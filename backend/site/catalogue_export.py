@@ -11,6 +11,10 @@ output (`site/data/catalogue.json`) is a presentation view of the same records:
   `review/preview_*.csv`) are withheld and marked "under review" instead of showing a value that is
   known to be in question. Formatting-only differences (e.g. ° vs ˚) are not withheld.
 - Verification status and editorial review notes are passed through unchanged.
+- Each product's display title is the title printed for its ordering table, read from the PDF in the
+  catalogue's title type (`backend/site/titles.py`), with the rule and page it came from. The
+  extracted heading (`sub_title`) is kept alongside it, and every difference between the two is
+  listed in `review/display_titles.csv`.
 """
 
 import csv
@@ -23,9 +27,12 @@ from collections import Counter
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+from .titles import TitleReader, relation
+
 DATASET = os.path.join("output_v2", "extracted_products.json")
 SITE_DATA = os.path.join("site", "data", "catalogue.json")
 PREVIEW_GLOB = os.path.join("review", "preview_*.csv")
+TITLE_REVIEW = os.path.join("review", "display_titles.csv")
 
 # Catalogue-level facts: which category a catalogue covers and whose brand it carries.
 CATALOGUES: Dict[str, Dict[str, str]] = {
@@ -126,7 +133,8 @@ def _image(r: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     return None
 
 
-def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], str]) -> Dict[str, Any]:
+def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], str],
+                  printed_title: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     cat = CATALOGUES.get(r["source_pdf"], {"category": "Other", "brand": "", "title": r["source_pdf"], "art": "tool"})
     specs_in = r.get("specifications") or {}
     specs, under_review = [], []
@@ -147,7 +155,10 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
         "cat_nr": r.get("cat_nr"),
         "ord_nr": r.get("ord_nr"),
         "model_code": r.get("product_name"),
+        "title": printed_title["text"] if printed_title else None,
+        "title_source": {k: printed_title[k] for k in ("rule", "pdf_page", "evidence")} if printed_title else None,
         "heading": heading_text(r),
+        "heading_relation": relation(r.get("sub_title"), printed_title["text"] if printed_title else None),
         "category": cat["category"],
         "brand": cat["brand"],
         "catalogue": {"pdf": r["source_pdf"], "title": cat["title"], "href": f"../{r['source_pdf']}#page={r['physical_page_number']}"},
@@ -169,12 +180,16 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
     }
 
 
-def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB) -> Dict[str, Any]:
+def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".") -> Dict[str, Any]:
     with open(dataset_path, "rb") as f:
         raw = f.read()
     records = json.loads(raw.decode("utf-8"))
     pending = load_pending_corrections(preview_glob)
-    items = [export_record(r, pending) for r in records]
+    reader = TitleReader(pdf_root)
+    try:
+        items = [export_record(r, pending, reader.title_for(r)) for r in records]
+    finally:
+        reader.close()
     ids = Counter(i["id"] for i in items)
     duplicates = [k for k, n in ids.items() if n > 1]
     if duplicates:
@@ -196,6 +211,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB) -> Dict
             "fields_under_review": sum(len(i["under_review"]) for i in items),
             "pending_correction_files": sorted({v for v in pending.values()}),
             "with_confirmed_image": sum(1 for i in items if i["image"]),
+            "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
+            "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
         },
         "categories": [{"name": c["category"], "art": c["art"], "blurb": c["blurb"], "records": by_cat[c["category"]]}
                        for c in catalogues],
@@ -210,3 +227,36 @@ def write(data: Dict[str, Any], path: str = SITE_DATA) -> None:
     with open(tmp, "w", encoding="utf-8", newline="\n") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
     os.replace(tmp, path)
+
+
+TITLE_REVIEW_COLUMNS = ["source_pdf", "pdf_page", "printed_page", "cat_nr", "ord_nr", "relation",
+                        "extracted_heading", "display_title", "title_rule", "title_pdf_page", "evidence"]
+
+
+def title_review_rows(data: Dict[str, Any], dataset_path: str = DATASET) -> List[Dict[str, Any]]:
+    """Every product whose display title is not identical to its extracted heading (for review)."""
+    with open(dataset_path, encoding="utf-8") as f:
+        raw_heading = {record_id(r): r.get("sub_title") for r in json.load(f)}
+    rows = []
+    for p in data["products"]:
+        if p["heading_relation"] == "same":
+            continue
+        src = p["title_source"] or {}
+        rows.append({"source_pdf": p["catalogue"]["pdf"], "pdf_page": p["page"], "printed_page": p["printed_page"] or "",
+                     "cat_nr": p["cat_nr"] or "", "ord_nr": p["ord_nr"] or "", "relation": p["heading_relation"],
+                     "extracted_heading": raw_heading.get(p["id"]) or "", "display_title": p["title"] or "",
+                     "title_rule": src.get("rule", ""), "title_pdf_page": src.get("pdf_page", ""),
+                     "evidence": src.get("evidence", "")})
+    return rows
+
+
+def write_title_review(data: Dict[str, Any], path: str = TITLE_REVIEW, dataset_path: str = DATASET) -> int:
+    rows = title_review_rows(data, dataset_path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=TITLE_REVIEW_COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+    os.replace(tmp, path)
+    return len(rows)

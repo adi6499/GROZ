@@ -1,12 +1,17 @@
 """The website's data export must be a faithful, read-only view of the extraction dataset."""
 
+import csv
 import hashlib
 import json
 import os
+import re
 
+import pymupdf
 import pytest
 
-from backend.site.catalogue_export import CATALOGUES, DATASET, SITE_DATA, build, load_pending_corrections
+from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, heading_text,
+                                           load_pending_corrections, title_review_rows)
+from backend.site.titles import relation
 
 
 @pytest.fixture(scope="module")
@@ -88,3 +93,73 @@ def test_committed_site_data_matches_the_dataset(site):
         committed = json.load(f)
     assert committed["meta"]["dataset_sha256"] == site["meta"]["dataset_sha256"]
     assert committed["products"] == site["products"]
+
+
+def test_committed_title_review_matches(site):
+    with open(TITLE_REVIEW, encoding="utf-8-sig", newline="") as f:
+        committed = list(csv.DictReader(f))
+    expected = [{k: str(v) for k, v in row.items()} for row in title_review_rows(site)]
+    assert committed == expected
+
+
+# ---------------------------------------------------------------- display titles (read from the PDFs)
+
+# Checked against the rendered catalogue pages (see review/editorial_decisions.json, decision F).
+PRINTED_TITLES = [
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ECH-212X", "CLUB HAMMERS", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESH-1030X", "SLEDGE HAMMERS", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESH/SF-1030X", "SLEDGE HAMMERS - SOFT FACE", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ETH-520X", "TIRE BEAD BREAK HAMMERS", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "EMH-0313X", "MACHINIST HAMMERS", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESAB-72", "SAN ANGELO BAR", "above"),
+    ("Estwing_Hammer_E-03_Interactive_1.pdf", "EPHD-69", "POST HOLE DIGGING BAR", "above"),
+    ("Precision_Catalogue_CA_03.pdf", "VB/C/2", "Vee Blocks Cast Iron", "above"),
+    ("Precision_Catalogue_CA_03.pdf", "PAB/01/A", "Adjustable Angle Block 0-60°", "above"),
+    ("Precision_Catalogue_CA_03.pdf", "SS/A/2", "Engineer’s Precision Squares", "facing"),
+    ("Precision_Catalogue_CA_03.pdf", "COB/0-1", "Tool Bits & Cut Off Blades", "facing"),
+    ("Precision_Catalogue_CA_03.pdf", "TB/0-1", "Tool Bits & Cut Off Blades", "above"),
+    ("GROZ_LIGHTING_GL-10_1.pdf", "LED/550", "Worklight Impact Resistant", "above"),
+    ("GROZ_LIGHTING_GL-10_1.pdf", "LED/621", "Worklight 270° Swivelling with Magnetic Base", "above"),
+    ("GROZ_LIGHTING_GL-10_1.pdf", "LED/685T", "Cordless Sitelamp 3 Head Design", "spread"),
+    ("tools_storage.pdf", "RTC/27-10/3/GRZ", '27" Rolling Tool Cabinets S10 Series', "spread"),
+]
+
+
+@pytest.mark.parametrize("pdf,cat_nr,title,rule", PRINTED_TITLES)
+def test_display_title_is_the_title_printed_for_the_product(site, pdf, cat_nr, title, rule):
+    p = next(p for p in site["products"] if p["catalogue"]["pdf"] == pdf and p["cat_nr"] == cat_nr)
+    assert (p["title"], p["title_source"]["rule"]) == (title, rule)
+
+
+def test_every_display_title_is_printed_on_its_cited_page(site):
+    words = lambda s: re.findall(r"[0-9a-z]+", s.lower().replace("’", "'"))
+    pages = {}
+    for p in site["products"]:
+        assert p["title"] and p["title_source"]["rule"] in {"above", "page", "spread", "facing"}
+        key = (p["catalogue"]["pdf"], p["title_source"]["pdf_page"])
+        if key not in pages:
+            with pymupdf.open(key[0]) as doc:
+                pages[key] = " ".join(words(doc[key[1] - 1].get_text()))
+        assert " ".join(words(p["title"])) in pages[key], (p["cat_nr"], p["title"], key)
+        assert f"PDF page {key[1]}" in p["title_source"]["evidence"]
+        if p["title_source"]["rule"] != "facing":
+            assert key[1] == p["page"]
+
+
+def test_extracted_heading_is_kept_alongside_the_title(source, site):
+    for r, p in zip(source, site["products"]):
+        assert p["heading"] == heading_text(r)
+        assert p["heading_relation"] == relation(r.get("sub_title"), p["title"])
+
+
+@pytest.mark.parametrize("extracted,printed,expected", [
+    ("Tweezers", "Tweezers", "same"),
+    ("Machinist’s Squares Excellent range of general purpose", "Machinist's Squares", "cleaned"),
+    ("Floodlight", "Floodlight 12W", "expanded"),
+    ("BS 876 SLEDGE HAMMERS •", "CLUB HAMMERS", "different"),
+    ("SLEDGE HAMMERS - SOFT FACE", "SLEDGE HAMMERS - BRASS", "different"),
+    (None, "Tool Bits & Cut Off Blades", "added"),
+    ("Anything", None, "none"),
+])
+def test_heading_relation(extracted, printed, expected):
+    assert relation(extracted, printed) == expected
