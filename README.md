@@ -7,6 +7,7 @@ no record is ever marked `verified` automatically.
 
 - `PROJECT_HANDOFF_AUDIT.md`: audit of the project as received from Google Antigravity.
 - `RECOVERY_REPORT.md`: the defect fixes, re-extraction results and open review items (14 Oct 2026).
+- `site/`: the local catalogue website built on `output_v2` (see [Website](#website-local-only)).
 
 ## Setup (Windows)
 
@@ -34,6 +35,13 @@ Tests never write into `output/` or `output_v2/`; image crops go to pytest tempo
 | `tests/test_schema.py`, `tests/test_extraction.py` | Original 35 tests (4 image expectations updated during recovery, each commented) |
 | `tests/test_recovery_regressions.py` | One or more tests per confirmed defect, with expected values read from the printed pages |
 | `tests/test_pipeline_safety.py` | Output-folder guard, approval gate, no record loss, no double extraction, computed reports |
+| `tests/test_site_data.py` | Website data export: every record exported once with its own values, nothing invented, unresolved images never shown, pending corrections withheld, `site/data/catalogue.json` not stale |
+
+Website logic (search, filters, sorting, comparison, quotation) has its own tests, run with Node.js 18 or later:
+
+```bash
+node --test "site/tests/*.test.mjs"
+```
 
 ## Extraction commands
 
@@ -135,6 +143,32 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
 - From rules version 2.1.0 (the `output_v2` dataset still uses 2.0.0 until regenerated):
   - `drawer_load_capacity`, `overall_load_capacity`, `net_weight` are read from the product's own capacity block. Each printed label is paired with the value printed directly above it. A block belongs to the panel headed by the product's CAT NR, otherwise to its own table area. Ambiguous values stay empty.
   - `beam_angle` comes only from the lighting spec-icon strip, verbatim (e.g. `60˚`). Titles and callouts such as "270° Swivelling" never count.
+
+## Website (local only)
+
+A static catalogue website on top of `output_v2`, following the Apple-style reference design (`groz_catalogue_apple_v2.html`). It is meant for local development only: do not deploy or publish it. The catalogue PDFs and images belong to GROZ.
+
+```bash
+.venv/Scripts/python.exe build_site_data.py
+.venv/Scripts/python.exe serve_site.py
+```
+
+Then open http://127.0.0.1:8962/site/. The server listens on this computer only (`--port N` changes the port). Opening `site/index.html` directly from disk does not work, because browsers block loading the data file from `file://` pages.
+
+- `build_site_data.py` reads `output_v2/extracted_products.json` (never writes to it) and writes `site/data/catalogue.json`. Re-run it whenever the dataset or the `review/preview_*.csv` files change; a test fails if the committed file is stale.
+- What the site shows (`backend/site/catalogue_export.py`):
+  - **Values** are the record's own values; an empty field shows "Not specified".
+  - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
+  - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are never shown.
+  - **Verification:** every record shows its verification status. Nothing is marked verified by the site.
+- Files:
+  - `site/index.html`, `site/assets/site.css`
+  - `site/assets/js/core.mjs`: pure logic, tested by Node.
+  - `site/assets/js/app.mjs`: page behaviour.
+  - `site/assets/js/art.mjs`: category icons from the reference design.
+- Saved products, the quote list and the grid/table choice are kept in the browser (`localStorage`). Contact details typed into the quote form are not stored.
+- **Quotations are prepared locally only.** They can be copied, downloaded (.txt / .csv) or printed. Nothing is emailed or sent anywhere: there is no backend.
+- The untracked `index.html` in the project root is a separate "Local Portal" page for the review dashboards; the website does not use it.
 
 ## Tools
 
