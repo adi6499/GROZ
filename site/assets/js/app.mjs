@@ -504,6 +504,15 @@ function valueCell(r) {
   return esc(r.text);
 }
 
+/** Who checked this product against its page, if anyone (from the verification tool's ledger). */
+function reviewLine(p) {
+  const v = p.verification;
+  const when = v ? String(v.at || "").slice(0, 10) : "";
+  if (v?.state === "verified") return `Review status: <b>Verified</b> — checked against the catalogue page by ${esc(v.reviewer)} on ${esc(when)}.`;
+  if (v?.state === "flagged") return `Review status: <b>Needs review</b> — flagged by ${esc(v.reviewer)} on ${esc(when)} (see the review note above).`;
+  return `Review status: <b>${esc(p.status_label)}</b>. Values were extracted automatically; check the catalogue page before ordering.`;
+}
+
 const RELATION_NOTE = {
   cleaned: "The extracted heading also contains description text printed next to the title.",
   expanded: "The extracted heading misses part of the printed title.",
@@ -561,7 +570,7 @@ function showDetails(id, { focusNav = "" } = {}) {
     <div class="source-box"><b>Source</b>: ${esc(p.catalogue.title)} — printed page ${esc(p.printed_page ?? "not printed")} (PDF page ${p.page}), file <code>${esc(p.catalogue.pdf)}</code>.
       ${title && p.title_source ? `<br/><b>Printed title</b>: ${esc(p.title_source.evidence)}` : ""}${headingNote}
       ${p.source_row_text ? `<br/><b>Catalogue table row</b> (text as extracted):<pre>${esc(p.source_row_text)}</pre>` : ""}
-      <div class="source-foot">Review status: <b>${esc(p.status_label)}</b>. Values were extracted automatically; check the catalogue page before ordering.</div></div>`, { wide: true, kind: "detail" });
+      <div class="source-foot">${reviewLine(p)}</div></div>`, { wide: true, kind: "detail" });
   state.detailId = p.id;
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }

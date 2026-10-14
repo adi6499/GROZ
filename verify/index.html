@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>GROZ — Verification</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 1 31 16 16 31 1 16Z%27 fill=%27%23f4511e%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2714%27 text-anchor=%27middle%27 fill=%27white%27%3EG%3C/text%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="/site/assets/site.css"/>
+<link rel="stylesheet" href="verify.css"/>
+</head>
+<body class="verify">
+<header class="vtop">
+  <a class="brand" href="/site/" title="Open the catalogue site"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-word">GROZ</span></a>
+  <span class="vtitle">Verification</span>
+  <div class="vprogress" id="progress" aria-live="polite"><span>Loading…</span></div>
+  <label class="vreviewer"><span>Reviewer</span><input id="reviewer" type="text" autocomplete="name" placeholder="Your name" maxlength="80" spellcheck="false"/></label>
+  <button class="btn soft sm" id="publish" type="button" title="Rebuild the catalogue site data so it shows the decisions">Update catalogue site</button>
+</header>
+
+<main class="vmain">
+  <aside class="vqueue" aria-label="Products to review">
+    <div class="vqueue-tools">
+      <input id="q" type="search" placeholder="Search CAT NR, ORD NR or title" aria-label="Search products" autocomplete="off" spellcheck="false"/>
+      <div class="segmented vfilter" id="stateFilter" role="group" aria-label="Show products">
+        <button type="button" data-filter="to_check" aria-pressed="true">To check <b data-count="to_check"></b></button>
+        <button type="button" data-filter="flagged" aria-pressed="false">Flagged <b data-count="flagged"></b></button>
+        <button type="button" data-filter="verified" aria-pressed="false">Verified <b data-count="verified"></b></button>
+        <button type="button" data-filter="all" aria-pressed="false">All</button>
+      </div>
+      <select id="catFilter" aria-label="Catalogue"><option value="">All catalogues</option></select>
+    </div>
+    <p class="vlist-count" id="listCount"></p>
+    <ul class="vlist" id="list"></ul>
+  </aside>
+
+  <section class="vwork" id="work" aria-label="Product being reviewed">
+    <div class="vempty"><strong>Loading the products…</strong></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="verify.mjs"></script>
+</body>
+</html>

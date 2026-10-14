@@ -50,10 +50,16 @@ def test_no_specification_is_invented(source, site):
 
 
 def test_verification_status_and_review_notes_pass_through(source, site):
+    """The dataset's status and notes are shown as they are, except where a person's current decision
+    in review/verifications.json says verified or flagged (see tests/test_verification.py)."""
+    from backend.review import verification
+    ledger = verification.load_ledger()
     for r, p in zip(source, site["products"]):
-        assert p["status"] == r["verification_status"]
-        assert len(p["notes"]) == len(r["editorial_notes"])
-    assert site["meta"]["verified"] == sum(1 for r in source if r["verification_status"] == "verified")
+        state, _ = verification.state_for(ledger, p["id"], r)
+        expected = {"verified": "verified", "flagged": "needs_review"}.get(state, r["verification_status"])
+        assert p["status"] == expected
+        assert len(p["notes"]) == len(r["editorial_notes"]) + (state == "flagged")
+    assert site["meta"]["verified"] == sum(1 for p in site["products"] if p["status"] == "verified")
 
 
 def test_only_supported_image_associations_are_shown(source, site):

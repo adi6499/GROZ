@@ -27,6 +27,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..review import verification
 from .titles import TitleReader, relation
 
 DATASET = os.path.join("output_v2", "extracted_products.json")
@@ -136,9 +137,32 @@ def _image(r: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     return None
 
 
+def _review_overlay(r: Dict[str, Any], decision: Tuple[Optional[str], Optional[Dict[str, Any]]]):
+    """Status, status label, extra notes and verification info from a person's decision.
+
+    Verified: only while the values still match the verified fingerprint. Flagged: needs review,
+    with the reviewer's comment as a note. Stale or no decision: the dataset's own status."""
+    state, entry = decision
+    status = r["verification_status"]
+    extra_notes: List[Dict[str, Any]] = []
+    info = None
+    if state in ("verified", "flagged"):
+        info = {"state": state, "reviewer": entry["reviewer"], "at": entry["at"]}
+        if state == "verified":
+            status = "verified"
+        else:
+            status = "needs_review"
+            extra_notes.append({"field": ", ".join(entry.get("fields") or []) or "record", "published_value": "",
+                                "issue": f"Flagged by {entry['reviewer']} on {entry['at'][:10]}: {entry.get('comment', '')}",
+                                "status": "flagged by reviewer"})
+    return status, STATUS_LABELS.get(status, status), extra_notes, info
+
+
 def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], str],
-                  printed_title: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                  printed_title: Optional[Dict[str, Any]] = None,
+                  decision: Tuple[Optional[str], Optional[Dict[str, Any]]] = (None, None)) -> Dict[str, Any]:
     cat = CATALOGUES.get(r["source_pdf"], {"category": "Other", "brand": "", "title": r["source_pdf"], "art": "tool"})
+    status, status_label, review_notes, verified_info = _review_overlay(r, decision)
     specs_in = r.get("specifications") or {}
     specs, under_review = [], []
     for key in sorted(specs_in, key=lambda k: (SPEC_ORDER.index(k) if k in SPEC_ORDER else len(SPEC_ORDER), k)):
@@ -174,25 +198,30 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
         "under_review": under_review,
         "image": image,
         "image_candidate_unconfirmed": image is None and unresolved,
-        "status": r["verification_status"],
-        "status_label": STATUS_LABELS.get(r["verification_status"], r["verification_status"]),
+        "status": status,
+        "status_label": status_label,
+        "verification": verified_info,
         "notes": [{"field": n.get("field_name"), "published_value": n.get("published_value"),
                    "issue": n.get("suspected_issue"), "status": n.get("review_status")}
-                  for n in r.get("editorial_notes") or []],
+                  for n in r.get("editorial_notes") or []] + review_notes,
         "source_row_text": r.get("source_row_text"),
     }
 
 
-def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".") -> Dict[str, Any]:
+def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".",
+          ledger_path: str = verification.LEDGER) -> Dict[str, Any]:
     with open(dataset_path, "rb") as f:
         raw = f.read()
     records = json.loads(raw.decode("utf-8"))
     pending = load_pending_corrections(preview_glob)
+    ledger = verification.load_ledger(ledger_path)
     reader = TitleReader(pdf_root)
     try:
-        items = [export_record(r, pending, reader.title_for(r)) for r in records]
+        items = [export_record(r, pending, reader.title_for(r), verification.state_for(ledger, record_id(r), r))
+                 for r in records]
     finally:
         reader.close()
+    review_counts = verification.summary(ledger, [(record_id(r), r) for r in records])
     ids = Counter(i["id"] for i in items)
     duplicates = [k for k, n in ids.items() if n > 1]
     if duplicates:
@@ -211,6 +240,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "dataset_sha256": hashlib.sha256(raw).hexdigest(),
             "records": len(items),
             "verified": sum(1 for i in items if i["status"] == "verified"),
+            "flagged_by_reviewer": review_counts["flagged"],
+            "verification_stale": review_counts["stale"],
             "fields_under_review": sum(len(i["under_review"]) for i in items),
             "pending_correction_files": sorted({v for v in pending.values()}),
             "with_confirmed_image": sum(1 for i in items if i["image"]),
