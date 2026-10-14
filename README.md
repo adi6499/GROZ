@@ -9,6 +9,14 @@ no record is ever marked `verified` automatically.
 - `RECOVERY_REPORT.md`: the defect fixes, re-extraction results and open review items (14 Oct 2026).
 - `site/`: the local catalogue website built on `output_v2` (see [Website](#website-local-only)).
 
+**Public code repository** (https://github.com/adi6499/GROZ): it holds the code, tests, website and review notes only. These are kept out of it because they are GROZ's catalogue material or data extracted from it:
+
+- the catalogue PDFs;
+- `output/` and `output_v2/`;
+- `site/data/catalogue.json`.
+
+To recreate them, put the PDFs in the project root, run the extraction batches, then run `build_site_data.py`. Tests that read the PDFs or the datasets need those files.
+
 ## Setup (Windows)
 
 ```bash
