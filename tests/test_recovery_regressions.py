@@ -247,6 +247,11 @@ def test_beam_angle_comes_from_the_spec_strip_only(page_products):
     assert by_cat(page_products(LIGHTING, 12), "LED/621").specifications.get("beam_angle") == "60˚"  # not "270° Swivelling"
     assert by_cat(page_products(LIGHTING, 7), "LED/670").specifications.get("beam_angle") == "110°"  # not "180°" callout
     assert by_cat(page_products(LIGHTING, 6), "LED/550").specifications.get("beam_angle") == "110˚"
+    # Strips with only lumens + angle tiles (no run time / distance), GL-10 p11
+    assert by_cat(page_products(LIGHTING, 11), "LED/602/US").specifications.get("beam_angle") == "110˚"
+    assert by_cat(page_products(LIGHTING, 11), "LED/612/EU").specifications.get("beam_angle") == "110˚"
+    # A page with a strip but no angle tile in the product's half: LED/800 (p10 right page)
+    assert "beam_angle" not in by_cat(page_products(LIGHTING, 10), "LED/800/EU").specifications
 
 
 def test_no_beam_angle_without_an_unambiguous_strip_value(page_products):

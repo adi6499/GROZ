@@ -371,18 +371,35 @@ class ProductBuilder:
         """Beam angle as printed in a lighting page's spec-icon strip, verbatim (e.g. "60˚").
 
         The catalogue prints no "BEAM ANGLE" text: the strip near the top of the page is a row of icon
-        tiles (lumens, run time, beam distance, beam angle) with values under the icons. A degree value
-        counts only when it is printed on that strip line -- the line holding a run-time ("4 HRS") or
-        beam-distance ("10M / 32'") tile value in the top 30% of the page. Degree values anywhere else
-        ("270° Swivelling", "360° Rotation") are feature callouts, not beam angles. Two different strip
-        angles (per-light-mode tiles, e.g. GL-10 p35) leave the value empty.
+        tiles (lumens, run time, beam distance, beam angle) whose values form one line of numbers and
+        units ("1000  11 HRS  8 HRS  10M / 32'  60˚", or just "2100  110˚"). A degree value counts only
+        when it sits on such a line in the top 30% of the page next to at least one other tile value,
+        and the line holds no ordinary words. Degree values in titles or callouts ("270° Swivelling with
+        Magnetic Base", "360° Rotation") are not beam angles. Two different strip angles (per-light-mode
+        tiles, e.g. GL-10 p35) leave the value empty.
         """
         words = page.get_text("words", clip=clip)
         top = page.rect.height * 0.30
-        anchors = [w for w in words if w[1] < top and (
-            w[4].upper() == "HRS" or re.fullmatch(r"\d+M(?:/\S*)?", w[4]) is not None)]
-        found = {w[4] for a in anchors for w in words
-                 if abs(w[1] - a[1]) <= 6 and re.fullmatch(r"\d{1,3}\s*[°˚]", w[4])}
+        degree = re.compile(r"\d{1,3}\s*[°˚]")
+
+        def tile_value(t: str) -> bool:
+            """Tile values and units, or the certification badges printed at the strip's height."""
+            return bool(degree.fullmatch(t) or re.fullmatch(r"[\d.,/()'’\"-]+", t)
+                        or re.fullmatch(r"\d+(?:\.\d+)?[A-Za-z]{1,3}['’]?", t)
+                        or re.fullmatch(r"I[PK]\d{2}", t, re.IGNORECASE)
+                        or t.upper() in ("HRS", "NM", "LM", "MAH", "A", "W", "V", "M", "ROHS", "CE"))
+
+        mid = page.rect.width / 2.0
+        side = (lambda o: (o[0] + o[2]) / 2.0 < mid) if page.rect.width > 800 else (lambda o: True)
+
+        found = set()
+        for w in words:
+            if w[1] >= top or not degree.fullmatch(w[4]):
+                continue
+            # neighbours on the same visual line and, on a two-page spread, the same page of the spread
+            others = [o for o in words if abs(o[1] - w[1]) < 4 and o is not w and side(o) == side(w)]
+            if others and all(tile_value(o[4]) for o in others):
+                found.add(w[4])
         return found.pop() if len(found) == 1 else None
 
     _LABELLED_SPECS = (
