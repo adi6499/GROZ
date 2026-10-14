@@ -30,8 +30,9 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 4. **Product.**
    - Open a product. Show its source line, the PDF page link ("Catalogue page"), the printed-title evidence and the table row as extracted.
    - Use Previous/Next or the ← → keys to step through results.
-   - LED/621 shows a beam angle "Under review".
-5. **Compare.** Tick *Compare* on 2–4 products and open the dock's Compare: "Not specified" and "Under review" cells are explicit; remove one.
+   - LED/621 shows the beam angle printed in its spec strip (60˚), not the "270° Swivelling" callout.
+   - G/10/M1 shows the printed table caption "TAPER SHANK ARBORS - DIN 238".
+5. **Compare.** Tick *Compare* on 2–4 products and open the dock's Compare: "Not specified" cells are explicit; remove one.
 6. **Save.** Tap the heart; reload the page; the saved list (heart icon in the header) is still there.
 7. **Quote.**
    - Add products, use − / + to set quantities, and try *Prepare request* empty to show the validation.
@@ -49,21 +50,19 @@ On a phone-sized window, show:
 ## What to say about the data
 
 - Every product shows **Not yet verified** (3 show **Needs review**). Verification needs a person; nothing is marked verified automatically.
-- **49 values** show *Under review*: a corrected reading is ready but not yet approved (decision E), so the old values are withheld.
+- **Approved corrections are in** (decisions A–F, rules 2.2.0, 14 Oct 2026).
+  - Capacities and beam angles are read from each product's own panel or strip.
+  - Every heading is the title printed for the product's own table.
+  - Printed table captions and row descriptions are kept.
+  - The catalogue's own inconsistencies carry review notes rather than guesses.
+  - Every changed value, before and after, is in `review/applied/2026-10-14_rules-2.2.0/`.
 - **261 products** have no confirmed image:
   - 211 have a nearby picture that is not linked to the product ("Image not confirmed");
   - 50 have none ("Image unavailable").
-- **Titles:** read from each product's own heading in the PDF (`review/display_titles.csv` lists every case). 111 products have an extracted heading from another product or section; the extraction fix is decision F, awaiting approval.
 - Hand Tool and Fluid Handling catalogues are not included yet. The Hand Tool pilot is prepared but has not been run.
 
-## Approvals still needed
+## Still open
 
-Recorded in `review/editorial_decisions.json` and `NEXT_PHASE_REPORT.md`; nothing in `output_v2` changes until approved:
-
-- **A:** LED/800 dimensions.
-- **B:** ORD 62900 note wording.
-- **C:** index discrepancies (documented only).
-- **D:** TCHL net weight note.
-- **E:** apply extraction rules 2.1.0 (releases the 49 withheld values).
-- **F:** heading rule.
-- **The five-page Hand Tool pilot.**
+- **Verification:** a person checks products against their pages; none is verified yet.
+- **C:** catalogue index discrepancies (documented only; questions for GROZ).
+- **The five-page Hand Tool pilot**, then the rest of the Hand Tool and Fluid Handling catalogues.

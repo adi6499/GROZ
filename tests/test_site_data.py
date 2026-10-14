@@ -9,7 +9,7 @@ import re
 import pymupdf
 import pytest
 
-from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, heading_text,
+from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, export_record, heading_text,
                                            load_pending_corrections, title_review_rows)
 from backend.site.titles import relation
 
@@ -68,17 +68,38 @@ def test_only_supported_image_associations_are_shown(source, site):
             assert os.path.isfile(path)
 
 
-def test_values_awaiting_a_pending_correction_are_withheld(site):
-    pending = load_pending_corrections()
-    by_key = {(p["catalogue"]["pdf"], p["page"], p["cat_nr"]): p for p in site["products"]}
-    assert pending, "review/preview_*.csv should list the pending corrections"
-    for (pdf, page, cat, key) in pending:
-        p = by_key[(pdf, page, cat)]
-        assert key not in {s["key"] for s in p["specs"]}
-    led621 = by_key[("GROZ_LIGHTING_GL-10_1.pdf", 12, "LED/621")]
-    assert "beam_angle" in {u["key"] for u in led621["under_review"]}  # dataset value "270°" is a callout
-    led680 = by_key[("GROZ_LIGHTING_GL-10_1.pdf", 8, "LED/680")]
-    assert {s["key"]: s["value"] for s in led680["specs"]}.get("beam_angle") == "120°"  # glyph-only change: shown
+def test_values_awaiting_a_pending_correction_are_withheld(source, tmp_path):
+    """A field listed as changed in a not-yet-applied preview is shown as 'under review', never with
+    its old value; formatting-only differences (° vs ˚) are not withheld."""
+    r = next(r for r in source if r["cat_nr"] == "LED/621")
+    other = next(r for r in source if r["cat_nr"] == "LED/680")
+    preview = tmp_path / "preview_batch_x.csv"
+    with open(preview, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["change", "source_pdf", "page", "cat_nr", "field", "legacy_value", "new_value"])
+        w.writeheader()
+        w.writerow({"change": "spec changed", "source_pdf": r["source_pdf"], "page": r["physical_page_number"], "cat_nr": "LED/621",
+                    "field": "specifications.beam_angle", "legacy_value": "270°", "new_value": "60˚"})
+        w.writerow({"change": "spec changed", "source_pdf": other["source_pdf"], "page": other["physical_page_number"], "cat_nr": "LED/680",
+                    "field": "specifications.beam_angle", "legacy_value": "120°", "new_value": "120˚"})
+    pending = load_pending_corrections(str(tmp_path / "preview_*.csv"))
+    assert len(pending) == 1
+    p = export_record(r, pending)
+    assert "beam_angle" in {u["key"] for u in p["under_review"]} and "beam_angle" not in {s["key"] for s in p["specs"]}
+    assert "beam_angle" in {s["key"] for s in export_record(other, pending)["specs"]}
+
+
+def test_rules_2_2_applied_nothing_is_withheld(site):
+    """Decisions A-F were approved and applied (rules 2.2.0): no correction is pending, and the
+    corrected readings are shown (review/applied/2026-10-14_rules-2.2.0)."""
+    assert not load_pending_corrections()
+    assert site["meta"]["fields_under_review"] == 0
+    by_cat = {p["cat_nr"]: p for p in site["products"]}
+    specs = lambda c: {s["key"]: s["value"] for s in by_cat[c]["specs"]}
+    assert specs("LED/621").get("beam_angle") == "60˚"           # E: from the spec strip, not the "270°" callout
+    assert specs("LED/800/EU").get("diameter") == '12-1/64" (305 mm)'  # A
+    assert by_cat["LED/800/EU"]["dimensions_mm"] is None
+    assert by_cat["ECH-212X"]["heading"] == "CLUB HAMMERS"       # F
+    assert specs("G/10/M1").get("table_caption") == "TAPER SHANK ARBORS - DIN 238"
 
 
 def test_categories_follow_the_source_catalogue(source, site):

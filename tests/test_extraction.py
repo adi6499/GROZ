@@ -233,10 +233,12 @@ def test_live_page_10_diameter_dimensions(tmp_path):
     assert p_660.dimensions_mm == "223 × 223 × 309"
     assert p_660.box_qty == 8
 
-    # LED-800-EU
+    # LED-800-EU. Decision A (approved 14 Oct 2026): the table has no SIZE column, so the size fields
+    # stay empty and the diagram's diameter callout is a specification (was: "12-1/64\" (Dia.)" in
+    # dimensions_inch and "305 mm (Dia.)" in dimensions_mm).
     p_800_eu = next(p for p in products if p.ord_nr == "55048")
-    assert "12-1/64" in p_800_eu.dimensions_inch
-    assert "305 mm" in p_800_eu.dimensions_mm
+    assert p_800_eu.dimensions_inch is None and p_800_eu.dimensions_mm is None
+    assert p_800_eu.specifications.get("diameter") == '12-1/64" (305 mm)'
     assert p_800_eu.box_qty == 1
     assert p_800_eu.specifications.get("plug_type") == "EU"
 

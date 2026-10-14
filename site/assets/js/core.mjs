@@ -7,12 +7,13 @@ export const MAX_COMPARE = 4;
 export const MAX_QTY = 99999;
 export const FACET_MAX_VALUES = 14;
 
-// Which specifications summarise a product best on its card, per category.
+// Which specifications summarise a product best on its card, per category. A description printed
+// in the product's own table row comes first: it is what tells close variants apart.
 const CARD_PRIORITY = {
-  "LED Worklights": ["lumens", "beam_distance", "run_time", "ip_rating", "battery"],
-  "Tool Storage": ["overall_load_capacity", "no_of_drawers", "top_options", "colour", "series"],
+  "LED Worklights": ["table_description", "lumens", "beam_distance", "run_time", "ip_rating", "battery"],
+  "Tool Storage": ["table_description", "overall_load_capacity", "no_of_drawers", "top_options", "colour", "series"],
   "Striking Tools": ["head_weight", "weight", "overall_length", "length", "handle_length"],
-  "Precision Tools": ["variant_label"],
+  "Precision Tools": ["variant_label", "table_caption"],
 };
 
 export const STATUS_ORDER = ["verified", "unverified", "needs_review"];

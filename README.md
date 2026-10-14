@@ -91,7 +91,7 @@ Options: `--out DIR` (main dataset folder, default `output_v2`), `--allow-shrink
 
 Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `compare` → review.
 
-Pipeline version: `2.1.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.0.0 (commit `4cf3417`).
+Pipeline version: `2.2.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.2.0 (commit `3df9ad3`, 14 Oct 2026), after the owner approved decisions A–F. Every changed value is listed in `review/applied/2026-10-14_rules-2.2.0/`.
 
 ## Batches
 
@@ -129,7 +129,9 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
 ### `review/`: review documents
 
 - `editorial_decisions.json`: decision log (evidence, current data, proposed treatment, status).
-- `preview_<batch>.md/.csv`: effect of not-yet-applied extraction-rule changes on a batch.
+- `preview_<batch>.md/.csv`: effect of not-yet-applied extraction-rule changes on a batch, written by `preview`. There are none at the moment; the website withholds any value such a file lists as changed.
+- `applied/<date>_rules-<version>/`: what an approved rules change did. Each folder holds a before/after list of every changed field, the previews and the old headings.
+- `display_titles.csv`: products whose printed title differs from `sub_title`. It is empty since rules 2.2.0.
 
 ### `output/`: legacy Antigravity outputs (read-only, kept for comparison)
 
@@ -139,7 +141,14 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
 ## Record fields worth knowing
 
 - `verification_status`: `unverified` or `needs_review` (missing CAT/ORD or low confidence). `verified` can only be set by a person.
-- `specifications.variant_label`: the printed header above a CAT/ORD column pair in two-column tables (e.g. `GRADE B`, `WORKSHOP GRADE`, `KNIFE EDGES`).
+- `sub_title` (from rules 2.2.0, decision F): the title printed for the product's own ordering table, in the catalogue's title type (`backend/extractor/printed_titles.py`):
+  1. the nearest title above the table, in the same column or half spread;
+  2. else the only title on the page or spread;
+  3. else the facing page's only title.
+- `specifications.variant_label`: the printed header above a CAT/ORD column pair in two-column tables (e.g. `GRADE B`, `WORKSHOP GRADE`, `KNIFE EDGES`), or above a knurl matrix column set (e.g. `COARSE LEFT`).
+- `specifications.table_caption`: the orange caption printed at the top of the product's table, verbatim, when it is more than "ORDERING INFORMATION" (e.g. `TAPER SHANK ARBORS - DIN 238`).
+- `specifications.table_description`: the description printed in the product's own table row (e.g. `Tool Box with Trolley`). It is kept only when its words are printed in that row.
+- `specifications.diameter`: LED/800 only; the diagram's diameter callout, verbatim (decision A).
 - Weight and length keys follow the printed column header, and values are kept only when they carry a unit:
   - `head_weight` (HEAD WEIGHT), `weight` (WEIGHT)
   - `overall_length` (OVERALL LENGTH), `length` (LENGTH), `handle_length` (HANDLE LENGTH)
@@ -148,7 +157,7 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
   - `product_family`: a family or shared label, or the single image beside the only ordering table in its region.
   - `unresolved`: page position only. A review candidate; never show it as the product's image.
 - `source_row_text`: the verbatim words of the product's own table row. `raw_text_snippet`: the start of the table text.
-- From rules version 2.1.0 (the `output_v2` dataset still uses 2.0.0 until regenerated):
+- From rules version 2.1.0 (decision E, applied to `output_v2` with 2.2.0):
   - `drawer_load_capacity`, `overall_load_capacity`, `net_weight` are read from the product's own capacity block. Each printed label is paired with the value printed directly above it. A block belongs to the panel headed by the product's CAT NR, otherwise to its own table area. Ambiguous values stay empty.
   - `beam_angle` comes only from the lighting spec-icon strip, verbatim (e.g. `60˚`). Titles and callouts such as "270° Swivelling" never count.
 
@@ -169,13 +178,10 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
   - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are labelled "Image not confirmed" and never shown; products without any image say "Image unavailable".
   - **Verification:** every record shows its verification status. Nothing is marked verified by the site.
-  - **Printed title** (`backend/site/titles.py`, presentation layer only): the title the catalogue prints for the product's ordering table, read from the PDF in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). Rules, in order:
-    1. the nearest title above the table, in the same column or half spread;
-    2. the only title on a single page;
-    3. the only title on a two-page spread;
-    4. the title on the facing page, for a right-hand page that prints none.
-
-    Product details name the rule and PDF page and keep the extracted heading (`sub_title`) visible. Every difference is listed in `review/display_titles.csv`; 111 extracted headings name another product or section (decision F in `review/editorial_decisions.json`, awaiting approval; `output_v2` is unchanged).
+  - **Printed title:** the title the catalogue prints for the product's ordering table, in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). The rules are the same as for `sub_title` (shared module `backend/extractor/printed_titles.py`).
+    - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
+    - Product details name the rule and PDF page the title came from.
+    - Any future difference is listed in `review/display_titles.csv`.
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.
