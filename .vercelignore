@@ -1,0 +1,17 @@
+# Files the website does not use; kept out of the Vercel deployment to keep it small.
+# The site needs: site/ (page, assets, data), output_v2/images/ and the four catalogue PDFs it links to.
+/output/
+/output_v2/*
+!/output_v2/images/
+/Fluid_Handling_Catalogue_spread.pdf
+/Fluid_Handling_mini_min_2.pdf
+/Hand_Tool_Catalogue_low_res_with_cover.pdf
+/Workshop_mini-compress.pdf
+/backend/
+/tests/
+/site/tests/
+/tools/
+/review/
+/venv/
+/.venv/
+*.py
