@@ -449,6 +449,33 @@ Values not found as printed (need review):
 
 ## 14. Coverage gates on the new dataset (3 findings)
 
-- Precision_Catalogue_CA_03.pdf: indexed ORD 01217 not in dataset (printed on pages none)
-- Precision_Catalogue_CA_03.pdf: indexed ORD 35044 not in dataset (printed on pages none)
-- Precision_Catalogue_CA_03.pdf: indexed ORD 35045 not in dataset (printed on pages none)
+- Precision_Catalogue_CA_03.pdf: indexed ORD 01217 (index page ref 12) not in dataset (printed on physical pages none)
+- Precision_Catalogue_CA_03.pdf: indexed ORD 35044 (index page ref 75) not in dataset (printed on physical pages none)
+- Precision_Catalogue_CA_03.pdf: indexed ORD 35045 (index page ref 75) not in dataset (printed on physical pages none)
+
+## 15. Editorial decisions (4)
+
+Recorded in `review/editorial_decisions.json`. A proposal is applied to the data only after approval.
+
+| ID | Item | Status | Current data | Proposed treatment |
+| --- | --- | --- | --- | --- |
+| A | LED/800/EU + LED/800/US dimensions | awaiting approval | dimensions_inch = '12-1/64" (Dia.)', dimensions_mm = '305 mm (Dia.)' -- reworded (word moved, parentheses changed); editorial note published_value '[Not in table]', suggested_correction '12-1/64" (Dia.) / 305 mm (Dia.)'. | Leave dimensions_inch / dimensions_mm empty (the table prints no size). Record the callout verbatim as specifications.diameter = '12-1/64" (305 mm)'. Editorial note: field 'dimensions', published_value 'Dia. 12-1/64" (305 mm)', no suggested_correction, issue text: 'The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.' |
+| B | ORD 62900 printed twice (Estwing mallets) | awaiting approval | EMLTT/CH-45W note: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (1" dia) and EMLTT/CH-45W (1-3/4" dia). Suspected typographical error in published catalogue; likely intended as 62902 following sequence, pending human review." | Replace the note text on EMLTT/CH-45W, and add the same note to EMLTT/CH-25W, with: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the Copper & Hide Mallet table (physical page 11); EMLTT/CH-38W between them is printed as 62901. The catalogue does not show which variant this order number belongs to; confirmation from GROZ is needed." published_value '62900', suggested_correction empty, status pending_review. Both ORD fields stay '62900' as printed. |
+| C | Precision catalogue index vs product pages | documented; no data change proposed | All 29 printed products are records (printed evidence); the 3 index-only numbers are not records. Listed in output_v2/reports/index_discrepancies.csv and change report section 16. | Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045. |
+| D | TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation) | awaiting approval | net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note). | Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records. |
+
+## 16. Catalogue index discrepancies (32) — source issues, not extraction defects
+
+Full list: `index_discrepancies.csv`. Printed products are kept even when the index omits them; index-only numbers are not turned into products. Index page references that point to a product family's first page are the catalogue's convention and are not listed.
+
+| Type | Count |
+| --- | --- |
+| in index, not printed on any product page | 3 |
+| printed on a product page, not in index | 29 |
+
+| Type | ORD | CAT NR | Physical page | Printed page | Note |
+| --- | --- | --- | --- | --- | --- |
+| in index, not printed on any product page | 01217 | — | 14 | 12 | possibly the same product as printed 01227 (DG/6/IN); which number is right is unknown |
+| in index, not printed on any product page | 35044 | — | 77 | 75 |  |
+| in index, not printed on any product page | 35045 | — | 77 | 75 |  |
+| printed on a product page, not in index | 01227 | DG/6/IN | 14 | 12 | possibly the same product as index-only 01217; which number is right is unknown |
