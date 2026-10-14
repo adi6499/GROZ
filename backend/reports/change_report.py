@@ -187,7 +187,9 @@ def _md_table(rows, header):
 
 
 def write_change_report(out_dir: str, legacy_path: str, new_path: str, pdf_root: str = ".",
-                        coverage_problems: Optional[List[str]] = None) -> Dict[str, Any]:
+                        coverage_problems: Optional[List[str]] = None,
+                        decisions: Optional[List[Dict[str, Any]]] = None,
+                        discrepancies: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     with open(legacy_path, encoding="utf-8") as f:
         legacy = json.load(f)
     with open(new_path, encoding="utf-8") as f:
@@ -257,6 +259,26 @@ def write_change_report(out_dir: str, legacy_path: str, new_path: str, pdf_root:
         L += [f"- {p}" for p in coverage_problems[:200]] or ["All gates pass: every printed ORD on processed product pages "
                                                               "is extracted, every extracted ORD and CAT NR is printed on its page, "
                                                               "and every ORD in the Precision numerical index is in the dataset."]
+    if decisions is not None:
+        L += ["", f"## 15. Editorial decisions ({len(decisions)})", "",
+              "Recorded in `review/editorial_decisions.json`. A proposal is applied to the data only after approval.", "",
+              _md_table([[d["id"], d["title"], d["status"], d["current"], d["proposal"]] for d in decisions],
+                        ["ID", "Item", "Status", "Current data", "Proposed treatment"])]
+    if discrepancies is not None:
+        with open(os.path.join(rep, "index_discrepancies.csv"), "w", encoding="utf-8-sig", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["type", "source_pdf", "ord_nr", "cat_nr", "physical_page", "printed_page",
+                                              "index_page_ref", "note"])
+            w.writeheader()
+            w.writerows(discrepancies)
+        counts = Counter(d["type"] for d in discrepancies)
+        L += ["", f"## 16. Catalogue index discrepancies ({len(discrepancies)}) — source issues, not extraction defects", "",
+              "Full list: `index_discrepancies.csv`. Printed products are kept even when the index omits them; "
+              "index-only numbers are not turned into products. Index page references that point to a product "
+              "family's first page are the catalogue's convention and are not listed.", "",
+              _md_table([[t, n] for t, n in sorted(counts.items())], ["Type", "Count"]), "",
+              _md_table([[d["type"], d["ord_nr"], d["cat_nr"] or "—", d["physical_page"], d["printed_page"], d["note"] or ""]
+                         for d in discrepancies if d["type"].startswith("in index") or d["note"]],
+                        ["Type", "ORD", "CAT NR", "Physical page", "Printed page", "Note"])]
     with open(os.path.join(rep, "change_report.md"), "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(L) + "\n")
     return res

@@ -1,0 +1,66 @@
+{
+  "updated": "2026-10-14",
+  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed.",
+  "decisions": [
+    {
+      "id": "A",
+      "title": "LED/800/EU + LED/800/US dimensions",
+      "status": "awaiting approval",
+      "evidence": [
+        "GROZ_LIGHTING_GL-10_1.pdf physical page 10 (spread), right page: the LED/800 ordering table has columns CAT NR, ORD NR, PLUG TYPE, POWER SOURCE, BOX QTY -- no size column.",
+        "The only printed dimension is a callout on the small LED-800 dimension diagram at the bottom right, in three lines: 'Dia.' / '12-1/64\"' / '(305 mm)'.",
+        "Both variants (EU, US) share the diagram."
+      ],
+      "current": "dimensions_inch = '12-1/64\" (Dia.)', dimensions_mm = '305 mm (Dia.)' -- reworded (word moved, parentheses changed); editorial note published_value '[Not in table]', suggested_correction '12-1/64\" (Dia.) / 305 mm (Dia.)'.",
+      "limitation": "dimensions_inch / dimensions_mm hold the ordering table's size columns (L x H x D) and cannot say 'diameter', so a diameter in them is either reworded or misleading.",
+      "proposal": "Leave dimensions_inch / dimensions_mm empty (the table prints no size). Record the callout verbatim as specifications.diameter = '12-1/64\" (305 mm)'. Editorial note: field 'dimensions', published_value 'Dia. 12-1/64\" (305 mm)', no suggested_correction, issue text: 'The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.'",
+      "alternatives": [
+        "Keep the current reworded values (not recommended: not verbatim).",
+        "Put '12-1/64\"' and '(305 mm)' in the size fields verbatim (not recommended: loses that it is a diameter)."
+      ]
+    },
+    {
+      "id": "B",
+      "title": "ORD 62900 printed twice (Estwing mallets)",
+      "status": "awaiting approval",
+      "evidence": [
+        "Estwing_Hammer_E-03_Interactive_1.pdf physical page 11, COPPER & HIDE MALLET table: EMLTT/CH-25W 62900 (face dia. 1”/25mm), EMLTT/CH-38W 62901 (1-1/2”/38mm), EMLTT/CH-45W 62900 (1-3/4”/44mm).",
+        "Searched all eight catalogue PDFs: 62900 appears only on Estwing page 11 (twice); 62901 only there; 62902 appears in none of them.",
+        "The note is attached to EMLTT/CH-45W only; EMLTT/CH-25W carries the same duplicate without a note."
+      ],
+      "current": "EMLTT/CH-45W note: \"Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (1\" dia) and EMLTT/CH-45W (1-3/4\" dia). Suspected typographical error in published catalogue; likely intended as 62902 following sequence, pending human review.\"",
+      "limitation": "The catalogue does not show which variant the number belongs to; '62902' is an unsupported guess.",
+      "proposal": "Replace the note text on EMLTT/CH-45W, and add the same note to EMLTT/CH-25W, with: \"Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the Copper & Hide Mallet table (physical page 11); EMLTT/CH-38W between them is printed as 62901. The catalogue does not show which variant this order number belongs to; confirmation from GROZ is needed.\" published_value '62900', suggested_correction empty, status pending_review. Both ORD fields stay '62900' as printed.",
+      "alternatives": [
+        "Keep the note on EMLTT/CH-45W only, with the corrected wording."
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Precision catalogue index vs product pages",
+      "status": "documented; no data change proposed",
+      "evidence": [
+        "Index (physical pages 82-83) lists 634 ORD numbers with page references.",
+        "3 indexed numbers appear on no product page: 01217 (index page 12 = physical 14), 35044 and 35045 (index page 75 = physical 77; the page prints only SCV/SP/100 35040).",
+        "29 products printed on product pages are absent from the index: 01227 (DG/6/IN), 14 workshop-grade DSW items 08520-08533, 14 COB tool bits 12201-12207 and 12221-12227.",
+        "Physical page 14 (printed 12) prints DG/6/IN 01227, which is not indexed, while the index lists 01217 for that page: possibly one product with a typo on one side; which number is right is unknown.",
+        "Index page references often cite a product family's first page (e.g. TB tool bits printed on page 55 are indexed to 54); that convention is not treated as a discrepancy."
+      ],
+      "current": "All 29 printed products are records (printed evidence); the 3 index-only numbers are not records. Listed in output_v2/reports/index_discrepancies.csv and change report section 16.",
+      "limitation": "Source discrepancies, not extraction defects; they cannot be resolved from the files.",
+      "proposal": "Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045."
+    },
+    {
+      "id": "D",
+      "title": "TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation)",
+      "status": "awaiting approval",
+      "evidence": [
+        "tools_storage.pdf physical page 23, right page, capacity block of the TCHL/14-10D/2 panel: NET WEIGHT '4 KG (21 LBS)'.",
+        "4 kg is about 8.8 lb and 21 lb is about 9.5 kg; physical page 24 prints '9.5 KG (21 LBS)' for TCHL/14-10/1."
+      ],
+      "current": "net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note).",
+      "limitation": "The catalogue does not show whether the kg or the lb figure is right.",
+      "proposal": "Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records."
+    }
+  ]
+}
