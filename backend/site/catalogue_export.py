@@ -54,6 +54,9 @@ CATALOGUE_ORDER = ("tools_storage.pdf", "GROZ_LIGHTING_GL-10_1.pdf", "Estwing_Ha
 
 SPEC_LABELS: Dict[str, str] = {
     "variant_label": "Variant (printed column)",
+    "table_description": "Description (printed in table)",
+    "table_caption": "Table caption (printed)",
+    "diameter": "Diameter",
     "lumens": "Light output (lumens)", "beam_distance": "Beam distance", "beam_angle": "Beam angle",
     "run_time": "Run time", "battery": "Battery", "led_type": "LED type", "ip_rating": "IP rating",
     "ik_rating": "IK rating", "plug_type": "Plug type", "power_source": "Power source",

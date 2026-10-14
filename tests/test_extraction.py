@@ -328,7 +328,10 @@ def test_tool_storage_p20_cantilever_boxes(tmp_path):
     p_mtb5t = next(p for p in products if p.ord_nr == "40003")
     assert p_mtb5t.cat_nr == "MTB/5T"
     assert p_mtb5t.box_qty == 1
-    assert p_mtb5t.sub_title == "Tool Box with Trolley"
+    # Decision F (rules 2.2.0): the heading is the printed title; the row's own description cell is
+    # kept verbatim as a specification (was: sub_title == "Tool Box with Trolley").
+    assert p_mtb5t.sub_title == "Cantilever Tool Box"
+    assert p_mtb5t.specifications.get("table_description") == "Tool Box with Trolley"
 
     doc.close()
 
@@ -664,22 +667,20 @@ def test_estwing_duplicate_published_ord_p11(tmp_path):
 
     assert len(prods) == 6
 
-    # EMLTT/CH-25W (1" dia) published 62900
-    p_25w = [p for p in prods if p.cat_nr == "EMLTT/CH-25W"][0]
-    assert p_25w.ord_nr == "62900"
-    assert len(p_25w.editorial_notes) == 0
-
-    # EMLTT/CH-45W (1-3/4" dia) published 62900 with editorial note
-    p_45w = [p for p in prods if p.cat_nr == "EMLTT/CH-45W"][0]
-    assert p_45w.ord_nr == "62900"
-    assert len(p_45w.editorial_notes) == 1
-
-    note = p_45w.editorial_notes[0]
-    assert note.field_name == "ord_nr"
-    assert note.published_value == "62900"
-    assert "Duplicate ORD NR" in note.suspected_issue
-    assert note.suggested_correction is None
-    assert note.review_status == "pending_review"
+    # Decision B (approved 14 Oct 2026): both variants printed with 62900 carry the same note, which
+    # does not guess the intended number (was: a note on EMLTT/CH-45W only, suggesting 62902).
+    for cat in ("EMLTT/CH-25W", "EMLTT/CH-45W"):
+        p = [p for p in prods if p.cat_nr == cat][0]
+        assert p.ord_nr == "62900"
+        assert len(p.editorial_notes) == 1
+        note = p.editorial_notes[0]
+        assert note.field_name == "ord_nr"
+        assert note.published_value == "62900"
+        assert "Duplicate ORD NR" in note.suspected_issue and "62901" in note.suspected_issue
+        assert "62902" not in note.suspected_issue
+        assert note.suggested_correction is None
+        assert note.review_status == "pending_review"
+    assert not [p for p in prods if p.cat_nr == "EMLTT/CH-38W"][0].editorial_notes
 
 
 def test_estwing_missing_ord_p15_pulaski_axe(tmp_path):

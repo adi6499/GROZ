@@ -306,3 +306,50 @@ def test_crop_names_and_ids_are_unique_across_pdfs(page_products):
                 assert "\\" not in im.file_path
                 ids.setdefault(im.image_id, set()).add(pdf)
     assert all(len(v) == 1 for v in ids.values())
+
+
+# --- Approved editorial decisions (rules 2.2.0, 14 Oct 2026; review/editorial_decisions.json) -----
+
+def test_decision_a_led_800_diameter_is_a_specification_not_a_size(page_products):
+    for cat in ("LED/800/EU", "LED/800/US"):
+        p = by_cat(page_products(LIGHTING, 10), cat)
+        assert (p.dimensions_inch, p.dimensions_mm) == (None, None)  # the table prints no SIZE column
+        assert p.specifications.get("diameter") == '12-1/64" (305 mm)'  # diagram callout, verbatim
+        note = [n for n in p.editorial_notes if n.field_name == "dimensions"]
+        assert len(note) == 1 and note[0].published_value == 'Dia. 12-1/64" (305 mm)' and note[0].suggested_correction is None
+
+
+def test_decision_d_tchl_net_weight_note(page_products):
+    for cat in ("TCHL/14-10D/2/BL/GRZ", "TCHL/14-10D/2/OR/GRZ"):
+        p = by_cat(page_products(STORAGE, 23), cat)
+        assert p.specifications.get("net_weight") == "4 KG (21 LBS)"  # kept as printed
+        assert [(n.field_name, n.published_value, n.suggested_correction) for n in p.editorial_notes] == [
+            ("net_weight", "4 KG (21 LBS)", None)]
+    assert not by_cat(page_products(STORAGE, 24), "TCHL/14-10/1/GRZ").editorial_notes  # 9.5 KG (21 LBS) agrees
+
+
+@pytest.mark.parametrize("pdf,page_no,cat_nr,title", [
+    (ESTWING, 4, "ECH-212X", "CLUB HAMMERS"),                      # was "BS 876 SLEDGE HAMMERS •"
+    (ESTWING, 4, "ESH-1030X", "SLEDGE HAMMERS"),
+    (ESTWING, 5, "ETH-520X", "TIRE BEAD BREAK HAMMERS"),           # was "SLEDGE HAMMERS - COPPER ..."
+    (ESTWING, 5, "EMH-0313X", "MACHINIST HAMMERS"),                # was "SLEDGE HAMMERS - BRASS ..."
+    (ESTWING, 16, "ESAB-72", "SAN ANGELO BAR"),                    # was "ROLL HEAD PRY BARS"
+    (PRECISION, 7, "SS/A/2", "Engineer’s Precision Squares"),      # was "ACC." (facing page 6)
+    (PRECISION, 45, "VB/C/2", "Vee Blocks Cast Iron"),             # was the page's first section
+    (PRECISION, 56, "TB/0-1", "Tool Bits & Cut Off Blades"),       # was title + description text
+    (LIGHTING, 9, "LED/685T", "Cordless Sitelamp 3 Head Design"),  # was "Floodlight complete with tripod"
+    (STORAGE, 5, "RTC/27-10/3/GRZ", '27" Rolling Tool Cabinets S10 Series'),
+])
+def test_decision_f_heading_is_the_printed_title(page_products, pdf, page_no, cat_nr, title):
+    assert by_cat(page_products(pdf, page_no), cat_nr).sub_title == title
+
+
+def test_decision_f_keeps_the_printed_text_the_heading_used_to_carry(page_products):
+    assert by_cat(page_products(PRECISION, 61), "G/10/M1").specifications.get("table_caption") == "TAPER SHANK ARBORS - DIN 238"
+    assert by_cat(page_products(PRECISION, 57), "COB/0-1").specifications.get("table_caption") == "ORDERING INFORMATION - CUTT OFF BLADES"
+    assert "table_caption" not in by_cat(page_products(PRECISION, 5), "SS/2").specifications  # plain "ORDERING INFORMATION"
+    assert by_cat(page_products(PRECISION, 68), "K58/CL").specifications.get("variant_label") == "COARSE LEFT"
+    assert by_cat(page_products(STORAGE, 20), "MTB/5").specifications.get("table_description") == "Tool Box"
+    # the row prints "Sitelamp complete with tripod" (the old guess said "Floodlight")
+    assert by_cat(page_products(LIGHTING, 9), "LED/685T").specifications.get("table_description") == "Sitelamp complete with tripod"
+    assert by_cat(page_products(LIGHTING, 7), "LED/670T").specifications.get("table_description") == "Worklight complete with tripod"

@@ -635,7 +635,11 @@ class TableExtractor:
 
         desc = None
         if "tripod" in slice_text.lower():
-            desc = "Worklight complete with tripod" if "worklight" in slice_text.lower() else "Floodlight complete with tripod"
+            # The light type is the word printed before "complete" in this row (LED/685T prints
+            # "Sitelamp complete with tripod"); the old two-way guess is kept only as a fallback.
+            tm = re.search(r"\b(Worklight|Floodlight|Sitelamp)\s+complete\b", slice_text)
+            kind = tm.group(1) if tm else ("Worklight" if "worklight" in slice_text.lower() else "Floodlight")
+            desc = f"{kind} complete with tripod"
         elif "Tool Box with Trolley" in slice_text:
             desc = "Tool Box with Trolley"
         elif "Tool Box" in slice_text:
@@ -722,6 +726,8 @@ class TableExtractor:
                             "cat_nr": c_nr,
                             "model_code": c_nr.replace('/', '-'),
                             "description": f"Knurls - {desc_line}",
+                            # the label printed above this Cat. Nr. column set (e.g. "COARSE LEFT")
+                            "variant_label": desc_line,
                             "dimensions_inch": dim_in,
                             "dimensions_mm": dim_m,
                             "box_qty": None,

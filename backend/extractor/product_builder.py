@@ -13,6 +13,21 @@ from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, Edit
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor
+from .printed_titles import PageTitles, table_caption
+
+
+def _words_in_order(phrase: str, text: str) -> bool:
+    """True when every word of `phrase` is printed in `text`, in the same order (a table cell may
+    wrap: 'Worklight complete' / 'with tripod' around the size columns)."""
+    words, pos = phrase.split(), 0
+    tokens = (text or "").split()
+    for w in words:
+        while pos < len(tokens) and tokens[pos] != w:
+            pos += 1
+        if pos == len(tokens):
+            return False
+        pos += 1
+    return bool(words)
 
 
 class ProductBuilder:
@@ -58,6 +73,7 @@ class ProductBuilder:
         )
 
         products: List[ProductRecord] = []
+        titles = PageTitles(page.parent, source_pdf)
 
         # Every code on the page: an image labelled with several of them is a family image.
         page_codes = sorted({c for r in ordering_rows for c in (r.get("cat_nr"), r.get("model_code")) if c})
@@ -83,12 +99,23 @@ class ProductBuilder:
             )
 
             # Specific override for row description if provided by table (e.g. "Worklight complete with tripod")
+            row_description = None
             if row.get("description"):
                 if "tripod" in row["description"].lower():
                     product_name = f"{model_code} (With Tripod)"
                     subtitle = row["description"]
+                    row_description = row["description"]
                 elif not model_code.startswith("LED"):
                     subtitle = row["description"]
+                    if not row["description"].startswith("Knurls - "):  # knurl labels: variant_label
+                        row_description = row["description"]
+
+            # Decision F (rules 2.2.0): the heading is the title printed for this product's own
+            # ordering table, in the catalogue's title type (see printed_titles.py). The old banner
+            # and row-text guesses above remain only as a fallback when no printed title is found.
+            printed_title = titles.title_for(page_number, row.get("table_bbox"), catalog_label)
+            if printed_title:
+                subtitle = printed_title["text"]
 
             # Extract specs for this region
             if text_region in ["full_spread", "full_page"]:
@@ -108,6 +135,14 @@ class ProductBuilder:
             # _storage_specs_for); never copied from a neighbouring variant's block.
             specs.update(self._storage_specs_for(row, cat_nr, labelled_blocks, clip_rect, region_tables))
 
+            # Printed text that the heading used to carry is kept verbatim (decision F): the table
+            # caption above the product's table, and the row's own description cell.
+            caption = table_caption(page, row.get("table_bbox"))
+            if caption:
+                specs["table_caption"] = caption
+            if row_description and _words_in_order(row_description, row.get("source_row_text") or ""):
+                specs["table_description"] = row_description
+
             # Special case for circular/diameter products (LED-800 on page 10)
             dim_inch = row.get("dimensions_inch")
             dim_mm = row.get("dimensions_mm")
@@ -116,14 +151,21 @@ class ProductBuilder:
             if not dim_inch and "800" in model_code:
                 dia_match = re.search(r'Dia\.\s*\n*(\d+-[0-9/]+"?)\s*\n*\(([\d\s]+mm)\)', full_text)
                 if dia_match:
-                    dim_inch = f"{dia_match.group(1)} (Dia.)"
-                    dim_mm = f"{dia_match.group(2)} (Dia.)"
+                    # Decision A (approved 14 Oct 2026): the ordering table has no SIZE column, so the
+                    # size fields stay empty; the only printed dimension, the diameter callout on the
+                    # LED-800 diagram, is recorded verbatim as a specification.
+                    callout = f"{dia_match.group(1)} ({dia_match.group(2).strip()})"
+                    specs["diameter"] = callout
                     editorial_notes.append(
                         EditorialReviewNote(
-                            field_name="dimensions_inch",
-                            published_value="[Not in table]",
-                            suspected_issue="Ordering table omitted SIZE column for circular cable reel worklight. Dimension extracted from graphic callout.",
-                            suggested_correction=f"{dim_inch} / {dim_mm}",
+                            field_name="dimensions",
+                            published_value=f"Dia. {callout}",
+                            suspected_issue=(
+                                "The ordering table has no SIZE column. The only printed dimension is this diameter "
+                                f"callout on the LED-800 diagram (physical page {page_number}), recorded verbatim as "
+                                "specifications.diameter."
+                            ),
+                            suggested_correction=None,
                             source_page_reference=f"{source_pdf} Physical Page {page_number}, Technical Callout",
                             review_status="pending_review",
                         )
@@ -192,15 +234,19 @@ class ProductBuilder:
                         review_status="pending_review",
                     )
                 )
-            elif ord_nr == "62900" and cat_nr == "EMLTT/CH-45W":
+            elif ord_nr == "62900" and cat_nr in ("EMLTT/CH-25W", "EMLTT/CH-45W"):
+                # Decision B (approved 14 Oct 2026): the same note on both variants, without guessing
+                # which one the number belongs to.
                 editorial_notes.append(
                     EditorialReviewNote(
                         field_name="ord_nr",
                         published_value="62900",
                         suspected_issue=(
                             "Duplicate ORD NR printed in catalogue table: '62900' is printed for both "
-                            "EMLTT/CH-25W (1\" dia) and EMLTT/CH-45W (1-3/4\" dia). Suspected typographical "
-                            "error in published catalogue; likely intended as 62902 following sequence, pending human review."
+                            "EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the "
+                            f"Copper & Hide Mallet table (physical page {page_number}); EMLTT/CH-38W between them is "
+                            "printed as 62901. The catalogue does not show which variant this order number belongs "
+                            "to; confirmation from GROZ is needed."
                         ),
                         suggested_correction=None,
                         source_page_reference=f"{source_pdf} Physical Page {page_number}, Table column ORD NR.",
@@ -218,6 +264,19 @@ class ProductBuilder:
                         ),
                         suggested_correction=None,
                         source_page_reference=f"{source_pdf} Physical Page {page_number}, Table column ORD NR.",
+                        review_status="pending_review",
+                    )
+                )
+
+            # Decision D (approved 14 Oct 2026): kg and lb figures printed for the same net weight disagree.
+            if cat_nr in ("TCHL/14-10D/2/BL/GRZ", "TCHL/14-10D/2/OR/GRZ") and specs.get("net_weight") == "4 KG (21 LBS)":
+                editorial_notes.append(
+                    EditorialReviewNote(
+                        field_name="net_weight",
+                        published_value="4 KG (21 LBS)",
+                        suspected_issue="kg and lb figures are inconsistent (4 kg is about 8.8 lb)",
+                        suggested_correction=None,
+                        source_page_reference=f"{source_pdf} Physical Page {page_number}, capacity block of the TCHL/14-10D/2 panel",
                         review_status="pending_review",
                     )
                 )
