@@ -308,6 +308,72 @@ class TableExtractor:
         hits = [w for w in header_words if _hdr(w[4]) in names]
         return min(hits, key=lambda w: (w[1], w[0])) if hits else None
 
+    @staticmethod
+    def _qualified_columns(header_words: List[Any], name: str) -> List[Any]:
+        """Header words equal to `name` (e.g. LENGTH) with their qualifier word, if any.
+
+        The qualifier is the header word printed immediately to the left on the same line, or
+        directly above it (two-line headers such as OVERALL / LENGTH). Returns [(qualifier, word)].
+        """
+        skip = {"CAT", "ORD", "NR"}
+        out = []
+        for w in sorted(header_words, key=lambda w: (w[1], w[0])):
+            if _hdr(w[4]) != name:
+                continue
+            left = [o for o in header_words if abs(o[1] - w[1]) < 3 and 0 <= w[0] - o[2] < 12 and _hdr(o[4]) not in skip]
+            above = [o for o in header_words if 4 < w[1] - o[1] < 14 and abs(_center_x(o) - _center_x(w)) < 25
+                     and _hdr(o[4]) not in skip]
+            cand = left or above
+            out.append((_hdr(max(cand, key=lambda o: o[1])[4]) if cand else None, w))
+        return out
+
+    _UNITS = ("mm", "cm", "kg", "g", "lb", "lbs", "in", "inch")
+
+    @staticmethod
+    def _column_measure(row_words: List[Any], header_word: Any, pattern: str) -> Optional[str]:
+        """Read a measurement printed under `header_word` in this row (e.g. 24”/600mm, 6lb/2.7kg).
+
+        Checked line by line. A line is skipped when the words under the column belong to a run of
+        prose (a set description such as "One each of 2" (50 mm), 3" ..." spanning the columns).
+        """
+        hx = _center_x(header_word)
+        for line in _group_lines(row_words):
+            window = [w for w in line if abs(_center_x(w) - hx) <= 40]
+            if not window:
+                continue
+            runs, cur = [], [line[0]]
+            for a, b in zip(line, line[1:]):
+                if b[0] - a[2] <= 6:
+                    cur.append(b)
+                else:
+                    runs.append(cur)
+                    cur = [b]
+            runs.append(cur)
+            touched = [w for r in runs if any(x is w for w in r for x in window) for w in r]
+            if any(re.fullmatch(r"[A-Za-z]+[.,):]*", w[4]) and w[4].lower().strip(".,):") not in TableExtractor._UNITS
+                   for w in touched):
+                continue
+            m = re.search(pattern, " ".join(w[4] for w in window), re.IGNORECASE)
+            if m:
+                return m.group(1).strip()
+        return None
+
+    @staticmethod
+    def _column_keys(header_words: List[Any], name: str) -> List[Any]:
+        """Spec keys named after the printed column headers: LENGTH -> length, OVERALL LENGTH ->
+        overall_length, HEAD WEIGHT -> head_weight, HANDLE LENGTH -> handle_length, ...
+
+        Returns [(key, header_word)], one per printed column, first occurrence of each key only.
+        """
+        out, seen = [], set()
+        for q, w in TableExtractor._qualified_columns(header_words, name):
+            qual = re.sub(r'[^a-z]', '', (q or "").lower())
+            key = f"{qual}_{name.lower()}" if qual else name.lower()
+            if key not in seen:
+                seen.add(key)
+                out.append((key, w))
+        return out
+
     # ------------------------------------------------------------------
     # Single-group tables (one CAT/ORD pair per row)
     # ------------------------------------------------------------------
@@ -330,26 +396,29 @@ class TableExtractor:
 
         lines = _group_lines(all_words)
         texts = [" ".join(w[4] for w in lw) for lw in lines]
-        cat_idx = [i for i, t in enumerate(texts) if re.search(TableExtractor.CAT_PATTERN, t)]
+        # The line holding the CAT header is never a product row, even when a caption printed just
+        # below the header (e.g. "EST/2/ST" on Precision p39) is grouped into the same visual line.
+        header_line = next((i for i, lw in enumerate(lines) if any(w is cat_hdr for w in lw)), -1)
+        cat_idx = [i for i, t in enumerate(texts) if i > header_line and re.search(TableExtractor.CAT_PATTERN, t)]
         if not cat_idx:
-            cat_idx = [i for i, t in enumerate(texts) if re.search(TableExtractor.ORD_PATTERN, t)]
+            cat_idx = [i for i, t in enumerate(texts) if i > header_line and re.search(TableExtractor.ORD_PATTERN, t)]
         if not cat_idx:
             return []
 
-        first_y = min(w[1] for w in lines[cat_idx[0]])
-        header_words = [w for lw in lines for w in lw if w[1] < first_y - 1 and x_left <= w[0] <= x_right]
+        header_words = [w for lw in lines[:cat_idx[0]] for w in lw if x_left <= w[0] <= x_right]
         header_text = _words_text(header_words) if header_words else " ".join(texts[:min(5, len(texts))])
         has_ord_column = bool(re.search(r'\bORD(?:\.|\b)', header_text))
 
         anchor_ys = [min(w[1] for w in lines[i]) for i in cat_idx]
-        gaps = [b - a for a, b in zip(anchor_ys, anchor_ys[1:])]
-        last_cap = max(1.6 * median(gaps), 22.0) if gaps else 22.0
+        # A row never extends further than a normal row height below its CAT line: this stops the
+        # text of a section heading or another table further down the page joining the row above it.
+        gaps = [b - a for a, b in zip(anchor_ys, anchor_ys[1:]) if b - a <= 40]
+        row_cap = max(1.6 * median(gaps), 22.0) if gaps else 22.0
 
         rows = []
         for k, idx in enumerate(cat_idx):
             end_idx = cat_idx[k + 1] if k + 1 < len(cat_idx) else len(lines)
-            slice_lines = [lw for lw in lines[idx:end_idx]
-                           if k + 1 < len(cat_idx) or min(w[1] for w in lw) <= anchor_ys[k] + last_cap]
+            slice_lines = [lw for lw in lines[idx:end_idx] if min(w[1] for w in lw) <= anchor_ys[k] + row_cap]
             slice_text = " \n ".join(" ".join(w[4] for w in lw) for lw in slice_lines)
             slice_text = slice_text.replace("Î", "×").replace("Ð", "×")
             slice_words = [w for lw in slice_lines for w in lw]
@@ -473,10 +542,6 @@ class TableExtractor:
         """Reads a row's own attributes. Each attribute requires its column header in this table."""
         hu = header_text.upper()
         has = {
-            # head_weight / overall_length are the hammer-table columns they are named after; other
-            # LENGTH columns (BLADE LENGTH, RULE LENGTH) must not be relabelled as overall length.
-            "weight": "HEAD" in hu and "WEIGHT" in hu,
-            "length": "OVERALL" in hu and "LENGTH" in hu,
             "spring": "SPRING" in hu,
             "top": re.search(r'\bTOP\b', hu) is not None,
             "colour": "COLOUR" in hu or "COLOR" in hu,
@@ -500,19 +565,22 @@ class TableExtractor:
         if model_code and '/' in model_code:
             model_code = model_code.split('/')[0]
 
-        head_weight = None
-        if has["weight"]:
-            src = column_text("WEIGHT")
-            hw_match = re.search(TableExtractor.HEAD_WEIGHT_PATTERN, src if src is not None else slice_text, re.IGNORECASE)
-            if hw_match:
-                head_weight = hw_match.group(1).strip()
-
-        overall_length = None
-        if has["length"]:
-            src = column_text("LENGTH")
-            ol_match = re.search(TableExtractor.LENGTH_PATTERN, src if src is not None else slice_text, re.IGNORECASE)
-            if ol_match:
-                overall_length = ol_match.group(1).strip()
+        # Weight and length columns: one spec key per printed column, named after its header
+        # (HEAD WEIGHT -> head_weight, WEIGHT -> weight, OVERALL LENGTH -> overall_length,
+        # HANDLE LENGTH -> handle_length, LENGTH -> length). The value is read under that column and
+        # kept only if it carries a unit (e.g. 24”/600mm, 6lb/2.7kg); bare numbers are not guessed at.
+        measured: Dict[str, Optional[str]] = {}
+        for name, pattern in (("WEIGHT", TableExtractor.HEAD_WEIGHT_PATTERN), ("LENGTH", TableExtractor.LENGTH_PATTERN)):
+            if header_words:
+                for key, hw in TableExtractor._column_keys(header_words, name):
+                    value = TableExtractor._column_measure(attr_words, hw, pattern)
+                    if value:
+                        measured[key] = value
+            else:  # text-only parsing (no geometry): only the hammer-table headers are recognised
+                qual = "HEAD" if name == "WEIGHT" else "OVERALL"
+                m = re.search(pattern, slice_text, re.IGNORECASE) if (qual in hu and name in hu) else None
+                if m:
+                    measured[f"{qual.lower()}_{name.lower()}"] = m.group(1).strip()
 
         spring_steel_bars = None
         if has["spring"]:
@@ -547,22 +615,23 @@ class TableExtractor:
                 dim_inch = dims[0] if len(dims) > 0 else None
                 dim_mm = dims[1] if len(dims) > 1 else None
 
+        # Drawer count: only from a "NO. OF DRAWERS" column, as a standalone number under its header
+        # (a "7 DRAWER" caption or a digit inside a CAT NR is not a drawer count).
         no_drawers = None
-        if has["drawer"]:
-            src = column_text("DRAWERS", "DRAWER", tol=22.0)
-            if src is not None:
-                m = re.search(r'\b([1-9]|10)\b', src)
-                no_drawers = int(m.group(1)) if m else None
-            else:
-                clean_for_dr = slice_text
-                if ord_nr:
-                    clean_for_dr = clean_for_dr.replace(ord_nr, " ")
-                if cat_nr:
-                    clean_for_dr = clean_for_dr.replace(cat_nr, " ")
-                if box_qty is not None:
-                    clean_for_dr = re.sub(rf'\b{box_qty}\b', ' ', clean_for_dr)
-                dr_candidates = [int(m) for m in re.findall(r'\b([2-9]|10)\b', clean_for_dr)]
-                no_drawers = dr_candidates[0] if dr_candidates else None
+        drawers_hdr = TableExtractor._header_word(header_words, "DRAWERS")
+        if drawers_hdr is not None:
+            dw = TableExtractor._column_value(attr_words, drawers_hdr, anchor_y, tol=22.0, pattern=r'^\d{1,2}$')
+            no_drawers = int(_clean_token(dw[4])) if dw is not None else None
+        elif not header_words and has["drawer"]:  # text-only parsing (no geometry)
+            clean_for_dr = slice_text
+            if ord_nr:
+                clean_for_dr = clean_for_dr.replace(ord_nr, " ")
+            if cat_nr:
+                clean_for_dr = clean_for_dr.replace(cat_nr, " ")
+            if box_qty is not None:
+                clean_for_dr = re.sub(rf'\b{box_qty}\b', ' ', clean_for_dr)
+            dr_candidates = [int(m) for m in re.findall(r'\b([2-9]|10)\b', clean_for_dr)]
+            no_drawers = dr_candidates[0] if dr_candidates else None
 
         desc = None
         if "tripod" in slice_text.lower():
@@ -601,8 +670,9 @@ class TableExtractor:
             "dimensions_inch": dim_inch,
             "dimensions_mm": dim_mm,
             "box_qty": box_qty,
-            "head_weight": head_weight,
-            "overall_length": overall_length,
+            "measured": measured,  # weight/length columns, keyed by printed header
+            "head_weight": measured.get("head_weight"),
+            "overall_length": measured.get("overall_length"),
             "spring_steel_bars": spring_steel_bars,
             "top_options": top_opt,
             "colour": colour,

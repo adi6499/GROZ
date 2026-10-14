@@ -79,6 +79,18 @@ def test_side_by_side_independent_tables_in_one_half(page_products):
     assert by_cat(page_products(PRECISION, 17), "MM/0-1").ord_nr == "16112"
 
 
+def test_captions_next_to_a_table_header_are_not_products(page_products):
+    """Precision p39: photo captions EST/2/ST and EST/1/ST sit beside a table that has an ORD column.
+
+    Found during the recovery re-extraction: the caption grouped into the header line hid the
+    ORD column, so two caption codes became records without an ORD. Rows without an ORD in a
+    table that has an ORD column are never records.
+    """
+    products = page_products(PRECISION, 39)
+    assert not [p.cat_nr for p in products if not p.ord_nr]
+    assert {p.ord_nr for p in products} == printed_ord_numbers(PRECISION, 39)
+
+
 # --- Defect 2: single-letter CAT prefix truncated (G/10/M1 -> 10/M1) -----------------------------
 
 def test_single_letter_cat_prefix_is_kept(page_products):
@@ -141,6 +153,34 @@ def test_row_specs_require_their_column_header(page_products):
     # Hammer columns are still read where the table has them.
     esh = by_cat(page_products(ESTWING, 4), "ESH-624X")
     assert esh.specifications["head_weight"] == "6lb/2.7kg"
+
+
+def test_drawer_count_only_from_a_drawers_column(page_products):
+    """tools_storage p6 has a '7 DRAWER' caption but no NO. OF DRAWERS column (found during recovery)."""
+    assert "no_of_drawers" not in by_cat(page_products(STORAGE, 6), "RTC/27-20/1/GRZ").specifications
+    assert "no_of_drawers" not in by_cat(page_products(STORAGE, 22), "TCHL/11-10D/3/BL/GRZ").specifications
+    assert by_cat(page_products(STORAGE, 4), "RTC/27-10D/1/GRZ").specifications["no_of_drawers"] == 7
+
+
+def test_length_and_weight_columns_keep_their_printed_meaning(page_products):
+    """Keys follow the printed header: OVERALL LENGTH, LENGTH, HEAD WEIGHT, WEIGHT (Estwing p11, p16, p17)."""
+    est16 = page_products(ESTWING, 16)
+    assert by_cat(est16, "EPB-12").specifications.get("length") == "12”/300mm"          # LENGTH column
+    esab = by_cat(est16, "ESAB-72").specifications
+    assert (esab.get("overall_length"), esab.get("weight")) == ("72”/1829mm", "17 lbs./7.73kg")
+    assert "head_weight" not in esab                                                    # WEIGHT, not HEAD WEIGHT
+    assert by_cat(page_products(ESTWING, 17), "EHDPR-46").specifications.get("length") == "46”/1170 mm"
+    # Feature text beside the table (p17) and a kit heading below it (p13) must not block the values
+    assert by_cat(page_products(ESTWING, 17), "EGBR-36").specifications.get("length") == "36”/914 mm"
+    eax = by_cat(page_products(ESTWING, 13), "EAX-114X").specifications
+    assert (eax.get("head_weight"), eax.get("overall_length")) == ("1.25 lb/0.5kg", "14”/350mm")
+    # Mallets print FACE DIA. before OVERALL LENGTH; the length is read from its own column
+    assert by_cat(page_products(ESTWING, 11), "EMLTT/CH-25W").specifications["overall_length"] == "11”/280mm"
+    # Qualified columns get their own printed name (HANDLE LENGTH -> handle_length), never overall_length
+    etm = by_cat(page_products(ESTWING, 18), "ETM/0808S").specifications
+    assert etm.get("handle_length") == "45”/1143mm" and "overall_length" not in etm
+    # A set description running across BLADE/STOCK LENGTH columns is prose, not a length value
+    assert not [(p.cat_nr, k) for p in page_products(PRECISION, 5) for k in p.specifications if k.endswith("length")]
 
 
 def test_ambiguous_page_ratings_are_not_attributed(page_products):

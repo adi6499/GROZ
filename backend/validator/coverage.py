@@ -69,7 +69,13 @@ def coverage_report(records: Sequence[Dict[str, Any]], pages_by_pdf: Dict[str, S
                     "missing_from_dataset": {o: printed_where.get(o, []) for o in sorted(indexed - in_dataset)},
                     "extracted_not_in_index": sorted(in_dataset - indexed),
                 }
+        no_ord_unexplained = [
+            (r["physical_page_number"], r.get("cat_nr")) for r in records
+            if r["source_pdf"] == pdf and not r.get("ord_nr")
+            and not any(n.get("field_name") == "ord_nr" for n in r.get("editorial_notes", []))
+        ]
         result[pdf] = {
+            "records_without_ord_unexplained": no_ord_unexplained,
             "pages_checked": len(pages),
             "printed_ord_tokens": printed_total,
             "extracted_ords": extracted_total,
@@ -91,6 +97,8 @@ def coverage_problems(report: Dict[str, Any]) -> List[str]:
             out.append(f"{pdf} p{pno}: extracted ORD not printed on page: {', '.join(v)}")
         for pno, cat in c["cat_nr_not_printed_as_word"]:
             out.append(f"{pdf} p{pno}: CAT NR not printed as a whole word: {cat}")
+        for pno, cat in c.get("records_without_ord_unexplained", []):
+            out.append(f"{pdf} p{pno}: record {cat} has no ORD NR and no editorial note explaining why")
         if c["index"]:
             for o, where in c["index"]["missing_from_dataset"].items():
                 out.append(f"{pdf}: indexed ORD {o} not in dataset (printed on pages {where or 'none'})")

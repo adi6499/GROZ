@@ -227,10 +227,8 @@ class ProductBuilder:
                 specs["colour"] = row["colour"]
             if row.get("no_of_drawers"):
                 specs["no_of_drawers"] = row["no_of_drawers"]
-            if row.get("head_weight"):
-                specs["head_weight"] = row["head_weight"]
-            if row.get("overall_length"):
-                specs["overall_length"] = row["overall_length"]
+            for key, value in row.get("measured", {}).items():
+                specs[key] = value
             if row.get("spring_steel_bars") is not None:
                 specs["spring_steel_bars"] = row["spring_steel_bars"]
             if row.get("variant_label"):
