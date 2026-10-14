@@ -16,7 +16,7 @@ from backend.reports.change_report import match_records, write_change_report
 from backend.reports.editorial import index_discrepancies, load_decisions
 from backend.reports.pilot_report import analyse
 from backend.reports.summary import compute_metrics, write_summary_md
-from backend.validator.coverage import coverage_report
+from backend.validator.coverage import coverage_problems, coverage_report
 import run_extraction
 
 HAND_TOOL = "Hand_Tool_Catalogue_low_res_with_cover.pdf"
@@ -226,9 +226,14 @@ def test_index_check_is_scoped_to_the_pages_processed():
     with pymupdf.open(pdf) as doc:
         printed = {p: {w[4] for w in doc[p - 1].get_text("words") if w[4].isdigit() and len(w[4]) == 5} for p in (14, 77)}
     recs = [_rec(pdf=pdf, page=p, cat=f"X/{o}", ord_nr=o) for p, os_ in printed.items() for o in os_]
-    idx = coverage_report(recs, {pdf: [14, 77]})[pdf]["index"]
+    report = coverage_report(recs, {pdf: [14, 77]})
+    idx = report[pdf]["index"]
     assert idx["scope"] == "printed pages ['12', '75']"
     assert set(idx["missing_from_dataset"]) == {"01217", "35044", "35045"}
+    # the per-page gates are untouched by the index check, and the findings list renders
+    assert report[pdf]["printed_not_extracted"] == {} and report[pdf]["extracted_not_printed"] == {}
+    index_findings = [p for p in coverage_problems(report) if "indexed ORD" in p]  # (synthetic CAT NRs are flagged too)
+    assert len(index_findings) == 3 and all("index page ref" in p for p in index_findings)
 
 
 def test_index_discrepancy_list_for_precision():

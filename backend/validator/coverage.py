@@ -92,24 +92,24 @@ def coverage_report(records: Sequence[Dict[str, Any]], pages_by_pdf: Dict[str, S
                         if pno not in idx:
                             scope_labels |= printed_page_labels(doc[pno - 1])
                     expected = {o for o, pg in entries.items() if scope_labels & set(pg)}
-                missing = sorted(expected - in_dataset)
+                idx_missing = sorted(expected - in_dataset)
                 outside = {}
-                if not full and missing:
+                if not full and idx_missing:
                     # The index cites a family's first page, so an ORD indexed to a processed page may be
                     # printed on a neighbouring page that was not processed: report it as outside scope.
                     tokens = {p: _five_digit(_printed_words(doc[p - 1])) for p in content_pages}
-                    for o in missing:
+                    for o in idx_missing:
                         where = [p for p in content_pages if o in tokens[p]]
                         if where and not set(where) & set(pages):
                             outside[o] = where
-                    missing = [o for o in missing if o not in outside]
+                    idx_missing = [o for o in idx_missing if o not in outside]
                 index = {
                     "index_pages": sorted(idx),
                     "scope": "whole catalogue" if full else f"printed pages {sorted(scope_labels, key=int)}",
                     "indexed": len(indexed),
                     "expected_in_scope": len(expected),
-                    "missing_from_dataset": {o: printed_where.get(o, []) for o in missing},
-                    "index_page_refs": {o: entries[o] for o in missing},
+                    "missing_from_dataset": {o: printed_where.get(o, []) for o in idx_missing},
+                    "index_page_refs": {o: entries[o] for o in idx_missing},
                     "indexed_here_printed_outside_scope": outside,
                     "extracted_not_in_index": sorted(in_dataset - indexed),
                 }
