@@ -1,0 +1,59 @@
+"""Which catalogue pages belong to which extraction batch.
+
+Every page of a source is processed unless `pages` lists specific physical pages. Pages without an
+ordering table simply produce no records, so processing a whole catalogue cannot invent products;
+it only stops pages from being skipped by mistake (as LED/695 on lighting page 5 once was).
+"""
+
+from dataclasses import dataclass
+from typing import Dict, Optional, Tuple
+
+
+@dataclass(frozen=True)
+class Source:
+    pdf: str
+    pages: Optional[Tuple[int, ...]] = None  # physical page numbers (1-based); None = every page
+
+
+@dataclass(frozen=True)
+class Batch:
+    name: str
+    description: str
+    sources: Tuple[Source, ...]
+    approved: bool = True  # unapproved batches refuse to run without an explicit override
+
+
+BATCHES: Dict[str, Batch] = {
+    "batch_1": Batch(
+        "batch_1",
+        "Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695)",
+        (Source("tools_storage.pdf"), Source("GROZ_LIGHTING_GL-10_1.pdf")),
+    ),
+    "batch_2": Batch(
+        "batch_2",
+        "Estwing hammers + Precision measuring tools, all pages",
+        (Source("Estwing_Hammer_E-03_Interactive_1.pdf"), Source("Precision_Catalogue_CA_03.pdf")),
+    ),
+    "batch_3_pilot": Batch(
+        "batch_3_pilot",
+        "Hand Tool catalogue pilot: p8 divider, p11 + p53 two-column tables, p12 standard table, "
+        "p224 calipers already extracted from Precision. Prepared; awaiting approval.",
+        (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", (8, 11, 12, 53, 224)),),
+        approved=False,
+    ),
+}
+
+BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot")
+
+# Brochure editions without order numbers. Policy (approved 14 Oct 2026): supplementary sources for
+# images, features and descriptions of products extracted from the full catalogues. They never
+# create product records by default; genuinely new products or specifications are flagged for review.
+SUPPLEMENTARY_SOURCES: Dict[str, str] = {
+    "Workshop_mini-compress.pdf": "brochure edition of Hand Tool / workshop products (no ORD numbers)",
+    "Fluid_Handling_mini_min_2.pdf": "brochure edition of Fluid_Handling_Catalogue_spread.pdf (no ORD numbers)",
+}
+
+# Catalogue pages that are numerical indexes (ORD NR -> page). Used as completeness checklists.
+INDEX_PAGES: Dict[str, Tuple[int, ...]] = {
+    "Precision_Catalogue_CA_03.pdf": (82, 83),
+}

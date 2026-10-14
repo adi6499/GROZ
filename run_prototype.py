@@ -24,7 +24,10 @@ def main():
         print(f"Error: Target catalogue '{pdf_filename}' does not exist in workspace.")
         sys.exit(1)
 
-    output_dir = "output"
+    # Recovery 14 Oct 2026: the prototype writes to its own folder and never touches the legacy
+    # output/ datasets or the batch pipeline's cumulative file (it used to overwrite
+    # output/extracted_products.json with 11 records).
+    output_dir = os.path.join("output_v2", "prototype")
     images_dir = os.path.join(output_dir, "images")
     previews_dir = os.path.join(output_dir, "previews")
     os.makedirs(images_dir, exist_ok=True)
@@ -79,7 +82,7 @@ def main():
     reader.close()
 
     # Save JSON database
-    json_path = os.path.join(output_dir, "extracted_products.json")
+    json_path = os.path.join(output_dir, "prototype_products.json")
     products_dict = [p.model_dump() for p in all_products]
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(products_dict, f, indent=2, ensure_ascii=False)
