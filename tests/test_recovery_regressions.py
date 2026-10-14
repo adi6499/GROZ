@@ -195,6 +195,66 @@ def test_power_source_is_verbatim_and_never_derived(page_products):
     assert "power_source" not in led602.specifications  # table has PLUG TYPE but no POWER SOURCE column
 
 
+# --- Next phase (14 Oct 2026): capacities per product panel / table ------------------------------
+
+CAP = ("drawer_load_capacity", "overall_load_capacity", "net_weight")
+
+
+def caps(products, cat_nr):
+    s = by_cat(products, cat_nr).specifications
+    return {k: s[k] for k in CAP if k in s}
+
+
+def test_capacities_read_per_table_when_tables_share_a_half_page(page_products):
+    """tools_storage p25-26: two one-product tables per half page, each with its own capacity block."""
+    p25, p26 = page_products(STORAGE, 25), page_products(STORAGE, 26)
+    assert caps(p25, "SRC/30-20/2/GRZ") == {"overall_load_capacity": "150 KG (330 LBS)", "net_weight": "18 KG (40 LBS)"}
+    assert caps(p25, "SRC/30-20/3/GRZ") == {"overall_load_capacity": "225 KG (500 LBS)", "net_weight": "23 KG (50 LBS)"}
+    assert caps(p25, "SRC/30-20/1/GRZ") == {"drawer_load_capacity": "45 KG (100 LBS)",
+                                            "overall_load_capacity": "200 KG (440 LBS)", "net_weight": "29 KG (63 LBS)"}
+    assert caps(p26, "WBN/60-20/1/GRZ") == {"overall_load_capacity": "545 KG (1200 LBS)", "net_weight": "65 KG (140 LBS)"}
+    assert caps(p26, "WBN/79-20/2/GRZ") == {"drawer_load_capacity": "45 KG (100 LBS)",
+                                            "overall_load_capacity": "545 KG (1200 LBS)", "net_weight": "90 KG (200 LBS)"}
+
+
+def test_capacities_follow_each_variant_panel(page_products):
+    """Spreads print one panel per variant, headed by its CAT NR; values were copied from the first panel."""
+    p4 = page_products(STORAGE, 4)
+    assert caps(p4, "RTC/27-10D/1/GRZ")["net_weight"] == "48 KG (105 LBS)"
+    assert caps(p4, "RTC/27-10D/2/GRZ")["net_weight"] == "43 KG (95 LBS)"
+    assert caps(p4, "RTC/27-10D/2/GRZ")["overall_load_capacity"] == "300 KG (660 LBS)"
+    p6 = page_products(STORAGE, 6)  # top-option variants (2A, 2B, 2C) belong to their base model's panel
+    assert {caps(p6, c)["net_weight"] for c in ("RTC/27-20/2/GRZ", "RTC/27-20/2A/GRZ", "RTC/27-20/2C/GRZ")} == {"64 KG (141 LBS)"}
+    assert caps(p6, "RTC/27-20/1B/GRZ")["net_weight"] == "71 KG (157 LBS)"
+    p11 = page_products(STORAGE, 11)
+    assert caps(p11, "RTCL/35-20/2/GRZ") == {"drawer_load_capacity": "45 KG (100 LBS)",
+                                             "overall_load_capacity": "550 KG (1212 LBS)", "net_weight": "105 KG (230 LBS)"}
+
+
+def test_capacity_values_with_decimals_are_read_whole(page_products):
+    """The old pattern could not read '4.5 KG' or '39.5 LBS' and stored '5 KG (10 LBS)' etc."""
+    assert caps(page_products(STORAGE, 20), "MTB/3L") == {"overall_load_capacity": "18 KG (39.5 LBS)",
+                                                          "net_weight": "4.5 KG (10 LBS)"}
+    assert caps(page_products(STORAGE, 24), "TCHL/14-10/1/GRZ")["net_weight"] == "9.5 KG (21 LBS)"
+    assert caps(page_products(STORAGE, 21), "TCHL/11-10D/1/BL/GRZ") == {
+        "drawer_load_capacity": "2.5 KG (5.5 LBS)", "overall_load_capacity": "10 KG (22 LBS)", "net_weight": "2.6 KG (5.7 LBS)"}
+
+
+# --- Next phase (14 Oct 2026): beam angle only from the spec-icon strip ----------------------------
+
+def test_beam_angle_comes_from_the_spec_strip_only(page_products):
+    """GL-10 prints no 'BEAM ANGLE' text; the angle is the degree value in the icon strip (y~175)."""
+    assert by_cat(page_products(LIGHTING, 12), "LED/621").specifications.get("beam_angle") == "60˚"  # not "270° Swivelling"
+    assert by_cat(page_products(LIGHTING, 7), "LED/670").specifications.get("beam_angle") == "110°"  # not "180°" callout
+    assert by_cat(page_products(LIGHTING, 6), "LED/550").specifications.get("beam_angle") == "110˚"
+
+
+def test_no_beam_angle_without_an_unambiguous_strip_value(page_products):
+    assert "beam_angle" not in by_cat(page_products(LIGHTING, 9), "LED/685").specifications   # strip has no angle tile
+    assert "beam_angle" not in by_cat(page_products(LIGHTING, 35), "LED/230").specifications  # two per-mode strip angles
+    assert "beam_angle" not in by_cat(page_products(LIGHTING, 41), "LED/701").specifications  # no strip on the page
+
+
 # --- Defect 6: LED/695 on lighting physical page 5 was never processed ----------------------------
 
 def test_led_695_extracted_from_page_5(page_products):

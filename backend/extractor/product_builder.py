@@ -4,6 +4,7 @@ Combines ordering tables, spatial text blocks, technical specifications,
 editorial review notes, and candidate images into strictly validated ProductRecord models.
 """
 
+from collections import defaultdict
 from typing import List, Dict, Any, Optional, Tuple
 import pymupdf
 import re
@@ -61,6 +62,8 @@ class ProductBuilder:
         # Every code on the page: an image labelled with several of them is a family image.
         page_codes = sorted({c for r in ordering_rows for c in (r.get("cat_nr"), r.get("model_code")) if c})
 
+        labelled_blocks = self._assign_labelled_blocks(page, page_codes) if ordering_rows else []
+
         def tables_in_region(region: str) -> int:
             boxes = {r.get("table_bbox") for r in ordering_rows
                      if region in ("full_spread", "full_page") or r.get("region_half") in (region, "full_page")}
@@ -101,6 +104,9 @@ class ProductBuilder:
                 lighting_context=self._is_lighting_context(cat_nr, page.get_text("text", clip=clip_rect)),
                 single_table_region=(region_tables == 1),
             )
+            # Capacity / net weight: read from this product's own panel or table area (see
+            # _storage_specs_for); never copied from a neighbouring variant's block.
+            specs.update(self._storage_specs_for(row, cat_nr, labelled_blocks, clip_rect, region_tables))
 
             # Special case for circular/diameter products (LED-800 on page 10)
             dim_inch = row.get("dimensions_inch")
@@ -360,6 +366,130 @@ class ProductBuilder:
     # Page-level specification keys and the context each one requires (see _extract_specifications).
     LIGHTING_KEYS = ("battery", "beam_distance", "beam_angle", "led_type", "lumens", "run_time")
 
+    @staticmethod
+    def _strip_beam_angle(page: pymupdf.Page, clip: pymupdf.Rect) -> Optional[str]:
+        """Beam angle as printed in a lighting page's spec-icon strip, verbatim (e.g. "60˚").
+
+        The catalogue prints no "BEAM ANGLE" text: the strip near the top of the page is a row of icon
+        tiles (lumens, run time, beam distance, beam angle) with values under the icons. A degree value
+        counts only when it is printed on that strip line -- the line holding a run-time ("4 HRS") or
+        beam-distance ("10M / 32'") tile value in the top 30% of the page. Degree values anywhere else
+        ("270° Swivelling", "360° Rotation") are feature callouts, not beam angles. Two different strip
+        angles (per-light-mode tiles, e.g. GL-10 p35) leave the value empty.
+        """
+        words = page.get_text("words", clip=clip)
+        top = page.rect.height * 0.30
+        anchors = [w for w in words if w[1] < top and (
+            w[4].upper() == "HRS" or re.fullmatch(r"\d+M(?:/\S*)?", w[4]) is not None)]
+        found = {w[4] for a in anchors for w in words
+                 if abs(w[1] - a[1]) <= 6 and re.fullmatch(r"\d{1,3}\s*[°˚]", w[4])}
+        return found.pop() if len(found) == 1 else None
+
+    _LABELLED_SPECS = (
+        ("drawer_load_capacity", ("DRAWER", "LOAD", "CAPACITY")),
+        ("overall_load_capacity", ("OVERALL", "LOAD", "CAPACITY")),
+        ("net_weight", ("NET", "WEIGHT")),
+    )
+    _KG_LBS = re.compile(r"\d+(?:\.\d+)?\s*KG\s*\(\d+(?:\.\d+)?\s*LBS\)", re.IGNORECASE)
+
+    @staticmethod
+    def _labelled_specs_in(page: pymupdf.Page, rect: pymupdf.Rect) -> Dict[str, str]:
+        """Labelled capacity/weight values inside `rect`; a key is returned only if exactly one value is found."""
+        found = defaultdict(set)
+        for b in ProductBuilder._labelled_blocks(page, rect):
+            found[b["key"]].add(b["value"])
+        return {k: v.pop() for k, v in found.items() if len(v) == 1}
+
+    @staticmethod
+    def _labelled_blocks(page: pymupdf.Page, rect: pymupdf.Rect) -> List[Dict[str, Any]]:
+        """Capacity/weight blocks: each printed label (e.g. OVERALL LOAD CAPACITY) with the value printed
+        directly above it ("225 KG (500 LBS)", "4.5 KG (10 LBS)", possibly wrapped over two lines).
+        Value words go to the nearest label on that label line. Returns [{key, value, x, y}].
+        """
+        words = sorted(page.get_text("words", clip=rect), key=lambda w: (round(w[1]), w[0]))
+        cx = lambda w: (w[0] + w[2]) / 2.0
+        labels = []
+        for key, seq in ProductBuilder._LABELLED_SPECS:
+            for w in words:
+                if w[4].upper() != seq[0]:
+                    continue
+                chain = [w]
+                for nxt in seq[1:]:
+                    cands = [o for o in words if o[4].upper() == nxt and abs(o[1] - chain[-1][1]) < 3
+                             and -4 <= o[0] - chain[-1][2] < 20]
+                    if not cands:
+                        break
+                    chain.append(min(cands, key=lambda o: o[0]))
+                if len(chain) == len(seq):
+                    labels.append((key, chain[0][0], chain[-1][2], w[1]))
+        blocks = []
+        for key, x0, x1, y in labels:
+            line = [l for l in labels if abs(l[3] - y) < 3]
+            mine = [o for o in words if y - 24 <= o[1] < y - 1 and x0 - 15 <= cx(o) <= x1 + 15
+                    and min(line, key=lambda l: abs((l[1] + l[2]) / 2 - cx(o)))[1:] == (x0, x1, y)]
+            text = " ".join(o[4] for o in mine).strip()
+            if ProductBuilder._KG_LBS.fullmatch(text):
+                blocks.append({"key": key, "value": text, "x": (x0 + x1) / 2.0, "y": y})
+        return blocks
+
+    @staticmethod
+    def _base_cat(cat_nr: Optional[str]) -> str:
+        """Base model of a top-option variant (RTC/27-20/1B/GRZ -> RTC/27-20/1/GRZ), as used for images."""
+        return re.sub(r'([1-4])[A-C]/', r'\1/', cat_nr or '')
+
+    @staticmethod
+    def _assign_labelled_blocks(page: pymupdf.Page, codes: List[str]) -> List[Dict[str, Any]]:
+        """All labelled capacity blocks on the page, each tagged with the product panel it sits in.
+
+        Tool-storage spreads print one panel per variant: the variant's CAT NR alone at the start of a
+        line (no ORD number on that line, so it is not a table row), followed lower down by that
+        variant's capacity block. A block belongs to the nearest such heading above it in the same
+        half page; blocks with no heading above them are left untagged (heading=None).
+        """
+        mid = page.rect.width / 2.0
+        half = lambda w: "L" if (w[0] + w[2]) / 2.0 < mid or page.rect.width <= 800 else "R"
+        words = page.get_text("words")
+        clean = lambda t: re.sub(r'^[^A-Za-z0-9]+', '', t).rstrip('.,;:')
+        headings = []
+        for w in words:
+            code = clean(w[4])
+            if code not in codes:
+                continue
+            line = [o for o in words if abs(o[1] - w[1]) < 3 and half(o) == half(w)]
+            if any(re.fullmatch(r'\d{5}', clean(o[4])) for o in line):
+                continue  # a table row, not a panel heading
+            if min(line, key=lambda o: o[0]) is not w:
+                continue  # the code is mentioned inside a sentence
+            headings.append((code, half(w), w[1]))
+        blocks = ProductBuilder._labelled_blocks(page, page.rect)
+        for b in blocks:
+            bh = "L" if b["x"] < mid or page.rect.width <= 800 else "R"
+            above = [h for h in headings if h[1] == bh and h[2] < b["y"]]
+            b["half"] = bh
+            b["heading"] = max(above, key=lambda h: h[2])[0] if above else None
+        return blocks
+
+    @staticmethod
+    def _storage_specs_for(row: Dict[str, Any], cat_nr: Optional[str], blocks: List[Dict[str, Any]],
+                           region: pymupdf.Rect, region_tables: int) -> Dict[str, str]:
+        """Capacity specs for one product, from the blocks of its own panel only.
+
+        1. Blocks under a panel heading equal to this product's CAT NR or its base model.
+        2. Otherwise untagged blocks in the product's page region -- and, when several tables share the
+           region, only blocks inside this product's own table area.
+        A key is filled only when exactly one value is found; anything ambiguous stays empty.
+        """
+        own = [b for b in blocks if b["heading"] and b["heading"] in (cat_nr, ProductBuilder._base_cat(cat_nr))]
+        if not own:
+            own = [b for b in blocks if b["heading"] is None and region.contains(pymupdf.Point(b["x"], b["y"]))]
+            if region_tables > 1:
+                tb = pymupdf.Rect(row["table_bbox"]) if row.get("table_bbox") else None
+                own = [b for b in own if tb is not None and tb.contains(pymupdf.Point(b["x"], b["y"]))]
+        found = defaultdict(set)
+        for b in own:
+            found[b["key"]].add(b["value"])
+        return {k: v.pop() for k, v in found.items() if len(v) == 1}
+
     def _extract_specifications(self, page: pymupdf.Page, clip: pymupdf.Rect,
                                 lighting_context: bool = True, single_table_region: bool = True) -> Dict[str, Any]:
         """Extracts page-level technical specifications from region text.
@@ -392,10 +522,10 @@ class ProductBuilder:
         if beam:
             specs["beam_distance"] = beam.group(1)
 
-        # Beam Angle
-        angle = re.search(r'(\d+)\s*[°˚]', text)
+        # Beam Angle: only the value printed in the spec-icon strip (see _strip_beam_angle), verbatim
+        angle = self._strip_beam_angle(page, clip)
         if angle:
-            specs["beam_angle"] = f"{angle.group(1)}°"
+            specs["beam_angle"] = angle
 
         # LED Type (e.g. 10W COB, 20W COB, 36W 72 SMD)
         led_type = re.search(r'(\d+\s*W(?:\s+\d+)?\s+(?:COB|SMD))', text, re.IGNORECASE)
@@ -414,20 +544,8 @@ class ProductBuilder:
         if runtime_match:
             specs["run_time"] = runtime_match.group(0).strip()
 
-        # Overall Load Capacity (Tool Storage)
-        olc = re.search(r'(\d+\s*KG\s*\(\d+\s*LBS\))\s*\n*OVERALL LOAD CAPACITY', text, re.IGNORECASE)
-        if olc:
-            specs["overall_load_capacity"] = olc.group(1)
-
-        # Drawer Load Capacity (Tool Storage)
-        dlc = re.search(r'(\d+\s*KG\s*\(\d+\s*LBS\))\s*\n*DRAWER LOAD CAPACITY', text, re.IGNORECASE)
-        if dlc:
-            specs["drawer_load_capacity"] = dlc.group(1)
-
-        # Net Weight (Tool Storage)
-        nw = re.search(r'(\d+\s*KG\s*\(\d+\s*LBS\))\s*\n*NET WEIGHT', text, re.IGNORECASE)
-        if nw:
-            specs["net_weight"] = nw.group(1)
+        # Overall / drawer load capacity and net weight are read per product panel in process_page
+        # (_storage_specs_for), not page-wide: multi-variant spreads print one block per variant.
 
         # Steel Gauge (Tool Storage)
         gauge = re.search(r'([0-9.]+\s*mm\s*\([0-9.]+\s*[Gg]auge\))', text, re.IGNORECASE)
