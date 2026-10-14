@@ -12,8 +12,8 @@ import os
 from collections import Counter, defaultdict
 from typing import Any, Dict, List
 
-from .batches import BATCH_ORDER
-from .runner import UnsafeOutputError, guard_output_dir, write_json_atomic
+from .batches import BATCHES, BATCH_ORDER
+from .runner import UnsafeOutputError, _same_path, guard_output_dir, write_json_atomic
 
 CUMULATIVE_NAME = "extracted_products.json"
 
@@ -35,6 +35,14 @@ def build_cumulative(out_dir: str, allow_shrink: bool = False, log=print) -> Lis
     batches = load_batches(out_dir)
     if not batches:
         raise FileNotFoundError(f"No batch files in {os.path.join(out_dir, 'batches')}")
+    reserved = {b.name: b.output_dir for b in BATCHES.values() if b.output_dir}
+    foreign = [n for n in batches if n in BATCHES and (
+        (BATCHES[n].output_dir and not _same_path(BATCHES[n].output_dir, out_dir))   # e.g. the pilot outside its folder
+        or (not BATCHES[n].output_dir and any(_same_path(d, out_dir) for d in reserved.values())))]
+    if foreign:
+        raise UnsafeOutputError(
+            f"Batch file(s) {', '.join(foreign)} belong to another output folder and cannot be merged into {out_dir}."
+        )
 
     page_owner: Dict[tuple, str] = {}
     clashes = defaultdict(set)

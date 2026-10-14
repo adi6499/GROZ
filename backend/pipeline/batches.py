@@ -20,7 +20,8 @@ class Batch:
     name: str
     description: str
     sources: Tuple[Source, ...]
-    approved: bool = True  # unapproved batches refuse to run without an explicit override
+    approved: bool = True  # unapproved batches refuse to run; approval = editing this flag in a commit
+    output_dir: Optional[str] = None  # dedicated output folder; None = the main corrected dataset (output_v2)
 
 
 BATCHES: Dict[str, Batch] = {
@@ -40,10 +41,18 @@ BATCHES: Dict[str, Batch] = {
         "p224 calipers already extracted from Precision. Prepared; awaiting approval.",
         (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", (8, 11, 12, 53, 224)),),
         approved=False,
+        output_dir="output_pilot_handtool",
     ),
 }
 
 BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot")
+
+# Catalogues of the not-yet-approved Batch 3: only the pages listed here may be processed, so no
+# batch definition (or edit of one) can run Batch 3 by accident. Fluid Handling: no pages yet.
+RESTRICTED_SOURCES: Dict[str, Tuple[int, ...]] = {
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": (8, 11, 12, 53, 224),
+    "Fluid_Handling_Catalogue_spread.pdf": (),
+}
 
 # Brochure editions without order numbers. Policy (approved 14 Oct 2026): supplementary sources for
 # images, features and descriptions of products extracted from the full catalogues. They never
@@ -53,7 +62,8 @@ SUPPLEMENTARY_SOURCES: Dict[str, str] = {
     "Fluid_Handling_mini_min_2.pdf": "brochure edition of Fluid_Handling_Catalogue_spread.pdf (no ORD numbers)",
 }
 
-# Catalogue pages that are numerical indexes (ORD NR -> page). Used as completeness checklists.
+# Catalogue pages that are numerical indexes (ORD NR -> printed page). Used as completeness checklists.
 INDEX_PAGES: Dict[str, Tuple[int, ...]] = {
     "Precision_Catalogue_CA_03.pdf": (82, 83),
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": (254, 255, 256, 257),
 }
