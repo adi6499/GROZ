@@ -48,7 +48,7 @@ Tests never write into `output/` or `output_v2/`; image crops go to pytest tempo
 Website logic (search, filters, sorting, titles, image labels, previous/next, comparison, quotation) has its own tests, run with Node.js 18 or later:
 
 ```bash
-node --test "site/tests/*.test.mjs"
+node --test "site/tests/*.test.mjs" "verify/tests/*.test.mjs"
 ```
 
 ## Extraction commands
@@ -201,6 +201,34 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
 - Saved products, the quote list and the grid/table choice are kept in the browser (`localStorage`). Contact details typed into the quote form are not stored.
 - **Quotations are prepared locally only.** They can be copied, downloaded (.txt / .csv) or printed. Nothing is emailed or sent anywhere: there is no backend.
 - The untracked `index.html` in the project root is a separate "Local Portal" page for the review dashboards; the website does not use it.
+
+## Verification tool (people check products against the catalogue)
+
+```bash
+.venv/Scripts/python.exe verify_server.py
+```
+
+Then open http://127.0.0.1:8963/verify/. The tool runs on this computer only and is not part of the website deployment.
+
+- **Screen:** each product's extracted values sit beside its catalogue page, rendered from the PDF in one of three views:
+  - **Row** (default): the table's column headings with the product's own printed row, CAT NR and ORD NR outlined.
+  - **Table**: the whole ordering table.
+  - **Whole page**: the full page, with the table outlined.
+- **Decisions:** the reviewer marks the product **Verified** (every value matches the page, including "not extracted" values) or **flags a problem**. A flag needs the fields concerned and a comment.
+  - Every decision records the reviewer's name and the time.
+  - Keys: <kbd>V</kbd> verified, <kbd>F</kbd> flag, <kbd>J</kbd>/<kbd>K</kbd> next/previous, <kbd>T</kbd> switch view.
+- **Records:**
+  - `review/verifications.json` holds the current decision per product.
+  - `review/verifications_log.jsonl` keeps every action, including undo, and is never rewritten.
+  - `output_v2` is not modified.
+- **Fingerprint:** each decision carries a fingerprint of the values checked: CAT NR, ORD NR, title, sizes, box quantity, specifications and the image shown. If a later extraction changes any of them, the decision is "changed since checked" and the product returns to the to-check list.
+- **Catalogue site:** "Update catalogue site" in the tool (or `build_site_data.py`) applies the decisions.
+  - A product shows **Verified**, with who and when, only while its values still match.
+  - A flagged product shows **Needs review**, with the reviewer's comment as a review note.
+- **Testing:** `verify_server.py --ledger <file> --log <file>` uses a separate test ledger. Such a server can never update the catalogue site.
+- **Code:**
+  - `backend/review/verification.py` (ledger rules), `verify_server.py` (local server).
+  - `verify/` (page). Tests: `tests/test_verification.py` and `verify/tests/`.
 
 ## Tools
 

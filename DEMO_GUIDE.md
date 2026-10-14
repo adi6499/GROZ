@@ -49,7 +49,7 @@ On a phone-sized window, show:
 
 ## What to say about the data
 
-- Every product shows **Not yet verified** (3 show **Needs review**). Verification needs a person; nothing is marked verified automatically.
+- Products show **Not yet verified** until a person checks them in the verification tool, which compares each product's values with its printed row (see below). Nothing is marked verified automatically. A product that is verified shows who checked it and when.
 - **Approved corrections are in** (decisions A–F, rules 2.2.0, 14 Oct 2026).
   - Capacities and beam angles are read from each product's own panel or strip.
   - Every heading is the title printed for the product's own table.
@@ -63,6 +63,9 @@ On a phone-sized window, show:
 
 ## Still open
 
-- **Verification:** a person checks products against their pages; none is verified yet.
+- **Verification:** checking the 941 products in the verification tool.
+  - Start it with `.venv/Scripts/python.exe verify_server.py`, then open http://127.0.0.1:8963/verify/.
+  - Enter your name. For each product, compare its values with the printed row, then press <kbd>V</kbd> (verified) or <kbd>F</kbd> (flag a problem).
+  - Press "Update catalogue site" to show the results on the catalogue.
 - **C:** catalogue index discrepancies (documented only; questions for GROZ).
 - **The five-page Hand Tool pilot**, then the rest of the Hand Tool and Fluid Handling catalogues.
