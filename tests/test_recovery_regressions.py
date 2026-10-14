@@ -250,6 +250,9 @@ def test_beam_angle_comes_from_the_spec_strip_only(page_products):
     # Strips with only lumens + angle tiles (no run time / distance), GL-10 p11
     assert by_cat(page_products(LIGHTING, 11), "LED/602/US").specifications.get("beam_angle") == "110˚"
     assert by_cat(page_products(LIGHTING, 11), "LED/612/EU").specifications.get("beam_angle") == "110˚"
+    # Strips with a tile caption ("BLUETOOTH"), GL-10 p5 and p21
+    assert by_cat(page_products(LIGHTING, 5), "LED/695").specifications.get("beam_angle") == "120˚"
+    assert by_cat(page_products(LIGHTING, 21), "LED/397").specifications.get("beam_angle") == "120˚"
     # A page with a strip but no angle tile in the product's half: LED/800 (p10 right page)
     assert "beam_angle" not in by_cat(page_products(LIGHTING, 10), "LED/800/EU").specifications
 

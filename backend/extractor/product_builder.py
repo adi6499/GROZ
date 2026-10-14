@@ -398,7 +398,10 @@ class ProductBuilder:
                 continue
             # neighbours on the same visual line and, on a two-page spread, the same page of the spread
             others = [o for o in words if abs(o[1] - w[1]) < 4 and o is not w and side(o) == side(w)]
-            if others and all(tile_value(o[4]) for o in others):
+            # up to two all-capitals tile captions (e.g. "BLUETOOTH") are allowed; mixed-case words are prose
+            captions = [o for o in others if re.fullmatch(r"[A-Z]{2,12}", o[4]) and not tile_value(o[4])]
+            values = [o for o in others if tile_value(o[4])]
+            if values and len(captions) <= 2 and len(values) + len(captions) == len(others):
                 found.add(w[4])
         return found.pop() if len(found) == 1 else None
 
