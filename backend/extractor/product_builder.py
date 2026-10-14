@@ -58,6 +58,14 @@ class ProductBuilder:
 
         products: List[ProductRecord] = []
 
+        # Every code on the page: an image labelled with several of them is a family image.
+        page_codes = sorted({c for r in ordering_rows for c in (r.get("cat_nr"), r.get("model_code")) if c})
+
+        def tables_in_region(region: str) -> int:
+            boxes = {r.get("table_bbox") for r in ordering_rows
+                     if region in ("full_spread", "full_page") or r.get("region_half") in (region, "full_page")}
+            return len(boxes)
+
         for row in ordering_rows:
             ord_nr = row.get("ord_nr")
             cat_nr = row.get("cat_nr")
@@ -87,7 +95,12 @@ class ProductBuilder:
             else:
                 clip_rect = pymupdf.Rect(mid_x, 0, page.rect.width, page.rect.height)
 
-            specs = self._extract_specifications(page, clip_rect)
+            region_tables = tables_in_region(text_region)
+            specs = self._extract_specifications(
+                page, clip_rect,
+                lighting_context=self._is_lighting_context(cat_nr, page.get_text("text", clip=clip_rect)),
+                single_table_region=(region_tables == 1),
+            )
 
             # Special case for circular/diameter products (LED-800 on page 10)
             dim_inch = row.get("dimensions_inch")
@@ -220,10 +233,13 @@ class ProductBuilder:
                 specs["overall_length"] = row["overall_length"]
             if row.get("spring_steel_bars") is not None:
                 specs["spring_steel_bars"] = row["spring_steel_bars"]
+            if row.get("variant_label"):
+                specs["variant_label"] = row["variant_label"]
 
             # Match images (pass text_region so unified spreads search across whole spread)
             matched_images = self.image_extractor.match_image_to_product(
-                candidate_images, model_code, cat_nr, text_region
+                candidate_images, model_code, cat_nr, text_region,
+                other_codes=page_codes, region_table_count=region_tables,
             )
 
             # Table bounding box
@@ -273,6 +289,7 @@ class ProductBuilder:
                 images=matched_images,
                 editorial_notes=editorial_notes,
                 raw_text_snippet=row.get("raw_text")[:200] if row.get("raw_text") else None,
+                source_row_text=row.get("source_row_text"),
             )
             products.append(record)
 
@@ -337,20 +354,35 @@ class ProductBuilder:
 
         return product_name, subtitle, description, features
 
-    def _extract_specifications(self, page: pymupdf.Page, clip: pymupdf.Rect) -> Dict[str, Any]:
-        """Extracts technical specifications cleanly from region text."""
+    @staticmethod
+    def _is_lighting_context(cat_nr: Optional[str], region_text: str) -> bool:
+        """Lighting specs (beam, lumens, run time, LED type, battery) only apply to lighting products."""
+        return (cat_nr or "").startswith("LED/") or bool(re.search(r'lumen|light output', region_text, re.IGNORECASE))
+
+    # Page-level specification keys and the context each one requires (see _extract_specifications).
+    LIGHTING_KEYS = ("battery", "beam_distance", "beam_angle", "led_type", "lumens", "run_time")
+
+    def _extract_specifications(self, page: pymupdf.Page, clip: pymupdf.Rect,
+                                lighting_context: bool = True, single_table_region: bool = True) -> Dict[str, Any]:
+        """Extracts page-level technical specifications from region text.
+
+        These values are printed in the page's feature graphics, not in a product's table row, so
+        they are attached only where they cannot belong to a different product:
+        - lighting keys (beam angle, lumens, ...) only for lighting products;
+        - all page-level keys only when the page region holds a single ordering table, i.e. every
+          product in the region is a variant of the one family the graphics describe.
+        """
+        if not single_table_region:
+            return {}
         text = page.get_text("text", clip=clip)
         specs: Dict[str, Any] = {}
 
-        # IP Rating
-        ip = re.search(r'\b(IP\s*[0-9]{2})\b', text)
-        if ip:
-            specs["ip_rating"] = ip.group(1).replace(" ", "")
-
-        # IK Rating
-        ik = re.search(r'\b(IK\s*[0-9]{2})\b', text)
-        if ik:
-            specs["ik_rating"] = ik.group(1).replace(" ", "")
+        # IP / IK ratings: only when the region shows a single rating. Two different ratings (e.g. an
+        # "IP54 COMPLIANT" and an "IP65 COMPLIANT" variant group) cannot be attributed page-wide.
+        for key, pattern in (("ip_rating", r'\b(IP\s*[0-9]{2})\b'), ("ik_rating", r'\b(IK\s*[0-9]{2})\b')):
+            found = {m.replace(" ", "") for m in re.findall(pattern, text)}
+            if len(found) == 1:
+                specs[key] = found.pop()
 
         # Battery / Power
         battery = re.search(r'([0-9.]+\s*V\s+[0-9.]+\s*mAh(?:\s+Li-Ion)?)', text, re.IGNORECASE)
@@ -409,4 +441,7 @@ class ProductBuilder:
         if series:
             specs["series"] = series.group(1)
 
+        if not lighting_context:
+            for key in self.LIGHTING_KEYS:
+                specs.pop(key, None)
         return specs

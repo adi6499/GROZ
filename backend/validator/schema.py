@@ -26,16 +26,26 @@ class BoundingBox(BaseModel):
         return self
 
 
+ImageAssociation = Literal["direct_product", "product_family", "unresolved"]
+
+
 class ProductImageRef(BaseModel):
-    """Reference to an extracted product image with verifiable source context."""
-    image_id: str = Field(..., description="Unique image identifier")
-    file_path: str = Field(..., description="Relative path to stored image asset")
+    """Reference to an extracted product image with verifiable source context.
+
+    association_type:
+      - direct_product: this product's own code is printed next to the image (and no other code is).
+      - product_family: the image shows the product's family (shared label, variant of a labelled
+        base model, or the only product image beside the only ordering table in that page region).
+      - unresolved: only page/region proximity links the image to the product. A candidate for
+        human review; must not be presented as the product's image.
+    """
+    image_id: str = Field(..., description="Unique image identifier (unique across PDFs)")
+    file_path: str = Field(..., description="Relative path to stored image asset (forward slashes)")
     source_pdf: str = Field(..., description="Origin PDF catalogue filename")
     physical_page_number: int = Field(..., ge=1, description="1-indexed physical PDF sheet number")
     bounding_box: BoundingBox = Field(..., description="Spatial location on the page")
-    association_type: Literal["direct_hero", "secondary", "product_family", "unverified"] = Field(
-        ..., description="Nature of association with this product"
-    )
+    association_type: ImageAssociation = Field(..., description="Strength of evidence linking image to product")
+    evidence: Optional[str] = Field(None, description="Why the image was associated, in plain words")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence of association")
     caption_or_label: Optional[str] = Field(None, description="Nearby text or callout label")
 
@@ -105,6 +115,10 @@ class ProductRecord(BaseModel):
 
     # Raw Reference
     raw_text_snippet: Optional[str] = Field(None, description="Snippet of raw extracted text for auditing")
+    source_row_text: Optional[str] = Field(
+        None, description="Verbatim words of this product's own table row (and its column-group header label)"
+    )
+    extraction_batch: Optional[str] = Field(None, description="Batch that produced this record (e.g. 'batch_1')")
 
     @field_validator("verification_status")
     @classmethod

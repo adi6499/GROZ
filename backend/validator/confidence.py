@@ -36,8 +36,10 @@ def calculate_product_confidence(
     elif extraction_method == "ocr":
         score += 0.05
 
-    # Image verification
-    if images and any(img.confidence >= 0.7 for img in images):
+    # Image evidence: unresolved (page-proximity-only) candidates do not raise confidence
+    if images and any(
+        img.confidence >= 0.7 and img.association_type in ("direct_product", "product_family") for img in images
+    ):
         score += 0.05
 
     return min(1.0, round(score, 2))

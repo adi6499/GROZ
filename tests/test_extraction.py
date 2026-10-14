@@ -76,9 +76,9 @@ def test_telescopic_range_dimension_parsing():
     assert parsed[1]["box_qty"] == 1
 
 
-def test_image_association_rules():
+def test_image_association_rules(tmp_path):
     """Ensure images are matched to products strictly based on spatial evidence and labels."""
-    extractor = ImageExtractor(output_dir="output/test_images")
+    extractor = ImageExtractor(output_dir=str(tmp_path / "test_images"))
 
     candidates = [
         {
@@ -113,17 +113,19 @@ def test_image_association_rules():
     matched_standalone = extractor.match_image_to_product(
         candidates, product_code="LED-670", cat_nr="LED/670", product_region="full_spread"
     )
+    # Recovery 14 Oct 2026: image IDs are now the crop filename stem (unique across PDFs) and
+    # direct_hero was renamed direct_product. The images chosen are unchanged.
     assert len(matched_standalone) == 1
-    assert matched_standalone[0].image_id == "img_102_7"
-    assert matched_standalone[0].association_type == "direct_hero"
+    assert matched_standalone[0].image_id == "standalone"
+    assert matched_standalone[0].association_type == "direct_product"
 
     # Tripod model LED-670T must match tripod image
     matched_tripod = extractor.match_image_to_product(
         candidates, product_code="LED-670T", cat_nr="LED/670T", product_region="full_spread"
     )
     assert len(matched_tripod) == 1
-    assert matched_tripod[0].image_id == "img_101_7"
-    assert matched_tripod[0].association_type == "direct_hero"
+    assert matched_tripod[0].image_id == "tripod"
+    assert matched_tripod[0].association_type == "direct_product"
 
 
 def test_live_page_7_exact_dimensions():
@@ -180,12 +182,12 @@ def test_live_page_8_exact_dimensions():
     doc.close()
 
 
-def test_live_page_9_image_hero_isolation():
+def test_live_page_9_image_hero_isolation(tmp_path):
     """Verify that LED-685 links to primary hero image xref 3656 (not secondary lifestyle image)."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -212,12 +214,12 @@ def test_live_page_9_image_hero_isolation():
     doc.close()
 
 
-def test_live_page_10_diameter_dimensions():
+def test_live_page_10_diameter_dimensions(tmp_path):
     """Verify LED-800 diameter dimension capture and LED-660 dimensions."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -241,12 +243,12 @@ def test_live_page_10_diameter_dimensions():
     doc.close()
 
 
-def test_tool_storage_p4_cabinets():
+def test_tool_storage_p4_cabinets(tmp_path):
     """Verify tool storage extraction on Page 4 (drawers, box quantity, hero image)."""
     pdf_path = "tools_storage.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -261,23 +263,28 @@ def test_tool_storage_p4_cabinets():
     assert p1.specifications.get("no_of_drawers") == 7
     assert p1.specifications.get("overall_load_capacity") == "300 KG (660 LBS)"
     assert len(p1.images) >= 1
-    assert "xref55" in p1.images[0].file_path
+    # Recovery 14 Oct 2026: the page prints RTC/27-10D/1/GRZ beside its own cabinet image (xref63),
+    # which now wins over the larger family feature photo (xref55) that was chosen by size alone.
+    assert "xref63" in p1.images[0].file_path
+    assert p1.images[0].association_type == "direct_product"
 
     # RTC/27-10D/2/GRZ
     p2 = next(p for p in products if p.ord_nr == "75001")
     assert p2.cat_nr == "RTC/27-10D/2/GRZ"
     assert p2.box_qty == 1
     assert p2.specifications.get("no_of_drawers") == 5
+    # No image is labelled with this code: only a family image is claimed, never a direct one.
+    assert p2.images and p2.images[0].association_type == "product_family"
 
     doc.close()
 
 
-def test_tool_storage_p5_top_options():
+def test_tool_storage_p5_top_options(tmp_path):
     """Verify tool storage top options parsing on Page 5."""
     pdf_path = "tools_storage.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -301,12 +308,12 @@ def test_tool_storage_p5_top_options():
     doc.close()
 
 
-def test_tool_storage_p20_cantilever_boxes():
+def test_tool_storage_p20_cantilever_boxes(tmp_path):
     """Verify cantilever tool boxes on Page 20 and fraction-interference-free box quantity."""
     pdf_path = "tools_storage.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -326,12 +333,12 @@ def test_tool_storage_p20_cantilever_boxes():
     doc.close()
 
 
-def test_tool_storage_p21_color_variants():
+def test_tool_storage_p21_color_variants(tmp_path):
     """Verify 7 color variants on Page 21."""
     pdf_path = "tools_storage.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -350,12 +357,12 @@ def test_tool_storage_p21_color_variants():
     doc.close()
 
 
-def test_lighting_p11_plug_variants_and_cross_normalization():
+def test_lighting_p11_plug_variants_and_cross_normalization(tmp_path):
     """Verify plug variants on Page 11 and Î character normalization to ×."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -374,12 +381,12 @@ def test_lighting_p11_plug_variants_and_cross_normalization():
     doc.close()
 
 
-def test_lighting_p12_missing_ord_nr_flagged():
+def test_lighting_p12_missing_ord_nr_flagged(tmp_path):
     """Verify that LED/616 with omitted ORD NR column is captured and flagged with pending_review editorial note."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -397,12 +404,12 @@ def test_lighting_p12_missing_ord_nr_flagged():
     doc.close()
 
 
-def test_lighting_p14_dual_table_spread():
+def test_lighting_p14_dual_table_spread(tmp_path):
     """Verify dual table spread on Page 14 with drycell and Li-Po variants."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -421,12 +428,12 @@ def test_lighting_p14_dual_table_spread():
     doc.close()
 
 
-def test_led_685t_editorial_note_compliance():
+def test_led_685t_editorial_note_compliance(tmp_path):
     """Requirement 1 compliance test: LED-685T verbatim dimensions, pending_review, suggested_correction=None."""
     pdf_path = "GROZ_LIGHTING_GL-10_1.pdf"
     assert os.path.exists(pdf_path)
 
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open(pdf_path)
@@ -452,9 +459,9 @@ def test_led_685t_editorial_note_compliance():
     doc.close()
 
 
-def test_batch_1_sku_uniqueness_and_traceability():
+def test_batch_1_sku_uniqueness_and_traceability(tmp_path):
     """Verify Batch 1 extraction produces exact record counts, unique SKUs, and complete lineage."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     # 1. Tools storage (all 35 pages)
@@ -492,9 +499,9 @@ def test_batch_1_sku_uniqueness_and_traceability():
     doc_light.close()
 
 
-def test_led_670_and_670t_dimension_discrepancy_compliance():
+def test_led_670_and_670t_dimension_discrepancy_compliance(tmp_path):
     """Verify LED-670 and LED-670T preserve published values and leave suggested_correction empty (None)."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("GROZ_LIGHTING_GL-10_1.pdf")
@@ -526,9 +533,9 @@ def test_led_670_and_670t_dimension_discrepancy_compliance():
     doc.close()
 
 
-def test_slender_penlight_and_option_variant_image_associations():
+def test_slender_penlight_and_option_variant_image_associations(tmp_path):
     """Verify slender penlights and cabinet option variants retain hero image associations."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     # Tool storage page 9: RTC/42-20/1B/GRZ should match family image
@@ -544,13 +551,17 @@ def test_slender_penlight_and_option_variant_image_associations():
     prods_p28 = builder.process_page(doc_gl[27], "GROZ_LIGHTING_GL-10_1.pdf", 28)
     p_336 = [p for p in prods_p28 if p.cat_nr == "LED/336"][0]
     assert len(p_336.images) >= 1
-    assert p_336.images[0].association_type == "direct_hero"
+    # Recovery 14 Oct 2026: no product code is printed beside this image, so the link is layout
+    # evidence (only table in the region) and is classed product_family, not a direct product image.
+    assert "xref4823" in p_336.images[0].file_path
+    assert p_336.images[0].association_type == "product_family"
 
     # GL-10 page 12: LED/621 swivelling light should match hero image
     prods_p12 = builder.process_page(doc_gl[11], "GROZ_LIGHTING_GL-10_1.pdf", 12)
     p_621 = [p for p in prods_p12 if p.cat_nr == "LED/621"][0]
     assert len(p_621.images) >= 1
-    assert p_621.images[0].association_type == "direct_hero"
+    assert "xref3836" in p_621.images[0].file_path
+    assert p_621.images[0].association_type == "product_family"
     doc_gl.close()
 
 
@@ -609,9 +620,9 @@ def test_batch_2_page_counts_inspection():
     assert precision_pages - 52 == +36
 
 
-def test_estwing_single_page_column_partitioning_p4():
+def test_estwing_single_page_column_partitioning_p4(tmp_path):
     """Verify Estwing Page 4 extracts 29 products across 3 distinct table boxes with hammer specifications."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Estwing_Hammer_E-03_Interactive_1.pdf")
@@ -641,9 +652,9 @@ def test_estwing_single_page_column_partitioning_p4():
     assert ech_416x.specifications.get("spring_steel_bars") == 4
 
 
-def test_estwing_duplicate_published_ord_p11():
+def test_estwing_duplicate_published_ord_p11(tmp_path):
     """Verify Estwing Page 11 duplicate ORD 62900 preserves published value and attaches editorial review note."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Estwing_Hammer_E-03_Interactive_1.pdf")
@@ -671,9 +682,9 @@ def test_estwing_duplicate_published_ord_p11():
     assert note.review_status == "pending_review"
 
 
-def test_estwing_missing_ord_p15_pulaski_axe():
+def test_estwing_missing_ord_p15_pulaski_axe(tmp_path):
     """Verify Estwing Page 15 Pulaski Axe EPAX-336F has ord_nr=None, status needs_review, and editorial note."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Estwing_Hammer_E-03_Interactive_1.pdf")
@@ -696,9 +707,9 @@ def test_estwing_missing_ord_p15_pulaski_axe():
     assert note.suggested_correction is None
 
 
-def test_precision_single_page_machinist_squares_p5():
+def test_precision_single_page_machinist_squares_p5(tmp_path):
     """Verify Precision Page 5 extracts 12 Machinist's Squares with clean CAT NRs and ORDs."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Precision_Catalogue_CA_03.pdf")
@@ -718,9 +729,9 @@ def test_precision_single_page_machinist_squares_p5():
     assert p_ss4.ord_nr == "01102"
 
 
-def test_precision_p6_tolerance_matrix_omission():
+def test_precision_p6_tolerance_matrix_omission(tmp_path):
     """Verify Precision Page 6 tolerance matrix (BS 939 Grade B) is not extracted as ordering rows."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Precision_Catalogue_CA_03.pdf")
@@ -731,9 +742,9 @@ def test_precision_p6_tolerance_matrix_omission():
     assert len(prods) == 0, f"Expected 0 ordering products from tolerance matrix page 6, got {len(prods)}"
 
 
-def test_precision_p68_knurl_matrix_parsing():
+def test_precision_p68_knurl_matrix_parsing(tmp_path):
     """Verify Precision Page 68 extracts 48 knurl products with Coarse/Medium/Fine pitches and pattern variants."""
-    image_ext = ImageExtractor("output/images")
+    image_ext = ImageExtractor(str(tmp_path / "images"))
     builder = ProductBuilder(image_ext)
 
     doc = pymupdf.open("Precision_Catalogue_CA_03.pdf")
