@@ -286,9 +286,17 @@ def test_image_association_types_and_evidence(page_products):
                     assert p.cat_nr in im.evidence or (p.cat_nr or "").replace("/", "-") in im.evidence
 
 
-def test_proximity_only_images_are_unresolved(page_products):
-    """Precision p17 has two tables side by side and no code labels: images are only candidates."""
-    assert {im.association_type for p in page_products(PRECISION, 17) for im in p.images} == {"unresolved"}
+def test_section_picture_over_side_by_side_tables_is_family_evidence(page_products):
+    """Precision p17 (printed 15) has two tables side by side (inch, metric) and no code labels.
+    Until rules 2.3.0 its only picture was an unresolved candidate; it is the single picture printed
+    above both tables under the title "Outside Micrometers", so it is the family picture (decision
+    G), never a direct product picture."""
+    products = page_products(PRECISION, 17)
+    assert len(products) == 12
+    for p in products:
+        assert [im.association_type for im in p.images] == ["product_family"]
+        assert "_p17_xref282_" in p.images[0].file_path
+        assert p.images[0].evidence.startswith("the only picture printed directly above this product's table")
 
 
 def test_code_labels_match_whole_codes_only():

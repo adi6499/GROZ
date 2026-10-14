@@ -12,7 +12,8 @@ import re
 from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, EditorialReviewNote
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
-from .image_extractor import ImageExtractor
+from .image_extractor import ImageExtractor, table_cell_rects
+from .image_sections import caption_picture, section_picture
 from .printed_titles import PageTitles, table_caption
 
 
@@ -60,10 +61,20 @@ class ProductBuilder:
         # 1. Extract ordering table records
         ordering_rows = TableExtractor.extract_ordering_records(page, source_pdf, page_number)
         
-        # 2. Extract candidate images
+        # 2. Extract candidate images (codes printed in the ordering tables are not image labels)
         candidate_images = self.image_extractor.extract_page_product_images(
-            page, source_pdf, page_number
+            page, source_pdf, page_number, table_cells=table_cell_rects(page, ordering_rows)
         )
+        page_tables = sorted({tuple(r["table_bbox"]) for r in ordering_rows if r.get("table_bbox")})
+        page_words = page.get_text("words")
+        facing_cache: Dict[str, Any] = {}
+
+        def facing_candidates():
+            # Pictures of the facing left-hand page, for a continuation page without titles.
+            if "c" not in facing_cache:
+                prev = page.parent[page_number - 2] if page_number > 1 else None
+                facing_cache["c"] = self.image_extractor.extract_page_product_images(prev, source_pdf, page_number - 1) if prev else []
+            return facing_cache["c"]
 
         # Determine whether this page is a single spread product family or dual-split page
         is_unified_spread = (
@@ -113,7 +124,7 @@ class ProductBuilder:
             # Decision F (rules 2.2.0): the heading is the title printed for this product's own
             # ordering table, in the catalogue's title type (see printed_titles.py). The old banner
             # and row-text guesses above remain only as a fallback when no printed title is found.
-            printed_title = titles.title_for(page_number, row.get("table_bbox"), catalog_label)
+            printed_title = titles.title_for(page_number, row.get("table_bbox"), catalog_label, cat_nr)
             if printed_title:
                 subtitle = printed_title["text"]
 
@@ -304,6 +315,22 @@ class ProductBuilder:
                 candidate_images, model_code, cat_nr, text_region,
                 other_codes=page_codes, region_table_count=region_tables,
             )
+            # Rules 2.3.0: without a picture labelled for it (own code, base model, tripod text), a
+            # product takes the picture printed with its table caption, or its section's single (or
+            # clearly largest) picture; the region-wide "largest picture" layout rule comes after.
+            weak = (not matched_images or matched_images[0].association_type == "unresolved"
+                    or (matched_images[0].evidence or "").startswith("largest product image in the same page region"))
+            if weak:
+                own = [c for c in (cat_nr, model_code) if c]
+                others = [c for c in page_codes if c not in own]
+                siblings = [c for r2 in ordering_rows if r2 is not row and r2.get("table_bbox") == row.get("table_bbox")
+                            for c in (r2.get("cat_nr"), r2.get("model_code")) if c]
+                pick = caption_picture(candidate_images, caption, page_words, row.get("table_bbox")) or section_picture(
+                    row.get("table_bbox"), printed_title, candidate_images, page_tables, titles, page_number,
+                    own, siblings, others,
+                    facing_cands=facing_candidates() if printed_title and printed_title["rule"] == "facing" else None)
+                if pick:
+                    matched_images = [self.image_extractor.make_ref(pick[0], "product_family", pick[1], 0.6)]
 
             # Table bounding box
             t_bbox = row.get("table_bbox")

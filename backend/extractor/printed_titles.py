@@ -13,6 +13,9 @@ belongs to a product's ordering table can be read back from the page:
 
 Anything else gets no title (the page is ambiguous). Used by the extractor (sub_title) and by the
 website builder (title evidence), so both apply the same rules.
+
+Rules 2.3.0 add the CAT NR tie-break for two titles printed side by side over one table, and
+section_of_point() (which printed section a picture belongs to, for image_sections.py).
 """
 
 import re
@@ -95,6 +98,19 @@ class PageTitles:
     def __init__(self, doc: pymupdf.Document, pdf: str):
         self.doc, self.pdf = doc, pdf
         self._pages: Dict[int, Tuple[float, List[Dict[str, Any]]]] = {}
+        self._words: Dict[int, List[Any]] = {}
+
+    def anchor_x(self, number: int, bbox: Sequence[float], cat_nr: Optional[str]) -> Optional[float]:
+        """Horizontal centre of the product's CAT NR as printed in its table (its own column)."""
+        if not cat_nr or not bbox or not 1 <= number <= len(self.doc):
+            return None
+        if number not in self._words:
+            self._words[number] = self.doc[number - 1].get_text("words")
+        x0, y0, x1, y1 = bbox
+        for w in self._words[number]:
+            if re.sub(r"^[^0-9A-Za-z]+", "", w[4]).rstrip(".,;:") == cat_nr and x0 - 3 <= w[0] and w[2] <= x1 + 3 and y0 - 3 <= w[1] <= y1 + 3:
+                return (w[0] + w[2]) / 2
+        return None
 
     def page(self, number: int) -> Optional[Tuple[float, List[Dict[str, Any]]]]:
         if not 1 <= number <= len(self.doc):
@@ -104,8 +120,12 @@ class PageTitles:
             self._pages[number] = (p.rect.width, title_blocks(p, self.pdf))
         return self._pages[number]
 
-    def title_for(self, number: int, bbox: Sequence[float], page_label: Optional[str]) -> Optional[Dict[str, Any]]:
-        """The printed title for the ordering table at `bbox` (x0, y0, x1, y1) on page `number`."""
+    def title_for(self, number: int, bbox: Sequence[float], page_label: Optional[str],
+                  cat_nr: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """The printed title for the ordering table at `bbox` (x0, y0, x1, y1) on page `number`.
+
+        When two titles are printed side by side at the same height above one table (two tables
+        detected as one), the title over the product's own CAT NR wins (rules 2.3.0)."""
         info = self.page(number)
         if not info or not bbox or self.pdf not in TITLE_TYPE:
             return None
@@ -118,13 +138,19 @@ class PageTitles:
 
         def found(block, rule, page, why):
             return {"text": block["text"], "rule": rule, "pdf_page": page, "type": type_text,
+                    "block": (page, round(block["x0"], 1), round(block["y0"], 1)),
                     "evidence": f"{why} (PDF page {page}, printed in the catalogue's title type {type_text})."}
 
         above_any = [g for g in blocks if g["y1"] <= by0 + 2]
         above = [g for g in above_any if (g["x0"] < bx1 and g["x1"] > bx0)
                  or (spread and left(g["x0"], g["x1"]) == left(bx0, bx1))]
         if above:
-            return found(max(above, key=lambda g: g["y1"]), "above", number, "Title printed above this product's ordering table")
+            best = max(above, key=lambda g: g["y1"])
+            tied = [g for g in above if best["y1"] - g["y1"] < 3]
+            ax = self.anchor_x(number, bbox, cat_nr) if len(tied) > 1 else None
+            if ax is not None:
+                best = min(tied, key=lambda g: 0 if g["x0"] <= ax <= g["x1"] else min(abs(ax - g["x0"]), abs(ax - g["x1"])))
+            return found(best, "above", number, "Title printed above this product's ordering table")
         if not spread and len(blocks) == 1 and above_any:
             return found(blocks[0], "page", number, "The only product title printed on this page, above this product's ordering table")
         if spread and len(blocks) == 1:
@@ -136,6 +162,22 @@ class PageTitles:
                 return found(prev[1][0], "facing", number - 1,
                              "This right-hand page prints no title of its own; title printed on the facing page")
         return None
+
+
+def section_of_point(titles: "PageTitles", number: int, x: float, y: float) -> Optional[Tuple[int, float, float]]:
+    """The printed section a point belongs to: the nearest title that starts above it, preferring
+    titles in the same half of the page (two-column pages and spreads). Same key as found()['block']."""
+    info = titles.page(number)
+    if not info:
+        return None
+    width, blocks = info
+    above = [b for b in blocks if b["y0"] <= y]
+    if not above:
+        return None
+    left = lambda b: (b["x0"] + b["x1"]) / 2 < width / 2
+    same = [b for b in above if left(b) == (x < width / 2)]
+    b = max(same or above, key=lambda b: b["y0"])
+    return (number, round(b["x0"], 1), round(b["y0"], 1))
 
 
 def table_caption(page: pymupdf.Page, bbox: Sequence[float]) -> Optional[str]:
