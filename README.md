@@ -35,9 +35,9 @@ Tests never write into `output/` or `output_v2/`; image crops go to pytest tempo
 | `tests/test_schema.py`, `tests/test_extraction.py` | Original 35 tests (4 image expectations updated during recovery, each commented) |
 | `tests/test_recovery_regressions.py` | One or more tests per confirmed defect, with expected values read from the printed pages |
 | `tests/test_pipeline_safety.py` | Output-folder guard, approval gate, no record loss, no double extraction, computed reports |
-| `tests/test_site_data.py` | Website data export: every record exported once with its own values, nothing invented, unresolved images never shown, pending corrections withheld, `site/data/catalogue.json` not stale |
+| `tests/test_site_data.py` | Website data export: every record exported once with its own values, nothing invented, unresolved images never shown, pending corrections withheld, display titles printed on their cited page (with page-checked examples), `site/data/catalogue.json` and `review/display_titles.csv` not stale |
 
-Website logic (search, filters, sorting, comparison, quotation) has its own tests, run with Node.js 18 or later:
+Website logic (search, filters, sorting, titles, image labels, previous/next, comparison, quotation) has its own tests, run with Node.js 18 or later:
 
 ```bash
 node --test "site/tests/*.test.mjs"
@@ -155,17 +155,35 @@ A static catalogue website on top of `output_v2`, following the Apple-style refe
 
 Then open http://127.0.0.1:8962/site/. The server listens on this computer only (`--port N` changes the port). Opening `site/index.html` directly from disk does not work, because browsers block loading the data file from `file://` pages.
 
-- `build_site_data.py` reads `output_v2/extracted_products.json` (never writes to it) and writes `site/data/catalogue.json`. Re-run it whenever the dataset or the `review/preview_*.csv` files change; a test fails if the committed file is stale.
+- `build_site_data.py` reads `output_v2/extracted_products.json` (never writes to it) and the catalogue PDFs, and writes `site/data/catalogue.json` and `review/display_titles.csv`. Re-run it whenever the dataset or the `review/preview_*.csv` files change; a test fails if either output is stale.
 - What the site shows (`backend/site/catalogue_export.py`):
   - **Values** are the record's own values; an empty field shows "Not specified".
   - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
-  - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are never shown.
+  - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are labelled "Image not confirmed" and never shown; products without any image say "Image unavailable".
   - **Verification:** every record shows its verification status. Nothing is marked verified by the site.
+  - **Printed title** (`backend/site/titles.py`, presentation layer only): the title the catalogue prints for the product's ordering table, read from the PDF in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). Rules, in order:
+    1. the nearest title above the table, in the same column or half spread;
+    2. the only title on a single page;
+    3. the only title on a two-page spread;
+    4. the title on the facing page, for a right-hand page that prints none.
+
+    Product details name the rule and PDF page and keep the extracted heading (`sub_title`) visible. Every difference is listed in `review/display_titles.csv`; 111 extracted headings name another product or section (decision F in `review/editorial_decisions.json`, awaiting approval; `output_v2` is unchanged).
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.
   - `site/assets/js/app.mjs`: page behaviour.
-  - `site/assets/js/art.mjs`: category icons from the reference design.
+  - `site/assets/js/art.mjs`: category icons from the reference design. `site/assets/js/icons.mjs`: interface icons (inline SVG).
+- Responsive and touch:
+  - Tested at 320, 375, 430, 768, 1024 and 1440 px with no horizontal page scrolling.
+  - Touch screens get 44 px targets and 16 px form text (no zoom on focus).
+  - On phones, filters and dialogs open as bottom sheets that respect the safe areas, and quote lines stack, with − / + quantity buttons.
+- Motion and performance:
+  - Only `transform` and `opacity` are animated, with CSS (no JavaScript animation loops, so displays at 60–144 Hz run them at their own rate).
+  - The hero's looping motion pauses off screen. Hover effects apply only where a pointer can hover.
+  - `prefers-reduced-motion` turns motion off.
+  - A *lite* mode (data saver, ≤ 2 GB memory or ≤ 2 CPU cores, or a measured median frame time over 34 ms) turns off decorative motion and blur, keeping every function.
+  - Cards render 36 at a time and "Show more" appends instead of rebuilding.
+  - Images are lazy-loaded in fixed-size boxes; layout shift on load measured 0.
 - Saved products, the quote list and the grid/table choice are kept in the browser (`localStorage`). Contact details typed into the quote form are not stored.
 - **Quotations are prepared locally only.** They can be copied, downloaded (.txt / .csv) or printed. Nothing is emailed or sent anywhere: there is no backend.
 - The untracked `index.html` in the project root is a separate "Local Portal" page for the review dashboards; the website does not use it.
