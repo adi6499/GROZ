@@ -1,5 +1,5 @@
 // Pure catalogue logic for the GROZ website: search, filters, sorting, comparison and quotation.
-// No DOM access here, so every function can be unit-tested with `node --test site/tests`.
+// No DOM access here, so every function can be unit-tested with `node --test "site/tests/*.test.mjs"`.
 // Values are only ever read from product records; missing values are reported as missing.
 
 export const PAGE_SIZE = 36;
@@ -26,13 +26,30 @@ export function codeKey(s) {
   return String(s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
 
+// One shared collator: String.localeCompare with options builds a new collator on every call,
+// which made sorting all 941 products take 60-90 ms.
+const COLLATOR = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
+
 export function naturalCompare(a, b) {
-  return String(a ?? "").localeCompare(String(b ?? ""), "en", { numeric: true, sensitivity: "base" });
+  return COLLATOR.compare(String(a ?? ""), String(b ?? ""));
+}
+
+/** The product's printed title (read from the catalogue page), else its extracted heading. */
+export function displayTitle(p) {
+  return p.title || p.heading || null;
+}
+
+/** How a product's picture should be labelled: never presents an unconfirmed image as the product. */
+export function imageState(p) {
+  if (p.image) return p.image.evidence === "product_family"
+    ? { kind: "family", label: "Family image" } : { kind: "direct", label: "Catalogue image" };
+  if (p.image_candidate_unconfirmed) return { kind: "unconfirmed", label: "Image not confirmed" };
+  return { kind: "none", label: "Image unavailable" };
 }
 
 export function searchText(p) {
   return [
-    p.cat_nr, p.ord_nr, p.model_code, p.heading, p.category, p.brand, p.catalogue?.title,
+    p.cat_nr, p.ord_nr, p.model_code, p.title, p.heading, p.category, p.brand, p.catalogue?.title,
     p.dimensions_inch, p.dimensions_mm,
     ...(p.specs || []).flatMap((s) => [s.label, s.value]),
   ].filter((x) => x != null && x !== "").join(" ");
@@ -107,7 +124,16 @@ export function sortProducts(list, mode) {
   if (mode === "code") a.sort((x, y) => naturalCompare(x.cat_nr, y.cat_nr));
   else if (mode === "ord") a.sort((x, y) => (x.ord_nr ? 0 : 1) - (y.ord_nr ? 0 : 1) || naturalCompare(x.ord_nr, y.ord_nr));
   else if (mode === "page") a.sort((x, y) => naturalCompare(x.catalogue?.title, y.catalogue?.title) || x.page - y.page);
+  else if (mode === "title") a.sort((x, y) => (displayTitle(x) ? 0 : 1) - (displayTitle(y) ? 0 : 1)
+    || naturalCompare(displayTitle(x), displayTitle(y)) || naturalCompare(x.cat_nr, y.cat_nr));
   return a; // "catalogue": the order of the source catalogues
+}
+
+/** Position of a product in a result list, for previous/next navigation in the detail view. */
+export function neighbours(list, id) {
+  const i = list.findIndex((p) => p.id === id);
+  if (i < 0) return { index: -1, total: list.length, prev: null, next: null };
+  return { index: i, total: list.length, prev: list[i - 1]?.id ?? null, next: list[i + 1]?.id ?? null };
 }
 
 /** Up to n label/value pairs for a product card; only values present in the record. */
@@ -146,7 +172,7 @@ export function detailRows(p) {
 /** Comparison table rows: the union of every compared product's fields; gaps say "Not specified". */
 export function compareRows(products) {
   const core = [
-    ["Category", (p) => p.category], ["Brand", (p) => p.brand], ["CAT NR", (p) => p.cat_nr],
+    ["Printed title", (p) => displayTitle(p)], ["Category", (p) => p.category], ["Brand", (p) => p.brand], ["CAT NR", (p) => p.cat_nr],
     ["ORD NR", (p) => p.ord_nr], ["Size (inch)", (p) => p.dimensions_inch], ["Size (mm)", (p) => p.dimensions_mm],
     ["Box quantity", (p) => (p.box_qty == null ? null : String(p.box_qty))],
   ];
@@ -203,7 +229,7 @@ export function validateQuote(items, contact) {
 
 function productLine(p) {
   const where = `${p.catalogue?.title}, printed page ${p.printed_page ?? "not printed"} (PDF page ${p.page})`;
-  return { code: p.cat_nr || "Not specified", ord: p.ord_nr || "Not printed in catalogue", heading: p.heading || "", where };
+  return { code: p.cat_nr || "Not specified", ord: p.ord_nr || "Not printed in catalogue", heading: displayTitle(p) || "", where };
 }
 
 export function quoteText(items, byId, contact, when = new Date()) {
@@ -241,11 +267,11 @@ function csvCell(v) {
 }
 
 export function quoteCsv(items, byId) {
-  const rows = [["Line", "CAT NR", "ORD NR", "Quantity", "Catalogue heading", "Catalogue", "Printed page", "PDF page"]];
+  const rows = [["Line", "CAT NR", "ORD NR", "Quantity", "Printed title", "Catalogue", "Printed page", "PDF page"]];
   items.forEach((it, n) => {
     const p = byId.get(it.id);
     if (!p) return;
-    rows.push([n + 1, p.cat_nr ?? "", p.ord_nr ?? "", parseQty(it.qty) ?? "", p.heading ?? "", p.catalogue?.title ?? "", p.printed_page ?? "", p.page]);
+    rows.push([n + 1, p.cat_nr ?? "", p.ord_nr ?? "", parseQty(it.qty) ?? "", displayTitle(p) ?? "", p.catalogue?.title ?? "", p.printed_page ?? "", p.page]);
   });
   return rows.map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
 }

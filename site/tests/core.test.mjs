@@ -5,20 +5,21 @@ import { readFileSync } from "node:fs";
 import * as core from "../assets/js/core.mjs";
 
 const P = (o) => ({
-  id: o.id, cat_nr: o.cat_nr, ord_nr: o.ord_nr ?? null, model_code: o.cat_nr?.replace(/\//g, "-"), heading: o.heading ?? null,
-  category: o.category ?? "LED Worklights", brand: "GROZ", catalogue: { title: o.title ?? "GROZ Lighting GL-10", pdf: "x.pdf" },
+  id: o.id, cat_nr: o.cat_nr, ord_nr: o.ord_nr ?? null, model_code: o.cat_nr?.replace(/\//g, "-"), title: o.title ?? null, heading: o.heading ?? null,
+  category: o.category ?? "LED Worklights", brand: "GROZ", catalogue: { title: o.cat_title ?? "GROZ Lighting GL-10", pdf: "x.pdf" },
   page: o.page ?? 1, printed_page: o.printed_page ?? "1", dimensions_inch: o.inch ?? null, dimensions_mm: o.mm ?? null,
   box_qty: o.box ?? null, specs: o.specs ?? [], under_review: o.review ?? [], image: o.image ?? null,
   status: o.status ?? "unverified", status_label: "Not yet verified", notes: o.notes ?? [],
+  image_candidate_unconfirmed: o.unconfirmed ?? false,
 });
 
 const A = P({ id: "a", cat_nr: "LED/550", ord_nr: "55046", heading: "Worklight Impact Resistant", mm: "170 × 125", box: 10,
   specs: [{ key: "lumens", label: "Light output (lumens)", value: "1000" }, { key: "ip_rating", label: "IP rating", value: "IP54" }] });
 const B = P({ id: "b", cat_nr: "LED/621", ord_nr: "55044", heading: "Worklight 270° Swivelling", page: 12,
   specs: [{ key: "ip_rating", label: "IP rating", value: "IP65" }], review: [{ key: "beam_angle", label: "Beam angle" }] });
-const C = P({ id: "c", cat_nr: "EPAX-336F", category: "Striking Tools", heading: "PULASKI FIBERGLASS HANDLE", title: "Estwing Hammers E-03",
+const C = P({ id: "c", cat_nr: "EPAX-336F", category: "Striking Tools", heading: "PULASKI FIBERGLASS HANDLE", cat_title: "Estwing Hammers E-03",
   specs: [{ key: "head_weight", label: "Head weight", value: "3.5 lb./1.58 kg" }], notes: [{ field: "ord_nr" }], status: "needs_review" });
-const D = P({ id: "d", cat_nr: "SS/A/2", ord_nr: "01000", category: "Precision Tools", heading: "Machinist’s Squares", box: 200,
+const D = P({ id: "d", cat_nr: "SS/A/2", ord_nr: "01000", category: "Precision Tools", heading: "ACC.", title: "Engineer’s Precision Squares", box: 200,
   specs: [{ key: "variant_label", label: "Variant (printed column)", value: "GRADE A" }], image: { src: "x.png", evidence: "direct_product" } });
 const ALL = [A, B, C, D];
 const INDEX = core.buildIndex(ALL);
@@ -88,7 +89,8 @@ test("comparison uses the union of fields and handles missing ones", () => {
   assert.deepEqual(row("Head weight").cells.map((c) => c.state), ["missing", "missing", "value"]);
   assert.deepEqual(row("Beam angle").cells.map((c) => c.state), ["missing", "review", "missing"]);
   assert.ok(row("Source") && row("Review status"));
-  assert.equal(core.compareRows([]).length, 9);
+  assert.equal(core.compareRows([]).length, 10);
+  assert.deepEqual(row("Printed title").cells.map((c) => c.text), ["Worklight Impact Resistant", "Worklight 270° Swivelling", "PULASKI FIBERGLASS HANDLE"]);
 });
 
 test("quantities, totals and validation", () => {
@@ -134,4 +136,49 @@ test("real catalogue data: every product searchable by its own code and order nu
   const byCategory = data.categories.map((c) => core.filterProducts(data.products, index, filters({ categories: new Set([c.name]) })).length);
   assert.deepEqual(byCategory, data.categories.map((c) => c.records));
   assert.equal(byCategory.reduce((a, b) => a + b, 0), data.products.length);
+});
+
+test("display title prefers the printed title and is searchable; the extracted heading stays searchable too", () => {
+  assert.equal(core.displayTitle(D), "Engineer’s Precision Squares");
+  assert.equal(core.displayTitle(A), "Worklight Impact Resistant");
+  assert.equal(core.displayTitle(P({ id: "z", cat_nr: "Z/1" })), null);
+  assert.deepEqual(ids(core.filterProducts(ALL, INDEX, filters({ query: "precision squares" }))), ["d"]);
+  assert.deepEqual(ids(core.filterProducts(ALL, INDEX, filters({ query: "ACC." }))), ["d"]);
+});
+
+test("image labels never present an unconfirmed picture as the product", () => {
+  assert.deepEqual(core.imageState(D), { kind: "direct", label: "Catalogue image" });
+  assert.deepEqual(core.imageState(P({ id: "f", cat_nr: "F/1", image: { src: "f.png", evidence: "product_family" } })), { kind: "family", label: "Family image" });
+  assert.deepEqual(core.imageState(P({ id: "u", cat_nr: "U/1", unconfirmed: true })), { kind: "unconfirmed", label: "Image not confirmed" });
+  assert.deepEqual(core.imageState(A), { kind: "none", label: "Image unavailable" });
+});
+
+test("sorting by printed title, then catalogue number", () => {
+  const t = (id, title, cat) => P({ id, cat_nr: cat, title });
+  const list = [t("1", "Vee Blocks", "VB/2"), t("2", null, "A/1"), t("3", "Tweezers", "TWZ/9"), t("4", "Vee Blocks", "VB/10")];
+  assert.deepEqual(ids(core.sortProducts(list, "title")), ["3", "1", "4", "2"]);
+});
+
+test("previous/next navigation follows the current result list", () => {
+  assert.deepEqual(core.neighbours(ALL, "b"), { index: 1, total: 4, prev: "a", next: "c" });
+  assert.deepEqual(core.neighbours(ALL, "a"), { index: 0, total: 4, prev: null, next: "b" });
+  assert.deepEqual(core.neighbours(ALL, "d"), { index: 3, total: 4, prev: "c", next: null });
+  assert.deepEqual(core.neighbours([B, D], "a"), { index: -1, total: 2, prev: null, next: null });
+});
+
+test("quotation exports use the printed title", () => {
+  const byId = new Map(ALL.map((p) => [p.id, p]));
+  assert.match(core.quoteText([{ id: "d", qty: 3 }], byId, { name: "N", email: "n@x.com" }), /SS\/A\/2 {2}\| {2}ORD NR 01000 {2}\| {2}Quantity 3\n {3}Engineer’s Precision Squares/);
+  const csv = core.quoteCsv([{ id: "d", qty: 3 }], byId);
+  assert.match(csv, /"Printed title"/);
+  assert.match(csv, /"Engineer’s Precision Squares"/);
+  assert.doesNotMatch(csv, /ACC\./);
+});
+
+test("real catalogue data: every product has a printed title with its source page", () => {
+  const data = JSON.parse(readFileSync(new URL("../data/catalogue.json", import.meta.url), "utf8"));
+  for (const p of data.products) {
+    assert.ok(core.displayTitle(p), `${p.cat_nr} has no title`);
+    assert.ok(p.title_source && /PDF page \d+/.test(p.title_source.evidence), `${p.cat_nr} title has no evidence`);
+  }
 });
