@@ -1,0 +1,8 @@
+# Python environments (the bundled venv/ is a Linux venv; preserved in the backup zip, not in git)
+venv/
+.venv/
+
+# Caches
+__pycache__/
+*.pyc
+.pytest_cache/

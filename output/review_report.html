@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROZ Product Catalogue - Extraction Review Report</title>
+<style>
+  :root {
+    --groz-orange: #FF5500;
+    --groz-dark: #121214;
+    --groz-card-bg: #1B1B1E;
+    --groz-border: #2C2C30;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A5;
+    --badge-unverified: #E58E26;
+    --badge-review: #EB4D4B;
+  }
+  body {
+    margin: 0;
+    padding: 24px;
+    background: var(--groz-dark);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .header {
+    max-width: 1200px;
+    margin: 0 auto 32px auto;
+    border-bottom: 1px solid var(--groz-border);
+    padding-bottom: 24px;
+  }
+  .brand-badge {
+    background: var(--groz-orange);
+    color: #fff;
+    padding: 4px 12px;
+    font-weight: 700;
+    border-radius: 4px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    display: inline-block;
+  }
+  h1 { margin: 12px 0 6px 0; font-size: 28px; font-weight: 700; }
+  p.subtitle { color: var(--text-secondary); margin: 0; font-size: 15px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px; margin-bottom: 40px; }
+  .card {
+    background: var(--groz-card-bg);
+    border: 1px solid var(--groz-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .product-title { font-size: 20px; font-weight: 700; color: #fff; margin: 0; }
+  .product-sub { color: var(--groz-orange); font-size: 13px; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-unverified { background: rgba(229, 142, 38, 0.2); color: var(--badge-unverified); border: 1px solid var(--badge-unverified); }
+  .badge-review { background: rgba(235, 77, 75, 0.2); color: var(--badge-review); border: 1px solid var(--badge-review); }
+  .image-container {
+    width: 100%;
+    height: 180px;
+    background: #0D0D0E;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 12px 0;
+    border: 1px solid #232326;
+  }
+  .image-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
+  .spec-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px; }
+  .spec-table td { padding: 6px 0; border-bottom: 1px solid #252529; }
+  .spec-key { color: var(--text-secondary); width: 45%; }
+  .spec-val { color: #fff; font-weight: 500; }
+  .source-box {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #252529;
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+  }
+  .preview-section { margin-top: 40px; }
+  .preview-item { background: var(--groz-card-bg); border: 1px solid var(--groz-border); border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+  .preview-item img { max-width: 100%; border-radius: 8px; border: 1px solid #333; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="brand-badge">GROZ INDUSTRIAL</span>
+  <h1>Milestone 1: Extraction & Lineage Review Report</h1>
+  <p class="subtitle">Catalogue: <strong>GROZ_LIGHTING_GL-10_1.pdf</strong> | Physical Pages: 6 – 10 | Target SKUs: 11</p>
+</div>
+
+<div class="container">
+  <h2>Extracted Product Records (11 Products)</h2>
+  <div class="grid">
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-550</h3>
+              <div class="product-sub">Worklight Impact Resistant</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p6_xref3384_297_198.png" alt="LED-550" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/550</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55046</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">10</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">6-11/16 × 5</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">170 × 125</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">3.7V 4400 mAh</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">10M / 32'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">180°</td></tr><tr><td class="spec-key">Led Type</td><td class="spec-val">10W COB</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">1000</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">5 HRS</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 6 (Printed: 8-10)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-560</h3>
+              <div class="product-sub">LED Industrial Lighting</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p6_xref3394_607_197.png" alt="LED-560" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/560</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55047</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">8</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">7-9/32 × 5-1/2</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">185 × 140</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">7.4V 4400 mAh</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">180°</td></tr><tr><td class="spec-key">Led Type</td><td class="spec-val">20W COB</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">2000</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">3 hours</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 6 (Printed: 8-10)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-670</h3>
+              <div class="product-sub">Worklight Dual Power</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p7_xref3457_284_191.png" alt="LED-670" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/670</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55050</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">4</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">9.5 x 10 x 5</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">24 x 26 x 13</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">7.4V 4400 mAh</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">10M / 32'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">180°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">2800</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">2 hours</td></tr>
+            </tbody>
+          </table>
+          
+                <div style="margin-top:12px; padding:10px; background:rgba(229,142,38,0.12); border-left:3px solid var(--badge-unverified); border-radius:4px; font-size:12px;">
+                  <strong style="color:var(--badge-unverified);">Editorial Review Flag (dimensions_mm):</strong>
+                  <div style="margin-top:4px; color:#ccc;">Upstream unit label mismatch: the catalogue table lists centimeter dimensions (24 × 26 × 13 cm) under a column explicitly labeled '(MM)'. Mathematical conversion of 9.5 × 10 × 5 inches is ~ 241 × 254 × 127 mm.</div>
+                  <div style="margin-top:4px; color:#aaa; font-size:11px;">Suggested: <em>241 × 254 × 127 mm</em></div>
+                </div>
+                
+          <div class="source-box">
+            <span>PDF: Page 7 (Printed: 10-03)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-670T (With Tripod)</h3>
+              <div class="product-sub">Worklight complete with tripod</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p7_xref3503_613_196.png" alt="LED-670T (With Tripod)" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/670T</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55077</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">4</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">46 × (48 to 75-1/2) × 46</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">117 × (122 - 192) × 117</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">7.4V 4400 mAh</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">10M / 32'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">180°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">2800</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">2 hours</td></tr>
+            </tbody>
+          </table>
+          
+                <div style="margin-top:12px; padding:10px; background:rgba(229,142,38,0.12); border-left:3px solid var(--badge-unverified); border-radius:4px; font-size:12px;">
+                  <strong style="color:var(--badge-unverified);">Editorial Review Flag (dimensions_mm):</strong>
+                  <div style="margin-top:4px; color:#ccc;">Upstream unit label mismatch: table lists centimeter dimensions under '(MM)' column. The 48 to 75-1/2 inch height range corresponds to 1219 to 1918 mm (published as 122 to 192 cm).</div>
+                  <div style="margin-top:4px; color:#aaa; font-size:11px;">Suggested: <em>1168 × (1219 - 1918) × 1168 mm</em></div>
+                </div>
+                
+          <div class="source-box">
+            <span>PDF: Page 7 (Printed: 10-03)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-680</h3>
+              <div class="product-sub">Worklight Dual Head</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p8_xref3535_331_204.png" alt="LED-680" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/680</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55089</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">11-3/16 × 7 × 5-1/8</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">288 × 176 × 131</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">14.8V 5200 mAh Li-Ion</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">80M / 262'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">120°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">4500</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">12 hours</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 8 (Printed: 12-750)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-680T (With Tripod)</h3>
+              <div class="product-sub">Floodlight complete with tripod</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p8_xref3515_363_471.png" alt="LED-680T (With Tripod)" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/680T</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55090</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">11-3/16 × (27-1/2 to 67) × 5-1/8</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">288 × (699 to 1702) × 131</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">14.8V 5200 mAh Li-Ion</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">80M / 262'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">120°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">4500</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">12 hours</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 8 (Printed: 12-750)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-685</h3>
+              <div class="product-sub">Cordless Sitelamp 3 Head Design</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p9_xref3656_305_140.png" alt="LED-685" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/685</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55118</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">25-63/64 × 2-31/32 × 3-3/16</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">660 × 75.5 × 81</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">3.7V 4000 mAh Li-Ion</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">50M / 164'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">360°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">700</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">8.5 hours</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 9 (Printed: 14-700)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-685T (With Tripod)</h3>
+              <div class="product-sub">Floodlight complete with tripod</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p9_xref3675_370_496.png" alt="LED-685T (With Tripod)" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/685T</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55119</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">28-17/64 × 6-27/64 × 19-9/16</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">718 × 1630 × 497</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">3.7V 4000 mAh Li-Ion</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">50M / 164'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">360°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">700</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">8.5 hours</td></tr>
+            </tbody>
+          </table>
+          
+                <div style="margin-top:12px; padding:10px; background:rgba(229,142,38,0.12); border-left:3px solid var(--badge-unverified); border-radius:4px; font-size:12px;">
+                  <strong style="color:var(--badge-unverified);">Editorial Review Flag (dimensions_inch):</strong>
+                  <div style="margin-top:4px; color:#ccc;">Upstream typographical error: height in inches is printed as '6-27/64', omitting the tens digit '4' from 64-27/64 inches. The corresponding metric dimension is 1630 mm (64.17 inches). Additionally, the diagram callout notes telescopic adjustment as 0.7m - 1.3m (27-1/2" - 51").</div>
+                  <div style="margin-top:4px; color:#aaa; font-size:11px;">Suggested: <em>28-17/64 × 64-11/64 × 19-9/16</em></div>
+                </div>
+                
+          <div class="source-box">
+            <span>PDF: Page 9 (Printed: 14-700)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-660</h3>
+              <div class="product-sub">Sitelamp 360° Swivel</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p10_xref3721_343_243.png" alt="LED-660" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/660</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55043</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">8</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">8.7 × 8.7 × 12.2</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">223 × 223 × 309</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP65</td></tr><tr><td class="spec-key">Battery</td><td class="spec-val">7.4V 4400 mAh</td></tr><tr><td class="spec-key">Beam Distance</td><td class="spec-val">45M / 150'</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">360°</td></tr><tr><td class="spec-key">Led Type</td><td class="spec-val">36W 72 SMD</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">3000</td></tr><tr><td class="spec-key">Run Time</td><td class="spec-val">1.5 hours</td></tr>
+            </tbody>
+          </table>
+          
+          <div class="source-box">
+            <span>PDF: Page 10 (Printed: 16-06)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-800-EU</h3>
+              <div class="product-sub">Worklight Cable Reel</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p10_xref3748_789_209.png" alt="LED-800-EU" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/800/EU</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55048</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">12-1/64" (Dia.)</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">305 mm (Dia.)</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">90°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">4000</td></tr><tr><td class="spec-key">Plug Type</td><td class="spec-val">EU</td></tr><tr><td class="spec-key">Power Source</td><td class="spec-val">220V AC, 50Hz</td></tr>
+            </tbody>
+          </table>
+          
+                <div style="margin-top:12px; padding:10px; background:rgba(229,142,38,0.12); border-left:3px solid var(--badge-unverified); border-radius:4px; font-size:12px;">
+                  <strong style="color:var(--badge-unverified);">Editorial Review Flag (dimensions_inch):</strong>
+                  <div style="margin-top:4px; color:#ccc;">Ordering table omitted SIZE column for circular cable reel worklight. Dimension extracted from graphic callout.</div>
+                  <div style="margin-top:4px; color:#aaa; font-size:11px;">Suggested: <em>12-1/64" (Dia.) / 305 mm (Dia.)</em></div>
+                </div>
+                
+          <div class="source-box">
+            <span>PDF: Page 10 (Printed: 16-06)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="product-title">LED-800-US</h3>
+              <div class="product-sub">Worklight Cable Reel</div>
+            </div>
+            <span class="badge badge-unverified">unverified (100%)</span>
+          </div>
+          <div class="image-container"><img src="images/p10_xref3748_789_209.png" alt="LED-800-US" /></div>
+          <table class="spec-table">
+            <tbody>
+              
+          <tr><td class="spec-key">CAT NR</td><td class="spec-val"><strong>LED/800/US</strong></td></tr>
+          <tr><td class="spec-key">ORD NR</td><td class="spec-val"><strong>55051</strong></td></tr>
+          <tr><td class="spec-key">Box Qty</td><td class="spec-val">1</td></tr>
+          <tr><td class="spec-key">Dimensions (in)</td><td class="spec-val">12-1/64" (Dia.)</td></tr>
+          <tr><td class="spec-key">Dimensions (mm)</td><td class="spec-val">305 mm (Dia.)</td></tr>
+        <tr><td class="spec-key">Ip Rating</td><td class="spec-val">IP54</td></tr><tr><td class="spec-key">Ik Rating</td><td class="spec-val">IK07</td></tr><tr><td class="spec-key">Beam Angle</td><td class="spec-val">90°</td></tr><tr><td class="spec-key">Lumens</td><td class="spec-val">4000</td></tr><tr><td class="spec-key">Plug Type</td><td class="spec-val">US</td></tr><tr><td class="spec-key">Power Source</td><td class="spec-val">110V AC, 60Hz</td></tr>
+            </tbody>
+          </table>
+          
+                <div style="margin-top:12px; padding:10px; background:rgba(229,142,38,0.12); border-left:3px solid var(--badge-unverified); border-radius:4px; font-size:12px;">
+                  <strong style="color:var(--badge-unverified);">Editorial Review Flag (dimensions_inch):</strong>
+                  <div style="margin-top:4px; color:#ccc;">Ordering table omitted SIZE column for circular cable reel worklight. Dimension extracted from graphic callout.</div>
+                  <div style="margin-top:4px; color:#aaa; font-size:11px;">Suggested: <em>12-1/64" (Dia.) / 305 mm (Dia.)</em></div>
+                </div>
+                
+          <div class="source-box">
+            <span>PDF: Page 10 (Printed: 16-06)</span>
+            <span>Method: native_pdf</span>
+          </div>
+        </div>
+        
+  </div>
+
+  <div class="preview-section">
+    <h2>Source Page Previews & Physical Spread References</h2>
+
+        <div class="preview-item">
+          <h3>Physical Page 6 — Extracted 2 Products (native_pdf)</h3>
+          <p style="color:#aaa; font-size:13px;">Extracted text character count: 2018 chars</p>
+          <img src="previews/page_6_preview.png" alt="Page 6 Preview" />
+        </div>
+        
+        <div class="preview-item">
+          <h3>Physical Page 7 — Extracted 2 Products (native_pdf)</h3>
+          <p style="color:#aaa; font-size:13px;">Extracted text character count: 1920 chars</p>
+          <img src="previews/page_7_preview.png" alt="Page 7 Preview" />
+        </div>
+        
+        <div class="preview-item">
+          <h3>Physical Page 8 — Extracted 2 Products (native_pdf)</h3>
+          <p style="color:#aaa; font-size:13px;">Extracted text character count: 1891 chars</p>
+          <img src="previews/page_8_preview.png" alt="Page 8 Preview" />
+        </div>
+        
+        <div class="preview-item">
+          <h3>Physical Page 9 — Extracted 2 Products (native_pdf)</h3>
+          <p style="color:#aaa; font-size:13px;">Extracted text character count: 2142 chars</p>
+          <img src="previews/page_9_preview.png" alt="Page 9 Preview" />
+        </div>
+        
+        <div class="preview-item">
+          <h3>Physical Page 10 — Extracted 3 Products (native_pdf)</h3>
+          <p style="color:#aaa; font-size:13px;">Extracted text character count: 2366 chars</p>
+          <img src="previews/page_10_preview.png" alt="Page 10 Preview" />
+        </div>
+        
+  </div>
+</div>
+</body>
+</html>
