@@ -7,11 +7,11 @@
     "description": "CENTRAL LOCKING",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "300 KG (660 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "48 KG (105 LBS)",
       "steel_gauge": "0.6 mm (24 Gauge)",
       "series": "S10D Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "300 KG (660 LBS)",
+      "net_weight": "48 KG (105 LBS)",
       "no_of_drawers": 7
     },
     "dimensions_inch": null,
@@ -64,11 +64,11 @@
     "description": "CENTRAL LOCKING",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "300 KG (660 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "48 KG (105 LBS)",
       "steel_gauge": "0.6 mm (24 Gauge)",
       "series": "S10D Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "300 KG (660 LBS)",
+      "net_weight": "43 KG (95 LBS)",
       "no_of_drawers": 5
     },
     "dimensions_inch": null,
@@ -117,15 +117,15 @@
     "product_name": "RTC-27-10-4-GRZ",
     "cat_nr": "RTC/27-10/4/GRZ",
     "ord_nr": "75035",
-    "sub_title": "27\" Rolling Tool Cabinets S10 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "CENTRAL LOCKING S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "350 KG (771 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "53 KG (117 LBS)",
       "steel_gauge": "0.8 mm (20 Gauge)",
       "series": "S10 Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "350 KG (771 LBS)",
+      "net_weight": "53 KG (117 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -174,15 +174,15 @@
     "product_name": "RTC-27-10-4A-GRZ",
     "cat_nr": "RTC/27-10/4A/GRZ",
     "ord_nr": "75036",
-    "sub_title": "27\" Rolling Tool Cabinets S10 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "CENTRAL LOCKING S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "350 KG (771 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "53 KG (117 LBS)",
       "steel_gauge": "0.8 mm (20 Gauge)",
       "series": "S10 Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "350 KG (771 LBS)",
+      "net_weight": "53 KG (117 LBS)",
       "top_options": "Thermofoam"
     },
     "dimensions_inch": null,
@@ -231,15 +231,15 @@
     "product_name": "RTC-27-10-4B-GRZ",
     "cat_nr": "RTC/27-10/4B/GRZ",
     "ord_nr": "75037",
-    "sub_title": "27\" Rolling Tool Cabinets S10 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "CENTRAL LOCKING S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "350 KG (771 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "53 KG (117 LBS)",
       "steel_gauge": "0.8 mm (20 Gauge)",
       "series": "S10 Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "350 KG (771 LBS)",
+      "net_weight": "53 KG (117 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -288,15 +288,15 @@
     "product_name": "RTC-27-10-4C-GRZ",
     "cat_nr": "RTC/27-10/4C/GRZ",
     "ord_nr": "75038",
-    "sub_title": "27\" Rolling Tool Cabinets S10 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "CENTRAL LOCKING S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "350 KG (771 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "53 KG (117 LBS)",
       "steel_gauge": "0.8 mm (20 Gauge)",
       "series": "S10 Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "350 KG (771 LBS)",
+      "net_weight": "53 KG (117 LBS)",
       "top_options": "Stainless Steel"
     },
     "dimensions_inch": null,
@@ -345,12 +345,12 @@
     "product_name": "RTC-27-10-3-GRZ",
     "cat_nr": "RTC/27-10/3/GRZ",
     "ord_nr": "75002",
-    "sub_title": null,
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "A 77 mm (",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "325 KG (716 LBS)",
       "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "325 KG (716 LBS)",
       "net_weight": "50 KG (110 LBS)",
       "top_options": "Rubberized Mat"
     },
@@ -400,12 +400,12 @@
     "product_name": "RTC-27-10-3A-GRZ",
     "cat_nr": "RTC/27-10/3A/GRZ",
     "ord_nr": "75047",
-    "sub_title": null,
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "A 77 mm (",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "325 KG (716 LBS)",
       "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "325 KG (716 LBS)",
       "net_weight": "50 KG (110 LBS)",
       "top_options": "Thermofoam"
     },
@@ -455,12 +455,12 @@
     "product_name": "RTC-27-10-3B-GRZ",
     "cat_nr": "RTC/27-10/3B/GRZ",
     "ord_nr": "75048",
-    "sub_title": null,
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "A 77 mm (",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "325 KG (716 LBS)",
       "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "325 KG (716 LBS)",
       "net_weight": "50 KG (110 LBS)",
       "top_options": "Wooden"
     },
@@ -510,12 +510,12 @@
     "product_name": "RTC-27-10-3C-GRZ",
     "cat_nr": "RTC/27-10/3C/GRZ",
     "ord_nr": "75049",
-    "sub_title": null,
+    "sub_title": "27\" Rolling Tool Cabinets S10 Series",
     "description": "A 77 mm (",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "325 KG (716 LBS)",
       "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "325 KG (716 LBS)",
       "net_weight": "50 KG (110 LBS)",
       "top_options": "Stainless Steel"
     },
@@ -565,15 +565,15 @@
     "product_name": "RTC-27-20-1-GRZ",
     "cat_nr": "RTC/27-20/1/GRZ",
     "ord_nr": "75003",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "71 KG (157 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -622,15 +622,15 @@
     "product_name": "RTC-27-20-1A-GRZ",
     "cat_nr": "RTC/27-20/1A/GRZ",
     "ord_nr": "75011",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "71 KG (157 LBS)",
       "top_options": "Thermofoam"
     },
     "dimensions_inch": null,
@@ -679,15 +679,15 @@
     "product_name": "RTC-27-20-1B-GRZ",
     "cat_nr": "RTC/27-20/1B/GRZ",
     "ord_nr": "75012",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "71 KG (157 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -736,15 +736,15 @@
     "product_name": "RTC-27-20-1C-GRZ",
     "cat_nr": "RTC/27-20/1C/GRZ",
     "ord_nr": "75013",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "71 KG (157 LBS)",
       "top_options": "Stainless Steel"
     },
     "dimensions_inch": null,
@@ -793,15 +793,15 @@
     "product_name": "RTC-27-20-2-GRZ",
     "cat_nr": "RTC/27-20/2/GRZ",
     "ord_nr": "75004",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "64 KG (141 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -850,15 +850,15 @@
     "product_name": "RTC-27-20-2A-GRZ",
     "cat_nr": "RTC/27-20/2A/GRZ",
     "ord_nr": "75014",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "64 KG (141 LBS)",
       "top_options": "Thermofoam"
     },
     "dimensions_inch": null,
@@ -907,15 +907,15 @@
     "product_name": "RTC-27-20-2B-GRZ",
     "cat_nr": "RTC/27-20/2B/GRZ",
     "ord_nr": "75015",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "64 KG (141 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -964,15 +964,15 @@
     "product_name": "RTC-27-20-2C-GRZ",
     "cat_nr": "RTC/27-20/2C/GRZ",
     "ord_nr": "75016",
-    "sub_title": "27\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "27\" Rolling Tool Cabinets S20 Series",
     "description": "S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (937 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "71 KG (157 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (937 LBS)",
+      "net_weight": "64 KG (141 LBS)",
       "top_options": "Stainless Steel"
     },
     "dimensions_inch": null,
@@ -1025,11 +1025,11 @@
     "description": "CENTRAL LOCKING SYSTEM i i i",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "475 KG (1047 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "80 KG (176 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "475 KG (1047 LBS)",
+      "net_weight": "80 KG (176 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -1082,11 +1082,11 @@
     "description": "CENTRAL LOCKING SYSTEM i i i",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "475 KG (1047 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "80 KG (176 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "475 KG (1047 LBS)",
+      "net_weight": "81 KG (178 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -1135,15 +1135,15 @@
     "product_name": "RTC-29-20-3-GRZ",
     "cat_nr": "RTC/29-20/3/GRZ",
     "ord_nr": "75039",
-    "sub_title": "29\" Rolling Tool Cabinet with Anti Tilt S20 Series NEW!",
+    "sub_title": "29\" Rolling Tool Cabinet with Anti Tilt S20 Series",
     "description": "CENTRAL LOCKING SYSTEM",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "450 KG (990 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "80 KG (176 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "450 KG (990 LBS)",
+      "net_weight": "80 KG (176 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -1191,15 +1191,15 @@
     "product_name": "RTC-42-20-2-GRZ",
     "cat_nr": "RTC/42-20/2/GRZ",
     "ord_nr": "75009",
-    "sub_title": "42\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "550 KG (1212 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "100 KG (220 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "550 KG (1212 LBS)",
+      "net_weight": "100 KG (220 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -1248,15 +1248,15 @@
     "product_name": "RTC-42-20-2B-GRZ",
     "cat_nr": "RTC/42-20/2B/GRZ",
     "ord_nr": "75030",
-    "sub_title": "42\" Rolling Tool Cabinets S20 Series TOP OPTIONS",
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "550 KG (1212 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "100 KG (220 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "550 KG (1212 LBS)",
+      "net_weight": "100 KG (220 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -1305,12 +1305,12 @@
     "product_name": "RTC-42-20-1-GRZ",
     "cat_nr": "RTC/42-20/1/GRZ",
     "ord_nr": "75008",
-    "sub_title": null,
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series",
     "description": "A B 70 mm 145 mm 42 (1075 mm",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "550 KG (1212 LBS)",
       "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "550 KG (1212 LBS)",
       "net_weight": "105 KG (230 LBS)",
       "top_options": "Rubberized Mat"
     },
@@ -1360,12 +1360,12 @@
     "product_name": "RTC-42-20-1B-GRZ",
     "cat_nr": "RTC/42-20/1B/GRZ",
     "ord_nr": "75027",
-    "sub_title": null,
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series",
     "description": "A B 70 mm 145 mm 42 (1075 mm",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "550 KG (1212 LBS)",
       "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "550 KG (1212 LBS)",
       "net_weight": "105 KG (230 LBS)",
       "top_options": "Wooden"
     },
@@ -1419,10 +1419,10 @@
     "description": "580 KG (1278 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 105 KG (230 LBS) NET WEIGHT 42",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "580 KG (1278 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "105 KG (230 LBS)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "580 KG (1278 LBS)",
+      "net_weight": "105 KG (230 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -1475,10 +1475,10 @@
     "description": "580 KG (1278 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 105 KG (230 LBS) NET WEIGHT 42",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "580 KG (1278 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "105 KG (230 LBS)",
       "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "580 KG (1278 LBS)",
+      "net_weight": "105 KG (230 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -1527,12 +1527,12 @@
     "product_name": "RTC-42-20-4-GRZ",
     "cat_nr": "RTC/42-20/4/GRZ",
     "ord_nr": "75043",
-    "sub_title": null,
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series (continued)",
     "description": "475 KG (1267 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) RAWER LOAD CAPACITY 100 KG (220 LBS) NET WEIGHT 42\" (107",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "475 KG (1267 LBS)",
       "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "475 KG (1267 LBS)",
       "net_weight": "100 KG (220 LBS)",
       "top_options": "Rubberized Mat"
     },
@@ -1582,12 +1582,12 @@
     "product_name": "RTC-42-20-4B-GRZ",
     "cat_nr": "RTC/42-20/4B/GRZ",
     "ord_nr": "75045",
-    "sub_title": null,
+    "sub_title": "42\" Rolling Tool Cabinets S20 Series (continued)",
     "description": "475 KG (1267 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) RAWER LOAD CAPACITY 100 KG (220 LBS) NET WEIGHT 42\" (107",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "475 KG (1267 LBS)",
       "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "475 KG (1267 LBS)",
       "net_weight": "100 KG (220 LBS)",
       "top_options": "Wooden"
     },
@@ -1641,11 +1641,11 @@
     "description": null,
     "features": [],
     "specifications": {
-      "overall_load_capacity": "500 KG (1100 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "100 KG (220 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "500 KG (1100 LBS)",
+      "net_weight": "100 KG (220 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -1697,11 +1697,11 @@
     "description": null,
     "features": [],
     "specifications": {
-      "overall_load_capacity": "500 KG (1100 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "100 KG (220 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "550 KG (1212 LBS)",
+      "net_weight": "105 KG (230 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -1749,15 +1749,15 @@
     "product_name": "RTCL-50-20-1-GRZ",
     "cat_nr": "RTCL/50-20/1/GRZ",
     "ord_nr": "75205",
-    "sub_title": "50\" Rolling Tool Cabinets with Lid S20 Series NEW!",
+    "sub_title": "50\" Rolling Tool Cabinets with Lid S20 Series",
     "description": null,
     "features": [],
     "specifications": {
-      "overall_load_capacity": "700 KG (1543 LBS)",
-      "drawer_load_capacity": "35 KG (77 LBS)",
-      "net_weight": "150 KG (330 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "35 KG (77 LBS)",
+      "overall_load_capacity": "700 KG (1543 LBS)",
+      "net_weight": "150 KG (330 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -1805,15 +1805,15 @@
     "product_name": "RTC-27-30-1-GRZ",
     "cat_nr": "RTC/27-30/1/GRZ",
     "ord_nr": "75005",
-    "sub_title": "TOP OPTIONS 27\" Rolling Tool Cabinet S30 Series",
+    "sub_title": "27\" Rolling Tool Cabinet S30 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (936 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "76 KG (167 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (936 LBS)",
+      "net_weight": "76 KG (167 LBS)",
       "top_options": "Rubberized Mat"
     },
     "dimensions_inch": null,
@@ -1862,15 +1862,15 @@
     "product_name": "RTC-27-30-1A-GRZ",
     "cat_nr": "RTC/27-30/1A/GRZ",
     "ord_nr": "75017",
-    "sub_title": "TOP OPTIONS 27\" Rolling Tool Cabinet S30 Series",
+    "sub_title": "27\" Rolling Tool Cabinet S30 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (936 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "76 KG (167 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (936 LBS)",
+      "net_weight": "76 KG (167 LBS)",
       "top_options": "Thermofoam"
     },
     "dimensions_inch": null,
@@ -1919,15 +1919,15 @@
     "product_name": "RTC-27-30-1B-GRZ",
     "cat_nr": "RTC/27-30/1B/GRZ",
     "ord_nr": "75018",
-    "sub_title": "TOP OPTIONS 27\" Rolling Tool Cabinet S30 Series",
+    "sub_title": "27\" Rolling Tool Cabinet S30 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (936 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "76 KG (167 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (936 LBS)",
+      "net_weight": "76 KG (167 LBS)",
       "top_options": "Wooden"
     },
     "dimensions_inch": null,
@@ -1976,15 +1976,15 @@
     "product_name": "RTC-27-30-1C-GRZ",
     "cat_nr": "RTC/27-30/1C/GRZ",
     "ord_nr": "75019",
-    "sub_title": "TOP OPTIONS 27\" Rolling Tool Cabinet S30 Series",
+    "sub_title": "27\" Rolling Tool Cabinet S30 Series",
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations S S",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "425 KG (936 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "76 KG (167 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
       "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "425 KG (936 LBS)",
+      "net_weight": "76 KG (167 LBS)",
       "top_options": "Stainless Steel"
     },
     "dimensions_inch": null,
@@ -2037,11 +2037,11 @@
     "description": "CENTRAL LOCKING SYSTEM High-security lock with 400 key combinations BUILT TO ENDURE",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "500 KG (1100 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "100 KG (220 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S30 Series"
+      "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "500 KG (1100 LBS)",
+      "net_weight": "100 KG (220 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2089,12 +2089,12 @@
     "product_name": "RTCL-35-30-2-GRZ",
     "cat_nr": "RTCL/35-30/2/GRZ",
     "ord_nr": "75203",
-    "sub_title": null,
+    "sub_title": "35\" Rolling Tool Cabinets with Lid S30 Series",
     "description": "35\" (89 90 mm Electric socket A",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "500 KG (1100 LBS)",
       "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "500 KG (1100 LBS)",
       "net_weight": "105 KG (230 LBS)"
     },
     "dimensions_inch": null,
@@ -2147,10 +2147,10 @@
     "description": "35 A",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "400 KG (880 LBS)",
+      "series": "S30 Series",
       "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "70 KG (154 LBS)",
-      "series": "S30 Series"
+      "overall_load_capacity": "400 KG (880 LBS)",
+      "net_weight": "70 KG (154 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2202,11 +2202,11 @@
     "description": "125 KG (275 LBS) OVERALL LOAD CAPACITY 25 KG (55 LBS) RAWER LOAD CAPACITY 22 KG (49 LBS) NET WEIGHT CENTRAL LOCKING 7 inch  I  3 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "125 KG (275 LBS)",
-      "drawer_load_capacity": "25 KG (55 LBS)",
-      "net_weight": "22 KG (49 LBS)",
       "steel_gauge": "0.8 mm (20 gauge)",
-      "series": "S10 Series"
+      "series": "S10 Series",
+      "drawer_load_capacity": "25 KG (55 LBS)",
+      "overall_load_capacity": "125 KG (275 LBS)",
+      "net_weight": "22 KG (49 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2258,11 +2258,11 @@
     "description": "300 KG (660 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 46 KG (101 LBS) NET WEIGHT 27 inch  I  5 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "300 KG (660 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "46 KG (101 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "300 KG (660 LBS)",
+      "net_weight": "46 KG (101 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2314,11 +2314,11 @@
     "description": "275 KG (600 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) RAWER LOAD CAPACITY 38 KG (84 LBS) NET WEIGHT 7 inch  I  4 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "275 KG (600 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "38 KG (84 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "275 KG (600 LBS)",
+      "net_weight": "38 KG (84 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2370,11 +2370,11 @@
     "description": "400 KG (880 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 60 KG (132 LBS) NET WEIGHT 42 inch  I  5 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "400 KG (880 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "60 KG (132 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S20 Series"
+      "series": "S20 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "400 KG (880 LBS)",
+      "net_weight": "60 KG (132 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2426,11 +2426,11 @@
     "description": "250 KG (550 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) RAWER LOAD CAPACITY 30 KG (66 LBS) NET WEIGHT CENTRAL LOCKING YSTEM 7 inch  I  3 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "250 KG (550 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "30 KG (66 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S30 Series"
+      "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "250 KG (550 LBS)",
+      "net_weight": "30 KG (66 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2482,11 +2482,11 @@
     "description": "300 KG (660 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 48 KG (105 LBS) NET WEIGHT 27 inch  I  5 DRAWER UV-RESISTANT FINISH Industrial-grade coating i f i",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "300 KG (660 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "48 KG (105 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S30 Series"
+      "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "300 KG (660 LBS)",
+      "net_weight": "48 KG (105 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2538,11 +2538,11 @@
     "description": "275 KG (600 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) RAWER LOAD CAPACITY 40 KG (88 LBS) NET WEIGHT 7 inch  I  4 DRAWER UV-RESISTANT INISH ndustrial-grade coating i f i",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "275 KG (600 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "40 KG (88 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S30 Series"
+      "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "275 KG (600 LBS)",
+      "net_weight": "40 KG (88 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2594,11 +2594,11 @@
     "description": "400 KG (880 LBS) OVERALL LOAD CAPACITY 45 KG (100 LBS) DRAWER LOAD CAPACITY 63 KG (138 LBS) NET WEIGHT BUILT TO ENDURE 1.2 mm (18 gauge) h t l h t 42 inch  I  5 DRAWER",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "400 KG (880 LBS)",
-      "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "63 KG (138 LBS)",
       "steel_gauge": "1.2 mm (18 gauge)",
-      "series": "S30 Series"
+      "series": "S30 Series",
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "400 KG (880 LBS)",
+      "net_weight": "63 KG (138 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2650,10 +2650,10 @@
     "description": "50 KG (110 LBS) OVERALL LOAD CAPACITY 10 KG (22 LBS) RAWER LOAD CAPACITY 12 KG (26 LBS) NET WEIGHT 0 inch  I  3 DRAWER + top compartment",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "50 KG (110 LBS)",
+      "steel_gauge": "0.8 mm (20 gauge)",
       "drawer_load_capacity": "10 KG (22 LBS)",
-      "net_weight": "12 KG (26 LBS)",
-      "steel_gauge": "0.8 mm (20 gauge)"
+      "overall_load_capacity": "50 KG (110 LBS)",
+      "net_weight": "12 KG (26 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2701,11 +2701,12 @@
     "product_name": "MTB-5",
     "cat_nr": "MTB/5",
     "ord_nr": "40002",
-    "sub_title": "Tool Box",
+    "sub_title": "Cantilever Tool Box",
     "description": "35 KG (77 LBS) OVERALL LOAD CAPACITY 18 inch  I  5 tray",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "35 KG (77 LBS)"
+      "overall_load_capacity": "35 KG (77 LBS)",
+      "table_description": "Tool Box"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2753,11 +2754,12 @@
     "product_name": "MTB-5T",
     "cat_nr": "MTB/5T",
     "ord_nr": "40003",
-    "sub_title": "Tool Box with Trolley",
+    "sub_title": "Cantilever Tool Box",
     "description": "35 KG (77 LBS) OVERALL LOAD CAPACITY 18 inch  I  5 tray",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "35 KG (77 LBS)"
+      "overall_load_capacity": "35 KG (77 LBS)",
+      "table_description": "Tool Box with Trolley"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2809,9 +2811,9 @@
     "description": "rays open utomatically when andle is depressed close when lifted BUILT TO ENDURE 6 mm (24 Gauge)",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "30 KG (65 LBS)",
-      "net_weight": "5 KG (10 LBS)",
-      "steel_gauge": "0.6 mm (24 Gauge)"
+      "steel_gauge": "0.6 mm (24 Gauge)",
+      "overall_load_capacity": "18 KG (39.5 LBS)",
+      "net_weight": "4.5 KG (10 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2863,9 +2865,9 @@
     "description": "rays open utomatically when andle is depressed close when lifted BUILT TO ENDURE 6 mm (24 Gauge)",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.6 mm (24 Gauge)",
       "overall_load_capacity": "30 KG (65 LBS)",
-      "net_weight": "5 KG (10 LBS)",
-      "steel_gauge": "0.6 mm (24 Gauge)"
+      "net_weight": "5.8 KG (12.5 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -2913,12 +2915,14 @@
     "product_name": "TCHL-11-10D-1-BL-GRZ",
     "cat_nr": "TCHL/11-10D/1/BL/GRZ",
     "ord_nr": "75401",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Classic Black"
     },
     "dimensions_inch": null,
@@ -2967,12 +2971,14 @@
     "product_name": "TCHL-11-10D-1-W1-GRZ",
     "cat_nr": "TCHL/11-10D/1/W1/GRZ",
     "ord_nr": "75404",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Cool Grey"
     },
     "dimensions_inch": null,
@@ -3021,12 +3027,14 @@
     "product_name": "TCHL-11-10D-1-BU19-GRZ",
     "cat_nr": "TCHL/11-10D/1/BU19/GRZ",
     "ord_nr": "75406",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Bossy Blue"
     },
     "dimensions_inch": null,
@@ -3075,12 +3083,14 @@
     "product_name": "TCHL-11-10D-1-RD-GRZ",
     "cat_nr": "TCHL/11-10D/1/RD/GRZ",
     "ord_nr": "75405",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Fiery Red"
     },
     "dimensions_inch": null,
@@ -3129,12 +3139,14 @@
     "product_name": "TCHL-11-10D-1-OR12-GRZ",
     "cat_nr": "TCHL/11-10D/1/OR12/GRZ",
     "ord_nr": "75402",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Royal Purple"
     },
     "dimensions_inch": null,
@@ -3183,12 +3195,14 @@
     "product_name": "TCHL-11-10D-1-GN16-GRZ",
     "cat_nr": "TCHL/11-10D/1/GN16/GRZ",
     "ord_nr": "75403",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Aqua Lux"
     },
     "dimensions_inch": null,
@@ -3237,12 +3251,14 @@
     "product_name": "TCHL-11-10D-1-OR-GRZ",
     "cat_nr": "TCHL/11-10D/1/OR/GRZ",
     "ord_nr": "75400",
-    "sub_title": "11\" Mini Tool Box with Lid AVAILABLE IN 7 COLOURS",
+    "sub_title": "11\" Mini Tool Box with Lid",
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "10 KG (22 LBS)",
       "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
+      "overall_load_capacity": "10 KG (22 LBS)",
+      "net_weight": "2.6 KG (5.7 LBS)",
       "colour": "Vibrant Orange"
     },
     "dimensions_inch": null,
@@ -3295,8 +3311,10 @@
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID & hanging bracket",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "2.6 KG (5.7 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3348,8 +3366,10 @@
     "description": "EASY STORAGE Top compartment with lid that opens 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 2.6 KG (5.7 LBS) NET WEIGHT 11 inch  I  2 DRAWER + TOP LID & hanging bracket",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "2.6 KG (5.7 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3401,9 +3421,10 @@
     "description": "15 KG (33 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) RAWER LOAD CAPACITY 5 KG (11 LBS) NET WEIGHT 1 inch  I  set of 2 ASY STORAGE op compartment with lid that opens °",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "15 KG (33 LBS)",
-      "net_weight": "5 KG (11 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "5 KG (11 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3455,9 +3476,10 @@
     "description": "15 KG (33 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) RAWER LOAD CAPACITY 5 KG (11 LBS) NET WEIGHT 1 inch  I  set of 2 ASY STORAGE op compartment with lid that opens °",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "15 KG (33 LBS)",
-      "net_weight": "5 KG (11 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "5 KG (11 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3509,8 +3531,10 @@
     "description": "EASY STORAGE 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 3 KG (6.6 LBS) NET WEIGHT 11 inch  I  2 DRAWER",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "3 KG (6.6 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3562,8 +3586,10 @@
     "description": "EASY STORAGE 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) DRAWER LOAD CAPACITY 3 KG (6.6 LBS) NET WEIGHT 11 inch  I  2 DRAWER",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "3 KG (6.6 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3615,9 +3641,10 @@
     "description": "ASY STORAGE op compartment 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) RAWER LOAD CAPACITY 4 KG (21 LBS) NET WEIGHT 4 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "net_weight": "4 KG (21 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "4 KG (21 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3656,7 +3683,16 @@
         "caption_or_label": "BUILT TO\nManufa\n0.60 mm\nsteel w\ncoated\nTORAGE   \npartment \nhat opens \nFULL EX\nHETT\nBEARIN\nProvide co"
       }
     ],
-    "editorial_notes": [],
+    "editorial_notes": [
+      {
+        "field_name": "net_weight",
+        "published_value": "4 KG (21 LBS)",
+        "suspected_issue": "kg and lb figures are inconsistent (4 kg is about 8.8 lb)",
+        "suggested_correction": null,
+        "source_page_reference": "tools_storage.pdf Physical Page 23, capacity block of the TCHL/14-10D/2 panel",
+        "review_status": "pending_review"
+      }
+    ],
     "raw_text_snippet": "DRAWER\nWIDTH\nDEPTH\nHEIGHT\nNO. OF \nDRAWERS\n(INCH)\n(MM)\n(INCH)\n(MM)\n(INCH)\n(MM)\nA\n13-15/16\n354\n5-1/2\n150\n19/32\n15\n1\nB\n12-1/64\n305\n5-3/16\n135\n1-3/8\n35\n1\nC\n12-1/64\n305\n5-3/16\n135\n2-9/32\n58\n1\nORDERING INFO",
     "source_row_text": "TCHL/14-10D/2/BL/GRZ 75422 4",
     "extraction_batch": "batch_1"
@@ -3669,9 +3705,10 @@
     "description": "ASY STORAGE op compartment 10 KG (22 LBS) OVERALL LOAD CAPACITY 2.5 KG (5.5 LBS) RAWER LOAD CAPACITY 4 KG (21 LBS) NET WEIGHT 4 inch  I  2 DRAWER + TOP LID",
     "features": [],
     "specifications": {
+      "steel_gauge": "0.60 mm (24 gauge)",
+      "drawer_load_capacity": "2.5 KG (5.5 LBS)",
       "overall_load_capacity": "10 KG (22 LBS)",
-      "net_weight": "4 KG (21 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "net_weight": "4 KG (21 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3710,7 +3747,16 @@
         "caption_or_label": "BUILT TO\nManufa\n0.60 mm\nsteel w\ncoated\nTORAGE   \npartment \nhat opens \nFULL EX\nHETT\nBEARIN\nProvide co"
       }
     ],
-    "editorial_notes": [],
+    "editorial_notes": [
+      {
+        "field_name": "net_weight",
+        "published_value": "4 KG (21 LBS)",
+        "suspected_issue": "kg and lb figures are inconsistent (4 kg is about 8.8 lb)",
+        "suggested_correction": null,
+        "source_page_reference": "tools_storage.pdf Physical Page 23, capacity block of the TCHL/14-10D/2 panel",
+        "review_status": "pending_review"
+      }
+    ],
     "raw_text_snippet": "DRAWER\nWIDTH\nDEPTH\nHEIGHT\nNO. OF \nDRAWERS\n(INCH)\n(MM)\n(INCH)\n(MM)\n(INCH)\n(MM)\nA\n13-15/16\n354\n5-1/2\n150\n19/32\n15\n1\nB\n12-1/64\n305\n5-3/16\n135\n1-3/8\n35\n1\nC\n12-1/64\n305\n5-3/16\n135\n2-9/32\n58\n1\nORDERING INFO",
     "source_row_text": "TCHL/14-10D/2/OR/GRZ 75421 4",
     "extraction_batch": "batch_1"
@@ -3723,10 +3769,10 @@
     "description": "60 KG (130 LBS) OVERALL LOAD CAPACITY 10 KG (22 LBS) DRAWER LOAD CAPACITY 9 KG (20 LBS) NET WEIGHT 14 inch  I  4 drawer EASY STORAGE Top compartment with lid that opens",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "60 KG (130 LBS)",
+      "steel_gauge": "0.60 mm (24 gauge)",
       "drawer_load_capacity": "10 KG (22 LBS)",
-      "net_weight": "9 KG (20 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "overall_load_capacity": "60 KG (130 LBS)",
+      "net_weight": "9 KG (20 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3778,10 +3824,10 @@
     "description": "60 KG (130 LBS) OVERALL LOAD CAPACITY 10 KG (22 LBS) RAWER LOAD CAPACITY 9.5 KG (21 LBS) NET WEIGHT 4 inch  I  4 drawer with lid",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "60 KG (130 LBS)",
+      "steel_gauge": "0.60 mm (24 gauge)",
       "drawer_load_capacity": "10 KG (22 LBS)",
-      "net_weight": "5 KG (21 LBS)",
-      "steel_gauge": "0.60 mm (24 gauge)"
+      "overall_load_capacity": "60 KG (130 LBS)",
+      "net_weight": "9.5 KG (21 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3833,10 +3879,10 @@
     "description": "BUILT TO ENDURE 1.2 mm (18 gauge) heavy steel sheet construction",
     "features": [],
     "specifications": {
-      "overall_load_capacity": "200 KG (440 LBS)",
+      "steel_gauge": "1.2 mm (18 gauge)",
       "drawer_load_capacity": "45 KG (100 LBS)",
-      "net_weight": "29 KG (63 LBS)",
-      "steel_gauge": "1.2 mm (18 gauge)"
+      "overall_load_capacity": "200 KG (440 LBS)",
+      "net_weight": "29 KG (63 LBS)"
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -3884,10 +3930,13 @@
     "product_name": "SRC-30-20-2-GRZ",
     "cat_nr": "SRC/30-20/2/GRZ",
     "ord_nr": "75501",
-    "sub_title": null,
+    "sub_title": "30\" Service Carts",
     "description": null,
     "features": [],
-    "specifications": {},
+    "specifications": {
+      "overall_load_capacity": "150 KG (330 LBS)",
+      "net_weight": "18 KG (40 LBS)"
+    },
     "dimensions_inch": null,
     "dimensions_mm": null,
     "box_qty": 1,
@@ -3903,7 +3952,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.7,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -3934,10 +3983,13 @@
     "product_name": "SRC-30-20-3-GRZ",
     "cat_nr": "SRC/30-20/3/GRZ",
     "ord_nr": "75502",
-    "sub_title": null,
+    "sub_title": "30\" Service Carts",
     "description": null,
     "features": [],
-    "specifications": {},
+    "specifications": {
+      "overall_load_capacity": "225 KG (500 LBS)",
+      "net_weight": "23 KG (50 LBS)"
+    },
     "dimensions_inch": null,
     "dimensions_mm": null,
     "box_qty": 1,
@@ -3953,7 +4005,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.8,
     "verification_status": "unverified",
     "images": [
       {
@@ -3984,10 +4036,13 @@
     "product_name": "WBN-60-20-1-GRZ",
     "cat_nr": "WBN/60-20/1/GRZ",
     "ord_nr": "75530",
-    "sub_title": null,
+    "sub_title": "Work Benches Heavy Duty",
     "description": "60",
     "features": [],
-    "specifications": {},
+    "specifications": {
+      "overall_load_capacity": "545 KG (1200 LBS)",
+      "net_weight": "65 KG (140 LBS)"
+    },
     "dimensions_inch": null,
     "dimensions_mm": null,
     "box_qty": 1,
@@ -4003,7 +4058,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.8,
     "verification_status": "unverified",
     "images": [
       {
@@ -4034,10 +4089,14 @@
     "product_name": "WBN-79-20-2-GRZ",
     "cat_nr": "WBN/79-20/2/GRZ",
     "ord_nr": "75532",
-    "sub_title": null,
+    "sub_title": "Work Benches Heavy Duty",
     "description": "60",
     "features": [],
-    "specifications": {},
+    "specifications": {
+      "drawer_load_capacity": "45 KG (100 LBS)",
+      "overall_load_capacity": "545 KG (1200 LBS)",
+      "net_weight": "90 KG (200 LBS)"
+    },
     "dimensions_inch": null,
     "dimensions_mm": null,
     "box_qty": 1,
@@ -4053,7 +4112,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.8,
     "verification_status": "unverified",
     "images": [
       {
@@ -4084,7 +4143,7 @@
     "product_name": "RTC-27-10D-65-GRZ",
     "cat_nr": "RTC/27-10D/65/GRZ",
     "ord_nr": "77002",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 65 Piece",
+    "sub_title": "Automotive Tool Kit 65 Piece",
     "description": null,
     "features": [],
     "specifications": {},
@@ -4134,7 +4193,7 @@
     "product_name": "RTC-27-10D-1-90-AU",
     "cat_nr": "RTC/27-10D/1/90/AU",
     "ord_nr": "77001",
-    "sub_title": "Automotive Tool Kit 90 Piece Automotive Tool Kit comes in a 7 Drawer",
+    "sub_title": "Automotive Tool Kit 90 Piece",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles",
     "features": [],
     "specifications": {},
@@ -4184,7 +4243,7 @@
     "product_name": "RTC-27-10D-1-148-AU",
     "cat_nr": "RTC/27-10D/1/148/AU",
     "ord_nr": "77000",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 148 Piece",
+    "sub_title": "Automotive Tool Kit 148 Piece",
     "description": "A versatile set with an organized layout, makes it convenient to find tools Ideal for maintenance and service work on automobiles",
     "features": [],
     "specifications": {},
@@ -4234,7 +4293,7 @@
     "product_name": "RTC-27-10-3-170-AU",
     "cat_nr": "RTC/27-10/3/170/AU",
     "ord_nr": "77003",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 170 Pieces",
+    "sub_title": "Automotive Tool Kit 170 Pieces",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles",
     "features": [],
     "specifications": {},
@@ -4284,7 +4343,7 @@
     "product_name": "RTC-27-10-3-211-AU",
     "cat_nr": "RTC/27-10/3/211/AU",
     "ord_nr": "77005",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 211 Pieces",
+    "sub_title": "Automotive Tool Kit 211 Pieces",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles Tools supplied",
     "features": [],
     "specifications": {},
@@ -4334,7 +4393,7 @@
     "product_name": "RTC-27-10-3-235-AU",
     "cat_nr": "RTC/27-10/3/235/AU",
     "ord_nr": "77004",
-    "sub_title": "Automotive Tool Kit 235 Pieces Automotive Tool Kit comes in a 7 Drawer",
+    "sub_title": "Automotive Tool Kit 235 Pieces",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles",
     "features": [],
     "specifications": {},
@@ -4384,7 +4443,7 @@
     "product_name": "RTC-27-10-3-243-AU",
     "cat_nr": "RTC/27-10/3/243/AU",
     "ord_nr": "77006",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 243 Pieces",
+    "sub_title": "Automotive Tool Kit 243 Pieces",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles Tools supplied",
     "features": [],
     "specifications": {},
@@ -4434,7 +4493,7 @@
     "product_name": "RTC-27-10-3-255-AU",
     "cat_nr": "RTC/27-10/3/255/AU",
     "ord_nr": "77007",
-    "sub_title": "Automotive Tool Kit comes in a 7 Drawer Automotive Tool Kit 255 Pieces",
+    "sub_title": "Automotive Tool Kit 255 Pieces",
     "description": "makes it convenient to find tools Ideal for maintenance and service work on automobiles",
     "features": [],
     "specifications": {},
@@ -4484,7 +4543,7 @@
     "product_name": "LED-695",
     "cat_nr": "LED/695",
     "ord_nr": "55117",
-    "sub_title": "Worklight Bluetooth Speaker NEW!",
+    "sub_title": "Worklight Bluetooth Speaker",
     "description": null,
     "features": [
       "a.\t IP 54 Rated",
@@ -4498,7 +4557,7 @@
       "ip_rating": "IP54",
       "battery": "7.4V 2000 mAh",
       "beam_distance": "45M /148'",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "lumens": "1000",
       "run_time": "1.5 hours"
     },
@@ -4566,7 +4625,7 @@
       "ik_rating": "IK07",
       "battery": "3.7V 4400 mAh",
       "beam_distance": "10M / 32'",
-      "beam_angle": "180°",
+      "beam_angle": "110˚",
       "led_type": "10W COB",
       "lumens": "1000",
       "run_time": "5 HRS"
@@ -4617,14 +4676,13 @@
     "product_name": "LED-560",
     "cat_nr": "LED/560",
     "ord_nr": "55047",
-    "sub_title": null,
+    "sub_title": "Worklight Impact Resistant",
     "description": "Rubberised plastic corner protectors",
     "features": [],
     "specifications": {
       "ip_rating": "IP54",
       "ik_rating": "IK07",
       "battery": "7.4V 4400 mAh",
-      "beam_angle": "180°",
       "led_type": "20W COB",
       "lumens": "2000",
       "run_time": "3 hours"
@@ -4692,7 +4750,7 @@
       "ik_rating": "IK07",
       "battery": "7.4V 4400 mAh",
       "beam_distance": "10M / 32'",
-      "beam_angle": "180°",
+      "beam_angle": "110°",
       "lumens": "2800",
       "run_time": "2 hours"
     },
@@ -4751,7 +4809,7 @@
     "product_name": "LED-670T (With Tripod)",
     "cat_nr": "LED/670T",
     "ord_nr": "55077",
-    "sub_title": "Worklight complete with tripod",
+    "sub_title": "Worklight Dual Power",
     "description": "Dual power worklight for use on construction sites, in general maintenance, workshops etc. Light Output Single button controlled variable output. Simply push button to change from 50% to full 100% intensity 2800 10M / 32' 110° 3 HRS 4 HRS at lowest intensity",
     "features": [
       "Single button controlled variable output. Simply",
@@ -4768,9 +4826,10 @@
       "ik_rating": "IK07",
       "battery": "7.4V 4400 mAh",
       "beam_distance": "10M / 32'",
-      "beam_angle": "180°",
+      "beam_angle": "110°",
       "lumens": "2800",
-      "run_time": "2 hours"
+      "run_time": "2 hours",
+      "table_description": "Worklight complete with tripod"
     },
     "dimensions_inch": "46 × (48 to 75-1/2) × 46",
     "dimensions_mm": "117 × (122 - 192) × 117",
@@ -4843,7 +4902,7 @@
       "ik_rating": "IK07",
       "battery": "14.8V 5200 mAh Li-Ion",
       "beam_distance": "80M / 262'",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "lumens": "4500",
       "run_time": "12 hours"
     },
@@ -4893,7 +4952,7 @@
     "product_name": "LED-680T (With Tripod)",
     "cat_nr": "LED/680T",
     "ord_nr": "55090",
-    "sub_title": "Floodlight complete with tripod",
+    "sub_title": "Worklight Dual Head",
     "description": "Powerful multi-directional  flooding output Light Output Twin heads deliver high quality, uniform illumination upto 4500 Lumens Single button controlled multiple settings for 4500 80M / 262' 120 4.5 HRS 12 HRS at lowest intensity",
     "features": [
       "Single button controlled multiple settings for",
@@ -4909,9 +4968,10 @@
       "ik_rating": "IK07",
       "battery": "14.8V 5200 mAh Li-Ion",
       "beam_distance": "80M / 262'",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "lumens": "4500",
-      "run_time": "12 hours"
+      "run_time": "12 hours",
+      "table_description": "Floodlight complete with tripod"
     },
     "dimensions_inch": "11-3/16 × (27-1/2 to 67) × 5-1/8",
     "dimensions_mm": "288 × (699 to 1702) × 131",
@@ -4959,7 +5019,7 @@
     "product_name": "LED-685",
     "cat_nr": "LED/685",
     "ord_nr": "55118",
-    "sub_title": "Cordless Sitelamp 3 Head Design NEW!",
+    "sub_title": "Cordless Sitelamp 3 Head Design",
     "description": "Triple Head sitelamp for 360° multi-directional illumination Easy set-up light, this is ideal for use in automotive repair work, roadside emergencies, construction sites, camping etc. Adjustable 3 blades design for multi- directional light. Heads can be independently rotated to cast light in several directions 2000 5 HRS 8.5 HRS at lowest intensity 50M / 164'",
     "features": [
       "a.\t IP 54 Rated",
@@ -4975,7 +5035,6 @@
       "ik_rating": "IK07",
       "battery": "3.7V 4000 mAh Li-Ion",
       "beam_distance": "50M / 164'",
-      "beam_angle": "360°",
       "lumens": "700",
       "run_time": "8.5 hours"
     },
@@ -5025,7 +5084,7 @@
     "product_name": "LED-685T (With Tripod)",
     "cat_nr": "LED/685T",
     "ord_nr": "55119",
-    "sub_title": "Floodlight complete with tripod",
+    "sub_title": "Cordless Sitelamp 3 Head Design",
     "description": "Triple Head sitelamp for 360° multi-directional illumination Easy set-up light, this is ideal for use in automotive repair work, roadside emergencies, construction sites, camping etc. Adjustable 3 blades design for multi- directional light. Heads can be independently rotated to cast light in several directions 2000 5 HRS 8.5 HRS at lowest intensity 50M / 164'",
     "features": [
       "a.\t IP 54 Rated",
@@ -5041,9 +5100,9 @@
       "ik_rating": "IK07",
       "battery": "3.7V 4000 mAh Li-Ion",
       "beam_distance": "50M / 164'",
-      "beam_angle": "360°",
       "lumens": "700",
-      "run_time": "8.5 hours"
+      "run_time": "8.5 hours",
+      "table_description": "Sitelamp complete with tripod"
     },
     "dimensions_inch": "28-17/64 × 6-27/64 × 19-9/16",
     "dimensions_mm": "718 × 1630 × 497",
@@ -5117,7 +5176,7 @@
       "ip_rating": "IP65",
       "battery": "7.4V 4400 mAh",
       "beam_distance": "45M / 150'",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "led_type": "36W 72 SMD",
       "lumens": "3000",
       "run_time": "1.5 hours"
@@ -5183,13 +5242,13 @@
     "specifications": {
       "ip_rating": "IP54",
       "ik_rating": "IK07",
-      "beam_angle": "90°",
       "lumens": "4000",
+      "diameter": "12-1/64\" (305 mm)",
       "plug_type": "EU",
       "power_source": "220V AC, 50Hz"
     },
-    "dimensions_inch": "12-1/64\" (Dia.)",
-    "dimensions_mm": "305 mm (Dia.)",
+    "dimensions_inch": null,
+    "dimensions_mm": null,
     "box_qty": 1,
     "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
     "physical_page_number": 10,
@@ -5227,10 +5286,10 @@
     ],
     "editorial_notes": [
       {
-        "field_name": "dimensions_inch",
-        "published_value": "[Not in table]",
-        "suspected_issue": "Ordering table omitted SIZE column for circular cable reel worklight. Dimension extracted from graphic callout.",
-        "suggested_correction": "12-1/64\" (Dia.) / 305 mm (Dia.)",
+        "field_name": "dimensions",
+        "published_value": "Dia. 12-1/64\" (305 mm)",
+        "suspected_issue": "The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.",
+        "suggested_correction": null,
         "source_page_reference": "GROZ_LIGHTING_GL-10_1.pdf Physical Page 10, Technical Callout",
         "review_status": "pending_review"
       }
@@ -5258,13 +5317,13 @@
     "specifications": {
       "ip_rating": "IP54",
       "ik_rating": "IK07",
-      "beam_angle": "90°",
       "lumens": "4000",
+      "diameter": "12-1/64\" (305 mm)",
       "plug_type": "US",
       "power_source": "110V AC, 60Hz"
     },
-    "dimensions_inch": "12-1/64\" (Dia.)",
-    "dimensions_mm": "305 mm (Dia.)",
+    "dimensions_inch": null,
+    "dimensions_mm": null,
     "box_qty": 1,
     "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
     "physical_page_number": 10,
@@ -5302,10 +5361,10 @@
     ],
     "editorial_notes": [
       {
-        "field_name": "dimensions_inch",
-        "published_value": "[Not in table]",
-        "suspected_issue": "Ordering table omitted SIZE column for circular cable reel worklight. Dimension extracted from graphic callout.",
-        "suggested_correction": "12-1/64\" (Dia.) / 305 mm (Dia.)",
+        "field_name": "dimensions",
+        "published_value": "Dia. 12-1/64\" (305 mm)",
+        "suspected_issue": "The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.",
+        "suggested_correction": null,
         "source_page_reference": "GROZ_LIGHTING_GL-10_1.pdf Physical Page 10, Technical Callout",
         "review_status": "pending_review"
       }
@@ -5329,7 +5388,7 @@
     ],
     "specifications": {
       "ip_rating": "IP65",
-      "beam_angle": "110°",
+      "beam_angle": "110˚",
       "lumens": "2100",
       "plug_type": "US"
     },
@@ -5390,7 +5449,7 @@
     ],
     "specifications": {
       "ip_rating": "IP65",
-      "beam_angle": "110°",
+      "beam_angle": "110˚",
       "lumens": "2100",
       "plug_type": "EU"
     },
@@ -5451,7 +5510,7 @@
     ],
     "specifications": {
       "ip_rating": "IP65",
-      "beam_angle": "110°",
+      "beam_angle": "110˚",
       "lumens": "4200",
       "plug_type": "US"
     },
@@ -5512,7 +5571,7 @@
     ],
     "specifications": {
       "ip_rating": "IP65",
-      "beam_angle": "110°",
+      "beam_angle": "110˚",
       "lumens": "4200",
       "plug_type": "EU"
     },
@@ -5562,7 +5621,7 @@
     "product_name": "LED-616-US",
     "cat_nr": "LED/616/US",
     "ord_nr": null,
-    "sub_title": "Foldable Worklight AC Powered NEW!",
+    "sub_title": "Foldable Worklight AC Powered",
     "description": "Distinctive ergonomic design for illuminating the darkest of areas. Easy set-up for instant illumination Light Output INTENSITY BUTTON 1ST PRESS 2ND PRESS INTENSITY 100% 50% 4000",
     "features": [
       "a.\t IP 54 Rated",
@@ -5634,7 +5693,7 @@
     "product_name": "LED-616-EU",
     "cat_nr": "LED/616/EU",
     "ord_nr": null,
-    "sub_title": "Foldable Worklight AC Powered NEW!",
+    "sub_title": "Foldable Worklight AC Powered",
     "description": "Distinctive ergonomic design for illuminating the darkest of areas. Easy set-up for instant illumination Light Output INTENSITY BUTTON 1ST PRESS 2ND PRESS INTENSITY 100% 50% 4000",
     "features": [
       "a.\t IP 54 Rated",
@@ -5719,7 +5778,7 @@
       "ip_rating": "IP65",
       "battery": "3.7V 6600 mAh",
       "beam_distance": "10M / 32'",
-      "beam_angle": "270°",
+      "beam_angle": "60˚",
       "run_time": "3 hours"
     },
     "dimensions_inch": "5-1/16 × 9-19/32 × 4",
@@ -5781,7 +5840,7 @@
       "ip_rating": "IP65",
       "battery": "3.7V 6600 mAh",
       "beam_distance": "10M / 32'",
-      "beam_angle": "270°",
+      "beam_angle": "60˚",
       "run_time": "9 HRS"
     },
     "dimensions_inch": "5-23/32 × 7-11/64 × 3-21/32",
@@ -5842,7 +5901,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "10M / 32'",
-      "beam_angle": "270°"
+      "beam_angle": "60˚"
     },
     "dimensions_inch": "3-17/32 × 12-3/8 × 3-27/64",
     "dimensions_mm": "90 × 314 × 87",
@@ -5898,7 +5957,6 @@
     ],
     "specifications": {
       "battery": "3.7V 5000 mAh",
-      "beam_angle": "360°",
       "led_type": "10W SMD",
       "lumens": "1000",
       "run_time": "3 hours"
@@ -5949,12 +6007,11 @@
     "product_name": "LED-385RM",
     "cat_nr": "LED/385RM",
     "ord_nr": "55087",
-    "sub_title": null,
+    "sub_title": "Folding Worklight",
     "description": null,
     "features": [],
     "specifications": {
       "battery": "3.7V 5000 mAh",
-      "beam_angle": "360°",
       "lumens": "1000",
       "run_time": "3 hours"
     },
@@ -6004,7 +6061,7 @@
     "product_name": "LED-370",
     "cat_nr": "LED/370",
     "ord_nr": "55042",
-    "sub_title": "Slim Worklight 360° Swivel IN THE",
+    "sub_title": "Slim Worklight 360° Swivel",
     "description": "Super slim worklight for tight, cluttered and difficult to reach workspaces Integrated a.\t 6W COB  Worklight b.\t 1W Top Torch 600 120 4 HRS 10 HRS at lowest intensity",
     "features": [
       "a.\t 6W COB  Worklight",
@@ -6021,7 +6078,7 @@
       "ip_rating": "IP54",
       "ik_rating": "IK07",
       "battery": "3.7V 2600 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "led_type": "6W COB",
       "lumens": "600",
       "run_time": "4 HRS"
@@ -6084,7 +6141,7 @@
     ],
     "specifications": {
       "battery": "3.7V 1200 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "180˚",
       "led_type": "3W COB",
       "run_time": "3 hours"
     },
@@ -6151,7 +6208,7 @@
       "ip_rating": "IP54",
       "ik_rating": "IK07",
       "battery": "3.7V 2200 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "run_time": "3 hours"
     },
     "dimensions_inch": "10 × 2-9/32 × 1-57/64",
@@ -6214,7 +6271,7 @@
       "ip_rating": "IP65",
       "ik_rating": "IK07",
       "battery": "3.7V 3350 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "50˚",
       "led_type": "10W COB",
       "run_time": "1.5 \nhours"
     },
@@ -6277,7 +6334,7 @@
     ],
     "specifications": {
       "battery": "3.7V 2000 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "led_type": "5W COB",
       "lumens": "180",
       "run_time": "3 HRS"
@@ -6338,7 +6395,7 @@
     ],
     "specifications": {
       "battery": "3.7V 2000 mAh",
-      "beam_angle": "270°",
+      "beam_angle": "270˚",
       "led_type": "10W COB",
       "run_time": "3.5 hours"
     },
@@ -6403,7 +6460,6 @@
     ],
     "specifications": {
       "battery": "3.7V 2000 mAh",
-      "beam_angle": "360°",
       "led_type": "10W COB",
       "run_time": "5 hours"
     },
@@ -6461,7 +6517,7 @@
     ],
     "specifications": {
       "battery": "3.7V 2400 mAh",
-      "beam_angle": "180°",
+      "beam_angle": "120˚",
       "led_type": "10W COB",
       "run_time": "3 hours"
     },
@@ -6511,7 +6567,7 @@
     "product_name": "LED-185",
     "cat_nr": "LED/185",
     "ord_nr": "55099",
-    "sub_title": "Folding Worklight Intensity Control",
+    "sub_title": "Folding Worklight",
     "description": "3 in 1 worklight with foldable design for difficult to reach & narrow workspaces Integrated a.\t 4W COB Worklight b.\t 2W SMD Spotlight c.\t 0.5W SMD Top Torch with Magnetic pick-up 400 25M / 82' 120 4 HRS 10 HRS at lowest intensity",
     "features": [
       "a.\t 4W COB Worklight",
@@ -6524,7 +6580,7 @@
     "specifications": {
       "battery": "3.7V 2600 mAh",
       "beam_distance": "25M / 82'",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "led_type": "4W COB",
       "lumens": "400",
       "run_time": "4 HRS"
@@ -6589,7 +6645,6 @@
       "ip_rating": "IP54",
       "ik_rating": "IK07",
       "battery": "3.7V 2600 mAh Li-Ion",
-      "beam_angle": "360°",
       "led_type": "5W COB",
       "lumens": "500",
       "run_time": "16 hours"
@@ -6649,7 +6704,7 @@
     ],
     "specifications": {
       "battery": "3.7V 4400 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "lumens": "650",
       "run_time": "4 hours"
     },
@@ -6710,7 +6765,6 @@
     "specifications": {
       "ik_rating": "IK07",
       "battery": "11.1V 2600 mAh Li-Ion",
-      "beam_angle": "180°",
       "led_type": "7W COB",
       "run_time": "4 HRS"
     },
@@ -6772,7 +6826,7 @@
     "specifications": {
       "ik_rating": "IK07",
       "battery": "7.4V 2600 mAh Li-Ion",
-      "beam_angle": "360°",
+      "beam_angle": "120˚",
       "led_type": "10W COB",
       "lumens": "1000",
       "run_time": "4.5 HRS"
@@ -6835,7 +6889,7 @@
     "specifications": {
       "battery": "3.7V 5200 mAh",
       "beam_distance": "48M / 157'",
-      "beam_angle": "40°",
+      "beam_angle": "60˚",
       "led_type": "15W COB",
       "lumens": "1000",
       "run_time": "3 hours"
@@ -6893,7 +6947,7 @@
       "b.\t Integrated pocket clip"
     ],
     "specifications": {
-      "beam_angle": "180°",
+      "beam_angle": "180˚",
       "led_type": "3W COB",
       "run_time": "4 HRS"
     },
@@ -6953,7 +7007,7 @@
     ],
     "specifications": {
       "battery": "3.7V 1800 mAh",
-      "beam_angle": "360°",
+      "beam_angle": "90˚",
       "run_time": "3 HRS"
     },
     "dimensions_inch": "2-3/8 × 1-3/8 × 4-27/32",
@@ -7011,7 +7065,7 @@
     ],
     "specifications": {
       "battery": "3.7V 1800 mAh",
-      "beam_angle": "70°",
+      "beam_angle": "70˚",
       "led_type": "5W SMD",
       "run_time": "2.5 HRS"
     },
@@ -7071,7 +7125,6 @@
     ],
     "specifications": {
       "battery": "3.7V 800 mAh",
-      "beam_angle": "85°",
       "led_type": "3W COB",
       "run_time": "3 hours"
     },
@@ -7132,7 +7185,7 @@
     "specifications": {
       "ik_rating": "IK07",
       "battery": "3.7V 650 mAh",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "led_type": "3W COB",
       "run_time": "6 hours"
     },
@@ -7196,7 +7249,6 @@
     "specifications": {
       "ip_rating": "IP54",
       "beam_distance": "50M / 164'",
-      "beam_angle": "90°",
       "lumens": "150",
       "run_time": "2.5 hours"
     },
@@ -7246,7 +7298,7 @@
     "product_name": "LED-165R",
     "cat_nr": "LED/165R",
     "ord_nr": "55120",
-    "sub_title": null,
+    "sub_title": "Penlight Pivoting head",
     "description": null,
     "features": [],
     "specifications": {
@@ -7319,7 +7371,7 @@
       "ik_rating": "IK07",
       "battery": "3.7V  2600mAh",
       "beam_distance": "80M / 292'",
-      "beam_angle": "90°",
+      "beam_angle": "20˚",
       "lumens": "30",
       "run_time": "20 hours"
     },
@@ -7369,7 +7421,7 @@
     "product_name": "LED-170R",
     "cat_nr": "LED/170R",
     "ord_nr": "55080",
-    "sub_title": null,
+    "sub_title": "Flashlight Pivoting Head, UV & Laser",
     "description": null,
     "features": [],
     "specifications": {
@@ -7439,7 +7491,6 @@
     ],
     "specifications": {
       "battery": "3.7V 800 mAh",
-      "beam_angle": "120°",
       "led_type": "5W COB",
       "lumens": "140",
       "run_time": "3 hours"
@@ -7506,7 +7557,7 @@
       "ip_rating": "IP67",
       "battery": "3.7V 2200 mAh",
       "beam_distance": "400M / 1312'",
-      "beam_angle": "70°",
+      "beam_angle": "70˚",
       "lumens": "700",
       "run_time": "2 hours"
     },
@@ -7680,7 +7731,7 @@
     "product_name": "LED-245",
     "cat_nr": "LED/245",
     "ord_nr": "55109",
-    "sub_title": "Rechargeable Headlamp 5W LED NEW!",
+    "sub_title": "Rechargeable Headlamp 5W LED",
     "description": null,
     "features": [
       "a.\t IP 54 Rated",
@@ -7691,7 +7742,6 @@
       "ip_rating": "IP54",
       "ik_rating": "IK07",
       "battery": "3.7V 900 mAh",
-      "beam_angle": "90°",
       "lumens": "20",
       "run_time": "4 HRS"
     },
@@ -7754,7 +7804,7 @@
     "specifications": {
       "battery": "3.7V 2200 mAh",
       "beam_distance": "15M / 50'",
-      "beam_angle": "120°",
+      "beam_angle": "120˚",
       "led_type": "3W COB",
       "lumens": "150",
       "run_time": "4 hours"
@@ -7814,7 +7864,7 @@
     ],
     "specifications": {
       "battery": "3.7V 1000 mAh",
-      "beam_angle": "60°",
+      "beam_angle": "120˚",
       "led_type": "3W COB",
       "lumens": "400",
       "run_time": "2 hours"
@@ -7873,7 +7923,6 @@
       "c.\t Light adjustable up to 45° to direct"
     ],
     "specifications": {
-      "beam_angle": "45°",
       "led_type": "3W COB",
       "lumens": "70",
       "run_time": "9 hours"
@@ -7933,7 +7982,7 @@
     "specifications": {
       "battery": "3.7V 1200 mAh",
       "beam_distance": "45M / 150'",
-      "beam_angle": "230°",
+      "beam_angle": "230˚",
       "led_type": "5W COB",
       "lumens": "350",
       "run_time": "2.5 hours"
@@ -7984,7 +8033,7 @@
     "product_name": "LED-505",
     "cat_nr": "LED/505",
     "ord_nr": "55064",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 12W",
     "description": null,
     "features": [
       "a.\t IP67 Rated",
@@ -7996,7 +8045,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "60M / 197'",
-      "beam_angle": "60°"
+      "beam_angle": "60˚"
     },
     "dimensions_inch": "3-5/32 × 3 × 3-7/32",
     "dimensions_mm": "80 × 75 × 82",
@@ -8044,7 +8093,7 @@
     "product_name": "LED-501",
     "cat_nr": "LED/501",
     "ord_nr": "55016",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 15W",
     "description": "15W LED Floodlight 5 powerful LED’s of 3W each Light Output High quality  output  of 900 lumen with a powerful flood spread of 60° over a distance up to 10 meter 900 32M / 100' 60",
     "features": [
       "a.\t IP 67 Rated",
@@ -8057,7 +8106,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "32M / 100'",
-      "beam_angle": "60°"
+      "beam_angle": "60˚"
     },
     "dimensions_inch": "3-11/32 × 3-11/32 × 1-3/8",
     "dimensions_mm": "85 × 85 × 35",
@@ -8105,7 +8154,7 @@
     "product_name": "LED-502",
     "cat_nr": "LED/502",
     "ord_nr": "55026",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 15W",
     "description": "15W LED Floodlight 5 powerful LED’s of 3W each Light Output High quality  output  of 900 lumen with a powerful flood spread of 60° over a distance up to 10 meter 900 32M / 100' 60",
     "features": [
       "a.\t IP 67 Rated",
@@ -8118,7 +8167,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "32M / 100'",
-      "beam_angle": "60°"
+      "beam_angle": "60˚"
     },
     "dimensions_inch": "3-11/32 × 3-11/32 × 1-3/8",
     "dimensions_mm": "85 × 85 × 35",
@@ -8178,7 +8227,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "32M / 100'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "1050"
     },
     "dimensions_inch": "2-29/32 × 2-29/32 × 1-3/8",
@@ -8240,7 +8289,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "10M / 32'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "1050"
     },
     "dimensions_inch": "4 × 4-13/16 × 1-7/8",
@@ -8302,7 +8351,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "10M / 32'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "1200"
     },
     "dimensions_inch": "4-9/32 × 5 × 1-21/32",
@@ -8351,7 +8400,7 @@
     "product_name": "LED-512",
     "cat_nr": "LED/512",
     "ord_nr": "55061",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 27W",
     "description": "1890 80M / 262' 60 High output, super bright illumination over long distances 27W LED Floodlight 9 powerful LED’s of 3W each Light Output",
     "features": [
       "a.\t IP 67 Rated",
@@ -8363,7 +8412,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "80M / 262'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "1890"
     },
     "dimensions_inch": "4-1/4 × 4-1/4 × 2-27/32",
@@ -8412,7 +8461,7 @@
     "product_name": "LED-545",
     "cat_nr": "LED/545",
     "ord_nr": "55065",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 30W",
     "description": "igh output super bright floodlight for On-the-Go’ use 0W LED Floodlight powerful LED’s of 5W each ight Output 2250 60M / 196' 60",
     "features": [
       "a.\t IP 67 Rated",
@@ -8425,7 +8474,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "60M / 196'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "2250"
     },
     "dimensions_inch": "6 × 2-1/16 × 2-9/32",
@@ -8474,7 +8523,7 @@
     "product_name": "LED-541",
     "cat_nr": "LED/541",
     "ord_nr": "55063",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 45W",
     "description": "High output super bright floodlight for long distance visibility 45W LED Floodlight 15 powerful LED’s of 3W each Light Output 3150 80M / 262' 60",
     "features": [
       "a.\t IP 67 Rated",
@@ -8486,7 +8535,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "80M / 262'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "3150"
     },
     "dimensions_inch": "6-7/32 × 3-23/32 × 3",
@@ -8535,7 +8584,7 @@
     "product_name": "LED-515",
     "cat_nr": "LED/515",
     "ord_nr": "55062",
-    "sub_title": "Floodlight",
+    "sub_title": "Floodlight 48W",
     "description": "rightest floodlight on site 8W LED Floodlight 6 powerful LED’s of 3 W each ght Output igh quality output  of 3360 lumen with 3360 80M / 262' 60",
     "features": [
       "a.\t IP 67 Rated",
@@ -8548,7 +8597,7 @@
     "specifications": {
       "ip_rating": "IP67",
       "beam_distance": "80M / 262'",
-      "beam_angle": "60°",
+      "beam_angle": "60˚",
       "lumens": "3360"
     },
     "dimensions_inch": "4-1/4 × 5-13/32 × 2-27/32",
@@ -8597,7 +8646,7 @@
     "product_name": "LED-701",
     "cat_nr": "LED/701",
     "ord_nr": "55066",
-    "sub_title": "Light Bar",
+    "sub_title": "Light Bar 36W",
     "description": null,
     "features": [
       "a.\t IP 67 Rated",
@@ -8607,7 +8656,6 @@
     ],
     "specifications": {
       "ip_rating": "IP67",
-      "beam_angle": "60°",
       "lumens": "2520"
     },
     "dimensions_inch": "8 × 4-17/32 × 3-11/32",
@@ -8656,7 +8704,7 @@
     "product_name": "LED-711",
     "cat_nr": "LED/711",
     "ord_nr": "55067",
-    "sub_title": "Light Bar",
+    "sub_title": "Light Bar 72W",
     "description": "72W LED Light Bar 24 powerful LED’s of 3W each Light Output High quality output  of 5040 lumen Combination Beam 5040",
     "features": [
       "a.\t IP 67 Rated",
@@ -8665,8 +8713,7 @@
       "c.\t Sturdy polycarbonate lens to"
     ],
     "specifications": {
-      "ip_rating": "IP67",
-      "beam_angle": "60°"
+      "ip_rating": "IP67"
     },
     "dimensions_inch": "14 × 4-17/32 × 3-11/32",
     "dimensions_mm": "357 × 115 × 85",
@@ -8714,7 +8761,7 @@
     "product_name": "LED-721",
     "cat_nr": "LED/721",
     "ord_nr": "55068",
-    "sub_title": "Light Bar",
+    "sub_title": "Light Bar 120W",
     "description": "20W LED Floodlight 0 powerful LED’s of 3W each ght Output igh quality output  of 8400 lumen ombination Beam 8400",
     "features": [
       "a.\t IP 67 Rated",
@@ -8723,8 +8770,7 @@
       "c.\t Sturdy polycarbonate lens to"
     ],
     "specifications": {
-      "ip_rating": "IP67",
-      "beam_angle": "60°"
+      "ip_rating": "IP67"
     },
     "dimensions_inch": "22-1/8 × 4-17/32 × 3-11/32",
     "dimensions_mm": "562 × 115 × 85",

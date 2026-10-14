@@ -1,7 +1,7 @@
 # Preview: batch_1 re-extracted with the current code (not applied)
 
-- Current: `output_v2\batches\batch_1.json` (150 records). Preview: pipeline 2.1.0 at `1847d4a` (150 records), extracted into a temporary folder and deleted; `output_v2/` was not changed.
-- Matched 150, added 0, missing 0, field changes 109.
+- Current: `output_v2\batches\batch_1.json` (150 records). Preview: pipeline 2.2.0 at `3df9ad3` (150 records), extracted into a temporary folder and deleted; `output_v2/` was not changed.
+- Matched 150, added 0, missing 0, field changes 122.
 - `preview_batch_1.csv` lists every change; `pdf_check` shows whether the new value is printed on its page.
 
 | Change | Catalogue | Page | CAT NR | Field | Current | Preview | New value in PDF |
@@ -14,6 +14,8 @@
 | spec changed | tools_storage.pdf | 7 | RTC/29-20/2/GRZ | specifications.net_weight | 80 KG (176 LBS) | 81 KG (178 LBS) | printed on page |
 | spec changed | tools_storage.pdf | 11 | RTCL/35-20/2/GRZ | specifications.net_weight | 100 KG (220 LBS) | 105 KG (230 LBS) | printed on page |
 | spec changed | tools_storage.pdf | 11 | RTCL/35-20/2/GRZ | specifications.overall_load_capacity | 500 KG (1100 LBS) | 550 KG (1212 LBS) | printed on page |
+| spec added | tools_storage.pdf | 20 | MTB/5 | specifications.table_description | — | Tool Box | printed on page |
+| spec added | tools_storage.pdf | 20 | MTB/5T | specifications.table_description | — | Tool Box with Trolley | printed on page |
 | spec changed | tools_storage.pdf | 20 | MTB/3L | specifications.net_weight | 5 KG (10 LBS) | 4.5 KG (10 LBS) | printed on page |
 | spec changed | tools_storage.pdf | 20 | MTB/3L | specifications.overall_load_capacity | 30 KG (65 LBS) | 18 KG (39.5 LBS) | printed on page |
 | spec changed | tools_storage.pdf | 20 | MTB/5L | specifications.net_weight | 5 KG (10 LBS) | 5.8 KG (12.5 LBS) | printed on page |
@@ -42,7 +44,9 @@
 | spec added | tools_storage.pdf | 23 | TCHL/11-10D/2/BL/GRZ | specifications.drawer_load_capacity | — | 2.5 KG (5.5 LBS) | printed on page |
 | spec added | tools_storage.pdf | 23 | TCHL/11-10D/2/BL/GRZ | specifications.net_weight | — | 3 KG (6.6 LBS) | printed on page |
 | spec added | tools_storage.pdf | 23 | TCHL/14-10D/2/BL/GRZ | specifications.drawer_load_capacity | — | 2.5 KG (5.5 LBS) | printed on page |
+| changed | tools_storage.pdf | 23 | TCHL/14-10D/2/BL/GRZ | editorial_notes | 0 | 1 |  |
 | spec added | tools_storage.pdf | 23 | TCHL/14-10D/2/OR/GRZ | specifications.drawer_load_capacity | — | 2.5 KG (5.5 LBS) | printed on page |
+| changed | tools_storage.pdf | 23 | TCHL/14-10D/2/OR/GRZ | editorial_notes | 0 | 1 |  |
 | spec changed | tools_storage.pdf | 24 | TCHL/14-10/1/GRZ | specifications.net_weight | 5 KG (21 LBS) | 9.5 KG (21 LBS) | printed on page |
 | spec added | tools_storage.pdf | 25 | SRC/30-20/2/GRZ | specifications.net_weight | — | 18 KG (40 LBS) | printed on page |
 | spec added | tools_storage.pdf | 25 | SRC/30-20/2/GRZ | specifications.overall_load_capacity | — | 150 KG (330 LBS) | printed on page |
@@ -58,13 +62,22 @@
 | spec removed | GROZ_LIGHTING_GL-10_1.pdf | 6 | LED/560 | specifications.beam_angle | 180° | — |  |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 7 | LED/670 | specifications.beam_angle | 180° | 110° | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 7 | LED/670T | specifications.beam_angle | 180° | 110° | printed on page |
+| spec added | GROZ_LIGHTING_GL-10_1.pdf | 7 | LED/670T | specifications.table_description | — | Worklight complete with tripod | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 8 | LED/680 | specifications.beam_angle | 120° | 120˚ | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 8 | LED/680T | specifications.beam_angle | 120° | 120˚ | printed on page |
+| spec added | GROZ_LIGHTING_GL-10_1.pdf | 8 | LED/680T | specifications.table_description | — | Floodlight complete with tripod | printed on page |
 | spec removed | GROZ_LIGHTING_GL-10_1.pdf | 9 | LED/685 | specifications.beam_angle | 360° | — |  |
 | spec removed | GROZ_LIGHTING_GL-10_1.pdf | 9 | LED/685T | specifications.beam_angle | 360° | — |  |
+| spec added | GROZ_LIGHTING_GL-10_1.pdf | 9 | LED/685T | specifications.table_description | — | Sitelamp complete with tripod | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/660 | specifications.beam_angle | 360° | 120˚ | printed on page |
+| changed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | dimensions_inch | 12-1/64" (Dia.) | — | n/a (empty) |
+| changed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | dimensions_mm | 305 mm (Dia.) | — | n/a (empty) |
 | spec removed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | specifications.beam_angle | 90° | — |  |
+| spec added | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | specifications.diameter | — | 12-1/64" (305 mm) | printed on page |
+| changed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | dimensions_inch | 12-1/64" (Dia.) | — | n/a (empty) |
+| changed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | dimensions_mm | 305 mm (Dia.) | — | n/a (empty) |
 | spec removed | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | specifications.beam_angle | 90° | — |  |
+| spec added | GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | specifications.diameter | — | 12-1/64" (305 mm) | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 11 | LED/602/US | specifications.beam_angle | 110° | 110˚ | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 11 | LED/602/EU | specifications.beam_angle | 110° | 110˚ | printed on page |
 | spec changed | GROZ_LIGHTING_GL-10_1.pdf | 11 | LED/612/US | specifications.beam_angle | 110° | 110˚ | printed on page |

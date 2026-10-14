@@ -328,10 +328,12 @@ None.
 | Precision_Catalogue_CA_03. | 67 | KT/2-5M | 11815 | 1 | 50 | in product's table row |
 | Precision_Catalogue_CA_03. | 79 | DPV/UG/125 | 35122 | 4 | 3 | in product's table row |
 
-## 7a. Dimension (inch) changes (24)
+## 7a. Dimension (inch) changes (26)
 
 | Catalogue | Page | CAT NR | ORD NR | Legacy | New | New value in PDF |
 | --- | --- | --- | --- | --- | --- | --- |
+| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | 55048 | 12-1/64" (Dia.) | — | n/a (empty) |
+| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | 55051 | 12-1/64" (Dia.) | — | n/a (empty) |
 | GROZ_LIGHTING_GL-10_1.pdf | 28 | LED/336 | 55094 | 32 × 6-49/64 × 45/64 | 29/32 × 6-49/64 × 45/64 | printed verbatim |
 | GROZ_LIGHTING_GL-10_1.pdf | 32 | LED/131 | 55053 | 4×1.5 | — | n/a (empty) |
 | Precision_Catalogue_CA_03. | 39 | EYL/2 | 02000 | 2x 600 | — | n/a (empty) |
@@ -357,10 +359,12 @@ None.
 | Precision_Catalogue_CA_03. | 67 | KT/6-4 | 11703 | 5 × 3/ | 5 × 3/ 4 × 5/16 | printed verbatim |
 | Precision_Catalogue_CA_03. | 67 | KT/0-1 | 11800 | 4 × 1/ | 4 × 1/ 2 × 1/2 | printed verbatim |
 
-## 7b. Dimension (mm) changes (9)
+## 7b. Dimension (mm) changes (11)
 
 | Catalogue | Page | CAT NR | ORD NR | Legacy | New | New value in PDF |
 | --- | --- | --- | --- | --- | --- | --- |
+| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | 55048 | 305 mm (Dia.) | — | n/a (empty) |
+| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | 55051 | 305 mm (Dia.) | — | n/a (empty) |
 | Precision_Catalogue_CA_03. | 57 | COB/0-1 | 12201 | — | 1.52 × 7.93 × 88.9 | printed verbatim |
 | Precision_Catalogue_CA_03. | 57 | COB/0-2 | 12202 | 2 × 4 | 2.38 × 12.7 × 101.6 | printed verbatim |
 | Precision_Catalogue_CA_03. | 57 | COB/0-3 | 12203 | — | 2.38 × 15.8 × 127 | printed verbatim |
@@ -379,29 +383,39 @@ None.
 
 None.
 
-## 10. Editorial note count changes (0)
+## 10. Editorial note count changes (3)
 
-None.
+| Catalogue | Page | CAT NR | ORD NR | Legacy | New | New value in PDF |
+| --- | --- | --- | --- | --- | --- | --- |
+| tools_storage.pdf | 23 | TCHL/14-10D/2/BL/GRZ | 75422 | 0 | 1 |  |
+| tools_storage.pdf | 23 | TCHL/14-10D/2/OR/GRZ | 75421 | 0 | 1 |  |
+| Estwing_Hammer_E-03_Intera | 11 | EMLTT/CH-25W | 62900 | 0 | 1 |  |
 
 ## 11. Specification changes (counts; every instance is in the CSV)
 
 | Spec key | Change | Records |
 | --- | --- | --- |
+| diameter | spec added | 2 |
+| drawer_load_capacity | spec added | 15 |
 | handle_length | spec added | 2 |
 | length | spec added | 14 |
-| variant_label | spec added | 121 |
+| net_weight | spec added | 11 |
+| table_caption | spec added | 106 |
+| table_description | spec added | 5 |
+| variant_label | spec added | 169 |
 | weight | spec added | 4 |
+| beam_angle | spec changed | 43 |
 | head_weight | spec changed | 1 |
+| net_weight | spec changed | 12 |
 | overall_length | spec changed | 3 |
+| overall_load_capacity | spec changed | 3 |
 | power_source | spec changed | 2 |
-| beam_angle | spec removed | 117 |
-| drawer_load_capacity | spec removed | 2 |
+| beam_angle | spec removed | 135 |
+| drawer_load_capacity | spec removed | 1 |
 | head_weight | spec removed | 5 |
 | ip_rating | spec removed | 3 |
-| net_weight | spec removed | 4 |
 | no_of_drawers | spec removed | 17 |
 | overall_length | spec removed | 59 |
-| overall_load_capacity | spec removed | 4 |
 | power_source | spec removed | 4 |
 | top_options | spec removed | 3 |
 
@@ -429,23 +443,12 @@ Legacy types `direct_hero`/`product_family` were assigned partly by page positio
 | box_qty | in product's table row | 562 |
 | box_qty | n/a (empty) | 379 |
 | cat_nr | printed as a word | 941 |
-| dimensions_inch | NOT printed verbatim | 2 |
-| dimensions_inch | n/a (empty) | 802 |
+| dimensions_inch | n/a (empty) | 804 |
 | dimensions_inch | printed verbatim | 137 |
-| dimensions_mm | NOT printed verbatim | 2 |
-| dimensions_mm | n/a (empty) | 828 |
+| dimensions_mm | n/a (empty) | 830 |
 | dimensions_mm | printed verbatim | 111 |
 | ord_nr | n/a (empty) | 3 |
 | ord_nr | printed on page | 938 |
-
-Values not found as printed (need review):
-
-| Catalogue | Page | CAT NR | Field | Value | Check |
-| --- | --- | --- | --- | --- | --- |
-| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | dimensions_inch | 12-1/64" (Dia.) | NOT printed verbatim |
-| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/EU | dimensions_mm | 305 mm (Dia.) | NOT printed verbatim |
-| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | dimensions_inch | 12-1/64" (Dia.) | NOT printed verbatim |
-| GROZ_LIGHTING_GL-10_1.pdf | 10 | LED/800/US | dimensions_mm | 305 mm (Dia.) | NOT printed verbatim |
 
 ## 14. Coverage gates on the new dataset (3 findings)
 
@@ -453,16 +456,17 @@ Values not found as printed (need review):
 - Precision_Catalogue_CA_03.pdf: indexed ORD 35044 (index page ref 75) not in dataset (printed on physical pages none)
 - Precision_Catalogue_CA_03.pdf: indexed ORD 35045 (index page ref 75) not in dataset (printed on physical pages none)
 
-## 15. Editorial decisions (4)
+## 15. Editorial decisions (5)
 
 Recorded in `review/editorial_decisions.json`. A proposal is applied to the data only after approval.
 
 | ID | Item | Status | Current data | Proposed treatment |
 | --- | --- | --- | --- | --- |
-| A | LED/800/EU + LED/800/US dimensions | awaiting approval | dimensions_inch = '12-1/64" (Dia.)', dimensions_mm = '305 mm (Dia.)' -- reworded (word moved, parentheses changed); editorial note published_value '[Not in table]', suggested_correction '12-1/64" (Dia.) / 305 mm (Dia.)'. | Leave dimensions_inch / dimensions_mm empty (the table prints no size). Record the callout verbatim as specifications.diameter = '12-1/64" (305 mm)'. Editorial note: field 'dimensions', published_value 'Dia. 12-1/64" (305 mm)', no suggested_correction, issue text: 'The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.' |
-| B | ORD 62900 printed twice (Estwing mallets) | awaiting approval | EMLTT/CH-45W note: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (1" dia) and EMLTT/CH-45W (1-3/4" dia). Suspected typographical error in published catalogue; likely intended as 62902 following sequence, pending human review." | Replace the note text on EMLTT/CH-45W, and add the same note to EMLTT/CH-25W, with: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the Copper & Hide Mallet table (physical page 11); EMLTT/CH-38W between them is printed as 62901. The catalogue does not show which variant this order number belongs to; confirmation from GROZ is needed." published_value '62900', suggested_correction empty, status pending_review. Both ORD fields stay '62900' as printed. |
+| A | LED/800/EU + LED/800/US dimensions | approved and applied | dimensions_inch = '12-1/64" (Dia.)', dimensions_mm = '305 mm (Dia.)' -- reworded (word moved, parentheses changed); editorial note published_value '[Not in table]', suggested_correction '12-1/64" (Dia.) / 305 mm (Dia.)'. | Leave dimensions_inch / dimensions_mm empty (the table prints no size). Record the callout verbatim as specifications.diameter = '12-1/64" (305 mm)'. Editorial note: field 'dimensions', published_value 'Dia. 12-1/64" (305 mm)', no suggested_correction, issue text: 'The ordering table has no SIZE column. The only printed dimension is this diameter callout on the LED-800 diagram (physical page 10), recorded verbatim as specifications.diameter.' |
+| B | ORD 62900 printed twice (Estwing mallets) | approved and applied | EMLTT/CH-45W note: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (1" dia) and EMLTT/CH-45W (1-3/4" dia). Suspected typographical error in published catalogue; likely intended as 62902 following sequence, pending human review." | Replace the note text on EMLTT/CH-45W, and add the same note to EMLTT/CH-25W, with: "Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the Copper & Hide Mallet table (physical page 11); EMLTT/CH-38W between them is printed as 62901. The catalogue does not show which variant this order number belongs to; confirmation from GROZ is needed." published_value '62900', suggested_correction empty, status pending_review. Both ORD fields stay '62900' as printed. |
 | C | Precision catalogue index vs product pages | documented; no data change proposed | All 29 printed products are records (printed evidence); the 3 index-only numbers are not records. Listed in output_v2/reports/index_discrepancies.csv and change report section 16. | Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045. |
-| D | TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation) | awaiting approval | net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note). | Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records. |
+| D | TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation) | approved and applied | net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note). | Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records. |
+| F | Product headings (sub_title) taken from the page banner, not from the product's own title (new observation, 14 Oct 2026) | approved and applied | output_v2 sub_title unchanged. The local website shows the printed title read from the PDF (backend/site/titles.py, presentation layer only), names the rule and page it came from, and keeps the extracted heading visible in the product details. | In the next extraction-rules version, read the product heading with the same rules as backend/site/titles.py (nearest title above the product's ordering table in the same column or half spread; else the only title on the page or spread; else the facing page's only title), keep the old value traceable in the change report, and regenerate output_v2 only after approval (together with decision E if approved). |
 
 ## 16. Catalogue index discrepancies (32) — source issues, not extraction defects
 

@@ -1,11 +1,11 @@
 {
   "updated": "2026-10-14",
-  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed.",
+  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0.",
   "decisions": [
     {
       "id": "A",
       "title": "LED/800/EU + LED/800/US dimensions",
-      "status": "awaiting approval",
+      "status": "approved and applied",
       "evidence": [
         "GROZ_LIGHTING_GL-10_1.pdf physical page 10 (spread), right page: the LED/800 ordering table has columns CAT NR, ORD NR, PLUG TYPE, POWER SOURCE, BOX QTY -- no size column.",
         "The only printed dimension is a callout on the small LED-800 dimension diagram at the bottom right, in three lines: 'Dia.' / '12-1/64\"' / '(305 mm)'.",
@@ -17,12 +17,13 @@
       "alternatives": [
         "Keep the current reworded values (not recommended: not verbatim).",
         "Put '12-1/64\"' and '(305 mm)' in the size fields verbatim (not recommended: loses that it is a diameter)."
-      ]
+      ],
+      "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.2.0 (commit 3df9ad3); output_v2 regenerated. Before/after values: review/applied/2026-10-14_rules-2.2.0/all_changes.csv."
     },
     {
       "id": "B",
       "title": "ORD 62900 printed twice (Estwing mallets)",
-      "status": "awaiting approval",
+      "status": "approved and applied",
       "evidence": [
         "Estwing_Hammer_E-03_Interactive_1.pdf physical page 11, COPPER & HIDE MALLET table: EMLTT/CH-25W 62900 (face dia. 1”/25mm), EMLTT/CH-38W 62901 (1-1/2”/38mm), EMLTT/CH-45W 62900 (1-3/4”/44mm).",
         "Searched all eight catalogue PDFs: 62900 appears only on Estwing page 11 (twice); 62901 only there; 62902 appears in none of them.",
@@ -33,7 +34,8 @@
       "proposal": "Replace the note text on EMLTT/CH-45W, and add the same note to EMLTT/CH-25W, with: \"Duplicate ORD NR printed in catalogue table: '62900' is printed for both EMLTT/CH-25W (face dia. 1”/25mm) and EMLTT/CH-45W (face dia. 1-3/4”/44mm) in the Copper & Hide Mallet table (physical page 11); EMLTT/CH-38W between them is printed as 62901. The catalogue does not show which variant this order number belongs to; confirmation from GROZ is needed.\" published_value '62900', suggested_correction empty, status pending_review. Both ORD fields stay '62900' as printed.",
       "alternatives": [
         "Keep the note on EMLTT/CH-45W only, with the corrected wording."
-      ]
+      ],
+      "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.2.0 (commit 3df9ad3); output_v2 regenerated. Before/after values: review/applied/2026-10-14_rules-2.2.0/all_changes.csv."
     },
     {
       "id": "C",
@@ -48,24 +50,26 @@
       ],
       "current": "All 29 printed products are records (printed evidence); the 3 index-only numbers are not records. Listed in output_v2/reports/index_discrepancies.csv and change report section 16.",
       "limitation": "Source discrepancies, not extraction defects; they cannot be resolved from the files.",
-      "proposal": "Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045."
+      "proposal": "Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045.",
+      "applied": "Reviewed 14 Oct 2026: no data change (source discrepancies kept on the list)."
     },
     {
       "id": "D",
       "title": "TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation)",
-      "status": "awaiting approval",
+      "status": "approved and applied",
       "evidence": [
         "tools_storage.pdf physical page 23, right page, capacity block of the TCHL/14-10D/2 panel: NET WEIGHT '4 KG (21 LBS)'.",
         "4 kg is about 8.8 lb and 21 lb is about 9.5 kg; physical page 24 prints '9.5 KG (21 LBS)' for TCHL/14-10/1."
       ],
       "current": "net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note).",
       "limitation": "The catalogue does not show whether the kg or the lb figure is right.",
-      "proposal": "Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records."
+      "proposal": "Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records.",
+      "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.2.0 (commit 3df9ad3); output_v2 regenerated. Before/after values: review/applied/2026-10-14_rules-2.2.0/all_changes.csv."
     },
     {
       "id": "F",
       "title": "Product headings (sub_title) taken from the page banner, not from the product's own title (new observation, 14 Oct 2026)",
-      "status": "awaiting approval",
+      "status": "approved and applied",
       "evidence": [
         "Each catalogue prints its product titles in one dedicated type: Mont-Heavy 16 pt (GROZ Tool Storage, Lighting, Precision; Lighting adds a Mont-Book 14 pt second line) and Futura-Bold 12 pt (Estwing). Every text set in these types is a product title, except 'NOTES' in Estwing.",
         "sub_title is read from a fixed rectangle at the top of the page (y 40-140), so it mixes the title with description lines (e.g. 'Tool Bits & Cut Off Blades Square Toolbits and Cut Off Blades are') and gives products in lower sections of a page, or on a facing page, another product's heading.",
@@ -79,7 +83,8 @@
       "proposal": "In the next extraction-rules version, read the product heading with the same rules as backend/site/titles.py (nearest title above the product's ordering table in the same column or half spread; else the only title on the page or spread; else the facing page's only title), keep the old value traceable in the change report, and regenerate output_v2 only after approval (together with decision E if approved).",
       "alternatives": [
         "Keep sub_title as is and rely on the website's display title (not recommended: exports and reports would keep the wrong headings)."
-      ]
+      ],
+      "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.2.0 (commit 3df9ad3); output_v2 regenerated. Before/after values: review/applied/2026-10-14_rules-2.2.0/all_changes.csv."
     }
   ]
 }
