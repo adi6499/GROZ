@@ -4,6 +4,11 @@
 
 **Stopped here.** Batch 3 has not been run, and no website has been built or deployed.
 
+> **Update (next phase, same day):** see `NEXT_PHASE_REPORT.md`.
+> - Open items 1–5 below now have evidence and proposals (decisions A–D in `review/editorial_decisions.json`).
+> - The tool-storage capacity and beam-angle rules are fixed in code, with their effect previewed in `review/preview_batch_1.md`. `output_v2` has not been regenerated yet.
+> - The Hand Tool pilot now writes only to `output_pilot_handtool/`, and the CLI approval bypass is removed.
+
 ## Outcome in one paragraph
 
 The corrected pipeline re-extracted Batches 1–2 into `output_v2/`: **941 records, up from 813**.
@@ -159,7 +164,7 @@ Every referenced crop exists. Its filename now identifies its PDF and page.
   - **p11 and p53:** two-column tables.
   - **p12:** standard table, with weight and length in lb/kg and inch/mm columns.
   - **p224:** calipers already extracted from Precision. They will be kept as separate Hand Tool records, and the shared ORDs will show as "printed more than once".
-- **Refused until approved.** To run after approval: set `approved=True` for `batch_3_pilot` in `backend/pipeline/batches.py`, commit, then run `python run_extraction.py batch batch_3_pilot`. The Hand Tool index (p254 onwards) should be added to `INDEX_PAGES` for the pilot's completeness check.
+- **Refused until approved.** To run after approval: set `approved=True` for `batch_3_pilot` in `backend/pipeline/batches.py`, commit, then run `python run_extraction.py batch batch_3_pilot`. The Hand Tool index (pages 254–257) is now registered in `INDEX_PAGES`; the pilot's index check is scoped to the printed pages processed.
 - **Mini catalogues** (Workshop, Fluid Handling mini) are registered as supplementary sources. The runner refuses to create product records from them. Using them for images, features and descriptions, and flagging new products, is a later step.
 
 ## Commits

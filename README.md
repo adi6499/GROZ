@@ -39,30 +39,43 @@ Tests never write into `output/` or `output_v2/`; image crops go to pytest tempo
 
 ```bash
 .venv/Scripts/python.exe run_extraction.py list
+.venv/Scripts/python.exe run_extraction.py status
 .venv/Scripts/python.exe run_extraction.py batch batch_1
-.venv/Scripts/python.exe run_extraction.py batch batch_2
+.venv/Scripts/python.exe run_extraction.py preview batch_1
 .venv/Scripts/python.exe run_extraction.py compare
+.venv/Scripts/python.exe run_extraction.py pilot-report batch_3_pilot
 .venv/Scripts/python.exe run_extraction.py recovery
 ```
 
-- `list` shows the batches and whether each is approved.
-- `batch NAME` extracts one batch, rebuilds the cumulative file and regenerates the reports. `run_batch_1.py` and `run_batch_2.py` do the same for their batch.
-- `compare` writes the change report against the legacy 813-record dataset.
+- `list` shows the batches, their approval status and output folders.
+- `status` runs every safety check for every batch without reading any page (shows READY or BLOCKED and why).
+- `batch NAME` extracts one batch into its own folder and rebuilds that folder's reports. Main batches also rebuild `output_v2/extracted_products.json`. `run_batch_1.py` and `run_batch_2.py` do the same for their batch.
+- `preview NAME` re-extracts an approved main batch into a temporary folder and writes `review/preview_NAME.md/.csv` listing every difference from `output_v2`. Nothing in `output_v2` changes.
+- `compare` writes the change report against the legacy 813-record dataset, including the editorial decision log and the index discrepancy list.
+- `pilot-report NAME` rebuilds a dedicated-folder batch's report from its existing files.
 - `recovery` runs batch_1 and batch_2, then the cumulative build, the comparison and the reports.
 
-Options: `--out DIR` (default `output_v2`), `--allow-shrink`, `--allow-unapproved`.
+Options: `--out DIR` (main dataset folder, default `output_v2`), `--allow-shrink`. There is deliberately no option that bypasses the approval gate.
 
-### Safe execution rules (enforced by the code)
+### Safe execution rules (enforced by the code, all checked before any page is read)
 
 1. Nothing ever writes into the legacy `output/` folder; the runner refuses it.
-2. A batch writes only `output_v2/batches/<batch>.json` and its manifest (pages processed, code commit).
-3. The cumulative file `output_v2/extracted_products.json` is rebuilt from the batch files. It refuses to drop a batch or lose records, and refuses the same page extracted by two batches. `--allow-shrink` overrides this only for an intended reduction.
-4. Re-running a batch that would produce fewer records than its existing file is refused (same override).
-5. A batch marked not approved (`batch_3_pilot`) refuses to run. On approval, set `approved=True` in `backend/pipeline/batches.py` and commit, then run it.
-6. Supplementary brochures (`Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`) can never create product records.
-7. Every report number is computed from the data when the report is generated.
+2. Each batch writes only to its own folder:
+   - batch_1 and batch_2 write to `output_v2/batches/`;
+   - `batch_3_pilot` writes only to `output_pilot_handtool/`;
+   - no batch may write into another batch's folder;
+   - the pilot is never merged into `output_v2`.
+3. Unapproved batches refuse to run. To approve one, set `approved=True` for it in `backend/pipeline/batches.py`, in its own commit, after written approval.
+4. Batch 3 catalogues (`Hand_Tool_…`, `Fluid_Handling_Catalogue_spread.pdf`) only allow the pages listed in `RESTRICTED_SOURCES`: the five pilot pages, and no Fluid pages.
+5. Supplementary brochures (`Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`) can never create product records.
+6. Extraction commands refuse to run while the extraction code has uncommitted changes. Every manifest records the pipeline version, git commit, source-PDF SHA-256, pages processed and approval state.
+7. The cumulative file is rebuilt from the batch files. It refuses to drop or shrink a batch, or to take one page from two batches. A batch re-run that would produce fewer records is refused. `--allow-shrink` overrides both, only for an intended reduction.
+8. A replaced batch file is first copied to `batches/history/`; nothing is discarded.
+9. Every report number is computed from the data when the report is generated.
 
 Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `compare` → review.
+
+Pipeline version: `2.1.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.0.0 (commit `4cf3417`).
 
 ## Batches
 
@@ -70,7 +83,7 @@ Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `
 |---|---|---|
 | `batch_1` | `tools_storage.pdf` + `GROZ_LIGHTING_GL-10_1.pdf`, all pages (includes the former pilot p6–10 and p5 / LED/695) | approved |
 | `batch_2` | `Estwing_Hammer_E-03_Interactive_1.pdf` + `Precision_Catalogue_CA_03.pdf`, all pages | approved |
-| `batch_3_pilot` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` pages 8, 11, 12, 53, 224 | prepared, **not approved** |
+| `batch_3_pilot` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` pages 8, 11, 12, 53, 224 → `output_pilot_handtool/` | prepared, **not approved, not run** |
 
 Supplementary sources (no product records by default; used later for images, features and descriptions; genuinely new products or specifications are flagged for review): `Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`.
 Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Hand Tool catalogue.
@@ -86,7 +99,21 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
 | `images/` | Image crops, named `<pdf>_p<page>_xref<n>_<x>_<y>.png` |
 | `review.html` | Review dashboard: filters by catalogue, image evidence, notes and changes. Serve the folder over HTTP to view it |
 | `reports/summary.md` | Counts, image evidence, editorial notes, coverage checks against the PDFs |
-| `reports/change_report.md` | Change report vs the legacy dataset. `.csv` has one row per changed field and opens in Excel |
+| `reports/change_report.md` | Change report vs the legacy dataset. `.csv` has one row per changed field and opens in Excel. Also renders the editorial decision log and the index discrepancy list |
+| `reports/index_discrepancies.csv` | Catalogue index vs printed pages (source issues, not extraction defects) |
+
+### `output_pilot_handtool/`: Hand Tool pilot (created only when the pilot is approved and run)
+
+| File | Contents |
+|---|---|
+| `batches/batch_3_pilot.json`, `.manifest.json` | Pilot records and provenance |
+| `reports/batch_3_pilot_report.md`, `_records.csv` | Records, missing values, ambiguous matches, unresolved images, gates, counterparts in output_v2/legacy (compared, never merged), changes since the previous run |
+| `review.html` | Review dashboard for the pilot |
+
+### `review/`: review documents
+
+- `editorial_decisions.json`: decision log (evidence, current data, proposed treatment, status).
+- `preview_<batch>.md/.csv`: effect of not-yet-applied extraction-rule changes on a batch.
 
 ### `output/`: legacy Antigravity outputs (read-only, kept for comparison)
 
@@ -105,6 +132,9 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
   - `product_family`: a family or shared label, or the single image beside the only ordering table in its region.
   - `unresolved`: page position only. A review candidate; never show it as the product's image.
 - `source_row_text`: the verbatim words of the product's own table row. `raw_text_snippet`: the start of the table text.
+- From rules version 2.1.0 (the `output_v2` dataset still uses 2.0.0 until regenerated):
+  - `drawer_load_capacity`, `overall_load_capacity`, `net_weight` are read from the product's own capacity block. Each printed label is paired with the value printed directly above it. A block belongs to the panel headed by the product's CAT NR, otherwise to its own table area. Ambiguous values stay empty.
+  - `beam_angle` comes only from the lighting spec-icon strip, verbatim (e.g. `60˚`). Titles and callouts such as "270° Swivelling" never count.
 
 ## Tools
 
