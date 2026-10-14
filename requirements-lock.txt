@@ -1,0 +1,12 @@
+# Exact versions used by the original (Linux) run and verified on Windows, 14 Oct 2026.
+# Install with:  python -m pip install -r requirements-lock.txt
+pymupdf==1.28.2
+pdfplumber==0.11.10
+pydantic==2.14.1
+pydantic_core==2.50.1
+pillow==12.3.0
+pytest==9.1.1
+
+# Optional OCR fallback (used only by backend/extractor/pdf_reader.py, not by the batch pipeline).
+# rapidocr-onnxruntime 1.4.4 requires Python <= 3.12, so it is not installed on Python 3.13.
+# rapidocr-onnxruntime==1.4.4
