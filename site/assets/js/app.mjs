@@ -33,6 +33,28 @@ const filtersEl = $("#filters");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const sheetQuery = matchMedia("(max-width: 860px)");
 
+// ---------------------------------------------------------------- theme (per-browser convenience only)
+// The head script sets data-theme before the first paint; this keeps the buttons and the device
+// setting in step. A choice is remembered only while it differs from the device setting.
+const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+const deviceTheme = () => (darkQuery.matches ? "dark" : "light");
+function applyTheme(theme) {
+  root.dataset.theme = theme;
+  const dark = theme === "dark";
+  $('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0d0d0f" : "#f5f5f7");
+  for (const b of [$("#themeBtn"), $("#themeRow")]) b?.setAttribute("aria-pressed", String(dark));
+}
+function toggleTheme() {
+  const next = root.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(next);
+  if (next === deviceTheme()) { try { localStorage.removeItem("groz.theme"); } catch { /* storage unavailable */ } }
+  else store.set("groz.theme", next);
+}
+applyTheme(root.dataset.theme === "dark" ? "dark" : "light");
+$("#themeBtn")?.addEventListener("click", toggleTheme);
+$("#themeRow")?.addEventListener("click", toggleTheme);
+darkQuery.addEventListener("change", () => { if (store.get("groz.theme", null) == null) applyTheme(deviceTheme()); });
+
 function notify(message) {
   toastEl.textContent = message;
   toastEl.classList.add("show");

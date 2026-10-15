@@ -198,6 +198,12 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
     - Product details name the rule and PDF page the title came from.
     - Any future difference is listed in `review/display_titles.csv`.
+- **Light and dark mode:**
+  - The site follows the device's setting.
+  - The sun/moon button in the header (on phones, "Dark mode" in the menu) switches it. That choice is kept in the browser only while it differs from the device setting.
+  - A small script in the page head applies the theme before the first paint, so there is no flash.
+  - Dark styles live in one block of `site.css` (`:root[data-theme=dark]`); light styles are unchanged.
+  - Catalogue pictures keep soft light tiles in dark mode, because they are renders on white.
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.

@@ -273,6 +273,80 @@ body.has-dock main{padding-bottom:110px}
 @media(max-width:400px){.brand-word{display:none}.hero h1{font-size:40px}.hero-copy{padding:26px 18px 4px}.quick{gap:6px 14px}}
 @media(max-width:340px){.products{grid-template-columns:1fr}.product-image{height:150px}.ptitle{min-height:0}.dock span{display:none}}
 
+/* dark mode: <html data-theme="dark">, set before first paint by the head script (device setting,
+   or the visitor's choice from the theme button). Light mode above is unchanged. Product pictures
+   are catalogue renders on white, so they keep soft light tiles (multiplied onto the tile colour). */
+:root[data-theme=dark]{color-scheme:dark;--ink:#f2f2f4;--ink2:#d6d6db;--muted:#9d9da4;--line:#2f2f33;--bg:#0d0d0f;--white:#1c1c1e;--orange2:#ff8a5c;--green:#5fd39b;--amber:#f0b54f;--shadow:0 24px 70px #0007}
+:root[data-theme=dark] .skip{color:#0d0d0f}
+:root[data-theme=dark] .top{background:#161618f2;border-bottom-color:#ffffff14}
+:root[data-theme=dark] .links{color:#c4c4ca}
+:root[data-theme=dark] .nav-search{background:#2a2a2d;color:#9d9da4}:root[data-theme=dark] .nav-search:focus-within{background:#333337}
+:root[data-theme=dark] .icon-btn{color:#d6d6db}
+:root[data-theme=dark] .mobile-menu{border-top-color:#ffffff14}:root[data-theme=dark] .mobile-menu a{border-bottom-color:#ffffff0d}
+:root[data-theme=dark] .soft{background:#2c2c2f}:root[data-theme=dark] .outline{background:#1c1c1e}
+:root[data-theme=dark] .danger{background:#1c1c1e;border-color:#5c2a20;color:#ff8f7a}
+:root[data-theme=dark] .btn.in-quote{background:#1c1c1e;border-color:#6b3322}
+:root[data-theme=dark] .hero{box-shadow:0 0 0 1px #ffffff12,var(--shadow)}
+:root[data-theme=dark] .searchbox{background:#2a2a2d}
+:root[data-theme=dark] .trust-strip{background:#2f2f33;border-color:#2f2f33}:root[data-theme=dark] .trust-item{background:#1c1c1e}:root[data-theme=dark] .trust-icon{background:#2a2a2d}
+:root[data-theme=dark] .cat{background:#1c1c1e;border-color:#2f2f33}
+:root[data-theme=dark] .cat-art{background:linear-gradient(140deg,#e9e9ec,#dadade)}
+:root[data-theme=dark] .cat-skeleton{background:linear-gradient(90deg,#1c1c1e 0,#242427 40%,#1c1c1e 80%);background-size:300% 100%}
+:root[data-theme=dark] .segmented{background:#2a2a2d}:root[data-theme=dark] .segmented button{color:#a8a8ae}:root[data-theme=dark] .segmented button.active{background:#3a3a3e;color:var(--ink)}
+:root[data-theme=dark] .data-note{background:#1c1c1e;color:#b8b8be}
+:root[data-theme=dark] .filters{background:#1c1c1e}:root[data-theme=dark] .filter-group{border-top-color:#2a2a2d}
+:root[data-theme=dark] .filter-option{color:#c4c4ca}:root[data-theme=dark] .filter-option .n{color:#8e8e95}
+:root[data-theme=dark] select{background:#1c1c1e;color:#d6d6db}
+:root[data-theme=dark] .chip{background:#2e1610;border-color:#6b3322;color:#ffb399}:root[data-theme=dark] .chip.clear{background:#1c1c1e;border-color:var(--line);color:var(--ink)}
+:root[data-theme=dark] .product{background:#1c1c1e;border-color:#2f2f33}
+:root[data-theme=dark] .product-image{background:linear-gradient(145deg,#ececef,#dedee2)}
+:root[data-theme=dark] .status-unverified{background:#3a2f14}:root[data-theme=dark] .status-needs_review{background:#3d1a14;color:#ff9a85}:root[data-theme=dark] .status-verified{background:#12301f}
+:root[data-theme=dark] .flag-note{background:#262041;color:#b9adff}:root[data-theme=dark] .flag-review{background:#1c1c1e;border-color:#5c4718}
+:root[data-theme=dark] .ptitle.muted,:root[data-theme=dark] .ptable .muted,:root[data-theme=dark] .v-missing{color:#8e8e95}
+:root[data-theme=dark] .sku{color:#9d9da4}:root[data-theme=dark] .spec{color:#a8a8ae}:root[data-theme=dark] .spec dt{color:#9d9da4}:root[data-theme=dark] .spec dd{color:#e5e5ea}
+:root[data-theme=dark] .compare-check{color:#b8b8be}
+:root[data-theme=dark] .empty,:root[data-theme=dark] .state{background:#1c1c1e}:root[data-theme=dark] .state code{background:#2a2a2d}:root[data-theme=dark] .state-icon{color:#6e6e75}
+:root[data-theme=dark] .skeleton{background:#1c1c1e;border-color:#2a2a2d}:root[data-theme=dark] .skeleton i{background:linear-gradient(90deg,#242427 0,#2c2c2f 40%,#242427 80%);background-size:300% 100%}
+:root[data-theme=dark] .ptable-wrap{background:#1c1c1e}:root[data-theme=dark] .ptable th{background:#242427;color:#b8b8be}:root[data-theme=dark] .ptable td{border-bottom-color:#262629}
+:root[data-theme=dark] .ptable .thumb,:root[data-theme=dark] .saved-item .thumb,:root[data-theme=dark] .detail-art{background:#e4e4e8}
+:root[data-theme=dark] .quote-card,:root[data-theme=dark] .catalogue-row{background:#1c1c1e}
+:root[data-theme=dark] .pdf-icon{background:#3a1c13}:root[data-theme=dark] .catalogue-row.pending{background:#18181a}:root[data-theme=dark] .catalogue-row.pending .pdf-icon{background:#2a2a2d;color:#7a7a80}
+:root[data-theme=dark] footer{border-top-color:#26262a}
+:root[data-theme=dark] .toast{background:#3a3a3e}
+:root[data-theme=dark] .modal{background:#1c1c1e;box-shadow:0 0 0 1px #ffffff12,0 30px 90px #000a}:root[data-theme=dark] .modal-head{background:#1c1c1ef7}
+:root[data-theme=dark] .close,:root[data-theme=dark] .compare-head .remove{background:#2c2c2f}
+:root[data-theme=dark] .detail-nav{border-bottom-color:#2a2a2d}
+:root[data-theme=dark] .spec-table td,:root[data-theme=dark] .spec-table th,:root[data-theme=dark] .compare-table td,:root[data-theme=dark] .compare-table th{border-bottom-color:#2a2a2d}
+:root[data-theme=dark] .compare-table thead th{background:#242427}:root[data-theme=dark] .compare-table tbody th{background:#1c1c1e}
+:root[data-theme=dark] .source-box{background:#242427;color:#c4c4ca}:root[data-theme=dark] .source-box pre{color:#d6d6db}
+:root[data-theme=dark] .review-notes{background:#1f1b33;border-color:#3a3260}:root[data-theme=dark] .review-notes h4{color:#b9adff}
+:root[data-theme=dark] .field input,:root[data-theme=dark] .field textarea{background:#242427;border-color:#3a3a3e}
+:root[data-theme=dark] .form-foot small{color:#9d9da4}:root[data-theme=dark] .err{color:#ff8f7a}
+:root[data-theme=dark] .quote-table td{border-bottom-color:#262629}
+:root[data-theme=dark] .stepper{background:#1c1c1e;border-color:#3a3a3e}:root[data-theme=dark] .step{background:#2a2a2d}:root[data-theme=dark] .step:active{background:#36363a}
+:root[data-theme=dark] .qty{background:transparent;border-color:#3a3a3e}
+:root[data-theme=dark] .quote-totals,:root[data-theme=dark] .prepared{background:#242427}
+:root[data-theme=dark] .notice{background:#2e2512;border-color:#5c4718;color:#c4c4ca}:root[data-theme=dark] .notice.ok{background:#11291c;border-color:#1f5a3a}
+:root[data-theme=dark] .dock{background:#2c2c2f;box-shadow:0 0 0 1px #ffffff14,0 12px 40px #0008}
+@media(hover:hover){
+  :root[data-theme=dark] .icon-btn:hover{background:#ffffff14}:root[data-theme=dark] .close:hover,:root[data-theme=dark] .step:hover{background:#3a3a3e}
+  :root[data-theme=dark] .chip:hover{background:#3a1c13;border-color:#8a4229}
+  :root[data-theme=dark] .cat:hover,:root[data-theme=dark] .product:hover{border-color:#7a3a24;box-shadow:0 14px 30px #0006}
+  :root[data-theme=dark] .compare-check:hover{background:#2a2a2d}
+}
+@media(hover:hover) and (pointer:fine){:root[data-theme=dark]:not(.lite) .top{background:#161618d6}}
+@media(max-width:860px){
+  :root[data-theme=dark] .filters:before{background:#48484c}:root[data-theme=dark] .filter-head{background:#1c1c1e}
+  :root[data-theme=dark] .filters-close{background:#2c2c2f!important}
+}
+
+/* theme button: the icon shows the theme it switches to */
+.theme-btn .theme-sun,:root[data-theme=dark] .theme-btn .theme-moon{display:none}:root[data-theme=dark] .theme-btn .theme-sun{display:inline-block}
+.menu-row{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 6px;border:0;background:transparent;font-size:15px;text-align:left;width:100%}
+.switch{width:42px;height:26px;border-radius:99px;background:#d9d9de;position:relative;flex:none;transition:background-color var(--fast)}.switch:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform var(--fast) var(--ease)}
+.menu-row[aria-pressed=true] .switch{background:var(--btn)}.menu-row[aria-pressed=true] .switch:after{transform:translateX(16px)}
+@media(max-width:720px){.nav .theme-btn{display:none}}
+
 /* print: only the prepared quotation */
 @media print{
   body.print-quote>*:not(#printArea){display:none!important}
