@@ -166,6 +166,18 @@ def test_facing_page_picture(page_products):
     assert pic(p57, "COB/0-1")[0] not in SHOWN
 
 
+def test_caption_and_section_pictures_count_as_image_evidence(page_products):
+    """They replace the layout rule's pictures and are at least as specific, so they carry the same
+    strength (0.7) that adds the image bonus to a record's confidence (validator/confidence.py)."""
+    from backend.validator.confidence import calculate_product_confidence
+    for pdf, page, cat in ((PRECISION, 17, "MM/0-1"), (PRECISION, 61, "GAT/11"), (PRECISION, 57, "TB/3-75M")):
+        p = product(page_products(pdf, page), cat)
+        assert p.images[0].association_type == "product_family" and p.images[0].confidence == 0.7
+        without = calculate_product_confidence(p.cat_nr, p.ord_nr, p.product_name, p.description, p.specifications,
+                                               p.extraction_method, [])
+        assert p.confidence == round(min(1.0, without + 0.05), 2)
+
+
 def test_sibling_picture_only_when_one_variant_is_pictured(page_products):
     p7 = page_products(PRECISION, 7)
     assert pic(p7, "SS/A/2-3-4-6/ST") == ("direct_product", 35)

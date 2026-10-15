@@ -330,7 +330,9 @@ class ProductBuilder:
                     own, siblings, others,
                     facing_cands=facing_candidates() if printed_title and printed_title["rule"] == "facing" else None)
                 if pick:
-                    matched_images = [self.image_extractor.make_ref(pick[0], "product_family", pick[1], 0.6)]
+                    # Same strength (0.7) as the layout rule these replace: family evidence that
+                    # counts toward the record's confidence (validator/confidence.py).
+                    matched_images = [self.image_extractor.make_ref(pick[0], "product_family", pick[1], 0.7)]
 
             # Table bounding box
             t_bbox = row.get("table_bbox")
