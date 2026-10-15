@@ -14,7 +14,7 @@ body.modal-open,body.sheet-open{overflow:hidden}
 .sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:-1px}
 
 /* header */
-.top{position:sticky;top:0;z-index:40;background:#fafafcf5;border-bottom:1px solid #00000010;padding-top:var(--sat)}
+.top{position:sticky;top:0;z-index:40;background:#fafafc;border-bottom:1px solid #00000010;padding-top:var(--sat)}
 .nav{height:66px;max-width:1280px;margin:auto;padding:0 max(30px,var(--sar)) 0 max(30px,var(--sal));display:flex;align-items:center;gap:28px}
 .brand{display:flex;align-items:center;gap:9px;font-size:21px;font-weight:850;letter-spacing:-.07em;white-space:nowrap;min-height:44px}
 .brand-mark{height:28px;width:28px;background:var(--orange);color:white;display:grid;place-items:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);font-size:14px;flex:none}
@@ -168,9 +168,11 @@ body.has-dock .toast{bottom:calc(88px + var(--sab))}
 body.has-dock main{padding-bottom:110px}
 #printArea{display:none}
 
-/* results bar: count, filters, sort and active filters stay reachable under the header */
+/* results bar: count, filters, sort and active filters stay reachable under the header. It tucks 1px
+   under the header: on high-density screens the header's 1px border renders thinner, which would
+   otherwise leave a sliver through which the scrolling cards show. */
 :root{--head-h:67px}
-.results-bar{position:sticky;top:calc(var(--head-h) + var(--sat));z-index:30;background:var(--bg);padding-top:6px;margin-top:-6px;transition:box-shadow var(--fast)}
+.results-bar{position:sticky;top:calc(var(--head-h) + var(--sat) - 1px);z-index:30;background:var(--bg);padding-top:6px;margin-top:-6px;transition:box-shadow var(--fast)}
 .results-bar.stuck{box-shadow:0 1px 0 var(--line),0 14px 18px -16px #00000030}
 
 /* product details: the picture as the hero and one calm column of facts (Apple product page) */
@@ -290,7 +292,12 @@ body.has-dock main{padding-bottom:110px}
   main{padding:14px max(13px,var(--sar)) 45px max(13px,var(--sal))}.hero{grid-template-columns:1fr;min-height:0;border-radius:24px}.hero-copy{padding:31px 23px 7px}.hero h1{font-size:44px}.hero p{font-size:13.5px}.hero-visual{min-height:205px}.hero-tool{width:76%;max-width:340px}.orbit{width:190px;height:190px}.hero-badge{top:12px;right:12px}.hero-note{bottom:11px;right:12px}
   .trust-strip{grid-template-columns:1fr}.trust-item{padding:11px 14px}.section{margin-top:33px}.section-head{flex-wrap:wrap;align-items:flex-start}.section-head h2{font-size:23px}
   .categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cat{padding:10px;min-height:137px}.cat-skeleton{min-height:170px}.cat-art{height:62px}
-  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.product{padding:8px;border-radius:14px;contain-intrinsic-size:auto 380px}.product-image{height:118px}.product h3{font-size:14.5px}.spec{font-size:10px}.heart{right:12px;top:12px}
+  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.product{padding:8px 8px 10px;border-radius:16px;contain-intrinsic-size:auto 400px}.product-image{height:118px}.product h3{font-size:14.5px}
+  /* narrow cards: text gets breathing room from the edges; each spec stacks (label over value) instead of
+     squeezing both onto one line, and the catalogue source goes on its own line */
+  .product>.ptitle,.product h3,.product .sku,.product .spec{margin-left:5px;margin-right:5px}
+  .product .sku-sep{display:none}.product .sku-src{display:block;color:var(--muted)}
+  .spec{font-size:10.5px;gap:7px;margin-top:10px}.spec div{flex-direction:column;gap:1px}.spec dd{text-align:left;font-size:11.5px}.heart{right:12px;top:12px}
   .product-actions{flex-direction:column;align-items:stretch;gap:2px}.product-actions .btn{width:100%}.compare-check{justify-content:center}
   .ptable .hide-sm{display:none}.ptable .actions{white-space:normal}.ptable .actions .compare-check{display:flex}
   .quote-card{padding:22px;align-items:flex-start;flex-direction:column}.catalogue-row{padding:16px;align-items:flex-start;flex-direction:column}
@@ -328,7 +335,7 @@ body.has-dock main{padding-bottom:110px}
    are catalogue renders on white, so they keep soft light tiles (multiplied onto the tile colour). */
 :root[data-theme=dark]{color-scheme:dark;--ink:#f2f2f4;--ink2:#d6d6db;--muted:#9d9da4;--line:#2f2f33;--bg:#0d0d0f;--white:#1c1c1e;--orange2:#ff8a5c;--green:#5fd39b;--amber:#f0b54f;--shadow:0 24px 70px #0007}
 :root[data-theme=dark] .skip{color:#0d0d0f}
-:root[data-theme=dark] .top{background:#161618f2;border-bottom-color:#ffffff14}
+:root[data-theme=dark] .top{background:#161618;border-bottom-color:#ffffff14}
 :root[data-theme=dark] .links{color:#c4c4ca}
 :root[data-theme=dark] .nav-search{background:#2a2a2d;color:#9d9da4}:root[data-theme=dark] .nav-search:focus-within{background:#333337}
 :root[data-theme=dark] .icon-btn{color:#d6d6db}

@@ -330,7 +330,8 @@ function statusHtml(p, { quiet = false } = {}) {
 }
 
 function skuHtml(p) {
-  return `ORD NR <b>${p.ord_nr ? esc(p.ord_nr) : "not printed"}</b> · ${esc(p.catalogue.title)}, p.&nbsp;${esc(p.printed_page ?? p.page)}`;
+  // The source is its own span so narrow cards can put it on its own line (site.css).
+  return `ORD NR <b>${p.ord_nr ? esc(p.ord_nr) : "not printed"}</b><span class="sku-sep"> · </span><span class="sku-src">${esc(p.catalogue.title)}, p.&nbsp;${esc(p.printed_page ?? p.page)}</span>`;
 }
 
 function titleHtml(p, cls = "ptitle") {
