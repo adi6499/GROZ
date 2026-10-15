@@ -47,7 +47,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code RTC/27-10D/1/GRZ printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.7,
         "caption_or_label": "A\nB\nRTC/27-10D/1/GRZ\n27 inch  I  7 DRAWER"
       }
     ],
@@ -90,22 +90,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p4_xref55_131_167",
-        "file_path": "images/tools_storage_p4_xref55_131_167.png",
+        "image_id": "tools_storage_p4_xref67_628_529",
+        "file_path": "images/tools_storage_p4_xref67_628_529.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 4,
         "bounding_box": {
-          "x0": 131.32,
-          "y0": 167.59,
-          "x1": 470.63,
-          "y1": 567.78,
+          "x0": 628.29,
+          "y0": 529.39,
+          "x1": 772.76,
+          "y1": 708.87,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGGED\n4 Heavy-\n5\" × 1.5\" (12\nRear castors\nAL LOCKING \nM \ncurity lock with \ncombinations\nO ENDURE\n4 "
+        "association_type": "direct_product",
+        "evidence": "product code RTC/27-10D/2/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "A\nB\nC\n27 inch  I  5 DRAWER"
       }
     ],
     "editorial_notes": [],
@@ -147,22 +147,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p5_xref92_131_201",
-        "file_path": "images/tools_storage_p5_xref92_131_201.png",
+        "image_id": "tools_storage_p5_xref108_314_613",
+        "file_path": "images/tools_storage_p5_xref108_314_613.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 5,
         "bounding_box": {
-          "x0": 131.32,
-          "y0": 201.79,
-          "x1": 470.63,
-          "y1": 567.78,
+          "x0": 314.33,
+          "y0": 613.49,
+          "x1": 474.21,
+          "y1": 799.57,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGGED\n4 Heavy-\n5\" × 1.5\" (1\nRear castors\nAL LOCKING \nM \ncurity lock with \ncombinations\nO ENDURE\n0 G"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/27-10/4/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "A\nB\nDraw"
       }
     ],
     "editorial_notes": [],
@@ -204,22 +204,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p5_xref92_131_201",
-        "file_path": "images/tools_storage_p5_xref92_131_201.png",
+        "image_id": "tools_storage_p5_xref108_314_613",
+        "file_path": "images/tools_storage_p5_xref108_314_613.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 5,
         "bounding_box": {
-          "x0": 131.32,
-          "y0": 201.79,
-          "x1": 470.63,
-          "y1": 567.78,
+          "x0": 314.33,
+          "y0": 613.49,
+          "x1": 474.21,
+          "y1": 799.57,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGGED\n4 Heavy-\n5\" × 1.5\" (1\nRear castors\nAL LOCKING \nM \ncurity lock with \ncombinations\nO ENDURE\n0 G"
+        "evidence": "base model RTC/27-10/4/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "A\nB\nDraw"
       }
     ],
     "editorial_notes": [],
@@ -261,22 +261,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p5_xref92_131_201",
-        "file_path": "images/tools_storage_p5_xref92_131_201.png",
+        "image_id": "tools_storage_p5_xref108_314_613",
+        "file_path": "images/tools_storage_p5_xref108_314_613.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 5,
         "bounding_box": {
-          "x0": 131.32,
-          "y0": 201.79,
-          "x1": 470.63,
-          "y1": 567.78,
+          "x0": 314.33,
+          "y0": 613.49,
+          "x1": 474.21,
+          "y1": 799.57,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGGED\n4 Heavy-\n5\" × 1.5\" (1\nRear castors\nAL LOCKING \nM \ncurity lock with \ncombinations\nO ENDURE\n0 G"
+        "evidence": "base model RTC/27-10/4/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "A\nB\nDraw"
       }
     ],
     "editorial_notes": [],
@@ -318,22 +318,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p5_xref92_131_201",
-        "file_path": "images/tools_storage_p5_xref92_131_201.png",
+        "image_id": "tools_storage_p5_xref108_314_613",
+        "file_path": "images/tools_storage_p5_xref108_314_613.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 5,
         "bounding_box": {
-          "x0": 131.32,
-          "y0": 201.79,
-          "x1": 470.63,
-          "y1": 567.78,
+          "x0": 314.33,
+          "y0": 613.49,
+          "x1": 474.21,
+          "y1": 799.57,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGGED\n4 Heavy-\n5\" × 1.5\" (1\nRear castors\nAL LOCKING \nM \ncurity lock with \ncombinations\nO ENDURE\n0 G"
+        "evidence": "base model RTC/27-10/4/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "A\nB\nDraw"
       }
     ],
     "editorial_notes": [],
@@ -609,7 +609,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code RTC/27-20/1/GRZ printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.7,
         "caption_or_label": "RTC/27-20/1/GRZ\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
@@ -652,22 +652,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref135_621_175",
+        "file_path": "images/tools_storage_p6_xref135_621_175.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 621.88,
+          "y0": 175.38,
+          "x1": 790.17,
+          "y1": 368.91,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27-20/1/GRZ\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -709,22 +709,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref135_621_175",
+        "file_path": "images/tools_storage_p6_xref135_621_175.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 621.88,
+          "y0": 175.38,
+          "x1": 790.17,
+          "y1": 368.91,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27-20/1/GRZ\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -766,22 +766,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref135_621_175",
+        "file_path": "images/tools_storage_p6_xref135_621_175.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 621.88,
+          "y0": 175.38,
+          "x1": 790.17,
+          "y1": 368.91,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27-20/1/GRZ\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -823,22 +823,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref139_623_520",
+        "file_path": "images/tools_storage_p6_xref139_623_520.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 623.17,
+          "y0": 520.12,
+          "x1": 793.31,
+          "y1": 720.92,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/27-20/2/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27 20/2/GRZ\n27 inch  I  5 DRAWER\nA\nB\nC"
       }
     ],
     "editorial_notes": [],
@@ -880,22 +880,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref139_623_520",
+        "file_path": "images/tools_storage_p6_xref139_623_520.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 623.17,
+          "y0": 520.12,
+          "x1": 793.31,
+          "y1": 720.92,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/2/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27 20/2/GRZ\n27 inch  I  5 DRAWER\nA\nB\nC"
       }
     ],
     "editorial_notes": [],
@@ -937,22 +937,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref139_623_520",
+        "file_path": "images/tools_storage_p6_xref139_623_520.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 623.17,
+          "y0": 520.12,
+          "x1": 793.31,
+          "y1": 720.92,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/2/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27 20/2/GRZ\n27 inch  I  5 DRAWER\nA\nB\nC"
       }
     ],
     "editorial_notes": [],
@@ -994,22 +994,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p6_xref131_132_211",
-        "file_path": "images/tools_storage_p6_xref131_132_211.png",
+        "image_id": "tools_storage_p6_xref139_623_520",
+        "file_path": "images/tools_storage_p6_xref139_623_520.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 6,
         "bounding_box": {
-          "x0": 132.12,
-          "y0": 211.35,
-          "x1": 451.11,
-          "y1": 587.35,
+          "x0": 623.17,
+          "y0": 520.12,
+          "x1": 793.31,
+          "y1": 720.92,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "G INFORMATION\nRUGG\n4 He\n5\" × \nRear ca\nRAL LOCKING \nM \ncurity lock with \ncombinations\nFU\nH\nBE\nProv\nvi"
+        "evidence": "base model RTC/27-20/2/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "RTC/27 20/2/GRZ\n27 inch  I  5 DRAWER\nA\nB\nC"
       }
     ],
     "editorial_notes": [],
@@ -1051,22 +1051,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p7_xref166_130_187",
-        "file_path": "images/tools_storage_p7_xref166_130_187.png",
+        "image_id": "tools_storage_p7_xref170_627_179",
+        "file_path": "images/tools_storage_p7_xref170_627_179.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 7,
         "bounding_box": {
-          "x0": 130.76,
-          "y0": 187.57,
-          "x1": 478.33,
-          "y1": 563.57,
+          "x0": 627.01,
+          "y0": 179.82,
+          "x1": 785.3,
+          "y1": 353.86,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUB\nRUGGED M\n4 Heavy-du\n5\" × 1.5\" (125\nRear castors w\nRAL LOCKING \nM \ncurity lock with \ncombinations"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/29-20/1/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "/\n/ /\n29 inch  I  7 DRAWER\nA\nB\nPerfo\nwith"
       }
     ],
     "editorial_notes": [],
@@ -1108,22 +1108,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p7_xref166_130_187",
-        "file_path": "images/tools_storage_p7_xref166_130_187.png",
+        "image_id": "tools_storage_p7_xref174_619_524",
+        "file_path": "images/tools_storage_p7_xref174_619_524.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 7,
         "bounding_box": {
-          "x0": 130.76,
-          "y0": 187.57,
-          "x1": 478.33,
-          "y1": 563.57,
+          "x0": 619.01,
+          "y0": 524.85,
+          "x1": 795.99,
+          "y1": 716.8,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUB\nRUGGED M\n4 Heavy-du\n5\" × 1.5\" (125\nRear castors w\nRAL LOCKING \nM \ncurity lock with \ncombinations"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/29-20/2/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "29 inch  I  7 DRAWER\nA\nB\nLockabl"
       }
     ],
     "editorial_notes": [],
@@ -1164,22 +1164,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p8_xref199_124_178",
-        "file_path": "images/tools_storage_p8_xref199_124_178.png",
+        "image_id": "tools_storage_p8_xref207_625_181",
+        "file_path": "images/tools_storage_p8_xref207_625_181.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 8,
         "bounding_box": {
-          "x0": 124.21,
-          "y0": 178.51,
-          "x1": 456.45,
-          "y1": 576.17,
+          "x0": 625.94,
+          "y0": 181.96,
+          "x1": 797.55,
+          "y1": 364.53,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "RUGG\n4 Hea\n5\" ×\nRear cas\nRAL LOCKING \nM \ncurity lock with \ncombinations\nNTI-TILT  \nFUL\nHETTICH® B\nSL"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/29-20/3/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "29 inch  I  7 DRAWER + ANTI TILT\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -1221,22 +1221,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p9_xref248_124_207",
-        "file_path": "images/tools_storage_p9_xref248_124_207.png",
+        "image_id": "tools_storage_p9_xref252_253_600",
+        "file_path": "images/tools_storage_p9_xref252_253_600.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 9,
         "bounding_box": {
-          "x0": 124.14,
-          "y0": 207.21,
-          "x1": 498.09,
-          "y1": 531.27,
+          "x0": 253.39,
+          "y0": 600.41,
+          "x1": 465.18,
+          "y1": 795.3,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "association_type": "direct_product",
+        "evidence": "product code RTC/42-20/2/GRZ printed beside the image",
         "confidence": 0.8,
-        "caption_or_label": "RUGGED MOBI\n4 Heavy-duty ca\n5\" × 2\" (125 x 50\nRear castors with b\nRAL LOCKING \nM \ncurity lock with \n"
+        "caption_or_label": "BOX\nQTY.\nt\n1\n1\nBS)\nDRAWER D\nA\nB\nC\nD\nE\nF\nG\nDRAWER\nA\nB\nC\nD\nE\nF\nG"
       }
     ],
     "editorial_notes": [],
@@ -1278,22 +1278,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p9_xref248_124_207",
-        "file_path": "images/tools_storage_p9_xref248_124_207.png",
+        "image_id": "tools_storage_p9_xref252_253_600",
+        "file_path": "images/tools_storage_p9_xref252_253_600.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 9,
         "bounding_box": {
-          "x0": 124.14,
-          "y0": 207.21,
-          "x1": 498.09,
-          "y1": 531.27,
+          "x0": 253.39,
+          "y0": 600.41,
+          "x1": 465.18,
+          "y1": 795.3,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "evidence": "base model RTC/42-20/2/GRZ printed beside the image (this is a variant)",
         "confidence": 0.8,
-        "caption_or_label": "RUGGED MOBI\n4 Heavy-duty ca\n5\" × 2\" (125 x 50\nRear castors with b\nRAL LOCKING \nM \ncurity lock with \n"
+        "caption_or_label": "BOX\nQTY.\nt\n1\n1\nBS)\nDRAWER D\nA\nB\nC\nD\nE\nF\nG\nDRAWER\nA\nB\nC\nD\nE\nF\nG"
       }
     ],
     "editorial_notes": [],
@@ -1457,8 +1457,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Rolling Tool Cabinets S20 Series (continued)”",
+        "confidence": 0.7,
         "caption_or_label": "580 KG (1278 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n105 KG (230 LBS)\nNET WE"
       }
     ],
@@ -1513,8 +1513,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Rolling Tool Cabinets S20 Series (continued)”",
+        "confidence": 0.7,
         "caption_or_label": "580 KG (1278 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n105 KG (230 LBS)\nNET WE"
       }
     ],
@@ -1680,7 +1680,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code RTCL/35-20/1/GRZ printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.7,
         "caption_or_label": "RTCL/35-20/1/GRZ\n35 inch  I  6 DRAWER\nA\nB\nC"
       }
     ],
@@ -1736,7 +1736,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code RTCL/35-20/2/GRZ printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.7,
         "caption_or_label": "RTCL/35-20/2/GRZ\n35 inch  I  5 DRAWER + front tool cabinet\nA\nB\nC\nD\nE"
       }
     ],
@@ -1778,22 +1778,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p12_xref363_113_134",
-        "file_path": "images/tools_storage_p12_xref363_113_134.png",
+        "image_id": "tools_storage_p12_xref367_622_184",
+        "file_path": "images/tools_storage_p12_xref367_622_184.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 12,
         "bounding_box": {
-          "x0": 113.71,
-          "y0": 134.36,
-          "x1": 487.59,
-          "y1": 546.45,
+          "x0": 622.6,
+          "y0": 184.71,
+          "x1": 779.65,
+          "y1": 377.4,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "S20 Series\n08\n08\nTRAL LOCKING \nTEM \nsecurity lock with \ney combinations\nERGON\nH\nFor\nmo\nFULL EXTE\nHET"
+        "association_type": "direct_product",
+        "evidence": "product code RTCL/50-20/1/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "50 inch  I  6 DRAWER + power tool cabinet\n75\n100\n150\n150\nA\nD\nE\nF\nC\nB"
       }
     ],
     "editorial_notes": [],
@@ -1835,22 +1835,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p13_xref404_594_531",
-        "file_path": "images/tools_storage_p13_xref404_594_531.png",
+        "image_id": "tools_storage_p13_xref402_624_179",
+        "file_path": "images/tools_storage_p13_xref402_624_179.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 13,
         "bounding_box": {
-          "x0": 594.27,
-          "y0": 531.81,
-          "x1": 1190.55,
-          "y1": 841.89,
+          "x0": 624.84,
+          "y0": 179.5,
+          "x1": 791.38,
+          "y1": 383.51,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "info@groz-tools.com\n25\nY\nrs \nm). \nes"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/27-30/1/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "/\n/ /\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -1892,22 +1892,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p13_xref404_594_531",
-        "file_path": "images/tools_storage_p13_xref404_594_531.png",
+        "image_id": "tools_storage_p13_xref402_624_179",
+        "file_path": "images/tools_storage_p13_xref402_624_179.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 13,
         "bounding_box": {
-          "x0": 594.27,
-          "y0": 531.81,
-          "x1": 1190.55,
-          "y1": 841.89,
+          "x0": 624.84,
+          "y0": 179.5,
+          "x1": 791.38,
+          "y1": 383.51,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "info@groz-tools.com\n25\nY\nrs \nm). \nes"
+        "evidence": "base model RTC/27-30/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "/\n/ /\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -1949,22 +1949,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p13_xref404_594_531",
-        "file_path": "images/tools_storage_p13_xref404_594_531.png",
+        "image_id": "tools_storage_p13_xref402_624_179",
+        "file_path": "images/tools_storage_p13_xref402_624_179.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 13,
         "bounding_box": {
-          "x0": 594.27,
-          "y0": 531.81,
-          "x1": 1190.55,
-          "y1": 841.89,
+          "x0": 624.84,
+          "y0": 179.5,
+          "x1": 791.38,
+          "y1": 383.51,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "info@groz-tools.com\n25\nY\nrs \nm). \nes"
+        "evidence": "base model RTC/27-30/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "/\n/ /\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -2006,22 +2006,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p13_xref404_594_531",
-        "file_path": "images/tools_storage_p13_xref404_594_531.png",
+        "image_id": "tools_storage_p13_xref402_624_179",
+        "file_path": "images/tools_storage_p13_xref402_624_179.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 13,
         "bounding_box": {
-          "x0": 594.27,
-          "y0": 531.81,
-          "x1": 1190.55,
-          "y1": 841.89,
+          "x0": 624.84,
+          "y0": 179.5,
+          "x1": 791.38,
+          "y1": 383.51,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "info@groz-tools.com\n25\nY\nrs \nm). \nes"
+        "evidence": "base model RTC/27-30/1/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "/\n/ /\n27 inch  I  7 DRAWER\nA\nB"
       }
     ],
     "editorial_notes": [],
@@ -2062,22 +2062,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p14_xref427_143_135",
-        "file_path": "images/tools_storage_p14_xref427_143_135.png",
+        "image_id": "tools_storage_p14_xref431_237_608",
+        "file_path": "images/tools_storage_p14_xref431_237_608.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 14,
         "bounding_box": {
-          "x0": 143.84,
-          "y0": 135.84,
-          "x1": 491.4,
-          "y1": 520.01,
+          "x0": 237.04,
+          "y0": 608.04,
+          "x1": 421.0,
+          "y1": 791.87,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "S30 Series\nRUGGED MOBILITY\n4 Heavy-duty castors \n5\" × 2\" (125 x 50mm). \nRear castors with brakes \nL "
+        "association_type": "direct_product",
+        "evidence": "product code RTCL/35-30/1/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "G (220 LBS)\nWEIGHT\n \nTop slide\nelectric \nA\nB\nC\nD"
       }
     ],
     "editorial_notes": [],
@@ -2171,22 +2171,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p15_xref475_-1_564",
-        "file_path": "images/tools_storage_p15_xref475_-1_564.png",
+        "image_id": "tools_storage_p15_xref473_50_171",
+        "file_path": "images/tools_storage_p15_xref473_50_171.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 15,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 564.84,
-          "x1": 596.29,
-          "y1": 841.89,
+          "x0": 50.07,
+          "y0": 171.69,
+          "x1": 203.85,
+          "y1": 407.99,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "direct_product",
         "evidence": "product code RTCL/35-30/3/GRZ printed beside the image",
-        "confidence": 1.0,
-        "caption_or_label": "28\nwww.groz-tools.com\nQ\nRTCL/35-30/3/GRZ\n75204\n1\nO\nT"
+        "confidence": 0.7,
+        "caption_or_label": "RTCL/35-30/3/GRZ\n35 inch  I  3 DRAWER + open shelf\nB\nA"
       }
     ],
     "editorial_notes": [],
@@ -2240,8 +2240,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest S10 Series”",
+        "confidence": 0.7,
         "caption_or_label": "CKING \nock with \nations\nFUL\nHE\nBEA\nProvid\nvisibility\nU\nfadin\nDURE\nge)\net\nDRAWERS WITH \nWER"
       }
     ],
@@ -2296,8 +2296,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest with Lid S20 Series”",
+        "confidence": 0.7,
         "caption_or_label": "300 KG (660 LBS)\nOVERALL LOAD CAPACITY\nBS)\nACITY\n46 KG (101 LBS)\nNET WEIGHT\n \nO ENDURE\ngauge)\nel she"
       }
     ],
@@ -2352,8 +2352,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest with Hutch S20 Series”",
+        "confidence": 0.7,
         "caption_or_label": "275 KG (600 LBS)\nOVERALL LOAD CAPACITY\nS)\nCITY\n38 KG (84 LBS)\nNET WEIGHT\n \nL LOCKING \nrity lock with"
       }
     ],
@@ -2408,8 +2408,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Tool Chest with Hutch S20 Series”",
+        "confidence": 0.7,
         "caption_or_label": "0 KG (880 LBS)\nALL LOAD CAPACITY\n60 KG (132 LBS)\nNET WEIGHT\n \nKING \nwith \nons\nFULL\nHE\nBEA\nProvide\nvi"
       }
     ],
@@ -2464,8 +2464,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest S30 Series”",
+        "confidence": 0.7,
         "caption_or_label": "WITH \nINERS\nt &\nOCKING \nock with \nnations\nF\nB\nPro\nvisib\nco\nDURE\nge)\neet\nWER\nZero"
       }
     ],
@@ -2520,8 +2520,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest with Lid S30 Series”",
+        "confidence": 0.7,
         "caption_or_label": "300 KG (660 LBS)\nOVERALL LOAD CAPACITY\nS)\nCITY\n48 KG (105 LBS)\nNET WEIGHT\n \nDRAWER\nL LOCKING \nrity l"
       }
     ],
@@ -2576,8 +2576,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “27\" Tool Chest with Hutch S30 Series”",
+        "confidence": 0.7,
         "caption_or_label": "275 KG (600 LBS)\nOVERALL LOAD CAPACITY\nS)\nCITY\n40 KG (88 LBS)\nNET WEIGHT\n \nB\nDRAWER\nL LOCKING \nrity "
       }
     ],
@@ -2632,8 +2632,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Tool Chest with Hutch S30 Series”",
+        "confidence": 0.7,
         "caption_or_label": "400 KG (880 LBS)\nVERALL LOAD CAPACITY\n63 KG (138 LBS)\nNET WEIGHT\n \nCENT\nHigh-\n400 k\nFU\nH\nBE\nProv\nvis"
       }
     ],
@@ -2687,8 +2687,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “20\" Tool Box Japanese Style”",
+        "confidence": 0.7,
         "caption_or_label": "50 KG (110 LBS)\nOVERALL LOAD CAPACITY\n12 KG (26 LBS)\nNET WEIGHT\n \nOCKING \nlock with \ninations\nFULL E"
       }
     ],
@@ -2834,22 +2834,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p20_xref669_754_180",
-        "file_path": "images/tools_storage_p20_xref669_754_180.png",
+        "image_id": "tools_storage_p20_xref689_769_450",
+        "file_path": "images/tools_storage_p20_xref689_769_450.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 20,
         "bounding_box": {
-          "x0": 754.69,
-          "y0": 180.87,
-          "x1": 1051.8,
-          "y1": 400.87,
+          "x0": 769.92,
+          "y0": 450.18,
+          "x1": 887.62,
+          "y1": 554.87,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "H\nSECU\nBuilt\nprovisio\nE\nFUL\nCA\nQuick & e\nto all s"
+        "association_type": "direct_product",
+        "evidence": "product code MTB/3L printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "BS)"
       }
     ],
     "editorial_notes": [],
@@ -2888,22 +2888,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p20_xref669_754_180",
-        "file_path": "images/tools_storage_p20_xref669_754_180.png",
+        "image_id": "tools_storage_p20_xref693_750_626",
+        "file_path": "images/tools_storage_p20_xref693_750_626.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 20,
         "bounding_box": {
-          "x0": 754.69,
-          "y0": 180.87,
-          "x1": 1051.8,
-          "y1": 400.87,
+          "x0": 750.79,
+          "y0": 626.87,
+          "x1": 904.15,
+          "y1": 721.24,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "H\nSECU\nBuilt\nprovisio\nE\nFUL\nCA\nQuick & e\nto all s"
+        "association_type": "direct_product",
+        "evidence": "product code MTB/5L printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "BOX\nQTY.\nATION\nKG (12.5 LBS)\nT WEIGHT"
       }
     ],
     "editorial_notes": [],
@@ -2957,8 +2957,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3013,8 +3013,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3069,8 +3069,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3125,8 +3125,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3181,8 +3181,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3237,8 +3237,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3293,8 +3293,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “11\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "NDURE\ned from \ngauge) \nwder \n finish\nRAGE   \nment \nopens \nFULL EXT\nHETTIC\nBEARING\nProvide com\nvisibi"
       }
     ],
@@ -3458,8 +3458,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “11\" Mini Tool Box Set Stackable”",
+        "confidence": 0.7,
         "caption_or_label": "15 KG (33 LBS)\nOVERALL LOAD CAPACITY\n5 KG (11 LBS)\nNET WEIGHT\n \nf 2\nNETIC\nENDS\nidental \nslips\nBUILT\n"
       }
     ],
@@ -3513,8 +3513,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “11\" Mini Tool Box Set Stackable”",
+        "confidence": 0.7,
         "caption_or_label": "15 KG (33 LBS)\nOVERALL LOAD CAPACITY\n5 KG (11 LBS)\nNET WEIGHT\n \nf 2\nNETIC\nENDS\nidental \nslips\nBUILT\n"
       }
     ],
@@ -3568,8 +3568,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “11\" Mini Tool Box Lockable”",
+        "confidence": 0.7,
         "caption_or_label": "BUILT\nMan\n0.60\nste\ncoa\nS\nSecu\nwith \nAGE   \nment \npens \nFULL\nHE\nBEA\nProvid\nvisibility \npact\nNETIC\nEND"
       }
     ],
@@ -3623,8 +3623,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “11\" Mini Tool Box Lockable”",
+        "confidence": 0.7,
         "caption_or_label": "BUILT\nMan\n0.60\nste\ncoa\nS\nSecu\nwith \nAGE   \nment \npens \nFULL\nHE\nBEA\nProvid\nvisibility \npact\nNETIC\nEND"
       }
     ],
@@ -3678,8 +3678,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “14\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "BUILT TO\nManufa\n0.60 mm\nsteel w\ncoated\nTORAGE   \npartment \nhat opens \nFULL EX\nHETT\nBEARIN\nProvide co"
       }
     ],
@@ -3742,8 +3742,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “14\" Mini Tool Box with Lid”",
+        "confidence": 0.7,
         "caption_or_label": "BUILT TO\nManufa\n0.60 mm\nsteel w\ncoated\nTORAGE   \npartment \nhat opens \nFULL EX\nHETT\nBEARIN\nProvide co"
       }
     ],
@@ -3806,8 +3806,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “14\" Mini Tool Box Extra Deep”",
+        "confidence": 0.7,
         "caption_or_label": "I  4 drawer\nMAGNETIC\nBUILT T\nManufa\n0.60 mm\nsteel \ncoated\nSTORAGE   \nmpartment \nd that opens \nFULL E"
       }
     ],
@@ -3861,8 +3861,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “14\" Mini Tool Box with Lid Extra Deep”",
+        "confidence": 0.7,
         "caption_or_label": "60 KG (130 LBS)\nOVERALL LOAD CAPACITY\n)\nCITY\n9.5 KG (21 LBS)\nNET WEIGHT\n \ndrawer with lid\nAGNETIC\nER"
       }
     ],
@@ -3903,22 +3903,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p25_xref868_157_147",
-        "file_path": "images/tools_storage_p25_xref868_157_147.png",
+        "image_id": "tools_storage_p25_xref872_43_534",
+        "file_path": "images/tools_storage_p25_xref872_43_534.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 25,
         "bounding_box": {
-          "x0": 157.61,
-          "y0": 147.02,
-          "x1": 449.88,
-          "y1": 479.02,
+          "x0": 43.34,
+          "y0": 534.73,
+          "x1": 207.05,
+          "y1": 720.57,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "1/GRZ\nER + 1 open shelf\nRUGG\n4 He\n4\" × \nRear ca\nU\nIndustri\nr\n**FU\nH\nBE\nProv\nvisibilit\nURE\n)\net\nELF W"
+        "association_type": "direct_product",
+        "evidence": "product code SRC/30-20/1/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "30 inch  I  1 DRAWER + 1 open shelf\nORDERING INFORMATION \nCAT\nORD\nBOX"
       }
     ],
     "editorial_notes": [],
@@ -3970,7 +3970,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code SRC/30-20/2/GRZ printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.7,
         "caption_or_label": "SRC/30-20/2/GRZ\n30 inch  I  2 open shelves\nORDERING INFORMATION \nCAT\nORD\nBOX"
       }
     ],
@@ -4005,7 +4005,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -4021,9 +4021,9 @@
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.7,
+        "association_type": "direct_product",
+        "evidence": "product code SRC/30-20/3/GRZ printed beside the image",
+        "confidence": 1.0,
         "caption_or_label": "/\n/ /\n30 inch  I  3 open shelves\nORDERING INFORMATION"
       }
     ],
@@ -4058,26 +4058,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p26_xref911_619_542",
-        "file_path": "images/tools_storage_p26_xref911_619_542.png",
+        "image_id": "tools_storage_p26_xref907_623_193",
+        "file_path": "images/tools_storage_p26_xref907_623_193.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 26,
         "bounding_box": {
-          "x0": 619.68,
-          "y0": 542.8,
-          "x1": 848.6,
-          "y1": 681.53,
+          "x0": 623.18,
+          "y0": 193.58,
+          "x1": 809.88,
+          "y1": 333.21,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "direct_product",
+        "evidence": "product code WBN/60-20/1/GRZ printed beside the image",
         "confidence": 0.7,
-        "caption_or_label": "79 inch  I 3 drawer"
+        "caption_or_label": "60 inch"
       }
     ],
     "editorial_notes": [],
@@ -4112,7 +4112,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -4128,9 +4128,9 @@
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.7,
+        "association_type": "direct_product",
+        "evidence": "product code WBN/79-20/2/GRZ printed beside the image",
+        "confidence": 1.0,
         "caption_or_label": "79 inch  I 3 drawer"
       }
     ],
@@ -4166,22 +4166,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p27_xref916_35_179",
-        "file_path": "images/tools_storage_p27_xref916_35_179.png",
+        "image_id": "tools_storage_p27_xref1093_767_137",
+        "file_path": "images/tools_storage_p27_xref1093_767_137.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 27,
         "bounding_box": {
-          "x0": 35.15,
-          "y0": 179.85,
-          "x1": 559.46,
-          "y1": 542.67,
+          "x0": 767.16,
+          "y0": 137.72,
+          "x1": 1086.23,
+          "y1": 455.88,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "COMPLETE TOOL SETS BUILT INTO THE CART\nREADY-TO-USE SETS"
+        "evidence": "the only picture printed directly above this product's table, under the title “Automotive Tool Kit 65 Piece”",
+        "confidence": 0.7,
+        "caption_or_label": "s in a 7 Drawer \nC/27-10D/1/GRZ) \nganized layout, \nnd tools \nnd service work \nTools \nsupplied \nwith "
       }
     ],
     "editorial_notes": [],
@@ -4229,8 +4229,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 90 Piece”",
+        "confidence": 0.7,
         "caption_or_label": "0 Piece\ns in a 7 Drawer \n/27-10D/1/GRZ)  \nganized layout, \nnd tools \nnd service work \nTools \nsupplie"
       }
     ],
@@ -4279,8 +4279,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 148 Piece”",
+        "confidence": 0.7,
         "caption_or_label": "n a 7 Drawer \nnized layout, \ntools \nservice work \n148\nPieces\nPiece\nTools \nsupplied \nwith \ntrolley"
       }
     ],
@@ -4329,8 +4329,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 170 Pieces”",
+        "confidence": 0.7,
         "caption_or_label": "TOOL TROLLEY\nSIZE\n17\nPie\ner \nt, \nrk \nTools \nsupplied \nwith \ntrolley\nes"
       }
     ],
@@ -4379,8 +4379,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 211 Pieces”",
+        "confidence": 0.7,
         "caption_or_label": "Tools \nsupplied \nwith \ntrolley\nLLEY\nSIZE\n1.5, 2, 2.5, 3, 4, 5, 6, 8, 10 mm\n2\nPie\nTool Kit"
       }
     ],
@@ -4429,8 +4429,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 235 Pieces”",
+        "confidence": 0.7,
         "caption_or_label": "a 7 Drawer \n0/1/GRZ)  \nzed layout, \nools \nervice work \nTools \nsupplied \nwith \ntrolley\n23\nPiece"
       }
     ],
@@ -4479,8 +4479,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 243 Pieces”",
+        "confidence": 0.7,
         "caption_or_label": "EY\nSIZE\n1.5, 2, 2.5, 3, 4, 5, 6, 8, 10 mm\n24\nPie\nTool Kit\nTools \nsupplied \nwith \ntrolley"
       }
     ],
@@ -4529,8 +4529,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed in its section, under the title “Automotive Tool Kit 255 Pieces”",
+        "confidence": 0.7,
         "caption_or_label": "GRZ)  \nlayout, \nce work \n255\nPieces\nTools \nsupplied \nwith \ntrolley"
       }
     ],
@@ -4580,22 +4580,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p5_xref3326_-1_92",
-        "file_path": "images/groz_lighting_gl_10_1_p5_xref3326_-1_92.png",
+        "image_id": "groz_lighting_gl_10_1_p5_xref3323_860_245",
+        "file_path": "images/groz_lighting_gl_10_1_p5_xref3323_860_245.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 5,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 92.2,
-          "x1": 596.31,
-          "y1": 841.89,
+          "x0": 860.2,
+          "y0": 245.37,
+          "x1": 1119.19,
+          "y1": 426.99,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "WORKLIGHTS\nRe\nsp\nLig\nM\n& \nPo\nSu\nra\nCo\nth\nco\nSt\na.\n\t\nb.\t\nVe\na.\t\nb.\t\nc.\t\nCh\nRe\nth\nCh\nRe\npo\nO"
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Worklight Bluetooth Speaker”",
+        "confidence": 0.7,
+        "caption_or_label": "t \n20%\n200\n10 hours\nk\ns \n10W Powerful \nCOB light"
       }
     ],
     "editorial_notes": [],
@@ -5004,8 +5004,8 @@
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "image labelled with LED-680T and other product codes (LED-680)",
+        "association_type": "direct_product",
+        "evidence": "product code LED-680T printed beside the image",
         "confidence": 1.0,
         "caption_or_label": "0.7m - 1.7m\n(27-1/2\" - 67\")\nLED-680T\nFloodlight \ncomplete with\ntripod\nLED-680\nFloodlight"
       }
@@ -5213,8 +5213,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Sitelamp 360° Swivel”",
+        "confidence": 0.7,
         "caption_or_label": "360°\nRotation"
       }
     ],
@@ -5279,8 +5279,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Worklight Cable Reel”",
+        "confidence": 0.7,
         "caption_or_label": "lt-in \nd effects \nection\ne cast \ne lens \nte \nable \nble \nnect \nigher \nh \nrface \nets at \nSwive"
       }
     ],
@@ -5354,8 +5354,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Worklight Cable Reel”",
+        "confidence": 0.7,
         "caption_or_label": "lt-in \nd effects \nection\ne cast \ne lens \nte \nable \nble \nnect \nigher \nh \nrface \nets at \nSwive"
       }
     ],
@@ -5424,8 +5424,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Site Lamp AC Powered”",
+        "confidence": 0.7,
         "caption_or_label": "IP65"
       }
     ],
@@ -5485,8 +5485,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Site Lamp AC Powered”",
+        "confidence": 0.7,
         "caption_or_label": "IP65"
       }
     ],
@@ -5670,8 +5670,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Foldable Worklight AC Powered”",
+        "confidence": 0.7,
         "caption_or_label": "6\nM\nH\nW\na\n\t\nb\nc\nd\nI\nI\nm\nve ergonomic design for \ning the darkest of areas. Easy \nor instant illumina"
       }
     ],
@@ -5742,8 +5742,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Foldable Worklight AC Powered”",
+        "confidence": 0.7,
         "caption_or_label": "6\nM\nH\nW\na\n\t\nb\nc\nd\nI\nI\nm\nve ergonomic design for \ning the darkest of areas. Easy \nor instant illumina"
       }
     ],
@@ -5813,8 +5813,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Worklight 270° Swivelling with Magnetic Base”",
+        "confidence": 0.7,
         "caption_or_label": null
       }
     ],
@@ -5875,8 +5875,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Worklight 270° Swivelling”",
+        "confidence": 0.7,
         "caption_or_label": "270°\nRotation\n60˚"
       }
     ],
@@ -5935,8 +5935,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Worklight DC Powered”",
+        "confidence": 0.7,
         "caption_or_label": "Cigarette plug \nadaptor"
       }
     ],
@@ -5994,7 +5994,7 @@
         },
         "association_type": "direct_product",
         "evidence": "product code LED/385 printed beside the image",
-        "confidence": 1.0,
+        "confidence": 0.8,
         "caption_or_label": "ndless applications; \ndoors \ngh quality and \neparately or both \nd illumination\nontrolled output\nn bo"
       }
     ],
@@ -6115,8 +6115,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Slim Worklight 360° Swivel”",
+        "confidence": 0.7,
         "caption_or_label": "LIGHT!\n4\n07\nHs"
       }
     ],
@@ -6177,8 +6177,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Worklight 360° Rotating Hook”",
+        "confidence": 0.7,
         "caption_or_label": "3W LED \ntop torch\n3W COB \nmain light\nand"
       }
     ],
@@ -6418,22 +6418,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p19_xref4276_314_184",
-        "file_path": "images/groz_lighting_gl_10_1_p19_xref4276_314_184.png",
+        "image_id": "groz_lighting_gl_10_1_p19_xref4286_620_195",
+        "file_path": "images/groz_lighting_gl_10_1_p19_xref4286_620_195.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 19,
         "bounding_box": {
-          "x0": 314.61,
-          "y0": 184.3,
-          "x1": 505.43,
-          "y1": 610.73,
+          "x0": 620.38,
+          "y0": 195.93,
+          "x1": 761.94,
+          "y1": 612.7,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "10W COB \nmain light\n3W LED top \ntorch\nSwivel\nMagne\nStand\n180°"
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Worklight Intensity Control & Battery Display”",
+        "confidence": 0.7,
+        "caption_or_label": "LCD disp\nshow b\nperce\nAlum\nfins \nligh\nb"
       }
     ],
     "editorial_notes": [],
@@ -6540,22 +6540,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p21_xref4376_325_235",
-        "file_path": "images/groz_lighting_gl_10_1_p21_xref4376_325_235.png",
+        "image_id": "groz_lighting_gl_10_1_p21_xref4404_631_241",
+        "file_path": "images/groz_lighting_gl_10_1_p21_xref4404_631_241.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 21,
         "bounding_box": {
-          "x0": 325.54,
-          "y0": 235.53,
-          "x1": 519.2,
-          "y1": 578.11,
+          "x0": 631.07,
+          "y0": 241.92,
+          "x1": 795.08,
+          "y1": 583.43,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "10W COB\nMain Ligh\n3W LED top torch\nSwivelling \nMagnetic \nStand\n180°"
+        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Worklight Intensity Control & Bluetooth Speaker”",
+        "confidence": 0.7,
+        "caption_or_label": "Real time\nLumens a\nPo\nInten"
       }
     ],
     "editorial_notes": [],
@@ -6617,8 +6617,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Folding Worklight”",
+        "confidence": 0.7,
         "caption_or_label": "dable design for difficult \nkspaces\nh with Magnetic pick-up\nuser controlled output.\nworklight and sp"
       }
     ],
@@ -6681,8 +6681,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Inspection Light Flexible”",
+        "confidence": 0.7,
         "caption_or_label": "Intensity\ncontrol knob\nDual head \nworklight \n5W COB on \neach side\nHook\nIP54\nIK07\nRoHs"
       }
     ],
@@ -6740,8 +6740,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Inspection Lamp Unbreakable”",
+        "confidence": 0.7,
         "caption_or_label": "LED 345\nStrong magnet \nattaches to most \nmetal surfaces\nRotating hook\nwith ratchet\nmovement adjusts\n"
       }
     ],
@@ -6800,8 +6800,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Worklight Jump Starter”",
+        "confidence": 0.7,
         "caption_or_label": "er!\nbright and \nRESS\n3RD PRESS\nENSITY\nHIGH INTENSITY\n0\n700\nrs\n4 hrs\nect engine oil \nge etc.\ne light "
       }
     ],
@@ -6863,7 +6863,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Underhood Light Magnetic Ends”",
         "confidence": 0.7,
         "caption_or_label": "rhood \nger\nght \nSS\n180°\n360°"
       }
@@ -6926,8 +6926,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Underhood Light Expandable”",
+        "confidence": 0.7,
         "caption_or_label": "S\nb i h\nd\nh\nd li h f\nrf l ill\ni\ni\n1000\n48M / 157'\n4.5 HRS\nExpandable Length\n1.2m -1.76m (47\"-69\")\n7 "
       }
     ],
@@ -7041,9 +7041,9 @@
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "direct_product",
-        "evidence": "product code LED-150 printed beside the image",
-        "confidence": 1.0,
+        "association_type": "product_family",
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Flashlight Rechargeable”",
+        "confidence": 0.7,
         "caption_or_label": "Rotating \nhook \nadjusts to \ndifferent \nangles\nSwivelling \nmagnetic \nbase\nUSB \ncharge \nport \nPocket\nH"
       }
     ],
@@ -7101,7 +7101,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Flashlight High Power”",
         "confidence": 0.7,
         "caption_or_label": "Alumini\nalloy bo\n5W SMD lig"
       }
@@ -7160,8 +7160,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Penlight”",
+        "confidence": 0.7,
         "caption_or_label": "1W \ntop to\n3W COB m\nl\nH"
       }
     ],
@@ -7284,8 +7284,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Penlight Pivoting head”",
+        "confidence": 0.7,
         "caption_or_label": "Anti-slip \ngrip\nPocket clip\nUnique L-head \npivots 90°\nRS\nintensity\nSCAN TO \nWATCH"
       }
     ],
@@ -7407,7 +7407,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "evidence": "the only picture printed directly above this product's table, under the title “Flashlight Pivoting Head, UV & Laser”",
         "confidence": 0.7,
         "caption_or_label": "SCAN TO\nWATCH\nAnti-\nUnique \np"
       }
@@ -7464,7 +7464,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Flashlight Pivoting Head, UV & Laser”",
         "confidence": 0.7,
         "caption_or_label": "SCAN TO\nWATCH"
       }
@@ -7527,8 +7527,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Pen Light UV and Laser”",
+        "confidence": 0.7,
         "caption_or_label": "L\n5W COB m\nLase\nPocket clip with\nLED battery \nwith e\nindica\n3W LED \nspotlight\nR"
       }
     ],
@@ -7593,8 +7593,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Spotlight Waterproof”",
+        "confidence": 0.7,
         "caption_or_label": "4TH\nPRESS & HOLD\nRED \nFLASHING\nTrigger \nlock\nTrigger\nWhistle\n70˚\nM / 1312'\nIP67\nRoHs"
       }
     ],
@@ -7642,22 +7642,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p32_xref5062_632_461",
-        "file_path": "images/groz_lighting_gl_10_1_p32_xref5062_632_461.png",
+        "image_id": "groz_lighting_gl_10_1_p32_xref5013_334_116",
+        "file_path": "images/groz_lighting_gl_10_1_p32_xref5013_334_116.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 32,
         "bounding_box": {
-          "x0": 632.32,
-          "y0": 461.5,
-          "x1": 912.82,
-          "y1": 735.6,
+          "x0": 334.55,
+          "y0": 116.89,
+          "x1": 515.21,
+          "y1": 662.73,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "Pen Clip\nLED-132\nLi-Ion\n2.5 HRS"
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Pick-Up Light Telescopic”",
+        "confidence": 0.7,
+        "caption_or_label": "Built-in \nmagnet for \neasy picking \nup of light \nmetallic \nparts\nto \nust focus\nOn/ Off \nButton\nPen c"
       }
     ],
     "editorial_notes": [],
@@ -7704,22 +7704,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p32_xref5062_632_461",
-        "file_path": "images/groz_lighting_gl_10_1_p32_xref5062_632_461.png",
+        "image_id": "groz_lighting_gl_10_1_p32_xref5013_334_116",
+        "file_path": "images/groz_lighting_gl_10_1_p32_xref5013_334_116.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 32,
         "bounding_box": {
-          "x0": 632.32,
-          "y0": 461.5,
-          "x1": 912.82,
-          "y1": 735.6,
+          "x0": 334.55,
+          "y0": 116.89,
+          "x1": 515.21,
+          "y1": 662.73,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "Pen Clip\nLED-132\nLi-Ion\n2.5 HRS"
+        "evidence": "the only picture not labelled for another product printed directly above this product's table, under the title “Pick-Up Light Telescopic”",
+        "confidence": 0.7,
+        "caption_or_label": "Built-in \nmagnet for \neasy picking \nup of light \nmetallic \nparts\nto \nust focus\nOn/ Off \nButton\nPen c"
       }
     ],
     "editorial_notes": [],
@@ -7764,22 +7764,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p33_xref5067_-1_95",
-        "file_path": "images/groz_lighting_gl_10_1_p33_xref5067_-1_95.png",
+        "image_id": "groz_lighting_gl_10_1_p33_xref5092_852_177",
+        "file_path": "images/groz_lighting_gl_10_1_p33_xref5092_852_177.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 33,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 95.34,
-          "x1": 596.28,
-          "y1": 841.89,
+          "x0": 852.22,
+          "y0": 177.88,
+          "x1": 1169.93,
+          "y1": 375.56,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "III\nHEADLAMPS\nO\nDU\nHi\nex\nIn\nLig\nus\nLig\nPo\nba\nL\nR\nRo\na.\n\t\nb.\t\nc.\t\nUn\nHe\nfre\nHa\nSu\nth\nle"
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Rechargeable Headlamp 5W LED”",
+        "confidence": 0.7,
+        "caption_or_label": "ESS \nLD\n5TH  \nPRESS\nCK \nNG\nSOS\nFLASHING\nIP54\nIK07\nRoHs\nNEW!"
       }
     ],
     "editorial_notes": [],
@@ -7841,8 +7841,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Headlamp Rechargeable With Hand Sensor”",
+        "confidence": 0.7,
         "caption_or_label": "SENSOR\nMODE\nPRESS &\nHOLD\nHigh\nIntensity\n150\n4 hours\nHands Free Sensor:\nWave to activate/\ndeactivate "
       }
     ],
@@ -7901,8 +7901,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Headlamp Dual Mode & Hand Sensor”",
+        "confidence": 0.7,
         "caption_or_label": "TH \nESS\n+COB\nINATION\nGH \nNSITY\n00\nhours\n4W LED Spotlight\n3W COB Floodlight\nHands Free Sensor:\nActiva"
       }
     ],
@@ -7959,8 +7959,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Headlamp Dual Mode”",
+        "confidence": 0.7,
         "caption_or_label": "1W LED light\n3W COB \nlight\n45°\nRotation\nCOB LIGHT \n120°"
       }
     ],
@@ -8066,22 +8066,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p36_xref5180_-1_93",
-        "file_path": "images/groz_lighting_gl_10_1_p36_xref5180_-1_93.png",
+        "image_id": "groz_lighting_gl_10_1_p36_xref5190_865_217",
+        "file_path": "images/groz_lighting_gl_10_1_p36_xref5190_865_217.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 36,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 93.97,
-          "x1": 595.79,
-          "y1": 841.89,
+          "x0": 865.28,
+          "y0": 217.73,
+          "x1": 1107.43,
+          "y1": 507.46,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "FLOODLIGHTS\n12\n4 \nLig\nHi\nsp\nm\nW\na.\n\t\nb.\nc.\t\nd.\nCo\nco\nId\nUs\neq\nse\nO\nPO"
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 12W”",
+        "confidence": 0.7,
+        "caption_or_label": "Stainless steel \nbracket\nDie cast \naluminium\nhousing\nPolycarbonate \nlens\nIP67\nRoHs"
       }
     ],
     "editorial_notes": [],
@@ -8140,8 +8140,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 15W”",
+        "confidence": 0.7,
         "caption_or_label": "o\nStainless steel \nbracket\nDie cast \naluminium \nhousing\nPolycarbonate \nlens\n˚\nIP67\nRoHs"
       }
     ],
@@ -8201,8 +8201,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 15W”",
+        "confidence": 0.7,
         "caption_or_label": "o\nStainless steel \nbracket\nDie cast \naluminium \nhousing\nPolycarbonate \nlens\n˚\nIP67\nRoHs"
       }
     ],
@@ -8262,8 +8262,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Floodlight 15W Compact”",
+        "confidence": 0.7,
         "caption_or_label": "Stainless \nsteel bracket\nDie cast \naluminium \nhousing\nPolycarbonate \nlens\nIP67\nRoHs"
       }
     ],
@@ -8324,8 +8324,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 15W Supercool”",
+        "confidence": 0.7,
         "caption_or_label": "Moisture & \ndust proof \nrubber \nsealing \nPolycarbonate \nlens\nStainless steel \nbracket\nIP67"
       }
     ],
@@ -8386,8 +8386,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 18W Supercool”",
+        "confidence": 0.7,
         "caption_or_label": "Polycarbonate \nlens\ny f\nul \nup \ncts \nr\nm \nte \neel \ner \nMoisture & \ndust proof \nrubber \nsealing \nStai"
       }
     ],
@@ -8447,8 +8447,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 27W”",
+        "confidence": 0.7,
         "caption_or_label": "Stainless stee\nbracke\nDie cast\naluminium\nhousing\nPolycarbonate\nlen\nIP67\nRoHs"
       }
     ],
@@ -8509,8 +8509,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Floodlight 30W”",
+        "confidence": 0.7,
         "caption_or_label": "Die cast \naluminium\numen with \n0° over a \nnd effects \n1 meter\nnium die \nmium \ns to \nf job site \ness "
       }
     ],
@@ -8570,8 +8570,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 45W”",
+        "confidence": 0.7,
         "caption_or_label": "for \nth \na \ncts \nr\nm \ne \nel \ner \nStainless \nsteel bracket\nDie cast \naluminium \nhousing\nPolycarbonate"
       }
     ],
@@ -8632,8 +8632,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Floodlight 48W”",
+        "confidence": 0.7,
         "caption_or_label": "e \ns \nalu\nPolycar\nStainle\n0˚\nIP\nRo"
       }
     ],
@@ -8677,22 +8677,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p41_xref5417_-1_93",
-        "file_path": "images/groz_lighting_gl_10_1_p41_xref5417_-1_93.png",
+        "image_id": "groz_lighting_gl_10_1_p41_xref5440_823_210",
+        "file_path": "images/groz_lighting_gl_10_1_p41_xref5440_823_210.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 41,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 93.09,
-          "x1": 596.31,
-          "y1": 841.89,
+          "x0": 823.56,
+          "y0": 210.68,
+          "x1": 1132.08,
+          "y1": 448.24,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "V\nSCAN TO \nWATCH\nLIGHT BARS\n36\n12 \nLig\nHi\nCo\nFlo\npo\nco\nillu\nlig\nsu\nW\na.\n\t\nb.\nc.\t\nCo\npo\nId\nUs\nto\neq\nm"
+        "evidence": "the only picture printed directly above this product's table, under the title “Light Bar 36W”",
+        "confidence": 0.7,
+        "caption_or_label": "COMBINATION BEAM\n270°\nRotation\nFLOODLIGHT\nIP67\nRoHs"
       }
     ],
     "editorial_notes": [],
@@ -8747,8 +8747,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Light Bar 72W”",
+        "confidence": 0.7,
         "caption_or_label": "270°\nRotation\nCOMBINATION BEAM\nFLOODLIGHT\nIP67\nRoHs"
       }
     ],
@@ -8804,8 +8804,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
+        "evidence": "the only picture printed directly above this product's table, under the title “Light Bar 120W”",
+        "confidence": 0.7,
         "caption_or_label": "FLOODLIGHT\nSPOTLIGHT\nFLOODLIGHT\neach\n8400 lumen \none; \n& \not \nor \ndistances & \neas bright \nction\nust"
       }
     ],

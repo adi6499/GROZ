@@ -76,12 +76,15 @@
    "text:description"
   ],
   "tools_storage.pdf|5|RTC/27-10/4A/GRZ|75036": [
+   "image",
    "text:description"
   ],
   "tools_storage.pdf|5|RTC/27-10/4B/GRZ|75037": [
+   "image",
    "text:description"
   ],
   "tools_storage.pdf|5|RTC/27-10/4C/GRZ|75038": [
+   "image",
    "text:description"
   ],
   "tools_storage.pdf|5|RTC/27-10/3/GRZ|75002": [
@@ -102,13 +105,16 @@
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/1A/GRZ|75011": [
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/1B/GRZ|75012": [
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/1C/GRZ|75013": [
    "spec:no_of_drawers",
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/2/GRZ|75004": [
@@ -118,14 +124,17 @@
   ],
   "tools_storage.pdf|6|RTC/27-20/2A/GRZ|75014": [
    "spec:net_weight",
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/2B/GRZ|75015": [
    "spec:net_weight",
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|6|RTC/27-20/2C/GRZ|75016": [
    "spec:net_weight",
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|7|RTC/29-20/1/GRZ|75006": [
@@ -142,6 +151,9 @@
    "text:description/sub_title"
   ],
   "tools_storage.pdf|9|RTC/42-20/2/GRZ|75009": [
+   "image"
+  ],
+  "tools_storage.pdf|9|RTC/42-20/2B/GRZ|75030": [
    "image"
   ],
   "tools_storage.pdf|9|RTC/42-20/1/GRZ|75008": [
@@ -182,12 +194,15 @@
    "text:description/sub_title"
   ],
   "tools_storage.pdf|13|RTC/27-30/1A/GRZ|75017": [
+   "image",
    "text:description/sub_title"
   ],
   "tools_storage.pdf|13|RTC/27-30/1B/GRZ|75018": [
+   "image",
    "text:description/sub_title"
   ],
   "tools_storage.pdf|13|RTC/27-30/1C/GRZ|75019": [
+   "image",
    "text:description/sub_title"
   ],
   "tools_storage.pdf|14|RTCL/35-30/1/GRZ|75201": [
@@ -752,44 +767,34 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-824X|62205": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-830X|62206": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-836X|62207": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1030X|62208": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1036X|62209": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1230X|62210": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1236X|62211": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1430X|62212": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-1436X|62213": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH-2036X|62217": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ECH-212X|62280": [
@@ -817,33 +822,43 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-824X|62235": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-830X|62236": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-836X|62237": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1030X|62238": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1036X|62239": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1230X|62240": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1236X|62241": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1430X|62242": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-1436X|62243": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|4|ESH/SF-2036X|62247": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|5|ESH-412X/CU|62270": [
@@ -911,23 +926,18 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESH-836F|62403": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESH-1036F|62404": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESH-1236F|62405": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESH-1436F|62406": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESH-1636F|62407": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|7|ESHD-836F|62335": [
@@ -971,60 +981,79 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-416W|62301": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-630W|62302": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-636W|62303": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-830W|62304": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-836W|62305": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-1036W|62306": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-1236W|62307": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-1436W|62308": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH-1636W|62309": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-216W|62320": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-416W|62321": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-630W|62322": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-636W|62323": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-830W|62324": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-836W|62325": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-1036W|62326": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-1236W|62327": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-1436W|62328": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|9|ESH/SF-1636W|62329": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|10|EDH-211W|62317": [
@@ -1036,11 +1065,9 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|10|EBH-214W|62315": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|10|EBH-414W|62314": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|10|EEH-214W|62312": [
@@ -1084,12 +1111,10 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|12|EML-636W|62443": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|12|EML-836W|62444": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|12|EAX-114W|62370": [
@@ -1105,7 +1130,6 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|12|EAX-436F|62441": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|12|EAX/SPR|62385": [
@@ -1113,7 +1137,6 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|13|EAX-114X|62380": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|13|EAX-114X/SPR|62381": [
@@ -1129,25 +1152,34 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|14|EMT/P-536F|62560": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|14|EMT/P-2|62581": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|14|EMT/P-5|62580": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|14|EMT/R-536F|62562": [
+   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|14|EMT/R-5|62582": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
+  "Estwing_Hammer_E-03_Interactive_1.pdf|15|EMT/C-536F|62563": [
+   "image"
+  ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|15|EMT/C-5|62583": [
-   "box_qty"
+   "box_qty",
+   "image"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|15|EPAX-336F|None": [
    "box_qty",
@@ -1162,20 +1194,17 @@
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|EPB-16|62451": [
    "box_qty",
    "spec:length",
-   "spec:overall_length",
-   "image"
+   "spec:overall_length"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|EPB-18|62456": [
    "box_qty",
    "spec:length",
-   "spec:overall_length",
-   "image"
+   "spec:overall_length"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|EPB-20|62452": [
    "box_qty",
    "spec:length",
-   "spec:overall_length",
-   "image"
+   "spec:overall_length"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|ESAB-72|62460": [
    "box_qty",
@@ -1199,14 +1228,12 @@
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|ECB-30|62472": [
    "box_qty",
    "spec:length",
-   "spec:overall_length",
-   "image"
+   "spec:overall_length"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|ECB-36|62473": [
    "box_qty",
    "spec:length",
-   "spec:overall_length",
-   "image"
+   "spec:overall_length"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|EPHD-69|62461": [
    "box_qty",
@@ -1258,7 +1285,6 @@
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|18|EWBR/16|62455": [
-   "image",
    "text:sub_title"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|18|ETM/0808S|62490": [
@@ -1340,6 +1366,7 @@
   ],
   "Precision_Catalogue_CA_03.pdf|7|SS/A/2-3-4-6/ST|01011": [
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|7|SS/A/2-4-6/ST|01012": [
@@ -1465,9 +1492,11 @@
   "Precision_Catalogue_CA_03.pdf|10|ID/OD/DD/6/ST|01495": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|11|FLG/13/100|01251": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|11|FLG/13A/100|01252": [
@@ -1487,9 +1516,11 @@
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|12|RDG/16/7.5-15|01261": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|12|RDG/15/15.5-25|01262": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|13|DP/6|01220": [
@@ -1531,7 +1562,6 @@
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|15|BG/1-15|01200": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|15|CS/1|03521": [
@@ -1561,27 +1591,21 @@
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/0-1|16112": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/1-2|16113": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/2-3|16114": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/3-4|16115": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/4-5|16116": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|17|MM/5-6|16117": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|19|MMED/1|16122": [
@@ -1591,6 +1615,7 @@
   ],
   "Precision_Catalogue_CA_03.pdf|19|MMED/2|16123": [
    "spec:ip_rating",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|19|MMED/1/65|16124": [
@@ -1605,9 +1630,11 @@
   ],
   "Precision_Catalogue_CA_03.pdf|20|EDC/8|16024": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|20|EDC/12|16025": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|20|EDC/6/67|16026": [
@@ -1673,6 +1700,7 @@
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|24|DTI/40M|16240": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|24|DTI/100M|16241": [
@@ -1717,7 +1745,6 @@
   "Precision_Catalogue_CA_03.pdf|29|EF/EC/1-2/0.2|03540": [
    "spec:beam_angle",
    "spec:overall_length",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|30|EF/2D/1-2/0.2|03538": [
@@ -1739,21 +1766,25 @@
   "Precision_Catalogue_CA_03.pdf|33|EF/3|03502": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/9|03509": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/6|03506": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/5|03504": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/2M|03501": [
@@ -1780,16 +1811,19 @@
   "Precision_Catalogue_CA_03.pdf|33|EF/4|03503": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/11|03510": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/8|03508": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/7|03507": [
@@ -1800,11 +1834,13 @@
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/1-5-7-8/ST|03550": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|33|EF/3-4-6-9/ST|03551": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|34|HOG/2|03560": [
@@ -1825,6 +1861,7 @@
   ],
   "Precision_Catalogue_CA_03.pdf|37|DCS/12/RD/S|01608": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|37|DCS/12/SQ|01609": [
@@ -1841,47 +1878,39 @@
   "Precision_Catalogue_CA_03.pdf|39|EYL/2|02000": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/3|02001": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/3-5|02002": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/4|02003": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/4-5|02004": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/5|02005": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/10|02006": [
    "box_qty",
    "dimensions_inch",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|EYL/2-5-10/ST|02020": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|39|ETS/1/ST|03600": [
@@ -1929,21 +1958,25 @@
   "Precision_Catalogue_CA_03.pdf|40|MS/MG/6|03221": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/P/3|03214": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/ST/9|03215": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MSCP/6|03217": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/7|03210": [
@@ -1955,26 +1988,31 @@
   "Precision_Catalogue_CA_03.pdf|40|MS/H/8|03211": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/81|03224": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/83|03225": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/84|03226": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|40|MS/85|03229": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|43|VB/T/30|03050": [
@@ -2001,60 +2039,73 @@
   ],
   "Precision_Catalogue_CA_03.pdf|44|VB/S/48|02910": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|PAB/01/A|02100": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|PAB/02/A|02101": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|PAB/03/A|02103": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/2|03107": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/3|03100": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/4|03101": [
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/5|03102": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/6|03103": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/7|03108": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/8|03104": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/10|03105": [
    "box_qty",
    "spec:beam_angle",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|45|VB/C/12|03106": [
    "spec:beam_angle",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|46|MVB/4S|02900": [
@@ -2092,30 +2143,37 @@
   ],
   "Precision_Catalogue_CA_03.pdf|49|VB/QD/95-70-35|03110": [
    "dimensions_inch",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|VB/QD/100-100-30|03111": [
    "dimensions_inch",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|VB/QD/120-120-35|03112": [
    "box_qty",
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|PMG/11-16|03432": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|PMG/13-16|03434": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|PMG/1-1-16|03433": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|49|PMG/1-3-8|03435": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|50|MB/30|03420": [
@@ -2838,189 +2896,237 @@
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/401XX|03711": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/403|03702": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/408|03701": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/410|03703": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/412|03705": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|58|TWZ/413|03704": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/414|03706": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/415|03708": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/416|03713": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/417|03707": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/423-3C|03709": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/401AA|03712": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|59|TWZ/ST-6|03720": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/1A|35890": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/2A|35891": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/3A|35892": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/4A|35893": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/1-4A/ST|35894": [
    "spec:overall_length",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|MPV/4A|35914": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PVD/02A|35915": [
    "box_qty",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|60|PV/93|35913": [
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/11|07600": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/12|07601": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/13|07602": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/133|07603": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/16|07604": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/21|07605": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/22|07606": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/23|07607": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/24|07608": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/25|07609": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/26|07610": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/233|07612": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/31|07613": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/32|07614": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/33|07615": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/34|07616": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/35|07617": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/36|07618": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/333|07620": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/42|07621": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/43|07622": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/44|07623": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/45|07624": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/46|07625": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/52|07626": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/53|07627": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|61|GAT/54|07628": [
    "spec:table_caption",
+   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|62|DSA/2-1|08420": [
@@ -3181,31 +3287,25 @@
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/13-16|09110": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/0-1|09111": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/1-5-16|09112": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/1-1-2|09113": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/0-2|09114": [
    "box_qty",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|DS/2-1-2|09116": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|66|KT/Q/2-6|11850": [
@@ -3464,17 +3564,14 @@
   ],
   "Precision_Catalogue_CA_03.pdf|69|WD/00|12070": [
    "spec:table_caption",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|69|WD/01|12071": [
    "spec:table_caption",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|69|WD/02|12072": [
    "spec:table_caption",
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|69|WDC/00|12080": [
@@ -3589,7 +3686,6 @@
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|78|RAV/60|35132": [
-   "image",
    "text:sub_title"
   ],
   "Precision_Catalogue_CA_03.pdf|79|DPV/UG/75|35120": [

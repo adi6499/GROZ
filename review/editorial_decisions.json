@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-14",
-  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0. Decision G (rules 2.3.0, product pictures) is proposed and awaits approval.",
+  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0. Decision G (rules 2.3.0, product pictures) was approved and applied on 15 Oct 2026.",
   "decisions": [
     {
       "id": "A",
@@ -89,7 +89,7 @@
     {
       "id": "G",
       "title": "Product pictures linked by page evidence (extraction rules 2.3.0, new observation, 14 Oct 2026)",
-      "status": "proposed; awaiting the project owner's approval",
+      "status": "approved and applied",
       "evidence": [
         "In output_v2 (rules 2.2.0) 211 products have only an unresolved picture candidate and 50 have none; 680 of 941 show a picture.",
         "Codes printed in an ordering table were read as picture labels: the first rows of a table printed under a picture got 'product code printed beside the image' (e.g. Estwing EMH-0313X, physical page 5) and the other rows of the same table did not.",
@@ -99,11 +99,11 @@
         "The layout rule ('largest picture in the page region') gave products pictures labelled for another product (the aluminium scriber MS/380A for ten steel body scribers, p40; the IP65 micrometer MMED/1/65 for MMED/1 and MMED/2, p19), and chapter-divider or lifestyle photos printed beside a section (Lighting p5, tools_storage p13, p15, p27).",
         "Every page whose picture changes was checked against the rendered page with the old and new pictures marked (overlay sheets, 53 pages; the remaining pages only lose a borrowed picture or change evidence type on the same picture). Regression tests: tests/test_image_evidence.py."
       ],
-      "current": "output_v2 unchanged (rules 2.2.0). The rules are committed (2033b7e) and previewed: review/preview_batch_1.md/.csv and review/preview_batch_2.md/.csv.",
+      "current": "output_v2 regenerated with rules 2.3.0 (15 Oct 2026). Pictures shown 680 -> 879: 88 direct product pictures, 791 family pictures; 59 unresolved, 3 without a picture.",
       "limitation": "A section or caption picture is a family picture (product_family): it shows the product family printed in that section, not necessarily the exact variant. Products whose page pictures several variants but not their own stay unconfirmed. Family pictures are not verified until a reviewer checks them in the verification tool.",
       "proposal": "Apply rules 2.3.0 to output_v2 (recovery), keeping all 941 records. Preview: 941 matched, 0 added, 0 missing; 374 picture changes (32 in batch_1, 342 in batch_2): 225 products gain a picture, 100 get a better-evidenced picture, 26 no longer show a picture labelled for another product. Pictures shown 680 -> 879; direct product pictures 49 -> 83; unresolved 211 -> 59; no picture 50 -> 3. One heading changes: EKIT-2F 'AXE KIT: AXE WITH SHARPENER' -> 'POWER DUO - 2PC KIT' (the title printed over its own column). The website title reader would pass the CAT NR in the same commit (one display title, EKIT-2F).",
       "alternatives": "Keep 2.2.0 pictures (210 more products without a confirmed picture), or apply only the label fixes (direct pictures) without the caption/section rules.",
-      "applied": null
+      "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.3.0 (commits 2033b7e, 57d279a, 135592b); output_v2 regenerated. 383 picture changes instead of the previewed 374: commit 135592b (found while checking the applied data) gives tool storage products the picture under their own code tag instead of the series photo above it, and stops page-header tabs labelling pictures (17 records differ from the preview, each checked on its page). Before/after values: review/applied/2026-10-15_rules-2.3.0/all_changes.csv."
     }
   ]
 }

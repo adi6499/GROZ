@@ -1,8 +1,8 @@
 """Printed product titles for the website, with the evidence of where each was read.
 
-The rules live in `backend/extractor/printed_titles.py` (extraction rules 2.2.0, decision F), so
-the extractor's `sub_title` and the website's title evidence always agree. This module opens the
-catalogue PDFs by path for the site builder.
+The rules live in `backend/extractor/printed_titles.py` (extraction rules 2.2.0, decision F, and
+the 2.3.0 CAT NR tie-break), so the extractor's `sub_title` and the website's title evidence always
+agree. This module opens the catalogue PDFs by path for the site builder.
 """
 
 import os
@@ -42,4 +42,5 @@ class TitleReader:
         bb = r.get("bounding_box")
         if not titles or not bb:
             return None
-        return titles.title_for(r["physical_page_number"], (bb["x0"], bb["y0"], bb["x1"], bb["y1"]), r.get("catalog_page_label"))
+        return titles.title_for(r["physical_page_number"], (bb["x0"], bb["y0"], bb["x1"], bb["y1"]), r.get("catalog_page_label"),
+                                r.get("cat_nr"))

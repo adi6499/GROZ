@@ -6,8 +6,8 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 
 | Batch | Scope | Records | Code version | Generated (UTC) |
 | --- | --- | --- | --- | --- |
-| batch_1 | Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695) | 150 | 3df9ad3 | 2026-10-14T09:49:31+00:00 |
-| batch_2 | Estwing hammers + Precision measuring tools, all pages | 791 | 3df9ad3 | 2026-10-14T09:50:00+00:00 |
+| batch_1 | Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695) | 150 | 135592b | 2026-10-15T05:25:09+00:00 |
+| batch_2 | Estwing hammers + Precision measuring tools, all pages | 791 | 135592b | 2026-10-15T05:25:38+00:00 |
 
 ## Records
 
@@ -29,11 +29,11 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 
 | Association | Count |
 | --- | --- |
-| Direct product image | 49 |
-| Product-family image | 631 |
-| Unresolved candidate | 211 |
-| Records with a direct or family image | 680 |
-| Records with no image candidate | 50 |
+| Direct product image | 88 |
+| Product-family image | 791 |
+| Unresolved candidate | 59 |
+| Records with a direct or family image | 879 |
+| Records with no image candidate | 3 |
 
 Unresolved candidates are linked by page position only and must not be shown as the product's image.
 

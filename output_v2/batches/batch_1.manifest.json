@@ -194,9 +194,9 @@
       ]
     }
   },
-  "pipeline_version": "2.2.0",
-  "code_version": "3df9ad3",
+  "pipeline_version": "2.3.0",
+  "code_version": "135592b",
   "python": "3.13.14",
   "pymupdf": "1.28.2",
-  "generated_at": "2026-10-14T09:49:31+00:00"
+  "generated_at": "2026-10-15T05:25:09+00:00"
 }
