@@ -173,6 +173,7 @@
    "text:sub_title"
   ],
   "tools_storage.pdf|10|RTC/42-20/4B/GRZ|75045": [
+   "image",
    "text:sub_title"
   ],
   "tools_storage.pdf|11|RTCL/35-20/1/GRZ|75200": [
@@ -1183,7 +1184,8 @@
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|15|EPAX-336F|None": [
    "box_qty",
-   "spec:head_weight"
+   "spec:head_weight",
+   "image"
   ],
   "Estwing_Hammer_E-03_Interactive_1.pdf|16|EPB-12|62450": [
    "box_qty",

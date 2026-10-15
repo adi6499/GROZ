@@ -423,15 +423,15 @@ None.
 
 | Legacy type | New type | Crop | Records |
 | --- | --- | --- | --- |
-| product_family | product_family | same crop | 370 |
-| product_family | product_family | different crop | 129 |
-| direct_hero | product_family | same crop | 105 |
+| product_family | product_family | same crop | 368 |
+| product_family | product_family | different crop | 131 |
+| direct_hero | product_family | same crop | 102 |
 | product_family | unresolved | same crop | 50 |
 | none | product_family | - | 47 |
-| direct_hero | direct_product | different crop | 31 |
+| direct_hero | direct_product | different crop | 32 |
 | product_family | direct_product | different crop | 28 |
-| direct_hero | direct_product | same crop | 25 |
-| direct_hero | product_family | different crop | 19 |
+| direct_hero | direct_product | same crop | 26 |
+| direct_hero | product_family | different crop | 20 |
 | product_family | direct_product | same crop | 4 |
 | none | none | - | 3 |
 | direct_hero | unresolved | same crop | 2 |
@@ -469,7 +469,7 @@ Recorded in `review/editorial_decisions.json`. A proposal is applied to the data
 | C | Precision catalogue index vs product pages | documented; no data change proposed | All 29 printed products are records (printed evidence); the 3 index-only numbers are not records. Listed in output_v2/reports/index_discrepancies.csv and change report section 16. | Keep the data as is and keep the list for review. Optionally ask GROZ about 01217 vs 01227 and about 35044/35045. |
 | D | TCHL/14-10D/2 net weight printed '4 KG (21 LBS)' (new observation) | approved and applied | net_weight '4 KG (21 LBS)' on TCHL/14-10D/2/BL/GRZ and TCHL/14-10D/2/OR/GRZ (verbatim; no note). | Keep the printed value verbatim and add an editorial note (field net_weight, published_value '4 KG (21 LBS)', issue: 'kg and lb figures are inconsistent (4 kg is about 8.8 lb)', no suggested correction, pending_review) to both records. |
 | F | Product headings (sub_title) taken from the page banner, not from the product's own title (new observation, 14 Oct 2026) | approved and applied | output_v2 sub_title unchanged. The local website shows the printed title read from the PDF (backend/site/titles.py, presentation layer only), names the rule and page it came from, and keeps the extracted heading visible in the product details. | In the next extraction-rules version, read the product heading with the same rules as backend/site/titles.py (nearest title above the product's ordering table in the same column or half spread; else the only title on the page or spread; else the facing page's only title), keep the old value traceable in the change report, and regenerate output_v2 only after approval (together with decision E if approved). |
-| G | Product pictures linked by page evidence (extraction rules 2.3.0, new observation, 14 Oct 2026) | proposed; awaiting the project owner's approval | output_v2 unchanged (rules 2.2.0). The rules are committed (2033b7e) and previewed: review/preview_batch_1.md/.csv and review/preview_batch_2.md/.csv. | Apply rules 2.3.0 to output_v2 (recovery), keeping all 941 records. Preview: 941 matched, 0 added, 0 missing; 374 picture changes (32 in batch_1, 342 in batch_2): 225 products gain a picture, 100 get a better-evidenced picture, 26 no longer show a picture labelled for another product. Pictures shown 680 -> 879; direct product pictures 49 -> 83; unresolved 211 -> 59; no picture 50 -> 3. One heading changes: EKIT-2F 'AXE KIT: AXE WITH SHARPENER' -> 'POWER DUO - 2PC KIT' (the title printed over its own column). The website title reader would pass the CAT NR in the same commit (one display title, EKIT-2F). |
+| G | Product pictures linked by page evidence (extraction rules 2.3.0, new observation, 14 Oct 2026) | approved and applied | output_v2 regenerated with rules 2.3.0 (15 Oct 2026). Pictures shown 680 -> 879: 88 direct product pictures, 791 family pictures; 59 unresolved, 3 without a picture. | Apply rules 2.3.0 to output_v2 (recovery), keeping all 941 records. Preview: 941 matched, 0 added, 0 missing; 374 picture changes (32 in batch_1, 342 in batch_2): 225 products gain a picture, 100 get a better-evidenced picture, 26 no longer show a picture labelled for another product. Pictures shown 680 -> 879; direct product pictures 49 -> 83; unresolved 211 -> 59; no picture 50 -> 3. One heading changes: EKIT-2F 'AXE KIT: AXE WITH SHARPENER' -> 'POWER DUO - 2PC KIT' (the title printed over its own column). The website title reader would pass the CAT NR in the same commit (one display title, EKIT-2F). |
 
 ## 16. Catalogue index discrepancies (32) — source issues, not extraction defects
 

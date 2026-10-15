@@ -57,7 +57,7 @@ On a phone-sized window, show:
   - The catalogue's own inconsistencies carry review notes rather than guesses.
   - Every changed value, before and after, is in `review/applied/2026-10-14_rules-2.2.0/`.
 - **Pictures are linked by page evidence** (decision G, rules 2.3.0, applied 15 Oct 2026; `review/applied/2026-10-15_rules-2.3.0/`).
-  - 879 of 941 products show a picture: 88 printed beside (or on the tag above) their own code, 791 family pictures (their section's picture, or one labelled for their base model or caption). Each says why on the product page.
+  - 879 of 941 products show a picture: 90 printed beside (or on the tag above) their own code, 789 family pictures (their section's picture, or one labelled for their base model or caption). Each says why on the product page, and each picture is shown alone, without the catalogue text around it (rules 2.3.1).
   - **62 products** have no confirmed image: 59 have a nearby picture that the page does not tie to them ("Image not confirmed"), 3 have none ("Image unavailable"). Mostly variants whose page pictures other variants but not them.
 - Hand Tool and Fluid Handling catalogues are not included yet. The Hand Tool pilot is prepared but has not been run.
 

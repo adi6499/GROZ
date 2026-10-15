@@ -58,8 +58,9 @@ image,tools_storage.pdf,9,RTC/42-20/2B/GRZ,75030,RTC/42-20/2B/GRZ,images[0],prod
 spec removed,tools_storage.pdf,9,RTC/42-20/1/GRZ,75008,RTC/42-20/1/GRZ,specifications.no_of_drawers,5,,
 image,tools_storage.pdf,9,RTC/42-20/1/GRZ,75008,RTC/42-20/1/GRZ,images[0],direct_hero images/p9_xref256_625_176.png,direct_product images/tools_storage_p9_xref256_625_176.png | product code RTC/42-20/1/GRZ printed beside the image,
 spec removed,tools_storage.pdf,9,RTC/42-20/1B/GRZ,75027,RTC/42-20/1B/GRZ,specifications.no_of_drawers,7,,
-image,tools_storage.pdf,10,RTC/42-20/3/GRZ,75010,RTC/42-20/3/GRZ,images[0],direct_hero images/p10_xref297_42_239.png,"product_family images/tools_storage_p10_xref297_42_239.png | the largest of 2 pictures printed directly above this product's table, under the title “42"" Rolling Tool Cabinets S20 Series (continued)”",
-image,tools_storage.pdf,10,RTC/42-20/4/GRZ,75043,RTC/42-20/4/GRZ,images[0],direct_hero images/p10_xref309_631_388.png,product_family images/tools_storage_p10_xref309_631_388.png | largest product image in the same page region as the only ordering table there (layout evidence),
+image,tools_storage.pdf,10,RTC/42-20/3/GRZ,75010,RTC/42-20/3/GRZ,images[0],direct_hero images/p10_xref297_42_239.png,direct_product images/tools_storage_p10_xref297_42_239.png | product code RTC/42-20/3/GRZ printed beside the image,
+image,tools_storage.pdf,10,RTC/42-20/4/GRZ,75043,RTC/42-20/4/GRZ,images[0],direct_hero images/p10_xref309_631_388.png,direct_product images/tools_storage_p10_xref301_625_252.png | product code RTC/42-20/4/GRZ printed beside the image,
+image,tools_storage.pdf,10,RTC/42-20/4B/GRZ,75045,RTC/42-20/4B/GRZ,images[0],product_family images/p10_xref309_631_388.png,product_family images/tools_storage_p10_xref301_625_252.png | base model RTC/42-20/4/GRZ printed beside the image (this is a variant),
 image,tools_storage.pdf,11,RTCL/35-20/1/GRZ,75200,RTCL/35-20/1/GRZ,images[0],direct_hero images/p11_xref336_124_157.png,direct_product images/tools_storage_p11_xref344_640_173.png | product code RTCL/35-20/1/GRZ printed beside the image,
 spec changed,tools_storage.pdf,11,RTCL/35-20/2/GRZ,75202,RTCL/35-20/2/GRZ,specifications.net_weight,100 KG (220 LBS),105 KG (230 LBS),printed on page
 spec changed,tools_storage.pdf,11,RTCL/35-20/2/GRZ,75202,RTCL/35-20/2/GRZ,specifications.overall_load_capacity,500 KG (1100 LBS),550 KG (1212 LBS),printed on page
@@ -226,7 +227,7 @@ image,GROZ_LIGHTING_GL-10_1.pdf,20,LED/376U,55105,LED/376U,images[0],direct_hero
 spec changed,GROZ_LIGHTING_GL-10_1.pdf,21,LED/397,55092,LED/397,specifications.beam_angle,180°,120˚,printed on page
 image,GROZ_LIGHTING_GL-10_1.pdf,21,LED/397,55092,LED/397,images[0],direct_hero images/p21_xref4376_325_235.png,"product_family images/groz_lighting_gl_10_1_p21_xref4404_631_241.png | the largest of 5 pictures printed directly above this product's table, under the title “Worklight Intensity Control & Bluetooth Speaker”",
 spec changed,GROZ_LIGHTING_GL-10_1.pdf,22,LED/185,55099,LED/185,specifications.beam_angle,120°,120˚,printed on page
-image,GROZ_LIGHTING_GL-10_1.pdf,22,LED/185,55099,LED/185,images[0],direct_hero images/p22_xref4449_179_-83.png,"product_family images/groz_lighting_gl_10_1_p22_xref4449_179_-83.png | the largest of 3 pictures printed directly above this product's table, under the title “Folding Worklight”",
+image,GROZ_LIGHTING_GL-10_1.pdf,22,LED/185,55099,LED/185,images[0],direct_hero images/p22_xref4449_179_-83.png,"product_family images/groz_lighting_gl_10_1_p22_xref4435_263_254.png | the largest of 2 pictures printed directly above this product's table, under the title “Folding Worklight”",
 spec removed,GROZ_LIGHTING_GL-10_1.pdf,23,LED/186,55114,LED/186,specifications.beam_angle,360°,,
 image,GROZ_LIGHTING_GL-10_1.pdf,23,LED/186,55114,LED/186,images[0],direct_hero images/p23_xref4501_322_189.png,"product_family images/groz_lighting_gl_10_1_p23_xref4501_322_189.png | the largest of 3 pictures printed directly above this product's table, under the title “Inspection Light Flexible”",
 spec changed,GROZ_LIGHTING_GL-10_1.pdf,23,LED/345,55040,LED/345,specifications.beam_angle,360°,120˚,printed on page
@@ -412,6 +413,7 @@ changed,Estwing_Hammer_E-03_Interactive_1.pdf,15,EMT/C-5,62583,EMT/C-5,box_qty,5
 image,Estwing_Hammer_E-03_Interactive_1.pdf,15,EMT/C-5,62583,EMT/C-5,images[0],product_family images/p15_xref464_0_546.png,"product_family images/estwing_hammer_e_03_interactive_1_p15_xref470_17_228.png | the only picture printed directly above this product's table, under the title “CUTTER MATTOCK FIBERGLASS HANDLE”",
 changed,Estwing_Hammer_E-03_Interactive_1.pdf,15,EPAX-336F,,EPAX-336F,box_qty,1,,n/a (empty)
 spec changed,Estwing_Hammer_E-03_Interactive_1.pdf,15,EPAX-336F,,EPAX-336F,specifications.head_weight,3.5 lb,3.5 lb./1.58 kg,printed on page
+image,Estwing_Hammer_E-03_Interactive_1.pdf,15,EPAX-336F,,EPAX-336F,images[0],product_family images/p15_xref464_0_546.png,"product_family images/estwing_hammer_e_03_interactive_1_p15_xref454_328_229.png | the only picture printed directly above this product's table, under the title “PULASKI FIBERGLASS HANDLE”",
 changed,Estwing_Hammer_E-03_Interactive_1.pdf,16,EPB-12,62450,EPB-12,box_qty,7,,n/a (empty)
 spec added,Estwing_Hammer_E-03_Interactive_1.pdf,16,EPB-12,62450,EPB-12,specifications.length,,12”/300mm,printed on page
 spec removed,Estwing_Hammer_E-03_Interactive_1.pdf,16,EPB-12,62450,EPB-12,specifications.overall_length,12”/300mm,,

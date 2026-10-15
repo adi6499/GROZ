@@ -91,7 +91,7 @@ Options: `--out DIR` (main dataset folder, default `output_v2`), `--allow-shrink
 
 Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `compare` → review.
 
-Pipeline version: `2.3.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.3.0 (commits `2033b7e`, `57d279a` and `135592b`, 15 Oct 2026), after the owner approved decision G (product pictures). The previous version, 2.2.0, applied decisions A–F. Every changed value is listed in `review/applied/2026-10-14_rules-2.2.0/` and `review/applied/2026-10-15_rules-2.3.0/`.
+Pipeline version: `2.3.1` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.3.1 (15 Oct 2026): decision G (product pictures, 2.3.0) and decision H (clean pictures, 2.3.1), both approved by the owner. Earlier, 2.2.0 applied decisions A–F. Every changed value is listed in `review/applied/` (one folder per applied rules version).
 
 ## Batches
 
@@ -112,7 +112,7 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
 |---|---|
 | `extracted_products.json` | Cumulative dataset (all batch files) |
 | `batches/<batch>.json`, `batches/<batch>.manifest.json` | Per-batch records, pages processed, code commit |
-| `images/` | Image crops, named `<pdf>_p<page>_xref<n>_<x>_<y>.png` |
+| `images/` | Product pictures, named `<pdf>_p<page>_xref<n>_<x>_<y>.png`: each picture alone as printed, without page text, line art or other pictures, white margins trimmed (rules 2.3.1). Files no longer referenced by any record are kept, never deleted |
 | `review.html` | Review dashboard: filters by catalogue, image evidence, notes and changes. Serve the folder over HTTP to view it |
 | `reports/summary.md` | Counts, image evidence, editorial notes, coverage checks against the PDFs |
 | `reports/change_report.md` | Change report vs the legacy dataset. `.csv` has one row per changed field and opens in Excel. Also renders the editorial decision log and the index discrepancy list |
@@ -168,6 +168,10 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
   - Where picture boxes overlap, the code belongs to the picture actually drawn next to it (its visible pixels).
   - Thin upright tool pictures (tweezers, scribers) are kept as product pictures.
   - A picture labelled for another product is never borrowed by layout.
+- From rules version 2.3.1 (decision H, clean pictures):
+  - The saved picture is the picture alone, exactly as printed (position, rotation, transparency, clipping), without the page's text, line art or other pictures, and without white margins.
+  - A picture that draws only an icon-sized detail on a mostly empty canvas (close-up insets, empty frames) is decoration, not a product picture.
+  - A tool storage panel's code tag reaches its picture up to 120 pt below it.
 - `source_row_text`: the verbatim words of the product's own table row. `raw_text_snippet`: the start of the table text.
 - From rules version 2.1.0 (decision E, applied to `output_v2` with 2.2.0):
   - `drawer_load_capacity`, `overall_load_capacity`, `net_weight` are read from the product's own capacity block. Each printed label is paired with the value printed directly above it. A block belongs to the panel headed by the product's CAT NR, otherwise to its own table area. Ambiguous values stay empty.

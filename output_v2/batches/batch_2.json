@@ -6095,22 +6095,22 @@
     "verification_status": "needs_review",
     "images": [
       {
-        "image_id": "estwing_hammer_e_03_interactive_1_p15_xref464_0_546",
-        "file_path": "images/estwing_hammer_e_03_interactive_1_p15_xref464_0_546.png",
+        "image_id": "estwing_hammer_e_03_interactive_1_p15_xref454_328_229",
+        "file_path": "images/estwing_hammer_e_03_interactive_1_p15_xref454_328_229.png",
         "source_pdf": "Estwing_Hammer_E-03_Interactive_1.pdf",
         "physical_page_number": 15,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 546.99,
-          "x1": 595.28,
-          "y1": 814.58,
+          "x0": 328.34,
+          "y0": 229.68,
+          "x1": 592.91,
+          "y1": 409.12,
           "page_width": 595.28,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "www.estwing-sledgehammers.com\n15\nEMT/C 5\n62583\n5 lb/2.2kg\n/\ng\n/"
+        "evidence": "the only picture printed directly above this product's table, under the title “PULASKI FIBERGLASS HANDLE”",
+        "confidence": 0.7,
+        "caption_or_label": "prying branches, breaking up soil or sod, carving or smoothening of \nwood, cut away roots or shrubs "
       }
     ],
     "editorial_notes": [

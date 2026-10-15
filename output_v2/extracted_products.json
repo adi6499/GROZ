@@ -1456,9 +1456,9 @@
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Rolling Tool Cabinets S20 Series (continued)”",
-        "confidence": 0.7,
+        "association_type": "direct_product",
+        "evidence": "product code RTC/42-20/3/GRZ printed beside the image",
+        "confidence": 1.0,
         "caption_or_label": "580 KG (1278 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n105 KG (230 LBS)\nNET WE"
       }
     ],
@@ -1513,8 +1513,8 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “42\" Rolling Tool Cabinets S20 Series (continued)”",
-        "confidence": 0.7,
+        "evidence": "base model RTC/42-20/3/GRZ printed beside the image (this is a variant)",
+        "confidence": 1.0,
         "caption_or_label": "580 KG (1278 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n105 KG (230 LBS)\nNET WE"
       }
     ],
@@ -1555,22 +1555,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p10_xref309_631_388",
-        "file_path": "images/tools_storage_p10_xref309_631_388.png",
+        "image_id": "tools_storage_p10_xref301_625_252",
+        "file_path": "images/tools_storage_p10_xref301_625_252.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 10,
         "bounding_box": {
-          "x0": 631.35,
-          "y0": 388.13,
-          "x1": 874.36,
-          "y1": 631.63,
+          "x0": 625.42,
+          "y0": 252.08,
+          "x1": 823.27,
+          "y1": 439.66,
           "page_width": 1190.55,
           "page_height": 841.89
         },
-        "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "Laptop tray\nPerforated side wall \nwith Can holder\nDRAWER DETAILS\nDRAWER\nW\n(INCH\nA\n37-1/64\nB\n22-13/6\n"
+        "association_type": "direct_product",
+        "evidence": "product code RTC/42-20/4/GRZ printed beside the image",
+        "confidence": 0.7,
+        "caption_or_label": "475 KG (1267 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n100 KG (220 LBS)\nNET WE"
       }
     ],
     "editorial_notes": [],
@@ -1610,22 +1610,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "tools_storage_p10_xref309_631_388",
-        "file_path": "images/tools_storage_p10_xref309_631_388.png",
+        "image_id": "tools_storage_p10_xref301_625_252",
+        "file_path": "images/tools_storage_p10_xref301_625_252.png",
         "source_pdf": "tools_storage.pdf",
         "physical_page_number": 10,
         "bounding_box": {
-          "x0": 631.35,
-          "y0": 388.13,
-          "x1": 874.36,
-          "y1": 631.63,
+          "x0": 625.42,
+          "y0": 252.08,
+          "x1": 823.27,
+          "y1": 439.66,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "Laptop tray\nPerforated side wall \nwith Can holder\nDRAWER DETAILS\nDRAWER\nW\n(INCH\nA\n37-1/64\nB\n22-13/6\n"
+        "evidence": "base model RTC/42-20/4/GRZ printed beside the image (this is a variant)",
+        "confidence": 0.7,
+        "caption_or_label": "475 KG (1267 LBS)\nOVERALL LOAD CAPACITY\n45 KG (100 LBS)\nDRAWER LOAD CAPACITY\n100 KG (220 LBS)\nNET WE"
       }
     ],
     "editorial_notes": [],
@@ -6604,22 +6604,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p22_xref4449_179_-83",
-        "file_path": "images/groz_lighting_gl_10_1_p22_xref4449_179_-83.png",
+        "image_id": "groz_lighting_gl_10_1_p22_xref4435_263_254",
+        "file_path": "images/groz_lighting_gl_10_1_p22_xref4435_263_254.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 22,
         "bounding_box": {
-          "x0": 179.03,
-          "y0": 0.0,
-          "x1": 827.4,
-          "y1": 476.44,
+          "x0": 263.83,
+          "y0": 254.42,
+          "x1": 406.33,
+          "y1": 711.75,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “Folding Worklight”",
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “Folding Worklight”",
         "confidence": 0.7,
-        "caption_or_label": "dable design for difficult \nkspaces\nh with Magnetic pick-up\nuser controlled output.\nworklight and sp"
+        "caption_or_label": "up\n.\nht \nol \ng it \nhe \nunt \ned \nrge \nrge\n0.24\"\n(6 mm) \n4W COB \nworklight\n0.5W SMD Top \nTorch with ma"
       }
     ],
     "editorial_notes": [],
@@ -14910,22 +14910,22 @@
     "verification_status": "needs_review",
     "images": [
       {
-        "image_id": "estwing_hammer_e_03_interactive_1_p15_xref464_0_546",
-        "file_path": "images/estwing_hammer_e_03_interactive_1_p15_xref464_0_546.png",
+        "image_id": "estwing_hammer_e_03_interactive_1_p15_xref454_328_229",
+        "file_path": "images/estwing_hammer_e_03_interactive_1_p15_xref454_328_229.png",
         "source_pdf": "Estwing_Hammer_E-03_Interactive_1.pdf",
         "physical_page_number": 15,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 546.99,
-          "x1": 595.28,
-          "y1": 814.58,
+          "x0": 328.34,
+          "y0": 229.68,
+          "x1": 592.91,
+          "y1": 409.12,
           "page_width": 595.28,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "www.estwing-sledgehammers.com\n15\nEMT/C 5\n62583\n5 lb/2.2kg\n/\ng\n/"
+        "evidence": "the only picture printed directly above this product's table, under the title “PULASKI FIBERGLASS HANDLE”",
+        "confidence": 0.7,
+        "caption_or_label": "prying branches, breaking up soil or sod, carving or smoothening of \nwood, cut away roots or shrubs "
       }
     ],
     "editorial_notes": [

@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-14",
-  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0. Decision G (rules 2.3.0, product pictures) was approved and applied on 15 Oct 2026.",
+  "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0. Decision G (rules 2.3.0, product pictures) was approved and applied on 15 Oct 2026. Decision H (rules 2.3.1, clean product pictures) was applied on 15 Oct 2026.",
   "decisions": [
     {
       "id": "A",
@@ -104,6 +104,21 @@
       "proposal": "Apply rules 2.3.0 to output_v2 (recovery), keeping all 941 records. Preview: 941 matched, 0 added, 0 missing; 374 picture changes (32 in batch_1, 342 in batch_2): 225 products gain a picture, 100 get a better-evidenced picture, 26 no longer show a picture labelled for another product. Pictures shown 680 -> 879; direct product pictures 49 -> 83; unresolved 211 -> 59; no picture 50 -> 3. One heading changes: EKIT-2F 'AXE KIT: AXE WITH SHARPENER' -> 'POWER DUO - 2PC KIT' (the title printed over its own column). The website title reader would pass the CAT NR in the same commit (one display title, EKIT-2F).",
       "alternatives": "Keep 2.2.0 pictures (210 more products without a confirmed picture), or apply only the label fixes (direct pictures) without the caption/section rules.",
       "applied": "Approved by the project owner on 14 Oct 2026 and applied in extraction rules 2.3.0 (commits 2033b7e, 57d279a, 135592b); output_v2 regenerated. 383 picture changes instead of the previewed 374: commit 135592b (found while checking the applied data) gives tool storage products the picture under their own code tag instead of the series photo above it, and stops page-header tabs labelling pictures (17 records differ from the preview, each checked on its page). Before/after values: review/applied/2026-10-15_rules-2.3.0/all_changes.csv."
+    },
+    {
+      "id": "H",
+      "title": "Clean product pictures: the picture alone, without page text or neighbouring pictures (extraction rules 2.3.1, 15 Oct 2026)",
+      "status": "approved and applied",
+      "evidence": [
+        "Picture files were rendered from the page area under each picture, so they also showed what is printed on or around it: 46 of the 262 pictures the website shows had 6 or more words of page text inside them (e.g. LED/616 with its spec icons and power-source box), and several showed neighbouring products (the pin vice PV/1A, the scribers on Precision p40).",
+        "Rendering each picture alone exposed four pictures that draw only an icon-sized close-up (or nothing) on a mostly empty canvas; one of them (Lighting p22) had been chosen as LED/185's 'largest picture'.",
+        "PDF redaction broke the masks of some photos (Estwing G-bar and construction bars rendered as blue rectangles), so the page's drawing instructions are edited instead (text invisible, paths traced but not painted, other pictures hidden).",
+        "All 262 pictures the website shows were checked on contact sheets after the change; the 6 changed assignments were checked on their pages."
+      ],
+      "current": "output_v2 regenerated with rules 2.3.1: 679 picture files re-rendered, 6 picture assignments changed, 879 products show a picture (90 direct, 789 family).",
+      "limitation": "A picture is shown as the catalogue prints it: low-resolution source photos (e.g. the knurl wheels) stay low resolution, and parts of a photo hidden under another picture in print can become visible.",
+      "proposal": "Save each picture alone, trimmed, and stop treating icon-sized close-ups on empty canvases as product pictures.",
+      "applied": "Requested by the project owner on 15 Oct 2026 ('yes fix the pictures') and applied in extraction rules 2.3.1 (commit 1dd3e42); output_v2 regenerated. Before/after: review/applied/2026-10-15_rules-2.3.1/."
     }
   ]
 }
