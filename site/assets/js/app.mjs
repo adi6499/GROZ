@@ -174,10 +174,9 @@ function renderDataNote() {
   const m = state.data.meta || {};
   const verified = m.verified ?? state.products.filter((p) => p.status === "verified").length;
   const review = m.fields_under_review ?? 0;
-  $("#dataNoteText").innerHTML = `${verified === 0
-    ? `All <b>${state.products.length}</b> products were extracted from the original GROZ catalogues and are <b>not yet verified</b> by a person.`
-    : `<b>${verified}</b> of ${state.products.length} products are verified; the rest were extracted automatically and are <b>not yet verified</b>.`}
-    ${review ? ` ${review} values awaiting a corrected reading are shown as <b>Under review</b>.` : ""} Every product links to its source page — check it before you order.`;
+  $("#dataNoteText").innerHTML = `Details are taken from the original GROZ catalogues. Check the catalogue page before ordering.${verified
+    ? ` <b>${verified}</b> of ${state.products.length} products have been checked by a person and show <b>Verified</b>.` : ""}${review
+    ? ` ${review} values awaiting a corrected reading are shown as <b>Under review</b>.` : ""}`;
 }
 
 // ---------------------------------------------------------------- filters
@@ -268,9 +267,11 @@ function placeholderFor(img) {
   holder.insertAdjacentHTML("beforeend", `${art(p ? state.artByCategory.get(p.category) : "tool")}<span class="img-tag muted">Image unavailable</span>`);
 }
 
-function statusHtml(p) {
+/** Status badges. Quiet (cards, table rows): no badge for products nobody has checked yet; the
+ *  catalogue note says so once, and the product details always show the status. */
+function statusHtml(p, { quiet = false } = {}) {
   const n = p.under_review.length;
-  return `<span class="status status-${esc(p.status)}">${esc(p.status_label)}</span>`
+  return (quiet && p.status === "unverified" ? "" : `<span class="status status-${esc(p.status)}">${esc(p.status_label)}</span>`)
     + (n ? `<span class="flag flag-review" title="A corrected reading is awaiting approval">${plural(n, "value")} under review</span>` : "")
     + (p.notes.length ? `<span class="flag flag-note" title="This product has a catalogue review note">Review note</span>` : "");
 }
@@ -297,10 +298,11 @@ function cardHtml(p) {
   const saved = state.saved.has(p.id);
   const specs = core.summarySpecs(p, 2);
   const label = [p.cat_nr, core.displayTitle(p)].filter(Boolean).join(", ");
+  const badges = statusHtml(p, { quiet: true });
   return `<article class="product" data-id="${esc(p.id)}">
     <button class="product-image" type="button" data-detail aria-label="View details for ${esc(label)}">${imageHtml(p)}</button>
     <button class="heart${saved ? " saved" : ""}" type="button" data-save aria-pressed="${saved}" aria-label="Save ${esc(p.cat_nr)}">${icon("heart")}</button>
-    <div class="card-meta">${statusHtml(p)}</div>
+    ${badges ? `<div class="card-badges">${badges}</div>` : ""}
     ${titleHtml(p)}
     <h3><button class="title-btn" type="button" data-detail>${esc(p.cat_nr || "No catalogue number")}</button></h3>
     <div class="sku">${skuHtml(p)}</div>
@@ -316,7 +318,7 @@ function rowHtml(p) {
       <td>${p.ord_nr ? esc(p.ord_nr) : '<span class="muted">Not printed</span>'}</td>
       <td class="hide-sm">${core.summarySpecs(p, 2).map((s) => `${esc(s.label)}: <b>${esc(s.value)}</b>`).join("<br/>") || '<span class="muted">See details</span>'}</td>
       <td class="hide-sm">${esc(p.catalogue.title)}<br/><span class="muted">printed p. ${esc(p.printed_page ?? "—")}</span></td>
-      <td class="hide-md">${statusHtml(p)}</td>
+      <td class="hide-md">${statusHtml(p, { quiet: true })}</td>
       <td class="actions">${quoteBtnHtml(p)}${compareHtml(p)}</td>
     </tr>`;
 }

@@ -101,6 +101,8 @@ select{border:1px solid var(--line);background:white;border-radius:10px;padding:
 .heart:after{content:"";position:absolute;inset:-5px}
 .heart:active{transform:scale(.9)}
 .card-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:10px 1px 0}
+.card-badges{position:absolute;left:18px;top:18px;right:60px;display:flex;gap:5px;flex-wrap:wrap;pointer-events:none}.card-badges>*{box-shadow:0 1px 3px #00000014}
+.product>.ptitle{margin-top:12px}
 .status{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:3px 8px;font-size:9.5px;font-weight:700;letter-spacing:0;white-space:nowrap}.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
 .status-unverified{background:#fdf6e7;color:var(--amber)}.status-needs_review{background:#fdecea;color:#a3341a}.status-verified{background:#e8f5ee;color:var(--green)}
 .flag{display:inline-flex;align-items:center;border-radius:99px;padding:2px 7px;font-size:9.5px;font-weight:700;white-space:nowrap}.flag-note{background:#f3f0ff;color:#4b3aa6}.flag-review{background:#fff;border:1px solid #ecd5a6;color:var(--amber)}

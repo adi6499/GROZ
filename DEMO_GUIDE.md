@@ -49,7 +49,7 @@ On a phone-sized window, show:
 
 ## What to say about the data
 
-- Products show **Not yet verified** until a person checks them in the verification tool, which compares each product's values with its printed row (see below). Nothing is marked verified automatically. A product that is verified shows who checked it and when.
+- Products not yet checked by a person carry no badge on their card; their details say **Not yet verified**, and a short note above the catalogue tells visitors to check the catalogue page before ordering. A product turns **Verified** (green badge) only when a person checks it in the verification tool, which compares its values with its printed row (see below), and then shows who checked it and when. Nothing is marked verified automatically.
 - **Approved corrections are in** (decisions A–F, rules 2.2.0, 14 Oct 2026).
   - Capacities and beam angles are read from each product's own panel or strip.
   - Every heading is the title printed for the product's own table.

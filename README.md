@@ -189,7 +189,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - **Values** are the record's own values; an empty field shows "Not specified".
   - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
   - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are labelled "Image not confirmed" and never shown; products without any image say "Image unavailable".
-  - **Verification:** every record shows its verification status. Nothing is marked verified by the site.
+  - **Verification:** cards and table rows show a badge only for products a person has checked ("Verified") or that need review; one note above the catalogue covers the rest. Every product's details show its status, including "Not yet verified". Nothing is marked verified by the site.
   - **Printed title:** the title the catalogue prints for the product's ordering table, in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). The rules are the same as for `sub_title` (shared module `backend/extractor/printed_titles.py`).
     - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
     - Product details name the rule and PDF page the title came from.
