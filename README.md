@@ -91,7 +91,7 @@ Options: `--out DIR` (main dataset folder, default `output_v2`), `--allow-shrink
 
 Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `compare` → review.
 
-Pipeline version: `2.2.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.2.0 (commit `3df9ad3`, 14 Oct 2026), after the owner approved decisions A–F. Every changed value is listed in `review/applied/2026-10-14_rules-2.2.0/`.
+Pipeline version: `2.3.0` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.3.0 (commits `2033b7e`, `57d279a` and `135592b`, 15 Oct 2026), after the owner approved decision G (product pictures). The previous version, 2.2.0, applied decisions A–F. Every changed value is listed in `review/applied/2026-10-14_rules-2.2.0/` and `review/applied/2026-10-15_rules-2.3.0/`.
 
 ## Batches
 
@@ -154,8 +154,20 @@ Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Ha
   - `overall_length` (OVERALL LENGTH), `length` (LENGTH), `handle_length` (HANDLE LENGTH)
 - `images[].association_type`, each with an `evidence` sentence:
   - `direct_product`: this product's code is printed beside the image.
-  - `product_family`: a family or shared label, or the single image beside the only ordering table in its region.
+  - `product_family`: one of:
+    - a label shared with other codes, or the base model's label;
+    - the picture captioned with the product's table caption;
+    - the only (or clearly largest) picture printed above the product's table under its printed title, or on the facing page;
+    - the picture of the one variant pictured in the same table;
+    - the largest picture in the region of the only ordering table there, when it is labelled for no other product.
   - `unresolved`: page position only. A review candidate; never show it as the product's image.
+- From rules version 2.3.0 (decision G, `backend/extractor/image_extractor.py` and `image_sections.py`):
+  - A printed code labels only its nearest picture. Codes in ordering-table cells never count, and labels never cross a spread's fold.
+  - Codes on white tags: a page-header tab labels no picture; a panel's code tag (tool storage) labels the picture printed under it.
+  - Codes match as whole codes ("MS/7" is not "MS/7/AL").
+  - Where picture boxes overlap, the code belongs to the picture actually drawn next to it (its visible pixels).
+  - Thin upright tool pictures (tweezers, scribers) are kept as product pictures.
+  - A picture labelled for another product is never borrowed by layout.
 - `source_row_text`: the verbatim words of the product's own table row. `raw_text_snippet`: the start of the table text.
 - From rules version 2.1.0 (decision E, applied to `output_v2` with 2.2.0):
   - `drawer_load_capacity`, `overall_load_capacity`, `net_weight` are read from the product's own capacity block. Each printed label is paired with the value printed directly above it. A block belongs to the panel headed by the product's CAT NR, otherwise to its own table area. Ambiguous values stay empty.
