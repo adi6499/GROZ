@@ -201,6 +201,62 @@ def test_caption_and_section_pictures_count_as_image_evidence(page_products):
         assert p.confidence == round(min(1.0, without + 0.05), 2)
 
 
+def _ink_fraction(img):
+    from backend.extractor.image_extractor import _count, _mask
+    return _count(_mask(img)) / (img.width * img.height)
+
+
+def test_crop_is_the_picture_alone_without_page_text():
+    """Rules 2.3.1: LED/616's picture box also covers the page's description text ("ergonomic design
+    for darkest of areas ..."); the crop shows the worklight only."""
+    from backend.extractor.image_extractor import pixmap_image, render_picture_alone
+    with pymupdf.open(LIGHTING) as doc:
+        page = doc[11]
+        r = page.get_image_rects(3889)[0]
+        word = next(w for w in page.get_text("words") if w[4] == "ergonomic" and pymupdf.Rect(w[:4]).intersects(r))
+        # the word is printed there on the page ...
+        assert _ink_fraction(pixmap_image(page.get_pixmap(clip=pymupdf.Rect(word[:4]), dpi=72))) > 0.05
+        # ... but not in the crop
+        img = render_picture_alone(page, 3889, r, r, 72)
+        box = (max(0, int(word[0] - r.x0)), int(word[1] - r.y0), int(word[2] - r.x0), int(word[3] - r.y0))
+        assert _ink_fraction(img.crop(box)) < 0.02
+
+
+def test_clipped_picture_keeps_its_shape():
+    """The Estwing G-bar and construction bar photos are cut to shape by the page (not transparent):
+    the crop shows the bar, not the photo's whole blue rectangle."""
+    from backend.extractor.image_extractor import render_picture_alone
+    with pymupdf.open(ESTWING) as doc:
+        page = doc[16]
+        for xref in (555, 559):
+            r = page.get_image_rects(xref)[0]
+            assert _ink_fraction(render_picture_alone(page, xref, r, r, 36)) < 0.5, xref
+
+
+def test_saved_crop_is_trimmed_to_the_picture(tmp_path):
+    from PIL import Image
+    from backend.extractor.image_extractor import ImageExtractor
+    with pymupdf.open(PRECISION) as doc:
+        cands = ImageExtractor(str(tmp_path)).extract_page_product_images(doc[57], PRECISION, 58)
+    tweezer = next(c for c in cands if c["xref"] == 1122)
+    w, h = Image.open(tweezer["crop_path"]).size
+    assert h > 4 * w  # the thin upright tweezer, not a wide strip of the page
+
+
+def test_decoration_is_not_a_product_picture(page_products):
+    # Lighting p22: a torch-tip close-up on a canvas covering most of the spread is not LED/185's picture.
+    assert pic(page_products(LIGHTING, 22), "LED/185") == ("product_family", 4435)
+    # Estwing p15: blade close-ups; the Pulaski axe is pictured above its own table (not the lifestyle photo).
+    assert pic(page_products(ESTWING, 15), "EPAX-336F") == ("product_family", 454)
+
+
+def test_panel_tag_reaches_the_picture_below_its_icons(page_products):
+    t10 = page_products(STORAGE, 10)
+    assert pic(t10, "RTC/42-20/3/GRZ") == ("direct_product", 297)
+    assert pic(t10, "RTC/42-20/4/GRZ") == ("direct_product", 301)
+    assert pic(t10, "RTC/42-20/4B/GRZ") == ("product_family", 301)
+
+
 def test_sibling_picture_only_when_one_variant_is_pictured(page_products):
     p7 = page_products(PRECISION, 7)
     assert pic(p7, "SS/A/2-3-4-6/ST") == ("direct_product", 35)

@@ -31,7 +31,7 @@ from ..extractor.product_builder import ProductBuilder
 from ..validator.schema import ProductRecord
 from .batches import BATCHES, RESTRICTED_SOURCES, SUPPLEMENTARY_SOURCES, Batch
 
-PIPELINE_VERSION = "2.3.0"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G)
+PIPELINE_VERSION = "2.3.1"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G; 2.3.1 = clean pictures)
 LEGACY_OUTPUT_DIR = "output"
 DEFAULT_OUTPUT_DIR = "output_v2"
 

@@ -31,12 +31,22 @@ Rules 2.3.0 (image evidence):
   rule ("largest picture in the region") applies only to the region's largest picture and never
   when that picture is labelled for another product.
 - Option variants are whole code segments (RTC/27-20/1B/GRZ): FLG/13A/100 and PV/1A are not.
+
+Rules 2.3.1 (clean pictures):
+- A crop is the picture alone, exactly as printed (position, rotation, transparency, clipping) but
+  without the text, line art and other pictures printed on or around it, and without plain white
+  margins.
+- A picture that draws only an icon-sized detail on a mostly empty canvas (a close-up inset, an
+  empty frame) is decoration, not a product picture.
+- A tool storage panel tag reaches the panel's picture up to 120 pt below it (the panel's size
+  line and capacity icons may come first).
 """
 
 from typing import List, Dict, Any, Optional, Sequence
 import os
 import re
 import pymupdf
+from PIL import Image, ImageChops
 from ..validator.schema import BoundingBox, ProductImageRef
 
 _EVIDENCE_RANK = {"direct_product": 0, "product_family": 1, "unresolved": 2}
@@ -65,6 +75,158 @@ def _code_in(code: Optional[str], text: str) -> bool:
 
 def _norm_word(t: str) -> str:
     return re.sub(r"^[^0-9A-Za-z]+", "", t).rstrip(".,;:")
+
+
+def _mask(img: Image.Image, threshold: int = 10) -> Image.Image:
+    """Pixels that are not white (any channel darker than white by more than `threshold`)."""
+    r, g, b = ImageChops.difference(img, Image.new("RGB", img.size, "white")).split()
+    return ImageChops.lighter(ImageChops.lighter(r, g), b).point(lambda v: 255 if v > threshold else 0)
+
+
+def _count(mask: Image.Image) -> int:
+    return mask.histogram()[255]
+
+
+def pixmap_image(pix: pymupdf.Pixmap) -> Image.Image:
+    mode = "RGBA" if pix.alpha else "RGB"
+    return Image.frombytes(mode, (pix.width, pix.height), pix.samples).convert("RGB")
+
+
+def ink_box(img: Image.Image, threshold: int = 10) -> Optional[tuple]:
+    """Pixel box of everything drawn (any channel darker than white by more than `threshold`)."""
+    return _mask(img, threshold).getbbox()
+
+
+_WS = b" \t\r\n\f\x00"
+_DELIM = b"()<>[]{}/%"
+_PAINT = {b"f", b"F", b"f*", b"B", b"B*", b"b", b"b*", b"S", b"s"}
+_CLEANED: Dict[tuple, Dict[int, bytes]] = {}  # (pdf path, page index) -> picture-only content streams
+
+
+def _picture_only_stream(data: bytes) -> bytes:
+    """A content stream that draws only its pictures: text is set invisible (rendering mode 3), path
+    painting becomes "n" (paths are still traced, so clipping paths keep cutting pictures to shape)
+    and shadings are dropped. Every other instruction (graphics state, transparency, transforms) is
+    kept as it is."""
+    out: List[bytes] = []
+    operand_at: List[int] = []  # positions in `out` of the current operator's operands
+    i, n = 0, len(data)
+    while i < n:
+        c = data[i:i + 1]
+        if c in _WS:
+            j = i + 1
+            while j < n and data[j:j + 1] in _WS:
+                j += 1
+            out.append(data[i:j]); i = j
+            continue
+        if c == b"%":
+            j = i
+            while j < n and data[j:j + 1] not in b"\r\n":
+                j += 1
+            out.append(data[i:j]); i = j
+            continue
+        if c == b"(":
+            depth, j = 0, i
+            while j < n:
+                ch = data[j:j + 1]
+                if ch == b"\\":
+                    j += 2
+                    continue
+                depth += 1 if ch == b"(" else -1 if ch == b")" else 0
+                j += 1
+                if depth == 0:
+                    break
+            operand_at.append(len(out)); out.append(data[i:j]); i = j
+            continue
+        if c == b"<" and data[i + 1:i + 2] != b"<":
+            j = data.find(b">", i) + 1 or n
+            operand_at.append(len(out)); out.append(data[i:j]); i = j
+            continue
+        if data[i:i + 2] in (b"<<", b">>"):
+            operand_at.append(len(out)); out.append(data[i:i + 2]); i += 2
+            continue
+        if c in b"[]{}<>":
+            operand_at.append(len(out)); out.append(c); i += 1
+            continue
+        j = i + 1
+        while j < n and data[j:j + 1] not in _WS and data[j:j + 1] not in _DELIM:
+            j += 1
+        word = data[i:j]
+        if c == b"/":
+            while j < n and data[j:j + 1] not in _WS and data[j:j + 1] not in _DELIM:
+                j += 1
+            word = data[i:j]
+            operand_at.append(len(out)); out.append(word); i = j
+            continue
+        if word == b"BI":  # inline image: copy through to its EI unchanged
+            k = data.find(b"ID", j)
+            m = k + 2
+            while True:
+                m = data.find(b"EI", m)
+                if m < 0 or ((data[m - 1:m] in _WS) and (m + 2 >= n or data[m + 2:m + 3] in _WS)):
+                    break
+                m += 2
+            j = n if m < 0 else m + 2
+            out.append(data[i:j]); operand_at.clear(); i = j
+            continue
+        i = j
+        if re.fullmatch(rb"[+-]?(\d+\.?\d*|\.\d+)", word) or word in (b"true", b"false", b"null"):
+            operand_at.append(len(out)); out.append(word)
+            continue
+        if word == b"BT":
+            out.append(b"BT 3 Tr")
+        elif word == b"Tr" and operand_at:
+            out[operand_at[-1]] = b"3"; out.append(word)
+        elif word in _PAINT:
+            out.append(b"n")
+        elif word == b"sh":
+            for k in operand_at:
+                out[k] = b""
+        else:
+            out.append(word)
+        operand_at.clear()
+    return b"".join(out)
+
+
+def render_picture_alone(source: pymupdf.Page, xref: int, rect: pymupdf.Rect, clip: pymupdf.Rect, dpi: int) -> Image.Image:
+    """The picture exactly as printed (position, rotation, transparency, clipping) but nothing else that
+    is printed on the page: on a private copy of the page, text and line art are not drawn and every
+    other picture is hidden (rules 2.3.1). Pictures placed at exactly the same position (layers of
+    one picture) are kept. Falls back to the plain page area if the PDF cannot be reopened."""
+    path = source.parent.name
+    same_place = lambda q: all(abs(a - b) < 1 for a, b in zip(q, rect))
+    doc = None
+    try:
+        if path and os.path.isfile(path):
+            doc = pymupdf.open(path)
+            page = doc[source.number]
+            key = (path, source.number)
+            if key not in _CLEANED:
+                if len(_CLEANED) > 8:
+                    _CLEANED.clear()
+                streams = set(page.get_contents()) | {x[0] for x in page.get_xobjects()}
+                _CLEANED[key] = {sx: _picture_only_stream(doc.xref_stream(sx)) for sx in streams}
+            for sx, data in _CLEANED[key].items():
+                doc.update_stream(sx, data)
+            for info in page.get_images(full=True):
+                if info[0] != xref and not any(same_place(q) for q in page.get_image_rects(info[0])):
+                    page.delete_image(info[0])
+            return pixmap_image(page.get_pixmap(clip=clip, dpi=dpi, annots=False))
+    except Exception:
+        pass
+    finally:
+        if doc is not None:
+            doc.close()
+    return pixmap_image(source.get_pixmap(clip=clip, dpi=dpi))
+
+
+def save_trimmed(img: Image.Image, box: Optional[tuple], path: str, margin: float = 0.03) -> None:
+    """Save a picture without its plain white margins (a cut-out on a large transparent canvas would
+    otherwise look tiny), keeping a small border. A picture with no ink is saved as it is."""
+    if box:
+        pad = max(6, int(margin * max(box[2] - box[0], box[3] - box[1])))
+        img = img.crop((max(0, box[0] - pad), max(0, box[1] - pad), min(img.width, box[2] + pad), min(img.height, box[3] + pad)))
+    img.save(path)
 
 
 def table_cell_rects(page: pymupdf.Page, rows: Sequence[Dict[str, Any]]) -> List[pymupdf.Rect]:
@@ -158,8 +320,15 @@ class ImageExtractor:
                     min(page_rect.width, r.x1 + 4),
                     min(page_rect.height, r.y1 + 4),
                 )
-                pix = page.get_pixmap(clip=padded_rect, dpi=dpi)
-                pix.save(crop_path)
+                img = render_picture_alone(page, xref, r, padded_rect, dpi)
+                box = ink_box(img)
+                ink_w, ink_h = ((box[2] - box[0]) * 72 / dpi, (box[3] - box[1]) * 72 / dpi) if box else (0.0, 0.0)
+                # What the picture actually draws decides whether it is a product picture: an icon-sized
+                # detail inset or an empty frame on a mostly empty transparent canvas is decoration, not
+                # a product (rules 2.3.1). Small product photos (knurl wheels) fill their own box.
+                if ink_w * ink_h < 5000 and max(ink_w, ink_h) < 100 and ink_w * ink_h < 0.1 * r.width * r.height:
+                    continue
+                save_trimmed(img, box, crop_path)
 
                 candidates.append({
                     "xref": xref,
@@ -243,7 +412,8 @@ class ImageExtractor:
         # Text printed in white sits on a coloured tag. A page tab (the code tab in the page header,
         # above y 110 pt) names the page's product, not one of its pictures: it labels none. A tag in
         # the page body heads a panel (tool storage): it labels the picture printed on it or in the
-        # panel below it (starting within 60 pt under the tag), never the picture above it.
+        # panel below it (starting within 120 pt under the tag, as the panel's size line and capacity
+        # icons may come first), never the picture above it.
         white = [s["bbox"] for b in page.get_text("dict")["blocks"] for line in b.get("lines", []) for s in line["spans"]
                  if s["color"] == 0xFFFFFF and s["text"].strip()]
         on_white = lambda w: next((sb for sb in white if sb[0] - 1 <= (w[0] + w[2]) / 2 <= sb[2] + 1
@@ -258,7 +428,7 @@ class ImageExtractor:
                 continue
             if tag:
                 under = [i for i, c in enumerate(candidates)
-                         if (box_gap(w, c) == 0 or w[1] - 2 <= c["rect"][1] <= w[3] + 60) and box_gap(w, c) <= 200
+                         if (box_gap(w, c) == 0 or w[1] - 2 <= c["rect"][1] <= w[3] + 120) and box_gap(w, c) <= 200
                          and (not spread or half(w[0], w[2]) == half(c["rect"][0], c["rect"][2]))]
                 if under:
                     owned.setdefault(min(under, key=lambda i: (box_gap(w, candidates[i]), candidates[i]["area"])), []).append(w)
