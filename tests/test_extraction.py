@@ -275,8 +275,10 @@ def test_tool_storage_p4_cabinets(tmp_path):
     assert p2.cat_nr == "RTC/27-10D/2/GRZ"
     assert p2.box_qty == 1
     assert p2.specifications.get("no_of_drawers") == 5
-    # No image is labelled with this code: only a family image is claimed, never a direct one.
-    assert p2.images and p2.images[0].association_type == "product_family"
+    # Rules 2.3.0: the panel's code tag RTC/27-10D/2/GRZ is printed directly above its own 5-drawer
+    # cabinet picture (xref67). Before, only the series photo (xref55) was claimed, as a family image.
+    assert "xref67" in p2.images[0].file_path
+    assert p2.images[0].association_type == "direct_product"
 
     doc.close()
 

@@ -140,8 +140,9 @@ def test_section_picture_above_the_products_table(page_products):
     e13 = page_products(ESTWING, 13)
     assert pic(e13, "EKIT-2F") == ("product_family", 430)
     assert product(e13, "EKIT-2F").sub_title == "POWER DUO - 2PC KIT"
-    # Tool storage: work bench and tool kit sections (not the facing lifestyle photo, p53).
-    assert pic(page_products(STORAGE, 26), "WBN/79-20/2/GRZ") == ("product_family", 911)
+    # Tool storage: work bench (its panel tag is printed above it) and tool kit sections (not the
+    # facing lifestyle photo, p53).
+    assert pic(page_products(STORAGE, 26), "WBN/79-20/2/GRZ") == ("direct_product", 911)
     t27 = page_products(STORAGE, 27)
     assert pic(t27, "RTC/27-10D/65/GRZ") == ("product_family", 1093)
     assert "Automotive Tool Kit 65 Piece" in evidence(t27, "RTC/27-10D/65/GRZ")
@@ -164,6 +165,28 @@ def test_facing_page_picture(page_products):
     assert "_p56_xref1098_" in product(p57, "TB/3-75M").images[0].file_path
     # Cut-off blades share the page but have no picture of their own.
     assert pic(p57, "COB/0-1")[0] not in SHOWN
+
+
+def test_panel_tag_labels_the_picture_under_it(page_products):
+    # Tool storage panels are headed by a white code tag; the series photo printed just above the tag
+    # belongs to the page, not to the panel's product.
+    t5 = page_products(STORAGE, 5)
+    assert pic(t5, "RTC/27-10/4/GRZ") == ("direct_product", 108)
+    assert pic(t5, "RTC/27-10/4B/GRZ") == ("product_family", 108)
+    assert pic(page_products(STORAGE, 9), "RTC/42-20/2/GRZ") == ("direct_product", 252)
+    assert pic(page_products(STORAGE, 14), "RTCL/35-30/1/GRZ") == ("direct_product", 431)
+    t20 = page_products(STORAGE, 20)
+    assert pic(t20, "MTB/3L") == ("direct_product", 689)
+    assert pic(t20, "MTB/5L") == ("direct_product", 693)
+    assert pic(page_products(STORAGE, 25), "SRC/30-20/1/GRZ") == ("direct_product", 872)
+
+
+def test_page_tab_labels_no_picture(page_products):
+    # The code tab in the page header names the page's product, not the photo printed under it.
+    assert pic(page_products(LIGHTING, 9), "LED/685") == ("product_family", 3656)       # not the night-scene photo
+    assert pic(page_products(LIGHTING, 22), "LED/185")[1] != 4485                        # not the clamp usage photo
+    assert pic(page_products(LIGHTING, 37), "LED/501")[1] != 5205                        # not the bulldozer photo
+    assert pic(page_products(LIGHTING, 23), "LED/345") == ("product_family", 4527)       # same picture, not "direct"
 
 
 def test_caption_and_section_pictures_count_as_image_evidence(page_products):

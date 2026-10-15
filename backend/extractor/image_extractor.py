@@ -22,6 +22,8 @@ Rules 2.3.0 (image evidence):
   edge of the one below), never across the fold of a spread. A picture placed inside another
   picture's box keeps the codes printed in its column; where a code lies inside several overlapping
   cut-out boxes, the picture actually drawn next to it (its visible pixels) wins.
+- Codes printed in white on a coloured tag: a page tab (page header) labels no picture; a panel
+  tag in the page body (tool storage) labels the picture under it, not the series photo above it.
 - Codes match as whole codes, segment by segment: "MS/7" is not a label for "MS/7/AL".
 - Tall, thin pictures of upright tools (tweezers, scribers: at least 15 pt wide and three times
   as tall) are product pictures, not icons.
@@ -238,9 +240,28 @@ class ImageExtractor:
                                 for d in candidates) else 0.0
             return (dx * dx + dy * dy) ** 0.5 + above + off_centre + outer
 
+        # Text printed in white sits on a coloured tag. A page tab (the code tab in the page header,
+        # above y 110 pt) names the page's product, not one of its pictures: it labels none. A tag in
+        # the page body heads a panel (tool storage): it labels the picture printed on it or in the
+        # panel below it (starting within 60 pt under the tag), never the picture above it.
+        white = [s["bbox"] for b in page.get_text("dict")["blocks"] for line in b.get("lines", []) for s in line["spans"]
+                 if s["color"] == 0xFFFFFF and s["text"].strip()]
+        on_white = lambda w: next((sb for sb in white if sb[0] - 1 <= (w[0] + w[2]) / 2 <= sb[2] + 1
+                                   and sb[1] - 1 <= (w[1] + w[3]) / 2 <= sb[3] + 1), None)
+
         owned: Dict[int, List[Any]] = {}
         for w in words:
             if in_table(w):
+                continue
+            tag = on_white(w)
+            if tag and tag[1] < 110:
+                continue
+            if tag:
+                under = [i for i, c in enumerate(candidates)
+                         if (box_gap(w, c) == 0 or w[1] - 2 <= c["rect"][1] <= w[3] + 60) and box_gap(w, c) <= 200
+                         and (not spread or half(w[0], w[2]) == half(c["rect"][0], c["rect"][2]))]
+                if under:
+                    owned.setdefault(min(under, key=lambda i: (box_gap(w, candidates[i]), candidates[i]["area"])), []).append(w)
                 continue
             near = [i for i, c in enumerate(candidates) if pymupdf.Rect(w[:4]).intersects(c["_nearby"])
                     and (not spread or half(w[0], w[2]) == half(c["rect"][0], c["rect"][2]))]
