@@ -198,6 +198,11 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
     - Product details name the rule and PDF page the title came from.
     - Any future difference is listed in `review/display_titles.csv`.
+- **Font:** Ubuntu Sans on every device.
+  - It is one variable font file (`site/assets/fonts/ubuntu-sans-latin-wght-normal.woff2`, 38 KB, from Fontsource `@fontsource-variable/ubuntu-sans` 5.3.0), served with the site and preloaded.
+  - Licence: Ubuntu Font Licence 1.0, `site/assets/fonts/LICENSE-ubuntu-font.txt`.
+  - Apple's San Francisco cannot be used: its licence does not allow serving it to other devices.
+  - Characters outside the font's Latin set fall back to the system fonts.
 - **Light and dark mode:**
   - The site follows the device's setting.
   - The sun/moon button in the header (on phones, "Dark mode" in the menu) switches it. That choice is kept in the browser only while it differs from the device setting.

@@ -20,7 +20,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 class Handler(http.server.SimpleHTTPRequestHandler):
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,
                       ".mjs": "text/javascript", ".js": "text/javascript", ".json": "application/json",
-                      ".css": "text/css", ".svg": "image/svg+xml"}
+                      ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2"}
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-cache")
