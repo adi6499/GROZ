@@ -44,13 +44,44 @@ function applyTheme(theme) {
   $('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0d0d0f" : "#f5f5f7");
   for (const b of [$("#themeBtn"), $("#themeRow")]) b?.setAttribute("aria-pressed", String(dark));
 }
-function toggleTheme() {
+function toggleTheme(e) {
   const next = root.dataset.theme === "dark" ? "light" : "dark";
-  applyTheme(next);
   if (next === deviceTheme()) { try { localStorage.removeItem("groz.theme"); } catch { /* storage unavailable */ } }
   else store.set("groz.theme", next);
+  // Glass reveal: the new theme grows from the button as a soft-edged circle while the old view
+  // frosts over (View Transitions API). Instant where unsupported, on low-end devices, or when
+  // the visitor asks for reduced motion.
+  if (!document.startViewTransition || reducedMotion.matches || root.classList.contains("lite")) { applyTheme(next); return; }
+  const r = e?.currentTarget?.getBoundingClientRect?.();
+  const x = r && r.width ? r.left + r.width / 2 : innerWidth - 60, y = r && r.height ? r.top + r.height / 2 : 40;
+  root.style.setProperty("--vt-x", `${Math.round(x)}px`);
+  root.style.setProperty("--vt-y", `${Math.round(y)}px`);
+  root.style.setProperty("--vt-r", `${Math.ceil(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)))}px`);
+  root.classList.add("theme-switching");
+  const t = document.startViewTransition(() => applyTheme(next));
+  t.finished.finally(() => root.classList.remove("theme-switching"));
 }
+
 applyTheme(root.dataset.theme === "dark" ? "dark" : "light");
+
+// The results bar (count, filters, sort, active filters) sticks under the header; it shows a
+// hairline only while it is stuck.
+(function watchResultsBar() {
+  const bar = $("#resultsBar"), head = $(".top");
+  if (!bar || !head || !("IntersectionObserver" in window)) return;
+  let io, h = -1;
+  const watch = () => {
+    const nh = Math.round(head.getBoundingClientRect().height);
+    if (nh === h) return;
+    h = nh;
+    io?.disconnect();
+    io = new IntersectionObserver(([en]) => bar.classList.toggle("stuck", en.intersectionRatio < 1 && en.boundingClientRect.top <= h + 2),
+      { rootMargin: `-${h + 1}px 0px 0px 0px`, threshold: [1] });
+    io.observe(bar);
+  };
+  watch();
+  addEventListener("resize", () => { clearTimeout(watch.t); watch.t = setTimeout(watch, 150); }, { passive: true });
+})();
 $("#themeBtn")?.addEventListener("click", toggleTheme);
 $("#themeRow")?.addEventListener("click", toggleTheme);
 darkQuery.addEventListener("change", () => { if (store.get("groz.theme", null) == null) applyTheme(deviceTheme()); });
@@ -482,13 +513,14 @@ let lastFocus = null;
 let lastClicked = null; // fallback when a click does not move focus (e.g. some browsers, scripted clicks)
 document.addEventListener("click", (e) => { const b = e.target.closest("button,a"); if (b && !modal.contains(b)) lastClicked = b; }, true);
 
-function openModal(title, html, { wide = false, kind = "" } = {}) {
+function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   if (!backdrop.classList.contains("open")) {
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
   }
   state.detailId = null;
   modal.dataset.kind = kind;
   $("#modalTitle").textContent = title;
+  $("#modalTools").innerHTML = tools;
   $("#modalBody").innerHTML = html;
   modal.classList.toggle("wide", wide);
   backdrop.classList.add("open");
@@ -548,6 +580,7 @@ function showDetails(id, { focusNav = "" } = {}) {
   const p = state.byId.get(id);
   if (!p) return;
   const rows = core.detailRows(p);
+  const facts = core.summarySpecs(p, 4);
   const inQ = state.quote.has(p.id), saved = state.saved.has(p.id), cmp = state.compare.has(p.id);
   const st = core.imageState(p);
   const title = core.displayTitle(p);
@@ -558,43 +591,57 @@ function showDetails(id, { focusNav = "" } = {}) {
       ? "<b>Image not confirmed.</b> The catalogue page has a picture near this product, but nothing links it to this product specifically, so it is not shown. The illustration is a category icon."
       : "<b>Image unavailable.</b> No product picture was found for this product. The illustration is a category icon.";
   const nav = core.neighbours(state.results, p.id);
-  const navHtml = nav.index >= 0 && nav.total > 1 ? `<div class="detail-nav">
-      <button class="btn soft sm" type="button" data-detail-nav="${esc(nav.prev ?? "")}" ${nav.prev ? "" : "disabled"} aria-label="Previous product">${icon("left")}<span>Previous</span></button>
-      <span class="detail-pos" aria-live="polite">${nav.index + 1} of ${nav.total} results</span>
-      <button class="btn soft sm" type="button" data-detail-nav="${esc(nav.next ?? "")}" ${nav.next ? "" : "disabled"} aria-label="Next product"><span>Next</span>${icon("right")}</button></div>` : "";
+  const tools = nav.index >= 0 && nav.total > 1 ? `<div class="pd-nav" role="group" aria-label="Browse results">
+      <button class="round-btn" type="button" data-detail-nav="${esc(nav.prev ?? "")}" ${nav.prev ? "" : "disabled"} aria-label="Previous product">${icon("left")}</button>
+      <span class="detail-pos" aria-live="polite">${nav.index + 1} of ${nav.total}</span>
+      <button class="round-btn" type="button" data-detail-nav="${esc(nav.next ?? "")}" ${nav.next ? "" : "disabled"} aria-label="Next product">${icon("right")}</button></div>` : "";
   const notes = p.notes.length ? `<div class="review-notes"><h4>Catalogue review note${p.notes.length > 1 ? "s" : ""}</h4>${p.notes.map((n) => `
       <p><b>${esc(n.field)}</b> — printed value: <code>${esc(n.published_value)}</code> (${esc(n.status)})<br/>${esc(n.issue)}</p>`).join("")}</div>` : "";
   const reviewList = p.under_review.length
-    ? `<p class="evidence"><b>Under review:</b> ${p.under_review.map((u) => esc(u.label)).join(", ")} — a corrected reading of ${p.under_review.length > 1 ? "these values is" : "this value is"} awaiting approval, so ${p.under_review.length > 1 ? "they are" : "it is"} not shown.</p>` : "";
+    ? `<p class="pd-callout"><b>Under review:</b> ${p.under_review.map((u) => esc(u.label)).join(", ")} — a corrected reading of ${p.under_review.length > 1 ? "these values is" : "this value is"} awaiting approval, so ${p.under_review.length > 1 ? "they are" : "it is"} not shown.</p>` : "";
   const headingNote = p.heading && p.heading_relation !== "same"
-    ? `<br/><b>Heading as extracted</b>: “${esc(p.heading)}”. ${esc(RELATION_NOTE[p.heading_relation] || "")}`
-    : !p.heading && title ? `<br/>${esc(RELATION_NOTE.added)}` : "";
+    ? `<p><b>Heading as extracted</b>: “${esc(p.heading)}”. ${esc(RELATION_NOTE[p.heading_relation] || "")}</p>`
+    : !p.heading && title ? `<p>${esc(RELATION_NOTE.added)}</p>` : "";
+  const tag = st.kind === "family" ? '<span class="img-tag">Family image</span>' : "";
   openModal("Product details", `
-    ${navHtml}
-    <div class="detail-grid">
-      <div><div class="detail-art">${image}</div><p class="evidence">${evidence}</p></div>
-      <div class="detail-copy">
-        <div class="eyebrow accent">${esc(p.category)}${p.brand ? ` · ${esc(p.brand)}` : ""}</div>
-        <h2 id="detailCode">${esc(p.cat_nr || "No catalogue number")}</h2>
-        ${title ? `<p class="lead">${esc(title)}</p>` : ""}
-        <div class="sku">${skuHtml(p)}</div>
-        <div class="card-meta">${statusHtml(p)}</div>
-        <div class="detail-actions">
-          <button class="btn ${inQ ? "in-quote" : "primary"}" type="button" data-modal-quote="${esc(p.id)}" data-autofocus>${inQ ? `${icon("check")} In quote — view quote` : "Add to quote"}</button>
-          <button class="btn soft" type="button" data-modal-save="${esc(p.id)}" aria-pressed="${saved}">${icon("heart", saved ? "filled" : "")}${saved ? "Saved" : "Save"}</button>
-          <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
-          <a class="btn outline" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">Catalogue page ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
+    <article class="pd">
+      <div class="pd-hero">
+        <figure class="pd-media">
+          <div class="pd-stage">${image}${tag}</div>
+          <figcaption class="pd-caption">${icon("info")}<span>${evidence}</span></figcaption>
+        </figure>
+        <div class="pd-copy">
+          <p class="pd-eyebrow">${esc(p.category)}${p.brand ? ` · ${esc(p.brand)}` : ""}</p>
+          <h2 class="pd-code" id="detailCode">${esc(p.cat_nr || "No catalogue number")}</h2>
+          ${title ? `<p class="pd-title">${esc(title)}</p>` : ""}
+          <p class="pd-meta">${skuHtml(p)}</p>
+          <div class="pd-status">${statusHtml(p)}</div>
+          ${facts.length ? `<dl class="pd-facts">${facts.map((f) => `<div><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`).join("")}</dl>` : ""}
+          <div class="pd-actions">
+            <button class="btn ${inQ ? "in-quote" : "primary"} pd-primary" type="button" data-modal-quote="${esc(p.id)}" data-autofocus>${inQ ? `${icon("check")} In quote — view quote` : "Add to quote"}</button>
+            <div class="pd-secondary">
+              <button class="btn soft" type="button" data-modal-save="${esc(p.id)}" aria-pressed="${saved}">${icon("heart", saved ? "filled" : "")}${saved ? "Saved" : "Save"}</button>
+              <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
+            </div>
+            <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue page ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
+          </div>
         </div>
       </div>
-    </div>
-    <table class="spec-table"><caption class="sr-only">Specifications for ${esc(p.cat_nr)}</caption><tbody>
-      ${rows.map((r) => `<tr><th scope="row">${esc(r.label)}</th><td>${valueCell(r)}</td></tr>`).join("")}
-    </tbody></table>
-    ${reviewList}${notes}
-    <div class="source-box"><b>Source</b>: ${esc(p.catalogue.title)} — printed page ${esc(p.printed_page ?? "not printed")} (PDF page ${p.page}), file <code>${esc(p.catalogue.pdf)}</code>.
-      ${title && p.title_source ? `<br/><b>Printed title</b>: ${esc(p.title_source.evidence)}` : ""}${headingNote}
-      ${p.source_row_text ? `<br/><b>Catalogue table row</b> (text as extracted):<pre>${esc(p.source_row_text)}</pre>` : ""}
-      <div class="source-foot">${reviewLine(p)}</div></div>`, { wide: true, kind: "detail" });
+      ${reviewList}${notes}
+      <section class="pd-section" aria-labelledby="pdSpecsTitle">
+        <h3 id="pdSpecsTitle">Specifications</h3>
+        <dl class="pd-specs">${rows.map((r) => `<div><dt>${esc(r.label)}</dt><dd>${valueCell(r)}</dd></div>`).join("")}</dl>
+      </section>
+      <section class="pd-section" aria-labelledby="pdSourceTitle">
+        <h3 id="pdSourceTitle">From the catalogue</h3>
+        <div class="pd-source">
+          <p><b>Source</b>: ${esc(p.catalogue.title)} — printed page ${esc(p.printed_page ?? "not printed")} (PDF page ${p.page}), file <code>${esc(p.catalogue.pdf)}</code>.</p>
+          ${title && p.title_source ? `<p><b>Printed title</b>: ${esc(p.title_source.evidence)}</p>` : ""}${headingNote}
+          ${p.source_row_text ? `<p><b>Catalogue table row</b> (text as extracted):</p><pre>${esc(p.source_row_text)}</pre>` : ""}
+          <p class="source-foot">${reviewLine(p)}</p>
+        </div>
+      </section>
+    </article>`, { wide: true, kind: "detail", tools });
   state.detailId = p.id;
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }

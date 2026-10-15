@@ -204,6 +204,12 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - A small script in the page head applies the theme before the first paint, so there is no flash.
   - Dark styles live in one block of `site.css` (`:root[data-theme=dark]`); light styles are unchanged.
   - Catalogue pictures keep soft light tiles in dark mode, because they are renders on white.
+  - Switching shows a glass reveal (View Transitions API): the new theme grows from the button in a soft-edged circle while the old view frosts over. It is instant where unsupported, on low-end devices, and for visitors who ask for reduced motion.
+- **Product details:** the picture is the hero, beside the code, title, status and up to four key facts.
+  - Then Add to quote, Save and Compare, and a link to the catalogue page.
+  - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).
+  - Previous/Next and the position in the results sit in the dialog header.
+- **Results bar:** the product count, Filters, sort and active filter chips stick under the header while scrolling, on every screen size.
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.

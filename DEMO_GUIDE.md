@@ -41,11 +41,11 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
    - Copy, download .txt/.csv, or print.
    - The request says it was **not sent**. There is no sending backend, by design.
 
-9. **Dark mode.** Click the moon in the header. The whole site switches, including the dialogs, while the catalogue pictures stay on soft light tiles. Reload: the choice is kept. Click the sun to return. By default the site follows the device's light or dark setting.
+9. **Dark mode.** Click the moon in the header. The new theme spreads from the button with a frosted-glass reveal, and the whole site switches, including the dialogs, while the catalogue pictures stay on soft light tiles. Reload: the choice is kept. Click the sun to return. By default the site follows the device's light or dark setting.
 
 On a phone-sized window, show:
 - the header search;
-- the Filters bottom sheet;
+- the Filters bottom sheet, and the Filters/sort bar that stays under the header while you scroll;
 - product details and the quote as bottom sheets;
 - the stacked quote lines;
 - the *Dark mode* switch in the menu.
