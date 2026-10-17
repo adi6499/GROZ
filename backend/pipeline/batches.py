@@ -38,9 +38,9 @@ BATCHES: Dict[str, Batch] = {
     "batch_3_pilot": Batch(
         "batch_3_pilot",
         "Hand Tool catalogue pilot: p8 divider, p11 + p53 two-column tables, p12 standard table, "
-        "p224 calipers already extracted from Precision. Prepared; awaiting approval.",
+        "p224 calipers already extracted from Precision. Approved by the project owner on 17 Oct 2026.",
         (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", (8, 11, 12, 53, 224)),),
-        approved=False,
+        approved=True,
         output_dir="output_pilot_handtool",
     ),
 }
