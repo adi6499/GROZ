@@ -43,7 +43,14 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 9. **Dark mode.** Click the moon in the header. The new theme spreads from the button with a frosted-glass reveal, and the whole site switches, including the dialogs, while the catalogue pictures stay on soft light tiles. Reload: the choice is kept. Click the sun to return. By default the site follows the device's light or dark setting.
 
-10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog: those open at once, without the box.
+10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog (or the arrow keys): the old picture swings out as the new one swings in.
+
+11. **Motion.**
+    - Move the mouse over a card: it leans toward the pointer with a soft glare.
+    - Click *Add to quote*: the picture is tossed into the Quote button, and its count rolls up.
+    - Click a heart: it bursts.
+    - Pick a category: the count counts down and the new cards rise in one after another.
+    - Scroll down: further cards rise as they come into view.
 
 On a phone-sized window, show:
 - the header search;

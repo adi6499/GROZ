@@ -17,6 +17,7 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 <link rel="preload" href="assets/fonts/ubuntu-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin/>
 <link rel="stylesheet" href="assets/site.css"/>
 <link rel="modulepreload" href="assets/js/core.mjs"/>
+<link rel="modulepreload" href="assets/js/motion.mjs"/>
 </head>
 <body>
 <a class="skip" href="#products">Skip to products</a>
@@ -91,7 +92,7 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
     <div class="results">
       <div class="results-bar" id="resultsBar">
       <div class="results-top">
-        <div class="count" id="resultCount" aria-live="polite" tabindex="-1"><strong>0</strong> products</div>
+        <div class="count" id="resultCount" tabindex="-1"><span id="countShown" aria-hidden="true"><strong>0</strong> products</span><span class="sr-only" id="countLive" aria-live="polite">Loading products</span></div>
         <div class="results-tools">
           <button class="btn outline filters-toggle" id="filtersToggle" type="button" aria-controls="filters" aria-expanded="false"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters <span class="filter-badge" id="filterBadge" hidden></span></button>
           <label class="sr-only" for="sort">Sort products</label>

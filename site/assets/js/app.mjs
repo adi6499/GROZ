@@ -3,6 +3,7 @@
 import * as core from "./core.mjs";
 import { art } from "./art.mjs";
 import { icon } from "./icons.mjs";
+import * as fx from "./motion.mjs";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -21,7 +22,7 @@ const state = {
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
-  detailId: null, unbox: null,
+  detailId: null, unbox: null, quoteHold: 0, fxReady: false,
 };
 
 const root = document.documentElement;
@@ -146,7 +147,7 @@ function renderLoading() {
   grid.className = "products";
   grid.setAttribute("aria-busy", "true");
   grid.innerHTML = Array.from({ length: 6 }, () => '<div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div>').join("");
-  $("#resultCount").textContent = "Loading products…";
+  setCount("Loading products…");
 }
 
 function renderError(err) {
@@ -157,7 +158,7 @@ function renderError(err) {
     <p>${fileProtocol ? "This page must be opened through the local server, not as a file." : esc(err?.message || "Unknown error")}</p>
     <p>From the project folder run <code>.venv/Scripts/python.exe build_site_data.py</code> and <code>python serve_site.py</code>, then open the address it prints.</p>
     <button class="btn soft" id="retryLoad" type="button">Try again</button></div>`;
-  $("#resultCount").textContent = "No products loaded";
+  setCount("No products loaded");
   $("#moreWrap").innerHTML = "";
   $("#retryLoad")?.addEventListener("click", load);
 }
@@ -194,6 +195,7 @@ function init(data) {
   renderFilters();
   renderProducts();
   updateBadges();
+  state.fxReady = true;
   if ("requestIdleCallback" in window) requestIdleCallback(() => probeFrames(), { timeout: 2000 });
   else setTimeout(() => probeFrames(), 500);
 }
@@ -398,13 +400,27 @@ function emptyHtml() {
     <button class="btn soft" type="button" data-reset>Reset search and filters</button></div>`;
 }
 
-/** Renders the current results. `append` adds only the next page (Show more) instead of rebuilding. */
-function renderProducts({ append = false } = {}) {
+/** The results count. Screen readers get the plain sentence (a polite live region); the visible copy,
+ *  hidden from them, counts its number up or down to the new total (motion.mjs). */
+function setCount(text, n = null, total = 0) {
+  $("#countLive").textContent = text;
+  const shown = $("#countShown");
+  const num = $(".n", shown);
+  if (n == null) { shown.textContent = text; delete shown.dataset.total; return; }
+  if (num && shown.dataset.total === String(total)) { fx.countTo(num, n); return; }
+  shown.innerHTML = `<strong class="n">${n}</strong> of ${total} products`;
+  shown.dataset.total = String(total);
+}
+
+/** Renders the current results. `append` adds only the next page (Show more) instead of rebuilding.
+ *  New cards come in with motion: `typing` makes that a short fade, `quiet` (a rebuild that only
+ *  refreshes buttons) shows them at once. */
+function renderProducts({ append = false, typing = false, quiet = false } = {}) {
   if (!state.data) return;
   if (!append) state.results = core.sortProducts(core.filterProducts(state.products, state.index, state.filters), state.sort);
   const list = state.results;
   grid.setAttribute("aria-busy", "false");
-  $("#resultCount").innerHTML = `<strong>${list.length}</strong> of ${state.products.length} products`;
+  setCount(`${list.length} of ${state.products.length} products`, list.length, state.products.length);
   if (!append) renderChips();
   if (!state.products.length || !list.length) {
     grid.className = "products";
@@ -412,6 +428,7 @@ function renderProducts({ append = false } = {}) {
       : '<div class="state"><strong>No products in this catalogue yet.</strong><p>The data file loaded, but it contains no products.</p></div>';
     state.rendered = 0;
     $("#moreWrap").innerHTML = "";
+    fx.cascade([]);
     return;
   }
   const from = append ? state.rendered : 0;
@@ -430,6 +447,7 @@ function renderProducts({ append = false } = {}) {
   const remaining = list.length - state.rendered;
   $("#moreWrap").innerHTML = remaining > 0
     ? `<button class="btn outline" type="button" id="showMore">Show ${Math.min(remaining, core.PAGE_SIZE)} more <span class="muted-on">· ${remaining} remaining</span></button>` : "";
+  fx.cascade(state.view === "grid" && !quiet ? $$(".product", grid).slice(from) : [], { fresh: !append, quick: typing });
 }
 
 function setView(view, rerender = true) {
@@ -442,23 +460,24 @@ function setView(view, rerender = true) {
   if (rerender) renderProducts();
 }
 
-function refresh({ resetPaging = true } = {}) {
+function refresh({ resetPaging = true, typing = false } = {}) {
   if (resetPaging) state.shown = core.PAGE_SIZE;
-  renderProducts();
+  renderProducts({ typing });
 }
 
-function setQuery(value, { scroll = false } = {}) {
+function setQuery(value, { scroll = false, typing = false } = {}) {
   state.filters.query = value;
   if ($("#navSearch").value !== value) $("#navSearch").value = value;
   if ($("#mainSearch").value !== value) $("#mainSearch").value = value;
-  refresh();
+  refresh({ typing });
   if (scroll) scrollToEl($("#products"));
 }
 
 function updateBadges() {
-  $("#savedCount").textContent = state.saved.size;
+  setBadge($("#savedCount"), state.saved.size);
   $("#savedBtn").setAttribute("aria-label", `Saved products, ${state.saved.size} saved`);
-  for (const el of $$("[data-quote-count]")) el.textContent = state.quote.size;
+  // While a picture is flying into the Quote button, its count changes as it lands.
+  if (!state.quoteHold) for (const el of $$("[data-quote-count]")) setBadge(el, state.quote.size);
   $("#mobileQuoteBtn").setAttribute("aria-label", `Quote, ${plural(state.quote.size, "product")}`);
   $("#compareCount").textContent = `${state.compare.size} of ${core.MAX_COMPARE} selected to compare`;
   $("#compareBtn").disabled = state.compare.size < 2;
@@ -467,7 +486,22 @@ function updateBadges() {
   document.body.classList.toggle("has-dock", dock);
 }
 
+/** Sets a count badge; after the first render, a new number rolls in and the badge pops. */
+function setBadge(el, n) {
+  const old = Number(el.textContent);
+  if (el.textContent === String(n)) return;
+  el.textContent = String(n);
+  if (state.fxReady) { fx.roll(el, n > old); fx.pop(el, 1.25); }
+}
+
 // ---------------------------------------------------------------- product actions
+/** Tosses the product picture into the visible Quote button; the quote count changes as it lands. */
+function tossToQuote(src) {
+  const target = [$("#navQuote"), $("#mobileQuoteBtn")].find((b) => b?.getClientRects().length);
+  state.quoteHold += 1;
+  fx.flyTo(src, target, () => { state.quoteHold -= 1; updateBadges(); });
+}
+
 function toggleSaved(id) {
   if (state.saved.has(id)) { state.saved.delete(id); notify("Removed from saved"); }
   else { state.saved.add(id); notify("Saved for later"); }
@@ -500,7 +534,7 @@ function addManyToQuote(ids) {
   for (const id of ids) if (state.byId.has(id) && !state.quote.has(id)) { state.quote.set(id, 1); added += 1; }
   persist();
   updateBadges();
-  renderProducts();
+  renderProducts({ quiet: true });
   return added;
 }
 
@@ -617,9 +651,7 @@ function playUnbox(tile, r) {
   if (!stage) return;
   // This replaces the dialog's own entrance (pop or sheet, fade-ins). A cancelled CSS animation stays
   // cancelled until the dialog next opens, so nothing replays when the unboxing ends.
-  if (typeof CSSAnimation === "function") {
-    modal.getAnimations({ subtree: true }).forEach((a) => { if (a instanceof CSSAnimation) a.cancel(); });
-  }
+  cancelEntrance();
   modal.classList.add("unboxing");
   const T = UNBOX;
   const sr = stage.getBoundingClientRect(), mr = modal.getBoundingClientRect();
@@ -752,9 +784,17 @@ function stopUnbox() {
   if (state.unbox) endUnbox(state.unbox, false);
 }
 
-function showDetails(id, { focusNav = "" } = {}) {
+/** Cancels the dialog's CSS entrance (pop or sheet, the details' fade-up and picture fade). */
+function cancelEntrance() {
+  if (typeof CSSAnimation !== "function") return;
+  modal.getAnimations({ subtree: true }).forEach((a) => { if (a instanceof CSSAnimation) a.cancel(); });
+}
+
+function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
   const p = state.byId.get(id);
   if (!p) return;
+  // Previous/Next: keep the old picture, so it can swing out while the new one swings in.
+  const oldPic = dir && state.detailId ? $(".pd-stage > img, .pd-stage > svg", modal) : null;
   const rows = core.detailRows(p);
   const facts = core.summarySpecs(p, 4);
   const inQ = state.quote.has(p.id), saved = state.saved.has(p.id), cmp = state.compare.has(p.id);
@@ -819,6 +859,9 @@ function showDetails(id, { focusNav = "" } = {}) {
       </section>
     </article>`, { wide: true, kind: "detail", tools });
   state.detailId = p.id;
+  // Shown again in place (Save, Compare, Add to quote) or stepped to: the opening fade does not replay.
+  if (dir || still) cancelEntrance();
+  if (dir) fx.carousel($(".pd-stage", modal), oldPic, dir, [$(".pd-copy", modal), $(".pd-caption", modal)]);
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }
 
@@ -837,12 +880,14 @@ function showCompare() {
 
 function showSaved() {
   const list = [...state.saved].map((id) => state.byId.get(id)).filter(Boolean);
+  const entering = !backdrop.classList.contains("open") || modal.dataset.kind !== "saved";
   openModal("Saved for later", list.length ? `<div class="saved-list">${list.map((p) => `
     <div class="saved-item" data-id="${esc(p.id)}"><div class="thumb">${p.image ? `<img src="${esc(p.image.src)}" alt="" width="54" height="44"/>` : art(state.artByCategory.get(p.category))}</div>
       <div class="grow"><strong>${esc(p.cat_nr)}</strong>${titleHtml(p, "ptitle row")}<div class="sku">${skuHtml(p)}</div></div>
       <div class="acts"><button class="btn soft sm" type="button" data-saved-view="${esc(p.id)}">View</button><button class="btn ${state.quote.has(p.id) ? "in-quote" : "primary"} sm" type="button" data-saved-quote="${esc(p.id)}">${state.quote.has(p.id) ? "In quote" : "Add to quote"}</button><button class="btn danger sm" type="button" data-saved-remove="${esc(p.id)}" aria-label="Remove ${esc(p.cat_nr)} from saved">Remove</button></div></div>`).join("")}</div>
     <div class="detail-actions"><button class="btn primary" type="button" data-saved-quote-all>Add all to quote</button></div>`
     : `<div class="empty plain">${icon("heart", "state-icon")}<strong>Nothing saved yet.</strong><p>Tap the heart on a product and it will be waiting here, even after you close the page.</p></div>`, { kind: "saved" });
+  if (entering) fx.stagger($$(".saved-item", modal));
 }
 
 // ---------------------------------------------------------------- quotation (local preparation only)
@@ -881,6 +926,7 @@ function field(id, label, { type = "text", required = false, full = false, area 
 }
 
 function showQuote() {
+  const entering = !backdrop.classList.contains("open") || modal.dataset.kind !== "quote";
   openModal("Let’s build your quote", `
     <p class="notice">This prepares a quotation request on your device. <b>Nothing is sent</b> — when it is ready you can copy, download or print it for your GROZ sales contact.</p>
     <div id="quoteItems">${quoteItemsHtml()}</div><div class="err" id="err-items" tabindex="-1"></div>
@@ -894,6 +940,7 @@ function showQuote() {
       ${field("notes", "What else should we know?", { full: true, area: true })}
       <div class="field full form-foot"><button class="btn primary lg" type="submit">Prepare request</button><small>Fields marked * are required. Nothing is sent.</small></div>
     </form>`, { kind: "quote" });
+  if (entering) fx.stagger($$("#quoteItems tbody tr", modal));
 }
 
 function refreshQuoteItems() {
@@ -956,7 +1003,7 @@ function submitQuote(form) {
     state.quote.clear();
     persist();
     updateBadges();
-    renderProducts();
+    renderProducts({ quiet: true });
     showQuote();
   };
 }
@@ -1022,7 +1069,7 @@ function setFiltersOpen(open, { restoreFocus = true } = {}) {
 
 function wire() {
   let typing;
-  const onType = (e) => { clearTimeout(typing); const v = e.target.value; typing = setTimeout(() => setQuery(v), 120); };
+  const onType = (e) => { clearTimeout(typing); const v = e.target.value; typing = setTimeout(() => setQuery(v, { typing: true }), 120); };
   $("#navSearch").addEventListener("input", onType);
   $("#mainSearch").addEventListener("input", onType);
   $("#navSearchForm").addEventListener("submit", (e) => { e.preventDefault(); clearTimeout(typing); setQuery($("#navSearch").value.trim(), { scroll: true }); $("#navSearch").blur(); });
@@ -1091,11 +1138,18 @@ function wire() {
     const host = e.target.closest("[data-id]");
     if (!host) return;
     const id = host.dataset.id;
-    if (e.target.closest("[data-save]")) { toggleSaved(id); syncProductButtons(id); return; }
+    if (e.target.closest("[data-save]")) {
+      toggleSaved(id); syncProductButtons(id);
+      fx.burst(host.querySelector("[data-save]"), state.saved.has(id));
+      return;
+    }
     if (e.target.closest("[data-quote]")) {
       if (state.quote.has(id)) { showQuote(); return; }
+      tossToQuote(host.querySelector(".product-image > img, .product-image > svg, .thumb > img, .thumb > svg"));
       addToQuote(id); syncProductButtons(id);
-      host.querySelector("[data-quote]")?.focus({ preventScroll: true });
+      const b = host.querySelector("[data-quote]");
+      b?.focus({ preventScroll: true });
+      fx.drawCheck(b);
       return;
     }
     if (e.target.closest("[data-detail]")) unboxThenShow(host, id);
@@ -1107,6 +1161,8 @@ function wire() {
     if (!toggleCompare(id, c.checked)) c.checked = false;
   });
   grid.addEventListener("error", (e) => { if (e.target.tagName === "IMG") placeholderFor(e.target); }, true);
+  fx.tilt(grid, ".product");
+  fx.tilt($("#categoryGrid"), ".cat", { max: 8, lift: -4 });
   $("#moreWrap").addEventListener("click", (e) => {
     if (!e.target.closest("#showMore")) return;
     const first = state.rendered;
@@ -1117,7 +1173,7 @@ function wire() {
   });
 
   $("#compareBtn").addEventListener("click", showCompare);
-  $("#clearCompare").addEventListener("click", () => { state.compare.clear(); updateBadges(); renderProducts(); });
+  $("#clearCompare").addEventListener("click", () => { state.compare.clear(); updateBadges(); renderProducts({ quiet: true }); });
   const openQuote = () => { setMenuOpen(false); showQuote(); };
   for (const id of ["#navQuote", "#bannerQuote", "#mobileQuote", "#mobileQuoteBtn"]) $(id).addEventListener("click", openQuote);
   $("#savedBtn").addEventListener("click", () => { setMenuOpen(false); showSaved(); });
@@ -1144,7 +1200,7 @@ function wire() {
     if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && state.detailId && !typing && !e.altKey && !e.ctrlKey && !e.metaKey) {
       const n = core.neighbours(state.results, state.detailId);
       const to = e.key === "ArrowLeft" ? n.prev : n.next;
-      if (to) { e.preventDefault(); showDetails(to); }
+      if (to) { e.preventDefault(); showDetails(to, { dir: e.key === "ArrowLeft" ? -1 : 1 }); }
       return;
     }
     trapFocus(e);
@@ -1153,15 +1209,31 @@ function wire() {
     const t = e.target.closest("button");
     if (!t) return;
     const d = t.dataset;
-    if ("detailNav" in d) { if (d.detailNav) showDetails(d.detailNav, { focusNav: t.getAttribute("aria-label") }); }
-    else if (d.modalQuote) { if (state.quote.has(d.modalQuote)) showQuote(); else { addToQuote(d.modalQuote); syncProductButtons(d.modalQuote); showDetails(d.modalQuote); } }
-    else if (d.modalSave) { toggleSaved(d.modalSave); syncProductButtons(d.modalSave); showDetails(d.modalSave); $(`[data-modal-save]`, modal)?.focus(); }
-    else if (d.modalCompare) { if (toggleCompare(d.modalCompare, !state.compare.has(d.modalCompare))) { syncProductButtons(d.modalCompare); showDetails(d.modalCompare); $(`[data-modal-compare]`, modal)?.focus(); } }
+    if ("detailNav" in d) {
+      const label = t.getAttribute("aria-label");
+      if (d.detailNav) showDetails(d.detailNav, { focusNav: label, dir: label === "Previous product" ? -1 : 1 });
+    } else if (d.modalQuote) {
+      if (state.quote.has(d.modalQuote)) showQuote();
+      else {
+        tossToQuote($(".pd-stage > img, .pd-stage > svg", modal));
+        addToQuote(d.modalQuote); syncProductButtons(d.modalQuote); showDetails(d.modalQuote, { still: true });
+        fx.drawCheck($("[data-modal-quote]", modal));
+      }
+    } else if (d.modalSave) {
+      toggleSaved(d.modalSave); syncProductButtons(d.modalSave); showDetails(d.modalSave, { still: true });
+      const b = $("[data-modal-save]", modal);
+      b?.focus();
+      fx.burst(b?.querySelector("svg"), state.saved.has(d.modalSave));
+    }
+    else if (d.modalCompare) { if (toggleCompare(d.modalCompare, !state.compare.has(d.modalCompare))) { syncProductButtons(d.modalCompare); showDetails(d.modalCompare, { still: true }); $(`[data-modal-compare]`, modal)?.focus(); } }
     else if (d.uncompare) { state.compare.delete(d.uncompare); updateBadges(); syncProductButtons(d.uncompare); state.compare.size >= 2 ? showCompare() : (closeModal(), notify("Choose at least two products to compare.")); }
     else if ("quoteAll" in d) { addManyToQuote(state.compare); showQuote(); }
-    else if ("clearCompare" in d) { state.compare.clear(); updateBadges(); renderProducts(); closeModal(); }
+    else if ("clearCompare" in d) { state.compare.clear(); updateBadges(); renderProducts({ quiet: true }); closeModal(); }
     else if (d.savedView) showDetails(d.savedView);
-    else if (d.savedQuote) { addToQuote(d.savedQuote); syncProductButtons(d.savedQuote); showSaved(); }
+    else if (d.savedQuote) {
+      if (!state.quote.has(d.savedQuote)) tossToQuote(t.closest(".saved-item")?.querySelector(".thumb > img, .thumb > svg"));
+      addToQuote(d.savedQuote); syncProductButtons(d.savedQuote); showSaved();
+    }
     else if (d.savedRemove) { state.saved.delete(d.savedRemove); persist(); updateBadges(); syncProductButtons(d.savedRemove); showSaved(); }
     else if ("savedQuoteAll" in d) { addManyToQuote(state.saved); showQuote(); }
     else if (d.quoteRemove) { state.quote.delete(d.quoteRemove); persist(); updateBadges(); syncProductButtons(d.quoteRemove); refreshQuoteItems(); ($("[data-qty]", modal) || $("#q-name"))?.focus(); }

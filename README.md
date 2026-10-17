@@ -222,10 +222,22 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).
   - Previous/Next and the position in the results sit in the dialog header.
 - **Results bar:** the product count, Filters, sort and active filter chips stick under the header while scrolling, on every screen size.
+- **Motion** (`site/assets/js/motion.mjs`, styles under "decorative motion" in `site.css`):
+  - Add to quote: the product picture is tossed in an arc into the Quote button, which pops as its count rolls to the new number. This works from cards, table rows, the details and the saved list. The button's check mark draws itself.
+  - Save: the heart squashes and springs back with a ring and sparks; the saved count rolls.
+  - Cards and category tiles lean toward the mouse in 3D, with a soft glare and the picture drifting the other way (mouse only).
+  - New results rise in one after another. Cards further down wait and rise as they are scrolled into view. While typing a search, results only fade, so they do not dance; rebuilds that only refresh buttons show at once.
+  - The product count counts up or down to the new total. Screen readers get the plain sentence through a separate live region, not the counting.
+  - Details Previous/Next (buttons or arrow keys): the old picture swings out one side of its tile while the new one swings in from the other. Save, Compare and Add to quote inside the details no longer replay its fade-in.
+  - The rows of the saved list and the quote rise in when those dialogs open. Buttons press in slightly when clicked.
+  - Rules:
+    - Only transform and opacity move: on the element itself, through the separate `translate`/`scale` properties so its own transform is kept, or on short-lived copies in a fixed layer.
+    - Each copy is removed when its animation ends, or by a timer if the page stops drawing.
+    - Nothing waits for an effect. With reduced motion, on low-end devices, or without Web Animations support, every effect is skipped and the page behaves as before.
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.
-  - `site/assets/js/app.mjs`: page behaviour.
+  - `site/assets/js/app.mjs`: page behaviour. `site/assets/js/motion.mjs`: decorative motion only.
   - `site/assets/js/art.mjs`: category icons from the reference design. `site/assets/js/icons.mjs`: interface icons (inline SVG).
 - Responsive and touch:
   - Tested at 320, 375, 430, 768, 1024 and 1440 px with no horizontal page scrolling.

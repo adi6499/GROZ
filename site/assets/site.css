@@ -440,6 +440,28 @@ body.has-dock main{padding-bottom:110px}
 :root[data-theme=dark] .unbox .ub-ghosts>div{box-shadow:0 0 0 1px #ffffff14,0 12px 32px #0009}
 .modal.unboxing .modal-head{-webkit-backdrop-filter:none;backdrop-filter:none}
 
+/* decorative motion (motion.mjs): copies fly and burst in a fixed layer above everything; cards tilt,
+   rise in and press. Nothing here changes layout. */
+.fx-layer{position:fixed;inset:0;z-index:96;pointer-events:none;overflow:hidden}
+.fx-fly{position:absolute;display:grid;place-items:center;border-radius:14px;background:#fff;box-shadow:0 14px 34px #0003;overflow:hidden}
+.fx-fly img{max-width:92%;max-height:92%;object-fit:contain;mix-blend-mode:multiply}
+.fx-fly svg{width:62%;height:62%;opacity:.6}
+:root[data-theme=dark] .fx-fly{background:#f1f1f4;box-shadow:0 14px 34px #000b}
+.fx-burst{position:absolute;width:0;height:0}
+.fx-burst i{position:absolute;left:-19px;top:-19px;width:38px;height:38px;border-radius:50%;border:2px solid var(--orange)}
+.fx-burst b{position:absolute;left:-3.5px;top:-3.5px;width:7px;height:7px;border-radius:50%;background:var(--orange)}
+.fx-burst b:nth-child(odd){background:#ffad8a}
+.fx-glare{position:absolute;left:-140px;top:-140px;width:280px;height:280px;border-radius:50%;background:radial-gradient(closest-side,#ffffff8c,#fff0);pointer-events:none;z-index:2}
+:root[data-theme=dark] .fx-glare{background:radial-gradient(closest-side,#ffffff21,#fff0)}
+.product.fx-wait{opacity:0}
+@media print{.product.fx-wait{opacity:1}}
+.badge-count{display:inline-block}
+.product-image img{transition:transform .3s var(--ease),translate .45s var(--ease)}
+.pd-stage>img,.pd-stage>svg{grid-area:1/1}
+.pd-stage .fx-out{animation:none}
+.btn:active:not([disabled]){transform:scale(.97);transition-duration:.08s}
+@media(prefers-reduced-motion:reduce){.btn:active:not([disabled]){transform:none}}
+
 /* theme switch: the new theme grows from the button as a soft-edged circle while the old view frosts
    over (View Transitions API; app.mjs sets --vt-x/--vt-y/--vt-r and skips it for reduced motion) */
 @property --vt-reveal{syntax:"<length>";inherits:true;initial-value:0px}
