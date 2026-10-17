@@ -416,6 +416,36 @@ body.has-dock main{padding-bottom:110px}
 .menu-row[aria-pressed=true] .switch{background:var(--btn)}.menu-row[aria-pressed=true] .switch:after{transform:translateX(16px)}
 @media(max-width:720px){.nav .theme-btn{display:none}}
 
+/* unboxing (app.mjs unboxThenShow): opening a product card turns its picture tile into a GROZ carton,
+   the flaps open, the product rises out, and the details panel grows from the box while the specs fly
+   out of it. Transform/opacity only; skipped for reduced motion and on low-end devices. */
+.unbox{position:fixed;z-index:95;pointer-events:none;perspective:1000px;perspective-origin:50% -30%;transition:opacity .28s ease}
+.unbox.done{opacity:0}
+.ub-box{position:absolute;inset:0;transform-style:preserve-3d;animation:ub-lift .5s var(--ease) both}
+.ub-face,.ub-flap,.ub-glow,.ub-item{position:absolute}
+.ub-front{inset:0;border-radius:10px;overflow:hidden;background:linear-gradient(165deg,#36383d,#1c1d20 72%);box-shadow:inset 0 0 0 1px #ffffff14,inset 0 -24px 36px #0007;display:flex;align-items:center;justify-content:center;gap:9px;color:#fff;font-weight:850;letter-spacing:-.04em;font-size:clamp(15px,calc(var(--h) * .14),28px)}
+.ub-front:before{content:"";position:absolute;left:0;right:0;top:0;height:13%;background:linear-gradient(#ff6a3d,#d14512)}
+.ub-front .brand-mark{width:1.3em;height:1.3em;font-size:.7em}
+.ub-back{inset:0;border-radius:10px;transform:translateZ(calc(var(--d) * -1));background:#111214}
+.ub-left,.ub-right{top:0;width:var(--d);height:100%;transform-origin:left center;transform:rotateY(90deg);background:linear-gradient(90deg,#2a2c30,#18191c)}
+.ub-left{left:0}.ub-right{left:100%}
+.ub-flap{left:0;top:0;width:100%;height:calc(var(--d) / 2);transform-origin:top center;background:linear-gradient(#ff6d40,#c2410c);box-shadow:inset 0 0 0 1px #0002}
+.ub-flap-f{transform:rotateX(-90deg);animation:ub-flap-f .44s .22s cubic-bezier(.3,.7,.2,1.15) both}
+.ub-flap-b{transform:translateZ(calc(var(--d) * -1)) rotateX(90deg);animation:ub-flap-b .44s .28s cubic-bezier(.3,.7,.2,1.15) both}
+.ub-glow{left:6%;right:6%;top:0;height:var(--d);transform-origin:top center;transform:rotateX(-90deg);background:radial-gradient(closest-side,#ffe3d6,#f4511e70 55%,transparent);opacity:0;animation:ub-glow .5s .3s ease both}
+.ub-item{left:14%;top:8%;width:72%;height:84%;border-radius:14px;background:radial-gradient(120% 95% at 50% 30%,#fff,#ebebef);display:grid;place-items:center;box-shadow:0 20px 44px #0006;opacity:0;animation:ub-rise .5s .4s var(--ease) both}
+.ub-item img{max-width:86%;max-height:86%;object-fit:contain;mix-blend-mode:multiply}.ub-item svg{width:58%;height:58%;opacity:.6}
+@keyframes ub-lift{from{opacity:0;transform:translateZ(0) rotateX(0deg) rotateY(0deg) scale(.94)}30%{opacity:1}to{opacity:1;transform:translateY(12%) translateZ(10px) rotateX(24deg) rotateY(-18deg) scale(.86)}}
+@keyframes ub-flap-f{to{transform:rotateX(-300deg)}}
+@keyframes ub-flap-b{to{transform:translateZ(calc(var(--d) * -1)) rotateX(212deg)}}
+@keyframes ub-glow{to{opacity:1}}
+@keyframes ub-rise{from{opacity:0;transform:translateZ(calc(var(--d) * -.5)) translateY(25%) rotateY(18deg) rotateX(-24deg) scale(.7)}25%{opacity:1}to{opacity:1;transform:translateZ(calc(var(--d) * .3)) translateY(-128%) rotateY(18deg) rotateX(-24deg) scale(1.1)}}
+.backdrop .modal.unboxed{animation:pd-unbox .44s var(--ease) both}
+@keyframes pd-unbox{from{opacity:0;transform:translate(var(--ox),var(--oy)) scale(.25)}to{opacity:1;transform:none}}
+.modal .fly{animation:pd-fly .52s calc(.12s + var(--i) * 40ms) var(--ease) both}
+@keyframes pd-fly{from{opacity:0;transform:translate(var(--fx),var(--fy)) scale(.3) rotate(-6deg)}to{opacity:1;transform:none}}
+.pd-facts.flying,.pd-specs.flying{overflow:visible}
+
 /* theme switch: the new theme grows from the button as a soft-edged circle while the old view frosts
    over (View Transitions API; app.mjs sets --vt-x/--vt-y/--vt-r and skips it for reduced motion) */
 @property --vt-reveal{syntax:"<length>";inherits:true;initial-value:0px}

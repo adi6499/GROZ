@@ -193,6 +193,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - **Values** are the record's own values; an empty field shows "Not specified".
   - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
   - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are labelled "Image not confirmed" and never shown; products without any image say "Image unavailable".
+    - A shown picture that fails to load (for example, the local server stopped) is retried once, then labelled "Picture didn't load". "Image unavailable" stays reserved for products that have no picture.
   - **Verification:** cards and table rows show a badge only for products a person has checked ("Verified") or that need review; one note above the catalogue covers the rest. Every product's details show its status, including "Not yet verified". Nothing is marked verified by the site.
   - **Printed title:** the title the catalogue prints for the product's ordering table, in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). The rules are the same as for `sub_title` (shared module `backend/extractor/printed_titles.py`).
     - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
@@ -211,6 +212,9 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Catalogue pictures keep soft light tiles in dark mode, because they are renders on white.
   - Switching shows a glass reveal (View Transitions API): the new theme grows from the button in a soft-edged circle while the old view frosts over. It is instant where unsupported, on low-end devices, and for visitors who ask for reduced motion.
 - **Product details:** the picture is the hero, beside the code, title, status and up to four key facts.
+  - Opening a product from a card plays a short 3D unboxing (about 0.8 s). The picture tile becomes a GROZ carton that tilts toward the viewer and opens its flaps. The product's own picture (or its category icon) rises out, and the details grow from the box as the picture and key specifications fly out one after another.
+    - Only transform and opacity are animated (`.unbox`/`.ub-*` in `site.css`, `unboxThenShow` and `flyOutOfBox` in `app.mjs`). Nothing in the data changes.
+    - It is skipped (the details open at once) for visitors who ask for reduced motion, on low-end devices, for cards that are off screen, in Table view, and when stepping between products inside the dialog.
   - Then Add to quote, Save and Compare, and a link to the catalogue page.
   - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).
   - Previous/Next and the position in the results sit in the dialog header.

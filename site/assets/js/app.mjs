@@ -21,7 +21,7 @@ const state = {
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
-  detailId: null,
+  detailId: null, unboxing: false,
 };
 
 const root = document.documentElement;
@@ -312,12 +312,20 @@ function imageHtml(p) {
 }
 
 function placeholderFor(img) {
+  // The record has a picture, so a failed load (server stopped, connection lost) is not "Image
+  // unavailable": try once more, then say the picture did not load.
+  if (!img.dataset.retried) {
+    img.dataset.retried = "1";
+    const src = img.getAttribute("src");
+    setTimeout(() => { if (img.isConnected) img.src = `${src}${src.includes("?") ? "&" : "?"}retry=${Date.now()}`; }, 1500);
+    return;
+  }
   const host = img.closest("[data-id]");
   const p = host && state.byId.get(host.dataset.id);
   const holder = img.parentElement;
   img.remove();
   holder.querySelector(".img-tag")?.remove();
-  holder.insertAdjacentHTML("beforeend", `${art(p ? state.artByCategory.get(p.category) : "tool")}<span class="img-tag muted">Image unavailable</span>`);
+  holder.insertAdjacentHTML("beforeend", `${art(p ? state.artByCategory.get(p.category) : "tool")}<span class="img-tag muted">Picture didn't load</span>`);
 }
 
 /** Status badges. Quiet (cards, table rows): no badge for products nobody has checked yet; the
@@ -577,7 +585,68 @@ const RELATION_NOTE = {
   added: "No heading was extracted for this product.",
 };
 
-function showDetails(id, { focusNav = "" } = {}) {
+// ---------------------------------------------------------------- unboxing
+// Opening a product card turns its picture tile into a GROZ carton: the box tilts toward the viewer,
+// the flaps open, the product rises out, and the details come out of the box with the key specs
+// flying out one by one. Transform/opacity only (site.css). Skipped for reduced motion, on low-end
+// devices, for cards off screen, and when stepping between products inside the dialog.
+function unboxThenShow(card, id) {
+  const tile = card.querySelector(".product-image");
+  const r = tile?.getBoundingClientRect();
+  if (!tile || !r || reducedMotion.matches || root.classList.contains("lite") || state.unboxing
+      || backdrop.classList.contains("open") || r.bottom < 0 || r.top > innerHeight) {
+    showDetails(id);
+    return;
+  }
+  state.unboxing = true;
+  const p = state.byId.get(id);
+  const w = Math.round(r.width), h = Math.round(r.height), d = Math.round(Math.min(w, h) * 0.55);
+  const box = document.createElement("div");
+  box.className = "unbox";
+  box.setAttribute("aria-hidden", "true");
+  box.style.cssText = `left:${r.left}px;top:${r.top}px;width:${w}px;height:${h}px;--w:${w}px;--h:${h}px;--d:${d}px`;
+  const item = p?.image ? `<img src="${esc(p.image.src)}" alt=""/>` : art(state.artByCategory.get(p?.category));
+  box.innerHTML = `<div class="ub-box">
+      <div class="ub-face ub-back"></div><div class="ub-face ub-left"></div><div class="ub-face ub-right"></div>
+      <div class="ub-glow"></div><div class="ub-item">${item}</div>
+      <div class="ub-face ub-front"><span class="brand-mark">G</span><span>GROZ</span></div>
+      <div class="ub-flap ub-flap-f"></div><div class="ub-flap ub-flap-b"></div></div>`;
+  document.body.appendChild(box);
+  tile.style.visibility = "hidden";
+  const from = { x: r.left + w / 2, y: r.top + h * 0.2 };
+  setTimeout(() => {
+    showDetails(id, { from });
+    box.classList.add("done");
+    setTimeout(() => { box.remove(); tile.style.visibility = ""; state.unboxing = false; }, 300);
+  }, 820);
+}
+
+/** The details panel grows from the box; the picture and the specs fly out of it, one after another. */
+function flyOutOfBox(from) {
+  const mr = modal.getBoundingClientRect();
+  modal.style.setProperty("--ox", `${Math.round(from.x - (mr.left + mr.width / 2))}px`);
+  modal.style.setProperty("--oy", `${Math.round(from.y - (mr.top + mr.height / 2))}px`);
+  const parts = $$(".pd-stage > img, .pd-stage > svg, .pd-facts > div, .pd-specs > div", modal).slice(0, 18);
+  parts.forEach((el, i) => {
+    const er = el.getBoundingClientRect();
+    el.style.setProperty("--fx", `${Math.round(from.x - (er.left + er.width / 2))}px`);
+    el.style.setProperty("--fy", `${Math.round(from.y - (er.top + er.height / 2))}px`);
+    el.style.setProperty("--i", String(i));
+    el.classList.add("fly");
+  });
+  const groups = $$(".pd-facts, .pd-specs", modal);
+  groups.forEach((g) => g.classList.add("flying"));
+  modal.classList.remove("unboxed");
+  void modal.offsetWidth;
+  modal.classList.add("unboxed");
+  setTimeout(() => {
+    parts.forEach((el) => el.classList.remove("fly"));
+    groups.forEach((g) => g.classList.remove("flying"));
+    modal.classList.remove("unboxed");
+  }, 1600);
+}
+
+function showDetails(id, { focusNav = "", from = null } = {}) {
   const p = state.byId.get(id);
   if (!p) return;
   const rows = core.detailRows(p);
@@ -644,6 +713,7 @@ function showDetails(id, { focusNav = "" } = {}) {
       </section>
     </article>`, { wide: true, kind: "detail", tools });
   state.detailId = p.id;
+  if (from) flyOutOfBox(from);
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }
 
@@ -923,7 +993,7 @@ function wire() {
       host.querySelector("[data-quote]")?.focus({ preventScroll: true });
       return;
     }
-    if (e.target.closest("[data-detail]")) showDetails(id);
+    if (e.target.closest("[data-detail]")) unboxThenShow(host, id);
   });
   grid.addEventListener("change", (e) => {
     const c = e.target.closest("[data-compare]");
@@ -1018,7 +1088,7 @@ function wire() {
     if (e.target.tagName !== "IMG") return;
     const parent = e.target.parentElement;
     e.target.remove();
-    parent.insertAdjacentHTML("beforeend", art("tool"));
+    parent.insertAdjacentHTML("beforeend", `${art("tool")}${parent.classList.contains("pd-stage") ? '<span class="img-tag muted">Picture didn\'t load</span>' : ""}`);
   }, true);
 
   // Entrance effects and the hero's looping motion only run while visible (IntersectionObserver),

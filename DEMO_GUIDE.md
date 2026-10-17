@@ -43,6 +43,8 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 9. **Dark mode.** Click the moon in the header. The new theme spreads from the button with a frosted-glass reveal, and the whole site switches, including the dialogs, while the catalogue pictures stay on soft light tiles. Reload: the choice is kept. Click the sun to return. By default the site follows the device's light or dark setting.
 
+10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog: those open at once, without the box.
+
 On a phone-sized window, show:
 - the header search;
 - the Filters bottom sheet, and the Filters/sort bar that stays under the header while you scroll;
