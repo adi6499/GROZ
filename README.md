@@ -212,8 +212,11 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Catalogue pictures keep soft light tiles in dark mode, because they are renders on white.
   - Switching shows a glass reveal (View Transitions API): the new theme grows from the button in a soft-edged circle while the old view frosts over. It is instant where unsupported, on low-end devices, and for visitors who ask for reduced motion.
 - **Product details:** the picture is the hero, beside the code, title, status and up to four key facts.
-  - Opening a product from a card plays a short 3D unboxing (about 0.8 s). The picture tile becomes a GROZ carton that tilts toward the viewer and opens its flaps. The product's own picture (or its category icon) rises out, and the details grow from the box as the picture and key specifications fly out one after another.
-    - Only transform and opacity are animated (`.unbox`/`.ub-*` in `site.css`, `unboxThenShow` and `flyOutOfBox` in `app.mjs`). Nothing in the data changes.
+  - Opening a product from a card plays a short 3D unboxing (about 1.5 s; the details are readable after about 1 s). The picture tile becomes a GROZ carton that tilts toward the viewer and opens its flaps. The product's own picture (or its category icon) rises out and flies to its place in the details, which grow from the box. The key specifications then fly out of the box in arcs and settle into their rows.
+    - It is one continuous sequence: the details are built and measured before the first frame, and every movement is a Web Animation on the same timeline (`unboxThenShow`/`playUnbox` in `app.mjs`; the carton's faces are `.unbox`/`.ub-*` in `site.css`). Only transform and opacity are animated, and never opacity on the carton itself, which would flatten its 3D faces.
+    - The flying picture and specs are copies of the real ones, landing exactly on them; the real ones appear as their copies land. The dialog's usual entrance is replaced, not replayed afterwards. Nothing in the data changes.
+    - If the page stops drawing (a hidden tab), a timer still ends the sequence so the details show.
+    - While any dialog is open, the space of the hidden page scrollbar is kept, so the page behind does not reflow.
     - It is skipped (the details open at once) for visitors who ask for reduced motion, on low-end devices, for cards that are off screen, in Table view, and when stepping between products inside the dialog.
   - Then Add to quote, Save and Compare, and a link to the catalogue page.
   - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).

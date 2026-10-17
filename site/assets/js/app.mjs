@@ -21,7 +21,7 @@ const state = {
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
-  detailId: null, unboxing: false,
+  detailId: null, unbox: null,
 };
 
 const root = document.documentElement;
@@ -523,8 +523,12 @@ let lastClicked = null; // fallback when a click does not move focus (e.g. some 
 document.addEventListener("click", (e) => { const b = e.target.closest("button,a"); if (b && !modal.contains(b)) lastClicked = b; }, true);
 
 function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
+  stopUnbox();
   if (!backdrop.classList.contains("open")) {
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
+    // Locking the page hides its scrollbar (Windows); keep that space so the page does not reflow.
+    const bar = innerWidth - root.clientWidth;
+    if (bar > 0) document.body.style.paddingRight = `${bar}px`;
   }
   state.detailId = null;
   modal.dataset.kind = kind;
@@ -540,8 +544,10 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
 
 function closeModal() {
   if (!backdrop.classList.contains("open")) return;
+  stopUnbox();
   backdrop.classList.remove("open");
   document.body.classList.remove("modal-open");
+  document.body.style.paddingRight = "";
   state.detailId = null;
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
 }
@@ -586,67 +592,167 @@ const RELATION_NOTE = {
 };
 
 // ---------------------------------------------------------------- unboxing
-// Opening a product card turns its picture tile into a GROZ carton: the box tilts toward the viewer,
-// the flaps open, the product rises out, and the details come out of the box with the key specs
-// flying out one by one. Transform/opacity only (site.css). Skipped for reduced motion, on low-end
-// devices, for cards off screen, and when stepping between products inside the dialog.
+// Opening a product from its card plays one continuous 3D unboxing: the picture tile becomes a GROZ
+// carton that tilts toward the viewer and opens its flaps, the product rises out and flies to its
+// place in the details, and the key specifications fly out of the box into their rows.
+// The details are built and measured before the first frame, and every movement runs on the one
+// Web Animations timeline (transform and opacity only), so nothing is laid out, swapped in late or
+// replayed while it moves. Skipped for reduced motion, on low-end devices, in Table view, for cards
+// off screen, and while the dialog is open (Previous/Next, Save, Compare).
+const UNBOX = { lift: 480, rise: 280, out: 660, fly: 460, specs: 720, step: 35, spec: 440, settle: 150, max: 8 };
+const EASE_OUT = "cubic-bezier(.2,.8,.2,1)";
+
 function unboxThenShow(card, id) {
   const tile = card.querySelector(".product-image");
   const r = tile?.getBoundingClientRect();
-  if (!tile || !r || reducedMotion.matches || root.classList.contains("lite") || state.unboxing
-      || backdrop.classList.contains("open") || r.bottom < 0 || r.top > innerHeight) {
-    showDetails(id);
-    return;
+  const still = !tile || !r || !tile.animate || reducedMotion.matches || root.classList.contains("lite")
+    || backdrop.classList.contains("open") || r.bottom < 0 || r.top > innerHeight;
+  showDetails(id);
+  if (still || state.detailId !== id) return;
+  try { playUnbox(tile, r); } catch { stopUnbox(); }
+}
+
+function playUnbox(tile, r) {
+  const stage = $(".pd-stage", modal);
+  if (!stage) return;
+  // This replaces the dialog's own entrance (pop or sheet, fade-ins). A cancelled CSS animation stays
+  // cancelled until the dialog next opens, so nothing replays when the unboxing ends.
+  if (typeof CSSAnimation === "function") {
+    modal.getAnimations({ subtree: true }).forEach((a) => { if (a instanceof CSSAnimation) a.cancel(); });
   }
-  state.unboxing = true;
-  const p = state.byId.get(id);
-  const w = Math.round(r.width), h = Math.round(r.height), d = Math.round(Math.min(w, h) * 0.55);
-  const box = document.createElement("div");
-  box.className = "unbox";
-  box.setAttribute("aria-hidden", "true");
-  box.style.cssText = `left:${r.left}px;top:${r.top}px;width:${w}px;height:${h}px;--w:${w}px;--h:${h}px;--d:${d}px`;
-  const item = p?.image ? `<img src="${esc(p.image.src)}" alt=""/>` : art(state.artByCategory.get(p?.category));
-  box.innerHTML = `<div class="ub-box">
-      <div class="ub-face ub-back"></div><div class="ub-face ub-left"></div><div class="ub-face ub-right"></div>
-      <div class="ub-glow"></div><div class="ub-item">${item}</div>
-      <div class="ub-face ub-front"><span class="brand-mark">G</span><span>GROZ</span></div>
-      <div class="ub-flap ub-flap-f"></div><div class="ub-flap ub-flap-b"></div></div>`;
-  document.body.appendChild(box);
-  tile.style.visibility = "hidden";
-  const from = { x: r.left + w / 2, y: r.top + h * 0.2 };
-  setTimeout(() => {
-    showDetails(id, { from });
-    box.classList.add("done");
-    setTimeout(() => { box.remove(); tile.style.visibility = ""; state.unboxing = false; }, 300);
-  }, 820);
-}
+  modal.classList.add("unboxing");
+  const T = UNBOX;
+  const sr = stage.getBoundingClientRect(), mr = modal.getBoundingClientRect();
+  // A carton's proportions, centred on the picture tile (wide tiles would make a flat slab).
+  const h = r.height, w = Math.min(r.width, Math.round(h * 1.25)), d = Math.round(Math.min(w, h) * 0.55);
+  const left = r.left + (r.width - w) / 2;
+  const mouth = { x: left + w / 2, y: r.top + h * 0.25 }; // where things come out of the box
+  const layer = document.createElement("div");
+  layer.className = "unbox";
+  layer.setAttribute("aria-hidden", "true");
+  layer.innerHTML = `<div class="ub-stage" style="left:${left}px;top:${r.top}px;width:${w}px;height:${h}px;--d:${d}px;--h:${h}px">
+      <div class="ub-box"><div class="ub-face ub-back"></div><div class="ub-face ub-left"></div><div class="ub-face ub-right"></div>
+      <div class="ub-glow"></div><div class="ub-face ub-front"><span class="brand-mark">G</span><span>GROZ</span></div>
+      <div class="ub-flap ub-flap-f"></div><div class="ub-flap ub-flap-b"></div></div></div>`;
+  const boxStage = layer.firstElementChild, box = boxStage.firstElementChild;
+  const u = { layer, tile, anims: [], tileAnim: null };
+  state.unbox = u;
 
-/** The details panel grows from the box; the picture and the specs fly out of it, one after another. */
-function flyOutOfBox(from) {
-  const mr = modal.getBoundingClientRect();
-  modal.style.setProperty("--ox", `${Math.round(from.x - (mr.left + mr.width / 2))}px`);
-  modal.style.setProperty("--oy", `${Math.round(from.y - (mr.top + mr.height / 2))}px`);
-  const parts = $$(".pd-stage > img, .pd-stage > svg, .pd-facts > div, .pd-specs > div", modal).slice(0, 18);
-  parts.forEach((el, i) => {
-    const er = el.getBoundingClientRect();
-    el.style.setProperty("--fx", `${Math.round(from.x - (er.left + er.width / 2))}px`);
-    el.style.setProperty("--fy", `${Math.round(from.y - (er.top + er.height / 2))}px`);
-    el.style.setProperty("--i", String(i));
-    el.classList.add("fly");
+  // The product in the box and the product that flies to the details are copies of the details
+  // picture itself, so the hand-overs between them, and to the real picture, cannot be seen.
+  const copy = (cls) => {
+    const el = stage.cloneNode(true);
+    el.classList.add(cls);
+    el.style.width = `${sr.width}px`;
+    el.style.height = `${sr.height}px`;
+    $$("img", el).forEach((img) => { img.alt = ""; img.removeAttribute("loading"); });
+    return el;
+  };
+  const item = copy("ub-item");
+  const k = Math.min((w * 0.72) / sr.width, (h * 0.8) / sr.height);
+  item.style.left = `${(w - sr.width) / 2}px`;
+  item.style.top = `${(h - sr.height) / 2}px`;
+  box.insertBefore(item, $(".ub-front", box));
+  const fly = copy("ub-fly");
+  fly.style.left = `${sr.left}px`;
+  fly.style.top = `${sr.top}px`;
+  layer.appendChild(fly);
+  document.body.appendChild(layer);
+
+  const turn = "rotateY(18deg) rotateX(-24deg)"; // undoes the box's tilt: the product faces the viewer
+  const boxStart = "translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) scale(.94)";
+  const boxEnd = `translateY(${h * 0.12}px) translateZ(10px) rotateX(24deg) rotateY(-18deg) scale(.86)`;
+  const itemStart = `translateZ(${-d / 2}px) translateY(${h * 0.2}px) ${turn} scale(${k * 0.85})`;
+  const itemEnd = `translateZ(${d * 0.3}px) translateY(${-(h * 0.5 + sr.height * k * 0.6)}px) ${turn} scale(${k})`;
+  // Where the product is when it has left the box: measured once, before anything is drawn.
+  box.style.transform = boxEnd;
+  item.style.transform = itemEnd;
+  const ir = item.getBoundingClientRect();
+  box.style.transform = item.style.transform = "";
+
+  const run = (el, frames, opts) => {
+    const a = el.animate(frames, { fill: "backwards", ...opts });
+    u.anims.push(a);
+    return a;
+  };
+  u.tileAnim = tile.animate({ opacity: [1, 0] }, { duration: 160, fill: "forwards" });
+  // 1. The carton lifts and tilts, the flaps open, light comes from inside. Opacity is only ever
+  //    animated on the carton's holder: on the carton itself it would flatten the 3D faces.
+  run(boxStage, { opacity: [0, 1] }, { duration: 150 });
+  run(box, { transform: [boxStart, boxEnd] }, { duration: T.lift, easing: EASE_OUT, fill: "both" });
+  run($(".ub-flap-f", box), { transform: ["rotateX(-90deg)", "rotateX(-300deg)"] },
+    { delay: 140, duration: 400, easing: "cubic-bezier(.3,.7,.2,1.1)", fill: "both" });
+  run($(".ub-flap-b", box), { transform: [`translateZ(${-d}px) rotateX(90deg)`, `translateZ(${-d}px) rotateX(212deg)`] },
+    { delay: 190, duration: 400, easing: "cubic-bezier(.3,.7,.2,1.1)", fill: "both" });
+  run($(".ub-glow", box), { opacity: [0, 1] }, { delay: 200, duration: 300, fill: "both" });
+  // 2. The product rises out of the box...
+  run(item, [{ opacity: 0, transform: itemStart }, { opacity: 1, offset: 0.25 }, { opacity: 1, transform: itemEnd }],
+    { delay: T.rise, duration: T.out - T.rise, easing: "cubic-bezier(.2,.7,.3,1)", fill: "both" });
+  run(item, { opacity: [0, 0] }, { delay: T.out, duration: 1, fill: "forwards" });
+  // 3. ...and its copy flies from there to the picture in the details, while the box sinks away and
+  //    the details grow from it. The real picture shows the moment the copy lands on it.
+  const land = T.out + T.fly;
+  run(fly, { opacity: [0, 0] }, { duration: T.out });
+  run(fly, { transform: [`translate(${ir.left - sr.left}px, ${ir.top - sr.top}px) scale(${ir.width / sr.width})`, "translate(0px, 0px) scale(1)"] },
+    { delay: T.out, duration: T.fly, easing: "cubic-bezier(.45,0,.2,1)" });
+  run(fly, { opacity: [0, 0] }, { delay: land, duration: 1, fill: "forwards" });
+  run(stage, { opacity: [0, 0] }, { duration: land });
+  run(boxStage, { opacity: [1, 0], transform: ["translateY(0px) scale(1)", "translateY(16px) scale(.94)"] },
+    { delay: T.out + 40, duration: 260, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
+
+  // 4. The key specifications fly out of the box, one after another, and settle into their rows.
+  //    Each is a copy of its row; the row's own text appears under it as it lands.
+  const seen = (el) => { const b = el.getBoundingClientRect(); return b.bottom > mr.top + 8 && b.top < mr.bottom - 8; };
+  const cells = [...$$(".pd-facts > div", modal), ...$$(".pd-specs > div", modal)].filter(seen).slice(0, T.max);
+  const arc = CSS.supports?.("translate", "1px 1px");
+  cells.forEach((cell, i) => {
+    const cr = cell.getBoundingClientRect();
+    const group = document.createElement("dl");
+    group.className = `${cell.parentElement.className} ub-ghosts`;
+    const ghost = cell.cloneNode(true);
+    ghost.style.cssText = `left:${cr.left}px;top:${cr.top}px;width:${cr.width}px;height:${cr.height}px`;
+    group.appendChild(ghost);
+    layer.appendChild(group);
+    const dx = mouth.x - (cr.left + cr.width / 2), dy = mouth.y - (cr.top + cr.height / 2);
+    const at = T.specs + i * T.step, lands = at + T.spec;
+    if (arc) {
+      // Sideways and vertical motion follow different curves, so each spec leaves the box in an arc.
+      run(ghost, { translate: [`${dx}px 0px`, "0px 0px"] }, { delay: at, duration: T.spec, easing: "cubic-bezier(.5,0,.3,1)" });
+      run(ghost, { opacity: [0, 1, 1], transform: [`translateY(${dy}px) scale(.2)`, "translateY(0px) scale(1)"] },
+        { delay: at, duration: T.spec, easing: "cubic-bezier(.2,.75,.3,1)" });
+    } else {
+      run(ghost, { opacity: [0, 1, 1], transform: [`translate(${dx}px, ${dy}px) scale(.2)`, "translate(0px, 0px) scale(1)"] },
+        { delay: at, duration: T.spec, easing: EASE_OUT });
+    }
+    run(ghost, { opacity: [1, 0] }, { delay: lands, duration: T.settle, fill: "forwards" });
+    [...cell.children].forEach((c) => run(c, { opacity: [0, 0] }, { duration: lands }));
   });
-  const groups = $$(".pd-facts, .pd-specs", modal);
-  groups.forEach((g) => g.classList.add("flying"));
-  modal.classList.remove("unboxed");
-  void modal.offsetWidth;
-  modal.classList.add("unboxed");
-  setTimeout(() => {
-    parts.forEach((el) => el.classList.remove("fly"));
-    groups.forEach((g) => g.classList.remove("flying"));
-    modal.classList.remove("unboxed");
-  }, 1600);
+  // The details grow from the box. Started last: its starting scale would shrink every rect measured.
+  modal.style.transformOrigin = `${mouth.x - mr.left}px ${mouth.y - mr.top}px`;
+  run(modal, { opacity: [0, 1], transform: ["scale(.94)", "scale(1)"] }, { delay: T.out - 60, duration: 420, easing: EASE_OUT });
+  Promise.all(u.anims.map((a) => a.finished)).then(() => { if (state.unbox === u) endUnbox(u, true); }, () => {});
+  // Safety net: a page that stops drawing frames (a hidden tab) still ends up showing the details.
+  const total = Math.max(...u.anims.map((a) => a.effect.getComputedTiming().endTime));
+  u.timer = setTimeout(() => { if (state.unbox === u) endUnbox(u, true); }, total + 1000);
 }
 
-function showDetails(id, { focusNav = "", from = null } = {}) {
+/** Removes the unboxing layer; the dialog is left exactly as it looks without it. */
+function endUnbox(u, settled) {
+  state.unbox = null;
+  clearTimeout(u.timer);
+  u.anims.forEach((a) => a.cancel());
+  u.layer.remove();
+  u.tileAnim?.cancel();
+  if (settled && u.tile.isConnected) u.tile.animate({ opacity: [0, 1] }, { duration: 220 });
+  modal.classList.remove("unboxing");
+  modal.style.transformOrigin = "";
+}
+
+function stopUnbox() {
+  if (state.unbox) endUnbox(state.unbox, false);
+}
+
+function showDetails(id, { focusNav = "" } = {}) {
   const p = state.byId.get(id);
   if (!p) return;
   const rows = core.detailRows(p);
@@ -713,7 +819,6 @@ function showDetails(id, { focusNav = "", from = null } = {}) {
       </section>
     </article>`, { wide: true, kind: "detail", tools });
   state.detailId = p.id;
-  if (from) flyOutOfBox(from);
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }
 
