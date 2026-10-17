@@ -182,3 +182,28 @@ test("real catalogue data: every product has a printed title with its source pag
     assert.ok(p.title_source && /PDF page \d+/.test(p.title_source.evidence), `${p.cat_nr} title has no evidence`);
   }
 });
+
+test("groups follow GROZ's own menu order; Precision Tools follows as a group of its own", () => {
+  assert.deepEqual(core.GROUPS.map((g) => g.name), ["Lubrication", "Fuel & DEF", "Air Tools", "Lighting", "Hand Tools",
+    "Mechanic's Tools", "Power Tools", "New & Exciting", "Precision Tools"]);
+  assert.equal(core.groupOf("Tool Storage").name, "Mechanic's Tools");
+  assert.equal(core.groupOf("LED Worklights").name, "Lighting");
+  assert.equal(core.groupOf("Striking Tools").name, "Hand Tools");
+  assert.equal(core.groupOf("Unknown"), null);
+  // A category no group lists still gets a group of its own; groups without data are "soon".
+  const g = core.siteGroups([{ name: "LED Worklights", records: 2, blurb: "Lights" }, { name: "Mystery", records: 1, art: "tool", blurb: "?" }]);
+  assert.deepEqual(g.filter((x) => !x.soon).map((x) => [x.name, x.records]), [["Lighting", 2], ["Mystery", 1]]);
+  assert.equal(g.find((x) => x.name === "Lubrication").blurb, core.GROUPS[0].range);
+  // Group names are searchable: "mechanic" finds tool storage, whose own text never says so.
+  const E = P({ id: "e", cat_nr: "RTC/27-10D/1/GRZ", category: "Tool Storage", heading: "Rolling Tool Cabinet", cat_title: "GROZ Tool Storage" });
+  assert.deepEqual(ids(core.filterProducts([...ALL, E], core.buildIndex([...ALL, E]), filters({ query: "mechanic" }))), ["e"]);
+});
+
+test("real catalogue data: every product sits in exactly one shown group", () => {
+  const data = JSON.parse(readFileSync(new URL("../data/catalogue.json", import.meta.url), "utf8"));
+  const groups = core.siteGroups(data.categories);
+  assert.equal(groups.reduce((n, g) => n + g.records, 0), data.products.length);
+  for (const p of data.products) {
+    assert.equal(groups.filter((g) => g.categories.includes(p.category)).length, 1, `${p.cat_nr} (${p.category})`);
+  }
+});

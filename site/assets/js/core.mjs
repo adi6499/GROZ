@@ -18,6 +18,49 @@ const CARD_PRIORITY = {
 
 export const STATUS_ORDER = ["verified", "unverified", "needs_review"];
 
+// GROZ's own top-level categories, in the order of the main menu on groz-tools.com (India site,
+// checked 17 Oct 2026), with the catalogue categories of this site that GROZ files under each:
+// rolling tool cabinets and tool boxes under Mechanic's Tools, worklights under Lighting, hammers
+// under Hand Tools. GROZ's menu has no place for precision measuring tools (its site search finds no
+// micrometers, calipers, scribers or verniers), so Precision Tools follows GROZ's eight as a group of
+// its own. A group with no categories here is not in this preview yet; `range` is what GROZ lists
+// under it.
+export const GROUPS = [
+  { name: "Lubrication", art: "grease", categories: [], range: "Grease, oil and waste-oil handling, drum handling & hose reels" },
+  { name: "Fuel & DEF", art: "fuel", categories: [], range: "Fuel and DEF pumps, meters, nozzles & specialty pumps" },
+  { name: "Air Tools", art: "air", categories: [], range: "Impact wrenches & ratchets, blow guns & air control units" },
+  { name: "Lighting", art: "light", categories: ["LED Worklights"] },
+  { name: "Hand Tools", art: "sledge", categories: ["Striking Tools"] },
+  { name: "Mechanic's Tools", art: "storage", categories: ["Tool Storage"] },
+  { name: "Power Tools", art: "drill", categories: [], range: "Cordless impact wrenches, drill drivers & grease guns" },
+  { name: "New & Exciting", art: "spark", categories: [], range: "GROZ's newest products" },
+  { name: "Precision Tools", art: "measure", categories: ["Precision Tools"] },
+];
+
+/** The group a catalogue category belongs to, or null. */
+export function groupOf(category) {
+  return GROUPS.find((g) => g.categories.includes(category)) || null;
+}
+
+/** The groups to show, with the categories this site has and their product counts. A group none of
+ *  whose categories is in the data is `soon`. A data category that no group lists becomes a group
+ *  of its own, so no product ever drops out of the navigation. */
+export function siteGroups(categories) {
+  const byName = new Map(categories.map((c) => [c.name, c]));
+  const groups = GROUPS.map((g) => {
+    const cats = g.categories.filter((name) => byName.has(name));
+    return {
+      name: g.name, art: g.art, categories: cats, soon: !cats.length,
+      records: cats.reduce((n, name) => n + (byName.get(name).records || 0), 0),
+      blurb: cats.length ? cats.map((name) => byName.get(name).blurb).filter(Boolean).join(" · ") : g.range,
+    };
+  });
+  for (const c of categories) {
+    if (!groupOf(c.name)) groups.push({ name: c.name, art: c.art, categories: [c.name], soon: false, records: c.records || 0, blurb: c.blurb || "" });
+  }
+  return groups;
+}
+
 export function norm(s) {
   return String(s ?? "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "");
 }
@@ -50,7 +93,7 @@ export function imageState(p) {
 
 export function searchText(p) {
   return [
-    p.cat_nr, p.ord_nr, p.model_code, p.title, p.heading, p.category, p.brand, p.catalogue?.title,
+    p.cat_nr, p.ord_nr, p.model_code, p.title, p.heading, p.category, groupOf(p.category)?.name, p.brand, p.catalogue?.title,
     p.dimensions_inch, p.dimensions_mm,
     ...(p.specs || []).flatMap((s) => [s.label, s.value]),
   ].filter((x) => x != null && x !== "").join(" ");

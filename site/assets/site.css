@@ -462,6 +462,35 @@ body.has-dock main{padding-bottom:110px}
 .btn:active:not([disabled]){transform:scale(.97);transition-duration:.08s}
 @media(prefers-reduced-motion:reduce){.btn:active:not([disabled]){transform:none}}
 
+/* GROZ's categories (core.GROUPS): tiles in GROZ's order, the header Categories menu and the list in
+   the phone menu. Categories not in this preview yet are dashed and say "Coming soon". */
+.categories{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:720px){.categories{grid-template-columns:repeat(2,minmax(0,1fr))}.categories>.cat:last-child:nth-child(odd){grid-column:1/-1}}
+.cat.soon{background:#fafafb;border-style:dashed;cursor:default}
+.cat.soon .cat-art{opacity:.55;filter:grayscale(1)}
+.cat.soon .cat-count{color:var(--muted)}
+@media(hover:hover){.cat.soon:hover{transform:none;border-color:#e8e8eb;box-shadow:none}.cat.soon:hover .cat-art svg{transform:none}}
+:root[data-theme=dark] .cat.soon{background:#161618;border-color:#2f2f33}
+.nav-cats{position:relative}
+.nav-link{border:0;background:none;padding:12px 0;font:inherit;color:inherit;display:inline-flex;align-items:center;gap:3px;cursor:pointer;transition:color var(--fast)}
+.nav-link .chev{width:13px;height:13px;transition:transform var(--fast) var(--ease)}
+.nav-link[aria-expanded=true]{color:var(--orange2)}
+.nav-link[aria-expanded=true] .chev{transform:rotate(180deg)}
+.cat-menu{position:absolute;top:calc(100% + 6px);left:-14px;z-index:60;width:290px;padding:8px;background:#fff;border:1px solid #e8e8eb;border-radius:18px;box-shadow:0 24px 60px #0000001f;display:grid;gap:1px;animation:pop .18s var(--ease)}
+.cat-menu[hidden]{display:none}
+.group-link{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:40px;padding:0 12px;border:0;border-radius:11px;background:none;text-align:left;font:inherit;font-size:12.5px;font-weight:760;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);cursor:pointer}
+.group-link small{font-size:10.5px;font-weight:650;letter-spacing:0;text-transform:none;color:var(--muted);font-variant-numeric:tabular-nums}
+.group-link.soon{color:#8b8b91;cursor:default}
+.menu-cats{display:grid;padding:8px 0 6px;border-bottom:1px solid #00000008}
+.menu-cats .group-link{min-height:46px;padding:0 6px;font-size:15px;border-radius:0}
+.soon-hint{margin-top:8px}
+@media(hover:hover){.nav-link:hover{color:var(--orange2)}.group-link:not(.soon):hover{background:#f4f4f6;color:var(--orange2)}}
+:root[data-theme=dark] .cat-menu{background:#1c1c1e;border-color:#2f2f33;box-shadow:0 24px 60px #000a}
+:root[data-theme=dark] .group-link{color:#f2f2f4}
+:root[data-theme=dark] .group-link.soon{color:#7d7d84}
+:root[data-theme=dark] .menu-cats{border-bottom-color:#ffffff0d}
+@media(hover:hover){:root[data-theme=dark] .group-link:not(.soon):hover{background:#2a2a2d}}
+
 /* theme switch: the new theme grows from the button as a soft-edged circle while the old view frosts
    over (View Transitions API; app.mjs sets --vt-x/--vt-y/--vt-r and skips it for reduced motion) */
 @property --vt-reveal{syntax:"<length>";inherits:true;initial-value:0px}

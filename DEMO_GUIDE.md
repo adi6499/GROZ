@@ -45,7 +45,12 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog (or the arrow keys): the old picture swings out as the new one swings in.
 
-11. **Motion.**
+11. **GROZ categories.**
+    - Open *Categories* in the header (on a phone, the menu): GROZ's own eight categories in GROZ's order, plus Precision Tools.
+    - Lighting, Hand Tools, Mechanic's Tools and Precision Tools show their products.
+    - The others say "Coming soon": their products are not in this preview yet.
+
+12. **Motion.**
     - Move the mouse over a card: it leans toward the pointer with a soft glare.
     - Click *Add to quote*: the picture is tossed into the Quote button, and its count rolls up.
     - Click a heart: it bursts.

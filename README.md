@@ -222,6 +222,17 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).
   - Previous/Next and the position in the results sit in the dialog header.
 - **Results bar:** the product count, Filters, sort and active filter chips stick under the header while scrolling, on every screen size.
+- **GROZ categories** (`GROUPS` in `core.mjs`; presentation only, the data keeps its own `category`):
+  - The site uses GROZ's own top-level categories, in the order of the main menu on groz-tools.com (India site, checked 17 Oct 2026): Lubrication, Fuel & DEF, Air Tools, Lighting, Hand Tools, Mechanic's Tools, Power Tools, New & Exciting.
+  - The catalogue categories sit where GROZ's menu puts them:
+    - LED Worklights under Lighting;
+    - Striking Tools (hammers) under Hand Tools;
+    - Tool Storage (rolling tool cabinets, tool boxes) under Mechanic's Tools.
+  - GROZ's menu has no place for precision measuring tools: its site search finds no micrometers, calipers, scribers or verniers. So Precision Tools follows the eight as a category of its own (owner's choice, 17 Oct 2026).
+  - They appear as category tiles, in a Categories menu in the header and in the phone menu, and as the Category filter. Chips and the details heading show them too, for example "Mechanic's Tools › Tool Storage". Searching a category name finds its products.
+  - Lubrication, Fuel & DEF, Air Tools, Power Tools and New & Exciting have no products in this preview, so they say "Coming soon". Their descriptions list what GROZ's menu shows under them. No products are made up for them.
+    - The Fluid Handling catalogue (likely Lubrication and Fuel & DEF) and the full Hand Tools catalogue are in the project but not extracted yet. There is no catalogue here for Air Tools or Power Tools.
+  - A data category that no group lists is shown as a category of its own, so no product drops out of the navigation (tested).
 - **Motion** (`site/assets/js/motion.mjs`, styles under "decorative motion" in `site.css`):
   - Add to quote: the product picture is tossed in an arc into the Quote button, which pops as its count rolls to the new number. This works from cards, table rows, the details and the saved list. The button's check mark draws itself.
   - Save: the heart squashes and springs back with a ring and sparks; the saved count rolls.

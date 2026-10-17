@@ -22,7 +22,7 @@ const state = {
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
-  detailId: null, unbox: null, quoteHold: 0, fxReady: false,
+  detailId: null, unbox: null, quoteHold: 0, fxReady: false, groups: [],
 };
 
 const root = document.documentElement;
@@ -183,12 +183,14 @@ function init(data) {
   state.byId = new Map(data.products.map((p) => [p.id, p]));
   state.index = core.buildIndex(data.products);
   state.artByCategory = new Map((data.categories || []).map((c) => [c.name, c.art]));
+  state.groups = core.siteGroups(data.categories || []);
   // Drop saved/quoted ids that are no longer in the dataset (e.g. after a data rebuild).
   for (const id of [...state.saved]) if (!state.byId.has(id)) state.saved.delete(id);
   for (const id of [...state.quote.keys()]) if (!state.byId.has(id)) state.quote.delete(id);
   persist();
   renderHero();
   renderCategories();
+  renderGroupMenus();
   renderCatalogues();
   renderDataNote();
   setView(state.view, false);
@@ -206,19 +208,37 @@ function renderHero() {
   $("#heroStats").innerHTML = `<span><b>${state.products.length}</b> products</span><span><b>${(state.data.catalogues || []).length}</b> source catalogues</span><span><b>${m.with_confirmed_image ?? 0}</b> with catalogue images</span>`;
 }
 
+/** "Mechanic's Tools › Tool Storage": GROZ's category, then this site's when the names differ. */
+function groupLabel(category) {
+  const g = core.groupOf(category);
+  return g && g.name !== category ? `${g.name} › ${category}` : category;
+}
+
+/** GROZ's categories as tiles, in GROZ's order; those not in this preview yet say "Coming soon". */
 function renderCategories() {
-  const cats = state.data.categories || [];
-  $("#categoryGrid").innerHTML = cats.map((c) => `
-    <button class="cat${state.filters.categories.has(c.name) ? " active" : ""}" type="button" data-cat="${esc(c.name)}" aria-pressed="${state.filters.categories.has(c.name)}">
-      <span class="cat-art">${art(c.art)}</span><span class="cat-name">${esc(c.name)}</span><span class="cat-blurb">${esc(c.blurb || "")}</span><span class="cat-count">${plural(c.records, "product")}</span>
-    </button>`).join("");
+  const f = state.filters.categories;
+  $("#categoryGrid").innerHTML = state.groups.map((g) => {
+    const on = !g.soon && g.categories.every((c) => f.has(c));
+    return `
+    <button class="cat${g.soon ? " soon" : ""}${on ? " active" : ""}" type="button" data-group="${esc(g.name)}" ${g.soon ? 'aria-disabled="true"' : `aria-pressed="${on}"`}>
+      <span class="cat-art">${art(g.art)}</span><span class="cat-name">${esc(g.name)}</span><span class="cat-blurb">${esc(g.blurb)}</span><span class="cat-count">${g.soon ? "Coming soon" : plural(g.records, "product")}</span>
+    </button>`;
+  }).join("");
+}
+
+/** The same categories in the header's Categories menu and in the phone menu, like GROZ's own site. */
+function renderGroupMenus() {
+  const html = state.groups.map((g) => `<button class="group-link${g.soon ? " soon" : ""}" type="button" data-group="${esc(g.name)}"${g.soon ? ' aria-disabled="true"' : ""}>
+    <span>${esc(g.name)}</span><small>${g.soon ? "Coming soon" : `${g.records}<span class="sr-only"> products</span>`}</small></button>`).join("");
+  $("#catMenu").innerHTML = html;
+  $("#mobileCats").innerHTML = html;
 }
 
 function renderCatalogues() {
   const list = state.data.catalogues || [];
   $("#catalogueList").innerHTML = list.map((c) => `
     <div class="catalogue-row"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>${esc(c.title)}</strong>
-      <small>${esc(c.category)} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
+      <small>${esc(groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
       <div class="row-actions"><button class="btn soft" type="button" data-show-cat="${esc(c.category)}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
       <small>Hand Tools and Fluid Handling are not in this preview yet. Their products will appear once they have been extracted and reviewed.</small></div></div></div>`;
@@ -244,7 +264,7 @@ const STATUS_LABEL = { verified: "Verified", unverified: "Not yet verified", nee
 
 function renderFilters() {
   const f = state.filters;
-  const cats = state.data.categories || [];
+  const soon = state.groups.filter((g) => g.soon).map((g) => g.name);
   // Specification filters are offered per category: across all categories they would be a long,
   // mixed list (beam angles next to drawer capacities).
   const groups = f.categories.size ? core.facetGroups(categoryScope()) : [];
@@ -264,8 +284,9 @@ function renderFilters() {
       ${g.values.length > 6 ? `<button class="filter-more" type="button" data-expand="${esc(g.key)}" aria-expanded="${expanded}">${expanded ? "Show fewer" : `Show all ${g.values.length}`}</button>` : ""}</fieldset>`;
   }).join("");
   $("#filterBody").innerHTML = `
-    <fieldset class="filter-group"><legend>Category</legend>${cats.map((c) =>
-      option(`data-filter="category" value="${esc(c.name)}"`, f.categories.has(c.name), c.name, c.records)).join("")}</fieldset>
+    <fieldset class="filter-group"><legend>Category</legend>${state.groups.filter((g) => !g.soon).map((g) =>
+      option(`data-filter="group" value="${esc(g.name)}"`, g.categories.every((c) => f.categories.has(c)), g.name, g.records)).join("")}
+      ${soon.length ? `<p class="filter-hint soon-hint">Coming soon: ${esc(soon.join(", "))}.</p>` : ""}</fieldset>
     ${facetHtml || (f.categories.size ? "" : `<div class="filter-group"><p class="filter-hint">Choose a category to filter by its specifications.</p></div>`)}
     <fieldset class="filter-group"><legend>Images</legend>${option('data-filter="image"', f.withImage, "Only with a catalogue image", count((p) => !!p.image))}</fieldset>
     <fieldset class="filter-group"><legend>Review status</legend>${statusCounts.map(([s, n]) =>
@@ -277,7 +298,10 @@ function renderChips() {
   const f = state.filters;
   const chips = [];
   if (f.query.trim()) chips.push(["query", "", `Search: “${f.query.trim()}”`]);
-  for (const c of f.categories) chips.push(["category", c, c]);
+  for (const c of f.categories) {
+    const g = state.groups.find((x) => x.categories.includes(c));
+    chips.push(["category", c, g?.categories.length === 1 ? g.name : groupLabel(c)]);
+  }
   for (const [key, values] of f.facets) {
     const label = state.products.find((p) => p.specs.some((s) => s.key === key))?.specs.find((s) => s.key === key)?.label || key;
     for (const v of values) chips.push([`facet:${key}`, v, `${label}: ${v}`]);
@@ -395,7 +419,10 @@ function tableHtml(list) {
 
 function emptyHtml() {
   const q = state.filters.query.trim();
+  const nq = core.norm(q);
+  const soon = nq.length > 2 && state.groups.find((g) => g.soon && (core.norm(g.name).includes(nq) || nq.includes(core.norm(g.name))));
   return `<div class="empty">${icon("search", "state-icon")}<strong>No matches${q ? ` for “${esc(q)}”` : ""}.</strong>
+    ${soon ? `<p><b>${esc(soon.name)}</b> is coming soon: its products are not in this preview yet.</p>` : ""}
     <p>Try a catalogue number such as <b>LED/621</b>, an order number such as <b>55044</b>, or a word such as <b>micrometer</b>${core.activeFilterCount(state.filters) > (q ? 1 : 0) ? ", or remove a filter" : ""}.</p>
     <button class="btn soft" type="button" data-reset>Reset search and filters</button></div>`;
 }
@@ -827,7 +854,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
           <figcaption class="pd-caption">${icon("info")}<span>${evidence}</span></figcaption>
         </figure>
         <div class="pd-copy">
-          <p class="pd-eyebrow">${esc(p.category)}${p.brand ? ` · ${esc(p.brand)}` : ""}</p>
+          <p class="pd-eyebrow">${esc(groupLabel(p.category))}${p.brand ? ` · ${esc(p.brand)}` : ""}</p>
           <h2 class="pd-code" id="detailCode">${esc(p.cat_nr || "No catalogue number")}</h2>
           ${title ? `<p class="pd-title">${esc(title)}</p>` : ""}
           <p class="pd-meta">${skuHtml(p)}</p>
@@ -1080,14 +1107,34 @@ function wire() {
   $("#clearFilters").addEventListener("click", resetFilters);
   $("#browseAll").addEventListener("click", (e) => { e.preventDefault(); resetFilters(); scrollToEl($("#products")); });
 
-  const showCategory = (name, toggle) => {
+  const showCategories = (cats, toggle) => {
     const f = state.filters;
-    f.categories = toggle && f.categories.has(name) && f.categories.size === 1 ? new Set() : new Set([name]);
+    const same = cats.length === f.categories.size && cats.every((c) => f.categories.has(c));
+    f.categories = toggle && same ? new Set() : new Set(cats);
     renderCategories(); renderFilters(); refresh();
     scrollToEl($("#products"));
   };
-  $("#categoryGrid").addEventListener("click", (e) => { const c = e.target.closest("[data-cat]"); if (c) showCategory(c.dataset.cat, true); });
-  $("#catalogueList").addEventListener("click", (e) => { const b = e.target.closest("[data-show-cat]"); if (b) showCategory(b.dataset.showCat, false); });
+  // A GROZ category: its products, or a note that it is not in this preview yet.
+  const openGroup = (name, toggle) => {
+    const g = state.groups.find((x) => x.name === name);
+    if (!g) return;
+    if (g.soon) notify(`${g.name} is coming soon: its products are not in this preview yet.`);
+    else showCategories(g.categories, toggle);
+  };
+  $("#categoryGrid").addEventListener("click", (e) => { const c = e.target.closest("[data-group]"); if (c) openGroup(c.dataset.group, true); });
+  $("#catalogueList").addEventListener("click", (e) => { const b = e.target.closest("[data-show-cat]"); if (b) showCategories([b.dataset.showCat], false); });
+
+  // Header Categories menu (desktop) and the category list in the phone menu.
+  const catMenu = $("#catMenu"), catBtn = $("#catMenuBtn");
+  const setCatMenu = (open) => { catMenu.hidden = !open; catBtn.setAttribute("aria-expanded", String(open)); };
+  catBtn.addEventListener("click", (e) => {
+    setCatMenu(catMenu.hidden);
+    if (!catMenu.hidden && e.detail === 0) $("button", catMenu)?.focus(); // opened from the keyboard
+  });
+  catMenu.addEventListener("click", (e) => { const b = e.target.closest("[data-group]"); if (b) { setCatMenu(false); openGroup(b.dataset.group, false); } });
+  document.addEventListener("click", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });
+  document.addEventListener("focusin", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });
+  $("#mobileCats").addEventListener("click", (e) => { const b = e.target.closest("[data-group]"); if (b) { setMenuOpen(false); openGroup(b.dataset.group, false); } });
 
   $("#filterBody").addEventListener("change", (e) => {
     const el = e.target;
@@ -1096,11 +1143,12 @@ function wire() {
       const set = f.facets.get(el.dataset.facet) || new Set();
       el.checked ? set.add(el.value) : set.delete(el.value);
       set.size ? f.facets.set(el.dataset.facet, set) : f.facets.delete(el.dataset.facet);
-    } else if (el.dataset.filter === "category") {
-      el.checked ? f.categories.add(el.value) : f.categories.delete(el.value);
+    } else if (el.dataset.filter === "group") {
+      const g = state.groups.find((x) => x.name === el.value);
+      for (const c of g?.categories || []) el.checked ? f.categories.add(c) : f.categories.delete(c);
       renderCategories();
       renderFilters();
-      $(`[data-filter="category"][value="${CSS.escape(el.value)}"]`, filtersEl)?.focus();
+      $(`[data-filter="group"][value="${CSS.escape(el.value)}"]`, filtersEl)?.focus();
     } else if (el.dataset.filter === "image") f.withImage = el.checked;
     else if (el.dataset.filter === "status") el.checked ? f.statuses.add(el.value) : f.statuses.delete(el.value);
     else if (el.dataset.filter === "notes") f.withNotes = el.checked;
@@ -1162,7 +1210,7 @@ function wire() {
   });
   grid.addEventListener("error", (e) => { if (e.target.tagName === "IMG") placeholderFor(e.target); }, true);
   fx.tilt(grid, ".product");
-  fx.tilt($("#categoryGrid"), ".cat", { max: 8, lift: -4 });
+  fx.tilt($("#categoryGrid"), ".cat:not(.soon)", { max: 8, lift: -4 });
   $("#moreWrap").addEventListener("click", (e) => {
     if (!e.target.closest("#showMore")) return;
     const first = state.rendered;
@@ -1191,7 +1239,8 @@ function wire() {
   backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      if (backdrop.classList.contains("open")) closeModal();
+      if (!catMenu.hidden) { setCatMenu(false); catBtn.focus(); }
+      else if (backdrop.classList.contains("open")) closeModal();
       else if (filtersEl.classList.contains("open") && sheetQuery.matches) setFiltersOpen(false);
       else if (!$("#mobileMenu").hidden) { setMenuOpen(false); $("#menuBtn").focus(); }
       return;
