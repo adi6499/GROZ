@@ -1,0 +1,37 @@
+{
+  "batch": "batch_3_pilot",
+  "description": "Hand Tool catalogue pilot: p8 divider, p11 + p53 two-column tables, p12 standard table, p224 calipers already extracted from Precision. Approved by the project owner on 17 Oct 2026.",
+  "approved": true,
+  "output_dir": "output_pilot_handtool",
+  "record_count": 73,
+  "records_per_pdf": {
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": 73
+  },
+  "pages_processed": {
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": [
+      8,
+      11,
+      12,
+      53,
+      224
+    ]
+  },
+  "source_pdfs": {
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": {
+      "sha256": "f772ca499abfb59d013eccb814ba8b053ae869e268b41b1ed40e37291938cc75",
+      "page_count": 260,
+      "pages": [
+        8,
+        11,
+        12,
+        53,
+        224
+      ]
+    }
+  },
+  "pipeline_version": "2.3.1",
+  "code_version": "212b7bd",
+  "python": "3.13.14",
+  "pymupdf": "1.28.2",
+  "generated_at": "2026-10-17T05:33:35+00:00"
+}

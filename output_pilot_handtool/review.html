@@ -1,0 +1,773 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROZ Extraction Review</title><style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--orange:#f97316}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#0b0f17;color:#fff;padding:20px 24px;border-bottom:3px solid var(--orange)}header h1{margin:0;font-size:20px}
+.kpis{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px;color:#cbd5e1;font-size:13px}.kpis b{color:#fff;font-size:17px;display:block}
+.controls{position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid var(--line);padding:10px 24px;display:flex;flex-wrap:wrap;gap:8px}
+.controls select,.controls input{padding:7px 9px;border:1px solid var(--line);border-radius:6px;font:inherit}.controls input{flex:1;min-width:180px}
+#count{align-self:center;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;padding:16px 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{position:relative;height:170px;background:#f1f5f9;display:flex;align-items:center;justify-content:center}
+.thumb img{max-width:92%;max-height:150px;object-fit:contain}.noimg{color:var(--muted)}
+.assoc{position:absolute;left:8px;bottom:8px;font-size:11px;padding:2px 7px;border-radius:4px;color:#fff}
+.assoc-direct_product{background:#15803d}.assoc-product_family{background:#1d4ed8}.assoc-unresolved{background:#b45309}
+.card[data-assoc=unresolved] .thumb img{opacity:.55;outline:2px dashed #b45309;outline-offset:4px}
+.body{padding:10px 12px;display:flex;flex-direction:column;gap:5px}.codes{display:flex;flex-wrap:wrap;gap:5px}
+.codes span{font-size:12px;font-weight:600;padding:2px 6px;border-radius:4px;background:#f1f5f9}.ord{background:#e0e7ff!important}
+.missing{background:#fee2e2!important;color:#991b1b}.st{margin-left:auto;font-weight:500!important}.st-needs_review{background:#fee2e2!important}
+.variant{font-size:12px;font-weight:600;color:#9a3412}.sub{color:var(--muted);font-size:12px}
+table{border-collapse:collapse;font-size:12px}td{padding:2px 0;vertical-align:top}td:first-child{color:var(--muted);padding-right:8px;white-space:nowrap}
+.note{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:5px 7px;font-size:11px;color:#7f1d1d}
+.chg{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:4px 7px;font-size:11px;color:#9a3412}
+.src{color:var(--muted);font-size:11px;margin-top:auto}
+</style></head><body>
+<header><h1>GROZ extraction review</h1><div class="kpis">
+<div><b>73</b>records</div><div><b>73</b>unique ORD</div>
+<div><b>0</b>verified</div><div><b>0</b>needs review</div>
+<div><b>2</b>direct images</div><div><b>55</b>family images</div>
+<div><b>0</b>unresolved candidates</div><div><b>0</b>changed vs legacy</div></div></header>
+<div class="controls"><select id="pdf"><option value="">All catalogues</option><option value="Hand_Tool_Catalogue_low_res_with_cover.pdf">Hand_Tool_Catalogue_low_res_with_cover.pdf (73)</option></select>
+<select id="assoc"><option value="">Any image evidence</option><option value="direct_product">Direct product image</option>
+<option value="product_family">Product-family image</option><option value="unresolved">Unresolved candidate</option><option value="none">No image</option></select>
+<select id="flag"><option value="">All records</option><option value="flag">Editorial notes</option><option value="review">Needs review</option><option value="chg">Changed vs legacy</option></select>
+<input id="q" placeholder="Search CAT NR, ORD NR, name, label"><span id="count"></span></div>
+<main class="grid" id="grid"><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/2.5/12 34500 chid-2.5-12 a club hammer is a small sledge club hammers indestructible handle hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/2.5/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/2.5/12</span><span class="ord">34500</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">A Club hammer is a small sledge Club Hammers Indestructible Handle</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/2.5/16 34505 chid-2.5-16 a club hammer is a small sledge club hammers indestructible handle hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/2.5/16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/2.5/16</span><span class="ord">34505</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">A Club hammer is a small sledge Club Hammers Indestructible Handle</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/4/12 34501 chid-4-12 a club hammer is a small sledge club hammers indestructible handle hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/4/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/4/12</span><span class="ord">34501</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">A Club hammer is a small sledge Club Hammers Indestructible Handle</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/4/16 34502 chid-4-16 a club hammer is a small sledge club hammers indestructible handle hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/4/16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/4/16</span><span class="ord">34502</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">A Club hammer is a small sledge Club Hammers Indestructible Handle</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/sf/2.5/12 34550 chid-sf-2.5-12 bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/SF/2.5/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/SF/2.5/12</span><span class="ord">34550</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">BS 876</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="chid/sf/4/12 34551 chid-sf-4-12 bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p11_xref263_233_209.png" alt="CHID/SF/4/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">CHID/SF/4/12</span><span class="ord">34551</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">BS 876</div>
+  <table><tr><td>Box qty</td><td>8</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p11 · printed 9</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/6/16 34521 shid-6-16 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/6/16</span><span class="ord">34521</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/6/24 34510 shid-6-24 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/6/24</span><span class="ord">34510</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/6/30 34511 shid-6-30 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/6/30</span><span class="ord">34511</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/6/36 34525 shid-6-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/6/36</span><span class="ord">34525</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/8/12 34522 shid-8-12 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/8/12</span><span class="ord">34522</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/8/16 34523 shid-8-16 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/8/16</span><span class="ord">34523</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/8/24 34512 shid-8-24 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/8/24</span><span class="ord">34512</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/8/30 34513 shid-8-30 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/8/30</span><span class="ord">34513</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/8/36 34517 shid-8-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/8/36</span><span class="ord">34517</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/10/30 34514 shid-10-30 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/10/30</span><span class="ord">34514</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/10/36 34518 shid-10-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/10/36</span><span class="ord">34518</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/12/30 34515 shid-12-30 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/12/30</span><span class="ord">34515</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/12/36 34519 shid-12-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/12/36</span><span class="ord">34519</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/14/30 34516 shid-14-30 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/14/30</span><span class="ord">34516</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/14/36 34520 shid-14-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/14/36</span><span class="ord">34520</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>4</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="none" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="shid/20/36 34524 shid-20-36 sledge hammer indestructible handle bs 876 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><div class="noimg">No image</div></div>
+ <div class="body">
+  <div class="codes"><span class="cat">SHID/20/36</span><span class="ord">34524</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Sledge Hammer Indestructible Handle BS 876</div>
+  <table><tr><td>Box qty</td><td>2</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p12 · printed 10</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/1-16 25540 ppr-1-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/1-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/1-16</span><span class="ord">25540</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/3-32 25541 ppr-3-32 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/3-32" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/3-32</span><span class="ord">25541</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/1-8 25542 ppr-1-8 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/1-8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/1-8</span><span class="ord">25542</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/5-32 25543 ppr-5-32 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/5-32" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/5-32</span><span class="ord">25543</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/3-16 25544 ppr-3-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/3-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/3-16</span><span class="ord">25544</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/7-32 25545 ppr-7-32 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/7-32" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/7-32</span><span class="ord">25545</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/1-4 25546 ppr-1-4 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/1-4" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/1-4</span><span class="ord">25546</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/5-16 25547 ppr-5-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/5-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/5-16</span><span class="ord">25547</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/3-8 25548 ppr-3-8 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/3-8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/3-8</span><span class="ord">25548</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="direct_product" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/6/st 25549 ppr-6-st hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2624_184_135.png" alt="PPR/6/ST" loading="lazy"><span class="assoc assoc-direct_product" title="product code PPR/6/ST printed beside the image">Direct product image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/6/ST</span><span class="ord">25549</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ppr/8/st 25550 ppr-8-st hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="PPR/8/ST" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">PPR/8/ST</span><span class="ord">25550</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>50</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/1-16 25500 ddp-1-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/1-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/1-16</span><span class="ord">25500</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>100</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/3-32 25501 ddp-3-32 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/3-32" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/3-32</span><span class="ord">25501</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>100</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/1-8 25502 ddp-1-8 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/1-8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/1-8</span><span class="ord">25502</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/5-32 25503 ddp-5-32 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/5-32" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/5-32</span><span class="ord">25503</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>100</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/3-16 25504 ddp-3-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/3-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/3-16</span><span class="ord">25504</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/1-4 25505 ddp-1-4 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/1-4" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/1-4</span><span class="ord">25505</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>100</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/5-16 25506 ddp-5-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/5-16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/5-16</span><span class="ord">25506</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/3-8 25507 ddp-3-8 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/3-8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/3-8</span><span class="ord">25507</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/5/st 25508 ddp-5-st hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2632_-2_33.png" alt="DDP/5/ST" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/5/ST</span><span class="ord">25508</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>40</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="direct_product" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="ddp/8/st 25509 ddp-8-st hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p53_xref2628_294_112.png" alt="DDP/8/ST" loading="lazy"><span class="assoc assoc-direct_product" title="product code DDP/8/ST printed beside the image">Direct product image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DDP/8/ST</span><span class="ord">25509</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p53 · printed 51</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/3 01400 id-3 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/3" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/3</span><span class="ord">01400</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/4 01401 id-4 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/4" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/4</span><span class="ord">01401</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/6 01402 id-6 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/6" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/6</span><span class="ord">01402</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/8 01403 id-8 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/8</span><span class="ord">01403</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>90</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/10 01404 id-10 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/10" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/10</span><span class="ord">01404</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/12 01405 id-12 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/12</span><span class="ord">01405</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/ec/14 01809 id-ec-14 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/EC/14" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/EC/14</span><span class="ord">01809</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/ec/16 01806 id-ec-16 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/EC/16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/EC/16</span><span class="ord">01806</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/ec/18 01807 id-ec-18 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/EC/18" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/EC/18</span><span class="ord">01807</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="id/ec/24 01808 id-ec-24 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="ID/EC/24" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">ID/EC/24</span><span class="ord">01808</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>15</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/3 01410 od-3 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/3" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/3</span><span class="ord">01410</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/4 01411 od-4 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/4" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/4</span><span class="ord">01411</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/6 01412 od-6 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/6" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/6</span><span class="ord">01412</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/8 01413 od-8 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/8</span><span class="ord">01413</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>90</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/10 01414 od-10 spring calipers &amp; dividers calipers are designed for transfer hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/10" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/10</span><span class="ord">01414</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub">Spring Calipers &amp; Dividers Calipers are designed for transfer</div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/12 01415 od-12 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/12</span><span class="ord">01415</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/ec/14 01819 od-ec-14 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/EC/14" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/EC/14</span><span class="ord">01819</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/ec/16 01816 od-ec-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/EC/16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/EC/16</span><span class="ord">01816</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/ec/18 01817 od-ec-18 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/EC/18" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/EC/18</span><span class="ord">01817</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/ec/24 01818 od-ec-24 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/EC/24" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/EC/24</span><span class="ord">01818</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>15</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/3 01420 dd-3 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/3" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/3</span><span class="ord">01420</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/4 01421 dd-4 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/4" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/4</span><span class="ord">01421</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>200</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/6 01422 dd-6 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/6" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/6</span><span class="ord">01422</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>150</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/8 01423 dd-8 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/8" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/8</span><span class="ord">01423</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>90</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/10 01424 dd-10 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/10" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/10</span><span class="ord">01424</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/12 01425 dd-12 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/12" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/12</span><span class="ord">01425</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>60</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/ec/14 01829 dd-ec-14 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/EC/14" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/EC/14</span><span class="ord">01829</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/ec/16 01826 dd-ec-16 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/EC/16" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/EC/16</span><span class="ord">01826</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="dd/ec/18 01827 dd-ec-18 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="DD/EC/18" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">DD/EC/18</span><span class="ord">01827</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>25</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article><article class="card" data-pdf="Hand_Tool_Catalogue_low_res_with_cover.pdf" data-assoc="product_family" data-status="unverified"
+ data-flag="0" data-chg="0" data-search="od/ec/24 01828 od-ec-24 hand_tool_catalogue_low_res_with_cover.pdf">
+ <div class="thumb"><img src="images/hand_tool_catalogue_low_res_with_cover_p224_xref6989_252_124.png" alt="OD/EC/24" loading="lazy"><span class="assoc assoc-product_family" title="largest product image in the same page region as the only ordering table there (layout evidence)">Product-family image</span></div>
+ <div class="body">
+  <div class="codes"><span class="cat">OD/EC/24</span><span class="ord">01828</span><span class="st st-unverified">unverified</span></div>
+  
+  <div class="sub"></div>
+  <table><tr><td>Box qty</td><td>15</td></tr></table>
+  
+  <div class="src">Hand_Tool_Catalogue_low_res_with_cover.pdf · physical p224 · printed 224</div>
+ </div></article></main>
+<script>
+const els=[...document.querySelectorAll('.card')],f=id=>document.getElementById(id);
+function apply(){const p=f('pdf').value,a=f('assoc').value,g=f('flag').value,q=f('q').value.trim().toLowerCase();let n=0;
+for(const c of els){const d=c.dataset;const ok=(!p||d.pdf===p)&&(!a||d.assoc===a)&&(!g||(g==='flag'&&d.flag==='1')||(g==='review'&&d.status==='needs_review')||(g==='chg'&&d.chg==='1'))&&(!q||d.search.includes(q));
+c.style.display=ok?'':'none';if(ok)n++;}f('count').textContent=n+' shown';}
+['pdf','assoc','flag'].forEach(i=>f(i).addEventListener('change',apply));f('q').addEventListener('input',apply);apply();
+</script></body></html>
