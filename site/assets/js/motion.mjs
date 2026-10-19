@@ -183,51 +183,108 @@ export function stagger(items) {
     { duration: 380, delay: 40 + i * 40, easing: EASE, fill: "backwards" }));
 }
 
+// ---------------------------------------------------------------- smooth following
+/** Moves a set of numbers toward their targets on every display frame (60, 120 or 144 Hz alike), with
+ *  frame-rate independent easing, and stops once they have settled. `apply(values)` writes them;
+ *  `speed` is per second (a number, or one per value). Used for everything that follows the mouse:
+ *  the browser's own transitions restart on every pointer event and lag or judder. */
+function follower(apply, speed, start) {
+  let cur = { ...start }, target = { ...start }, raf = 0, last = 0, onRest = null;
+  const step = (now) => {
+    const dt = Math.min(0.064, Math.max(0.001, (now - last) / 1000));
+    last = now;
+    let moving = false;
+    for (const k in target) {
+      const d = target[k] - cur[k];
+      if (Math.abs(d) > 0.004) {
+        cur[k] += d * (1 - Math.exp(-(typeof speed === "number" ? speed : speed[k] ?? 12) * dt));
+        moving = true;
+      } else cur[k] = target[k];
+    }
+    apply(cur);
+    if (moving) { raf = requestAnimationFrame(step); return; }
+    raf = 0;
+    const done = onRest;
+    onRest = null;
+    done?.();
+  };
+  return {
+    /** Heads for `values`; `rest` runs once they are reached (unless a new target comes first). */
+    to(values, rest = null) {
+      target = { ...target, ...values };
+      onRest = rest;
+      if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+    },
+    /** Moves straight to `values` (no easing), e.g. to start the glare under the pointer. */
+    jump(values) { cur = { ...cur, ...values }; },
+    get value() { return cur; },
+  };
+}
+
 // ---------------------------------------------------------------- tilt
 /** Cards in `container` lean toward the mouse, with a soft glare under the pointer and the product
- *  picture drifting the other way. Mouse only; the card returns smoothly when the pointer leaves. */
+ *  picture drifting the other way. Mouse only; the card eases back when the pointer leaves. Each card
+ *  is smoothed on every display frame (follower) and is its own compositor layer while it moves. */
 export function tilt(container, selector, { max = 7, lift = -3 } = {}) {
   if (!container || !finePointer.matches) return;
-  const glare = document.createElement("span");
-  glare.className = "fx-glare";
-  glare.setAttribute("aria-hidden", "true");
-  let card = null, pic = null, box = null, sy = 0, px = 0, py = 0, raf = 0;
-  const paint = () => {
-    raf = 0;
-    if (!card?.isConnected) return;
-    const x = Math.min(1, Math.max(0, (px - box.left) / box.width));
-    const y = Math.min(1, Math.max(0, (py - (box.top + sy - scrollY)) / box.height));
-    card.style.transform = `perspective(900px) translateY(${lift}px) rotateX(${((0.5 - y) * max).toFixed(2)}deg) rotateY(${((x - 0.5) * max * 1.3).toFixed(2)}deg)`;
-    glare.style.transform = `translate(${(x * box.width).toFixed(1)}px, ${(y * box.height).toFixed(1)}px)`;
-    if (pic && split) pic.style.translate = `${((0.5 - x) * 10).toFixed(1)}px ${((0.5 - y) * 7).toFixed(1)}px`;
+  const REST = { rx: 0, ry: 0, lift: 0, gx: 0, gy: 0, g: 0, px: 0, py: 0 };
+  const SPEED = { rx: 12, ry: 12, lift: 12, gx: 20, gy: 20, g: 9, px: 8, py: 8 };
+  const cards = new WeakMap();
+  let card = null, box = null, sy = 0;
+  const stateOf = (c) => {
+    let s = cards.get(c);
+    if (s) return s;
+    const glare = document.createElement("span");
+    glare.className = "fx-glare";
+    glare.setAttribute("aria-hidden", "true");
+    const pic = c.querySelector(".product-image > img");
+    s = { glare, pic };
+    s.f = follower((v) => {
+      c.style.transform = `perspective(900px) translateY(${v.lift.toFixed(2)}px) rotateX(${v.rx.toFixed(2)}deg) rotateY(${v.ry.toFixed(2)}deg)`;
+      glare.style.transform = `translate(${v.gx.toFixed(1)}px, ${v.gy.toFixed(1)}px)`;
+      glare.style.opacity = v.g.toFixed(3);
+      if (pic && split) pic.style.translate = `${v.px.toFixed(2)}px ${v.py.toFixed(2)}px`;
+    }, SPEED, REST);
+    cards.set(c, s);
+    return s;
   };
-  const leave = () => {
-    if (!card) return;
-    card.removeEventListener("pointerleave", leave);
-    card.style.transform = "";
-    if (pic) pic.style.translate = "";
-    glare.remove();
-    card = pic = null;
+  const rest = (c) => {
+    const s = cards.get(c);
+    if (!s) return;
+    s.f.to(REST, () => {
+      c.style.transform = "";
+      if (s.pic) s.pic.style.translate = "";
+      s.glare.remove();
+      c.classList.remove("tilting");
+    });
+  };
+  const onLeave = (e) => {
+    const c = e.currentTarget;
+    c.removeEventListener("pointerleave", onLeave);
+    rest(c);
+    if (card === c) card = null;
   };
   container.addEventListener("pointermove", (e) => {
-    if (e.pointerType !== "mouse" || !motionOK()) { leave(); return; }
+    if (e.pointerType !== "mouse" || !motionOK()) { if (card) { rest(card); card = null; } return; }
     const c = e.target.closest(selector);
     if (c !== card) {
-      leave();
-      if (!c || !container.contains(c)) return;
-      card = c;
-      box = c.getBoundingClientRect();
+      if (card) rest(card);
+      card = c && container.contains(c) ? c : null;
+      if (!card) return;
+      box = card.getBoundingClientRect();
       sy = scrollY;
-      pic = c.querySelector(".product-image > img");
-      c.appendChild(glare);
-      c.addEventListener("pointerleave", leave);
+      const s = stateOf(card);
+      if (!s.glare.isConnected) card.appendChild(s.glare);
+      card.classList.add("tilting");
+      s.f.jump({ gx: e.clientX - box.left, gy: e.clientY - box.top });
+      card.addEventListener("pointerleave", onLeave);
     }
-    px = e.clientX;
-    py = e.clientY;
-    raf ||= requestAnimationFrame(paint);
+    const x = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width));
+    const y = Math.min(1, Math.max(0, (e.clientY - (box.top + sy - scrollY)) / box.height));
+    stateOf(card).f.to({ rx: (0.5 - y) * max, ry: (x - 0.5) * max * 1.3, lift, gx: x * box.width, gy: y * box.height, g: 1, px: (0.5 - x) * 10, py: (0.5 - y) * 7 });
   }, { passive: true });
   // A click opens a dialog over the card: let it settle back.
-  container.addEventListener("click", leave);
+  container.addEventListener("click", () => { if (card) { card.removeEventListener("pointerleave", onLeave); rest(card); card = null; } });
 }
 
 // ---------------------------------------------------------------- numbers and dialogs
@@ -278,61 +335,83 @@ export function nudge(el, px = 3) {
 }
 
 /** The hero follows the mouse: an orange spotlight under the pointer, the hammer leaning toward it
- *  and the rings drifting the other way (CSS transitions smooth the movement). Mouse only. */
+ *  and the rings drifting the other way, each smoothed on every display frame. Mouse only. */
 export function heroFollow(hero, { tool, orbit } = {}) {
   if (!hero || !finePointer.matches || !split) return;
   const glow = document.createElement("span");
   glow.className = "hero-glow";
   glow.setAttribute("aria-hidden", "true");
   hero.prepend(glow);
-  let raf = 0, px = 0, py = 0;
-  const paint = () => {
-    raf = 0;
-    if (!hero.classList.contains("lit")) return;
-    const box = hero.getBoundingClientRect();
-    const x = px - box.left, y = py - box.top, nx = x / box.width - 0.5, ny = y / box.height - 0.5;
-    glow.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
-    if (tool) { tool.style.translate = `${(nx * 22).toFixed(1)}px ${(ny * 16).toFixed(1)}px`; tool.style.rotate = `${(nx * 6).toFixed(2)}deg`; }
-    if (orbit) orbit.style.translate = `${(-nx * 14).toFixed(1)}px ${(-ny * 10).toFixed(1)}px`;
-  };
-  const leave = () => {
-    hero.classList.remove("lit");
-    if (tool) tool.style.translate = tool.style.rotate = "";
-    if (orbit) orbit.style.translate = "";
-  };
+  const REST = { gx: 0, gy: 0, tx: 0, ty: 0, rot: 0, ox: 0, oy: 0 };
+  const f = follower((v) => {
+    glow.style.transform = `translate(${v.gx.toFixed(1)}px, ${v.gy.toFixed(1)}px)`;
+    if (tool) { tool.style.translate = `${v.tx.toFixed(2)}px ${v.ty.toFixed(2)}px`; tool.style.rotate = `${v.rot.toFixed(3)}deg`; }
+    if (orbit) orbit.style.translate = `${v.ox.toFixed(2)}px ${v.oy.toFixed(2)}px`;
+  }, { gx: 16, gy: 16, tx: 4.5, ty: 4.5, rot: 4.5, ox: 3.5, oy: 3.5 }, REST);
+  let inside = false;
   hero.addEventListener("pointermove", (e) => {
-    if (e.pointerType !== "mouse" || !motionOK()) { leave(); return; }
-    hero.classList.add("lit");
-    px = e.clientX;
-    py = e.clientY;
-    raf ||= requestAnimationFrame(paint);
+    if (e.pointerType !== "mouse" || !motionOK()) return;
+    const box = hero.getBoundingClientRect();
+    const x = e.clientX - box.left, y = e.clientY - box.top, nx = x / box.width - 0.5, ny = y / box.height - 0.5;
+    if (!inside) { inside = true; hero.classList.add("lit"); f.jump({ gx: x, gy: y }); }
+    f.to({ gx: x, gy: y, tx: nx * 22, ty: ny * 16, rot: nx * 6, ox: -nx * 14, oy: -ny * 10 });
   }, { passive: true });
-  hero.addEventListener("pointerleave", leave);
+  hero.addEventListener("pointerleave", () => {
+    inside = false;
+    hero.classList.remove("lit");
+    f.to({ tx: 0, ty: 0, rot: 0, ox: 0, oy: 0 }, () => {
+      if (tool) tool.style.translate = tool.style.rotate = "";
+      if (orbit) orbit.style.translate = "";
+    });
+  });
+}
+
+/** Puts the hammer's pivot at its grip (the `.grip-point` marker), measured while it is at rest; the
+ *  lean and the strike then both turn about the grip. */
+export function hammerPivot(wrap) {
+  const grip = wrap?.querySelector(".grip-point");
+  if (!grip) return;
+  const set = () => {
+    if (wrap.style.rotate || striking) return; // only while at rest
+    const wr = wrap.getBoundingClientRect(), gr = grip.getBoundingClientRect();
+    if (!wr.width) return;
+    wrap.style.transformOrigin = `${(gr.left + gr.width / 2 - wr.left).toFixed(1)}px ${(gr.top + gr.height / 2 - wr.top).toFixed(1)}px`;
+  };
+  set();
+  let t = 0;
+  addEventListener("resize", () => { clearTimeout(t); t = setTimeout(set, 200); }, { passive: true });
 }
 
 let striking = false;
 /** The hero hammer winds up and strikes, pivoting at its grip; at the moment of impact sparks fly
- *  from its face with a shockwave, and `onImpact` runs. One strike at a time. */
-export function strike(svg, { onImpact } = {}) {
-  const swing = svg?.querySelector(".swing"), face = svg?.querySelector(".strike-point");
-  if (!swing || !face || striking || !motionOK()) return;
+ *  from its face with a shockwave, and `onImpact` runs. One strike at a time. The whole drawing turns
+ *  as one compositor layer, so nothing is redrawn while it swings. */
+export function strike(wrap, { onImpact } = {}) {
+  const face = wrap?.querySelector(".strike-point");
+  if (!face || striking || !motionOK()) return;
   striking = true;
   const ms = 820, impact = 0.55;
-  const a = swing.animate([
+  const a = wrap.animate([
     { transform: "rotate(0deg)", easing: "cubic-bezier(.2,.7,.4,1)" },
     { transform: "rotate(20deg)", offset: 0.4, easing: "cubic-bezier(.7,0,1,.6)" },
     { transform: "rotate(-12deg)", offset: impact, easing: "ease-out" },
     { transform: "rotate(-6deg)", offset: 0.66, easing: "cubic-bezier(.3,.6,.4,1)" },
     { transform: "rotate(0deg)" },
   ], { duration: ms });
-  const t = setTimeout(() => {
+  // Sparks at the moment of impact, timed by the strike itself (not a separate timer).
+  const hit = wrap.animate({ opacity: [1, 1] }, { duration: ms * impact });
+  let sparked = false;
+  const spark = () => {
+    if (sparked) return;
+    sparked = true;
     const r = face.getBoundingClientRect();
     if (onScreen(r)) sparks(r.left + r.width / 2, r.top + r.height / 2);
     onImpact?.();
-  }, ms * impact);
+  };
+  hit.finished.then(spark, () => {});
   const done = () => { striking = false; };
-  a.finished.then(done, () => { clearTimeout(t); done(); });
-  setTimeout(done, ms + 400);
+  a.finished.then(done, done);
+  setTimeout(done, ms + 600);
 }
 
 /** Sparks fanning out from (x, y) and falling, with an elliptical shockwave. */
@@ -441,26 +520,36 @@ export function ripple(btn, x, y) {
   settle(clip, [a], 1000);
 }
 
-/** Primary buttons lean toward the mouse while it is over them (magnetic). Mouse only. */
+/** Primary buttons lean toward the mouse while it is over them (magnetic), smoothed on every display
+ *  frame, and ease back when it leaves. Mouse only. */
 export function magnetic(selector, { pull = 0.3, max = 7 } = {}) {
   if (!finePointer.matches || !split) return;
-  let btn = null, raf = 0, px = 0, py = 0;
-  const release = () => { if (btn) btn.style.translate = ""; btn = null; };
-  const paint = () => {
-    raf = 0;
-    if (!btn?.isConnected) { btn = null; return; }
-    const r = btn.getBoundingClientRect();
-    const clamp = (v) => Math.max(-max, Math.min(max, v));
-    btn.style.translate = `${clamp((px - (r.left + r.width / 2)) * pull).toFixed(1)}px ${clamp((py - (r.top + r.height / 2)) * pull).toFixed(1)}px`;
+  const buttons = new WeakMap();
+  let btn = null;
+  const followerOf = (b) => {
+    let f = buttons.get(b);
+    if (!f) {
+      f = follower((v) => { b.style.translate = `${v.x.toFixed(2)}px ${v.y.toFixed(2)}px`; }, 15, { x: 0, y: 0 });
+      buttons.set(b, f);
+    }
+    return f;
   };
+  const release = () => {
+    if (!btn) return;
+    const b = btn;
+    btn = null;
+    followerOf(b).to({ x: 0, y: 0 }, () => { b.style.translate = ""; });
+  };
+  const clamp = (v) => Math.max(-max, Math.min(max, v));
   document.addEventListener("pointermove", (e) => {
     if (e.pointerType !== "mouse" || !motionOK()) { release(); return; }
     const b = e.target.closest?.(selector) || null;
     if (b !== btn) { release(); btn = b; }
     if (!btn) return;
-    px = e.clientX;
-    py = e.clientY;
-    raf ||= requestAnimationFrame(paint);
+    const f = followerOf(btn), r = btn.getBoundingClientRect();
+    // The measured box includes the current lean: measure from the button's resting centre.
+    const cx = r.left + r.width / 2 - f.value.x, cy = r.top + r.height / 2 - f.value.y;
+    f.to({ x: clamp((e.clientX - cx) * pull), y: clamp((e.clientY - cy) * pull) });
   }, { passive: true });
   root.addEventListener("pointerleave", release);
 }

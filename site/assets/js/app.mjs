@@ -212,7 +212,7 @@ function renderHero() {
   const stats = [[state.products.length, "products"], [(state.data.catalogues || []).length, "source catalogues"], [m.with_confirmed_image ?? 0, "with catalogue images"]];
   // The numbers count up from zero (motion.mjs); without motion they are shown at once.
   $("#heroStats").innerHTML = stats.map(([n, label]) => `<span><b>${fx.motionOK() ? 0 : n}</b> ${label}</span>`).join("");
-  $$("#heroStats b").forEach((b, i) => fx.countTo(b, stats[i][0], 1400));
+  setTimeout(() => $$("#heroStats b").forEach((b, i) => fx.countTo(b, stats[i][0], 1400)), 40); // after the first render
 }
 
 /** "Mechanic's Tools › Tool Storage": GROZ's category, then this site's when the names differ. */
@@ -617,19 +617,24 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
 function closeModal() {
   if (!backdrop.classList.contains("open") || backdrop.classList.contains("closing")) return;
   stopUnbox();
+  const boxTo = boxCloseTarget(); // product details whose card is on screen close back into its box
   state.detailId = null;
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
-  // The dialog fades and settles back (a bottom sheet slides down) before it is hidden.
   backdrop.classList.add("closing");
-  const sheet = matchMedia("(max-width: 720px)").matches;
-  closing = fx.leave([[backdrop, { opacity: [1, 0] }], [modal, sheet
-    ? { transform: ["none", "translateY(28%)"], opacity: [1, 0] }
-    : { transform: ["none", "translateY(10px) scale(.96)"], opacity: [1, 0] }]], () => {
+  const hide = () => {
     closing = null;
     backdrop.classList.remove("open", "closing");
     document.body.classList.remove("modal-open");
     document.body.style.paddingRight = "";
-  }, 200);
+  };
+  if (boxTo) {
+    try { closing = playBoxClose(boxTo, hide); return; } catch { $$(".unbox").forEach((l) => l.remove()); /* plain exit below */ }
+  }
+  // Other dialogs fade and settle back (a bottom sheet slides down) before they are hidden.
+  const sheet = matchMedia("(max-width: 720px)").matches;
+  closing = fx.leave([[backdrop, { opacity: [1, 0] }], [modal, sheet
+    ? { transform: ["none", "translateY(28%)"], opacity: [1, 0] }
+    : { transform: ["none", "translateY(10px) scale(.96)"], opacity: [1, 0] }]], hide, 200);
   if (!backdrop.classList.contains("closing")) closing = null; // closed at once (no motion)
 }
 
@@ -675,12 +680,16 @@ const RELATION_NOTE = {
 // ---------------------------------------------------------------- unboxing
 // Opening a product from its card plays one continuous 3D unboxing: the picture tile becomes a GROZ
 // carton that tilts toward the viewer and opens its flaps, the product rises out and flies to its
-// place in the details, and the key specifications fly out of the box into their rows.
+// place in the details, and the key specifications fly out of the box into their rows. Closing the
+// details plays it backwards, onto the card of the product shown (playBoxClose).
 // The details are built and measured before the first frame, and every movement runs on the one
 // Web Animations timeline (transform and opacity only), so nothing is laid out, swapped in late or
-// replayed while it moves. Skipped for reduced motion, on low-end devices, in Table view, for cards
-// off screen, and while the dialog is open (Previous/Next, Save, Compare).
+// replayed while it moves. The animations wait (paused) until the picture copies are decoded, so the
+// first frames do not stall on image decoding. Skipped for reduced motion, on low-end devices, in
+// Table view, for cards off screen, and while the dialog is open (Previous/Next, Save, Compare).
 const UNBOX = { lift: 480, rise: 280, out: 660, fly: 460, specs: 720, step: 35, spec: 440, settle: 150, max: 8 };
+const BOXCLOSE = { specs: 0, step: 28, spec: 380, fly: 120, flyDur: 440, modal: 160, modalDur: 380, back: 300, backDur: 420,
+  boxIn: 100, boxInDur: 200, sink: 560, sinkDur: 300, flaps: 720, flapsDur: 360, land: 900, landDur: 380, out: 1180, outDur: 220 };
 const EASE_OUT = "cubic-bezier(.2,.8,.2,1)";
 
 function unboxThenShow(card, id) {
@@ -693,19 +702,16 @@ function unboxThenShow(card, id) {
   try { playUnbox(tile, r); } catch { stopUnbox(); }
 }
 
-function playUnbox(tile, r) {
-  const stage = $(".pd-stage", modal);
-  if (!stage) return;
-  // This replaces the dialog's own entrance (pop or sheet, fade-ins). A cancelled CSS animation stays
-  // cancelled until the dialog next opens, so nothing replays when the unboxing ends.
-  cancelEntrance();
-  modal.classList.add("unboxing");
-  const T = UNBOX;
-  const sr = stage.getBoundingClientRect(), mr = modal.getBoundingClientRect();
+/** The carton over a card's picture tile (rect `r`), with two copies of the details picture `stage`:
+ *  one inside the box and one that flies between the box and the details. Everything is measured
+ *  here, once; nothing is animated yet. The copies are the details picture itself, so the hand-overs
+ *  between them, and to the real picture, cannot be seen. */
+function buildCarton(r, stage) {
+  const sr = stage.getBoundingClientRect();
   // A carton's proportions, centred on the picture tile (wide tiles would make a flat slab).
   const h = r.height, w = Math.min(r.width, Math.round(h * 1.25)), d = Math.round(Math.min(w, h) * 0.55);
   const left = r.left + (r.width - w) / 2;
-  const mouth = { x: left + w / 2, y: r.top + h * 0.25 }; // where things come out of the box
+  const mouth = { x: left + w / 2, y: r.top + h * 0.25 }; // where things go in and come out of the box
   const layer = document.createElement("div");
   layer.className = "unbox";
   layer.setAttribute("aria-hidden", "true");
@@ -714,14 +720,11 @@ function playUnbox(tile, r) {
       <div class="ub-glow"></div><div class="ub-face ub-front"><span class="brand-mark">G</span><span>GROZ</span></div>
       <div class="ub-flap ub-flap-f"></div><div class="ub-flap ub-flap-b"></div></div></div>`;
   const boxStage = layer.firstElementChild, box = boxStage.firstElementChild;
-  const u = { layer, tile, anims: [], tileAnim: null };
-  state.unbox = u;
-
-  // The product in the box and the product that flies to the details are copies of the details
-  // picture itself, so the hand-overs between them, and to the real picture, cannot be seen.
   const copy = (cls) => {
     const el = stage.cloneNode(true);
     el.classList.add(cls);
+    el.classList.remove("zooming");
+    $$(".fx-loupe, .fx-out", el).forEach((x) => x.remove());
     el.style.width = `${sr.width}px`;
     el.style.height = `${sr.height}px`;
     $$("img", el).forEach((img) => { img.alt = ""; img.removeAttribute("loading"); });
@@ -739,15 +742,64 @@ function playUnbox(tile, r) {
   document.body.appendChild(layer);
 
   const turn = "rotateY(18deg) rotateX(-24deg)"; // undoes the box's tilt: the product faces the viewer
-  const boxStart = "translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) scale(.94)";
-  const boxEnd = `translateY(${h * 0.12}px) translateZ(10px) rotateX(24deg) rotateY(-18deg) scale(.86)`;
-  const itemStart = `translateZ(${-d / 2}px) translateY(${h * 0.2}px) ${turn} scale(${k * 0.85})`;
-  const itemEnd = `translateZ(${d * 0.3}px) translateY(${-(h * 0.5 + sr.height * k * 0.6)}px) ${turn} scale(${k})`;
-  // Where the product is when it has left the box: measured once, before anything is drawn.
-  box.style.transform = boxEnd;
-  item.style.transform = itemEnd;
-  const ir = item.getBoundingClientRect();
+  const c = {
+    layer, boxStage, box, item, fly, sr, d, h, mouth,
+    flapF: $(".ub-flap-f", box), flapB: $(".ub-flap-b", box), glow: $(".ub-glow", box),
+    boxStart: "translateY(0px) translateZ(0px) rotateX(0deg) rotateY(0deg) scale(.94)",
+    boxEnd: `translateY(${h * 0.12}px) translateZ(10px) rotateX(24deg) rotateY(-18deg) scale(.86)`,
+    itemStart: `translateZ(${-d / 2}px) translateY(${h * 0.2}px) ${turn} scale(${k * 0.85})`,
+    itemEnd: `translateZ(${d * 0.3}px) translateY(${-(h * 0.5 + sr.height * k * 0.6)}px) ${turn} scale(${k})`,
+  };
+  // Where the product is when it is just out of the box (the open pose).
+  box.style.transform = c.boxEnd;
+  item.style.transform = c.itemEnd;
+  c.ir = item.getBoundingClientRect();
   box.style.transform = item.style.transform = "";
+  // The flying copy's pose over the box, from its own place (sr).
+  c.atBox = `translate(${c.ir.left - sr.left}px, ${c.ir.top - sr.top}px) scale(${c.ir.width / sr.width})`;
+  return c;
+}
+
+/** A copy of a specification row, laid over it (for flying between the row and the box). */
+function ghostOf(cell, layer) {
+  const cr = cell.getBoundingClientRect();
+  const group = document.createElement("dl");
+  group.className = `${cell.parentElement.className} ub-ghosts`;
+  const ghost = cell.cloneNode(true);
+  ghost.style.cssText = `left:${cr.left}px;top:${cr.top}px;width:${cr.width}px;height:${cr.height}px`;
+  group.appendChild(ghost);
+  layer.appendChild(group);
+  return { ghost, cr };
+}
+
+/** The rows of the details that are in view (they fly; the rest just come and go with the dialog). */
+function visibleCells(mr, max) {
+  const seen = (el) => { const b = el.getBoundingClientRect(); return b.bottom > mr.top + 8 && b.top < mr.bottom - 8; };
+  return [...$$(".pd-facts > div", modal), ...$$(".pd-specs > div", modal)].filter(seen).slice(0, max);
+}
+
+/** Starts animations together once the picture copies in `layer` are decoded (at most ~150 ms). */
+function playWhenDecoded(anims, layer, isCurrent) {
+  anims.forEach((a) => a.pause());
+  const imgs = $$("img", layer);
+  const wait = new Promise((resolve) => setTimeout(resolve, 150));
+  Promise.race([Promise.all(imgs.map((img) => img.decode().catch(() => {}))), wait])
+    .then(() => { if (isCurrent()) anims.forEach((a) => a.play()); });
+}
+
+function playUnbox(tile, r) {
+  const stage = $(".pd-stage", modal);
+  if (!stage) return;
+  // This replaces the dialog's own entrance (pop or sheet, fade-ins). A cancelled CSS animation stays
+  // cancelled until the dialog next opens, so nothing replays when the unboxing ends.
+  cancelEntrance();
+  modal.classList.add("unboxing");
+  const T = UNBOX;
+  const mr = modal.getBoundingClientRect();
+  const c = buildCarton(r, stage);
+  const { layer, boxStage, box, item, fly, d, mouth } = c;
+  const u = { layer, tile, anims: [], tileAnim: null };
+  state.unbox = u;
 
   const run = (el, frames, opts) => {
     const a = el.animate(frames, { fill: "backwards", ...opts });
@@ -758,22 +810,21 @@ function playUnbox(tile, r) {
   // 1. The carton lifts and tilts, the flaps open, light comes from inside. Opacity is only ever
   //    animated on the carton's holder: on the carton itself it would flatten the 3D faces.
   run(boxStage, { opacity: [0, 1] }, { duration: 150 });
-  run(box, { transform: [boxStart, boxEnd] }, { duration: T.lift, easing: EASE_OUT, fill: "both" });
-  run($(".ub-flap-f", box), { transform: ["rotateX(-90deg)", "rotateX(-300deg)"] },
+  run(box, { transform: [c.boxStart, c.boxEnd] }, { duration: T.lift, easing: EASE_OUT, fill: "both" });
+  run(c.flapF, { transform: ["rotateX(-90deg)", "rotateX(-300deg)"] },
     { delay: 140, duration: 400, easing: "cubic-bezier(.3,.7,.2,1.1)", fill: "both" });
-  run($(".ub-flap-b", box), { transform: [`translateZ(${-d}px) rotateX(90deg)`, `translateZ(${-d}px) rotateX(212deg)`] },
+  run(c.flapB, { transform: [`translateZ(${-d}px) rotateX(90deg)`, `translateZ(${-d}px) rotateX(212deg)`] },
     { delay: 190, duration: 400, easing: "cubic-bezier(.3,.7,.2,1.1)", fill: "both" });
-  run($(".ub-glow", box), { opacity: [0, 1] }, { delay: 200, duration: 300, fill: "both" });
+  run(c.glow, { opacity: [0, 1] }, { delay: 200, duration: 300, fill: "both" });
   // 2. The product rises out of the box...
-  run(item, [{ opacity: 0, transform: itemStart }, { opacity: 1, offset: 0.25 }, { opacity: 1, transform: itemEnd }],
+  run(item, [{ opacity: 0, transform: c.itemStart }, { opacity: 1, offset: 0.25 }, { opacity: 1, transform: c.itemEnd }],
     { delay: T.rise, duration: T.out - T.rise, easing: "cubic-bezier(.2,.7,.3,1)", fill: "both" });
   run(item, { opacity: [0, 0] }, { delay: T.out, duration: 1, fill: "forwards" });
   // 3. ...and its copy flies from there to the picture in the details, while the box sinks away and
   //    the details grow from it. The real picture shows the moment the copy lands on it.
   const land = T.out + T.fly;
   run(fly, { opacity: [0, 0] }, { duration: T.out });
-  run(fly, { transform: [`translate(${ir.left - sr.left}px, ${ir.top - sr.top}px) scale(${ir.width / sr.width})`, "translate(0px, 0px) scale(1)"] },
-    { delay: T.out, duration: T.fly, easing: "cubic-bezier(.45,0,.2,1)" });
+  run(fly, { transform: [c.atBox, "translate(0px, 0px) scale(1)"] }, { delay: T.out, duration: T.fly, easing: "cubic-bezier(.45,0,.2,1)" });
   run(fly, { opacity: [0, 0] }, { delay: land, duration: 1, fill: "forwards" });
   run(stage, { opacity: [0, 0] }, { duration: land });
   run(boxStage, { opacity: [1, 0], transform: ["translateY(0px) scale(1)", "translateY(16px) scale(.94)"] },
@@ -781,17 +832,9 @@ function playUnbox(tile, r) {
 
   // 4. The key specifications fly out of the box, one after another, and settle into their rows.
   //    Each is a copy of its row; the row's own text appears under it as it lands.
-  const seen = (el) => { const b = el.getBoundingClientRect(); return b.bottom > mr.top + 8 && b.top < mr.bottom - 8; };
-  const cells = [...$$(".pd-facts > div", modal), ...$$(".pd-specs > div", modal)].filter(seen).slice(0, T.max);
   const arc = CSS.supports?.("translate", "1px 1px");
-  cells.forEach((cell, i) => {
-    const cr = cell.getBoundingClientRect();
-    const group = document.createElement("dl");
-    group.className = `${cell.parentElement.className} ub-ghosts`;
-    const ghost = cell.cloneNode(true);
-    ghost.style.cssText = `left:${cr.left}px;top:${cr.top}px;width:${cr.width}px;height:${cr.height}px`;
-    group.appendChild(ghost);
-    layer.appendChild(group);
+  visibleCells(mr, T.max).forEach((cell, i) => {
+    const { ghost, cr } = ghostOf(cell, layer);
     const dx = mouth.x - (cr.left + cr.width / 2), dy = mouth.y - (cr.top + cr.height / 2);
     const at = T.specs + i * T.step, lands = at + T.spec;
     if (arc) {
@@ -804,15 +847,102 @@ function playUnbox(tile, r) {
         { delay: at, duration: T.spec, easing: EASE_OUT });
     }
     run(ghost, { opacity: [1, 0] }, { delay: lands, duration: T.settle, fill: "forwards" });
-    [...cell.children].forEach((c) => run(c, { opacity: [0, 0] }, { duration: lands }));
+    [...cell.children].forEach((x) => run(x, { opacity: [0, 0] }, { duration: lands }));
   });
   // The details grow from the box. Started last: its starting scale would shrink every rect measured.
   modal.style.transformOrigin = `${mouth.x - mr.left}px ${mouth.y - mr.top}px`;
   run(modal, { opacity: [0, 1], transform: ["scale(.94)", "scale(1)"] }, { delay: T.out - 60, duration: 420, easing: EASE_OUT });
+  playWhenDecoded([...u.anims, u.tileAnim], layer, () => state.unbox === u);
   Promise.all(u.anims.map((a) => a.finished)).then(() => { if (state.unbox === u) endUnbox(u, true); }, () => {});
   // Safety net: a page that stops drawing frames (a hidden tab) still ends up showing the details.
   const total = Math.max(...u.anims.map((a) => a.effect.getComputedTiming().endTime));
-  u.timer = setTimeout(() => { if (state.unbox === u) endUnbox(u, true); }, total + 1000);
+  u.timer = setTimeout(() => { if (state.unbox === u) endUnbox(u, true); }, total + 1200);
+}
+
+/** Where the details can be boxed back into on closing: the picture tile of the shown product's
+ *  card, when it is on screen in Cards view and the details picture is in view. */
+function boxCloseTarget() {
+  if (!state.detailId || modal.dataset.kind !== "detail" || state.view !== "grid" || !fx.motionOK()) return null;
+  const card = $(`[data-id="${CSS.escape(state.detailId)}"]`, grid);
+  const tile = card?.querySelector(".product-image"), stage = $(".pd-stage", modal);
+  if (!tile || !stage || card.classList.contains("fx-wait")) return null;
+  const r = tile.getBoundingClientRect(), sr = stage.getBoundingClientRect(), mr = modal.getBoundingClientRect();
+  if (!r.width || r.bottom < 40 || r.top > innerHeight - 40) return null;
+  if (sr.bottom < mr.top + 60 || sr.top > mr.bottom - 60) return null; // the picture is scrolled out of view
+  return { tile, r, stage };
+}
+
+/** Closing the details, backwards: the specs fly back into the carton, the picture flies down into
+ *  it, the details shrink toward it, the flaps close and the carton settles back onto the card.
+ *  `hide` runs at the end. Returns a function that stops it and leaves the dialog as it was. */
+function playBoxClose({ tile, r, stage }, hide) {
+  const T = BOXCLOSE;
+  cancelEntrance();
+  modal.classList.add("unboxing");
+  const mr = modal.getBoundingClientRect();
+  const c = buildCarton(r, stage);
+  const { layer, boxStage, box, item, fly, d, mouth } = c;
+  const anims = [];
+  const run = (el, frames, opts) => {
+    const a = el.animate(frames, { fill: "both", ...opts });
+    anims.push(a);
+    return a;
+  };
+  // The specifications lift off their rows and fly back into the box, last first.
+  const arc = CSS.supports?.("translate", "1px 1px");
+  const cells = visibleCells(mr, UNBOX.max);
+  cells.forEach((cell, n) => {
+    const i = cells.length - 1 - n;
+    const { ghost, cr } = ghostOf(cell, layer);
+    const dx = mouth.x - (cr.left + cr.width / 2), dy = mouth.y - (cr.top + cr.height / 2);
+    const at = T.specs + i * T.step;
+    if (arc) {
+      run(ghost, { translate: ["0px 0px", `${dx}px 0px`] }, { delay: at, duration: T.spec, easing: "cubic-bezier(.6,0,.6,1)" });
+      run(ghost, { opacity: [1, 1, 0], transform: ["translateY(0px) scale(1)", `translateY(${dy}px) scale(.2)`] },
+        { delay: at, duration: T.spec, easing: "cubic-bezier(.6,.05,.85,.3)" });
+    } else {
+      run(ghost, { opacity: [1, 1, 0], transform: ["translate(0px, 0px) scale(1)", `translate(${dx}px, ${dy}px) scale(.2)`] },
+        { delay: at, duration: T.spec, easing: "cubic-bezier(.5,0,.75,0)" });
+    }
+    [...cell.children].forEach((x) => run(x, { opacity: [0, 0] }, { duration: 1, fill: "forwards" }));
+  });
+  // The picture: its copy, laid exactly over it, flies to the box's mouth, then sinks inside.
+  run(stage, { opacity: [0, 0] }, { duration: 1, fill: "forwards" });
+  run(fly, { transform: ["translate(0px, 0px) scale(1)", c.atBox] }, { delay: T.fly, duration: T.flyDur, easing: "cubic-bezier(.55,0,.25,1)" });
+  run(fly, { opacity: [1, 0] }, { delay: T.sink, duration: 1, fill: "forwards" });
+  run(item, [{ opacity: 1, transform: c.itemEnd }, { opacity: 1, offset: 0.55 }, { opacity: 0, transform: c.itemStart }],
+    { delay: T.sink, duration: T.sinkDur, easing: "cubic-bezier(.5,0,.75,0)" });
+  run(item, { opacity: [0, 0] }, { duration: T.sink, fill: "none" }); // hidden until the hand-over
+  // The details shrink toward the box and fade; the page behind comes back.
+  modal.style.transformOrigin = `${mouth.x - mr.left}px ${mouth.y - mr.top}px`;
+  run(modal, { opacity: [1, 0], transform: ["scale(1)", "scale(.92)"] }, { delay: T.modal, duration: T.modalDur, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
+  run(backdrop, { opacity: [1, 0] }, { delay: T.back, duration: T.backDur, easing: "ease-in-out", fill: "forwards" });
+  // The carton waits open, closes its flaps over the product, and settles back onto the card.
+  run(boxStage, { opacity: [0, 1] }, { delay: T.boxIn, duration: T.boxInDur });
+  run(c.glow, { opacity: [1, 0] }, { delay: T.flaps, duration: 260 });
+  run(c.flapF, { transform: ["rotateX(-300deg)", "rotateX(-90deg)"] }, { delay: T.flaps, duration: T.flapsDur, easing: "cubic-bezier(.5,0,.4,1)" });
+  run(c.flapB, { transform: [`translateZ(${-d}px) rotateX(212deg)`, `translateZ(${-d}px) rotateX(90deg)`] },
+    { delay: T.flaps + 60, duration: T.flapsDur, easing: "cubic-bezier(.5,0,.4,1)" });
+  run(box, { transform: [c.boxEnd, c.boxStart] }, { delay: T.land, duration: T.landDur, easing: "cubic-bezier(.4,0,.2,1)" });
+  run(tile, { opacity: [1, 0] }, { delay: T.boxIn + T.boxInDur, duration: 120 });
+  // The carton fades into the card's own picture.
+  run(boxStage, { opacity: [1, 0] }, { delay: T.out, duration: T.outDur, fill: "forwards" });
+  run(tile, { opacity: [0, 1] }, { delay: T.out, duration: T.outDur, fill: "forwards" });
+
+  let over = false;
+  const cleanup = () => {
+    anims.forEach((a) => a.cancel());
+    layer.remove();
+    modal.classList.remove("unboxing");
+    modal.style.transformOrigin = "";
+  };
+  // Hide the dialog first, then drop the animations, in the same task: no frame shows it again.
+  const end = () => { if (over) return; over = true; clearTimeout(timer); hide(); cleanup(); };
+  playWhenDecoded(anims, layer, () => !over);
+  Promise.all(anims.map((a) => a.finished)).then(end, () => {});
+  const total = Math.max(...anims.map((a) => a.effect.getComputedTiming().endTime));
+  const timer = setTimeout(end, total + 1200);
+  return () => { if (over) return; over = true; clearTimeout(timer); cleanup(); };
 }
 
 /** Removes the unboxing layer; the dialog is left exactly as it looks without it. */
@@ -1272,7 +1402,8 @@ function wire() {
   fx.tilt(grid, ".product");
   // Hero: a spotlight and a lean that follow the mouse. The hammer strikes when clicked, and once by
   // itself when the page is first opened in a visit (remembered for the visit only).
-  const heroTool = $(".hero-tool");
+  const heroTool = $(".tool-wrap");
+  fx.hammerPivot(heroTool);
   const strikeHammer = () => fx.strike(heroTool, { onImpact: () => fx.nudge($(".hero-visual")) });
   fx.heroFollow($(".hero"), { tool: heroTool, orbit: $(".orbit") });
   fx.embers($(".hero-visual"));

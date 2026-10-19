@@ -43,7 +43,7 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 9. **Dark mode.** Click the moon in the header. The new theme spreads from the button with a frosted-glass reveal, and the whole site switches, including the dialogs, while the catalogue pictures stay on soft light tiles. Reload: the choice is kept. Click the sun to return. By default the site follows the device's light or dark setting.
 
-10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog (or the arrow keys): the old picture swings out as the new one swings in.
+10. **Unboxing.** In Cards view, click a product's picture or code. The picture turns into a GROZ carton, the flaps open, the product rises out, and the details panel grows from the box with the specifications flying out. Use Previous/Next inside the dialog (or the arrow keys): the old picture swings out as the new one swings in. Close the details: the specs fly back into the box, the picture sinks inside, the flaps close and the box settles back onto the card.
 
 11. **GROZ categories.**
     - Open *Categories* in the header (on a phone, the menu): GROZ's own eight categories in GROZ's order, plus Precision Tools.

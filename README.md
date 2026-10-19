@@ -218,6 +218,15 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - If the page stops drawing (a hidden tab), a timer still ends the sequence so the details show.
     - While any dialog is open, the space of the hidden page scrollbar is kept, so the page behind does not reflow.
     - It is skipped (the details open at once) for visitors who ask for reduced motion, on low-end devices, for cards that are off screen, in Table view, and when stepping between products inside the dialog.
+    - The animations are created paused and start together once the picture copies are decoded (at most ~150 ms), so the first frames do not stall on image decoding.
+  - Closing the details plays the unboxing backwards (`playBoxClose`; about 1.4 s):
+    - the specifications lift off their rows and fly back into the carton, last first;
+    - the picture flies down to the box and sinks inside;
+    - the details shrink toward the box and the page comes back;
+    - the flaps close and the carton settles onto the product's card and fades into its picture.
+    - It applies to product details whose card is on screen in Cards view, with the picture in view. Other dialogs, and every dialog with reduced motion, close with the plain fade.
+    - Reopening during the close stops it and leaves the dialog as it was.
+    - Opening and closing share one carton builder (`buildCarton`), so the box looks the same both ways.
   - Then Add to quote, Save and Compare, and a link to the catalogue page.
   - Below: all specifications in a two-column grid, and "From the catalogue" (source page, printed-title evidence, the table row as extracted).
   - Previous/Next and the position in the results sit in the dialog header.
@@ -257,6 +266,13 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Buttons show a soft ripple from where they are pressed. Primary buttons lean toward the mouse (magnetic). Ticked checkboxes pop.
   - Product details: hovering the picture shows a round magnifier (mouse only). It appears only when the picture file is at least 1.4× larger than shown, and zooms up to 3×.
   - A round "Back to top" button appears once the page is scrolled well down. Pressed, it lifts off as the page scrolls up. It moves up while the compare bar is showing.
+  - Smoothness (any refresh rate, 60 to 144 Hz and above):
+    - Everything that follows the mouse (card and tile tilt, the hero lean and spotlight, magnetic buttons) is driven on every display frame by `follower()` in `motion.mjs`. Its easing does not depend on the frame rate, and its CSS transitions are off while it moves. Transitions restarted on every pointer event lag or judder.
+    - Tilting cards get their own compositor layer while they move.
+    - The hero hammer sits in a `.tool-wrap` that leans and strikes as one compositor layer, pivoting at its grip (`.grip-point`, `hammerPivot`). The drawing, with its blurred shadow, is not redrawn while it swings. Sparks are timed by the strike animation itself.
+    - The hero badge uses a plain tint instead of a backdrop blur. It sits over constantly moving embers and rings, so the blur would be recomputed on every frame.
+    - The hero numbers start counting after the first render, not during it.
+    - Smoothness can only be judged in a real browser window. Preview panels that are hidden or not focused draw few or no frames.
   - Exits:
     - Dialogs fade and settle back before they hide; on phones the bottom sheet slides down. Reopening one during its exit cancels the exit.
     - The phone menu slides in with its items cascading, and slides away when closed.
