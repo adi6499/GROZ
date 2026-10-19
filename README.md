@@ -257,6 +257,15 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Buttons show a soft ripple from where they are pressed. Primary buttons lean toward the mouse (magnetic). Ticked checkboxes pop.
   - Product details: hovering the picture shows a round magnifier (mouse only). It appears only when the picture file is at least 1.4× larger than shown, and zooms up to 3×.
   - A round "Back to top" button appears once the page is scrolled well down. Pressed, it lifts off as the page scrolls up. It moves up while the compare bar is showing.
+  - Exits:
+    - Dialogs fade and settle back before they hide; on phones the bottom sheet slides down. Reopening one during its exit cancels the exit.
+    - The phone menu slides in with its items cascading, and slides away when closed.
+    - The phone filter sheet slides down when closed.
+    - All use `leave()` in `motion.mjs`, which hides the element and drops the exit in the same task, so no frame shows it again.
+  - When results change (sort, filters), cards that were on screen glide to their new places (FLIP); newcomers rise in.
+  - Saving a product flies a small heart into the saved button; the saved count changes as it lands.
+  - Soft embers drift up behind the hero hammer. They are CSS-animated and paused while the hero is off screen.
+  - Messages (toasts) spring in with a timer bar that runs down. The theme button's sun or moon spins into place.
   - Rules:
     - Only transform and opacity move: on the element itself, through the separate `translate`/`scale` properties so its own transform is kept, or on short-lived copies in a fixed layer.
     - Each copy is removed when its animation ends, or by a timer if the page stops drawing.

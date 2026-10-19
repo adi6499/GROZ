@@ -57,11 +57,11 @@ export function roll(el, up = true) {
 
 /** Tosses a copy of `src` (a product picture) in an arc into `target` (the Quote button), pops the
  *  target, then calls `onLand`. Without motion, or with nothing to fly, `onLand` runs at once. */
-export function flyTo(src, target, onLand) {
+export function flyTo(src, target, onLand, { bare = false } = {}) {
   const a = src?.getBoundingClientRect(), b = target?.getBoundingClientRect();
   if (!split || !motionOK() || !a || !b || !onScreen(a) || !b.width) { onLand?.(); return; }
   const card = document.createElement("div");
-  card.className = "fx-fly";
+  card.className = bare ? "fx-fly bare" : "fx-fly";
   card.style.cssText = `left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px`;
   if (src.tagName === "IMG") {
     const img = new Image();
@@ -126,10 +126,28 @@ function reveal(el, delay) {
     { duration: 500, delay, easing: EASE, fill: "backwards" });
 }
 
+/** Where the cards on screen are now, by product id, for `cascade(..., { from })`. */
+export function positions(cards) {
+  const map = new Map();
+  if (!motionOK()) return map;
+  for (const c of cards) {
+    const r = c.getBoundingClientRect();
+    if (onScreen(r)) map.set(c.dataset.id, r);
+  }
+  return map;
+}
+
+function glide(el, prev, now, i) {
+  const dx = prev.left - now.left, dy = prev.top - now.top;
+  if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+  el.animate([{ transform: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)` }, { transform: "none" }],
+    { duration: 560, delay: Math.min(i, 12) * 18, easing: EASE, fill: "backwards" });
+}
+
 /** Freshly shown cards come in: those on screen rise one after another; those further down wait,
  *  hidden, and rise as they are scrolled into view. `fresh` (a new result list) forgets cards still
  *  waiting from the previous list. `quick` (results changing while someone types) only fades. */
-export function cascade(cards, { fresh = true, quick = false } = {}) {
+export function cascade(cards, { fresh = true, quick = false, from = null } = {}) {
   if (fresh) revealer?.disconnect();
   if (!cards.length || !motionOK()) return;
   if (quick) {
@@ -137,9 +155,12 @@ export function cascade(cards, { fresh = true, quick = false } = {}) {
     return;
   }
   const below = [];
-  let i = 0;
+  let i = 0, g = 0;
   for (const c of cards) {
     const r = c.getBoundingClientRect();
+    const prev = from?.get(c.dataset.id);
+    // A card that was on screen before glides from where it was (sorting looks like a shuffle).
+    if (prev && Math.abs(prev.top - r.top) < innerHeight * 1.5) { glide(c, prev, r, g++); continue; }
     if (onScreen(r)) reveal(c, Math.min(i++, 12) * 45);
     else if (r.top >= innerHeight) below.push(c);
   }
@@ -547,4 +568,45 @@ export function backToTop({ onTop } = {}) {
     onTop?.();
   });
   return btn;
+}
+// ---------------------------------------------------------------- wave 4: exits and finishing touches
+/** Plays a short exit on elements about to be hidden, then calls `done` (at once without motion).
+ *  Returns a function that stops the exit without calling `done`, leaving the elements shown. */
+export function leave(parts, done, ms = 200) {
+  const live = parts.filter(([el]) => el);
+  if (!motionOK() || !live.length) { done(); return () => {}; }
+  const anims = live.map(([el, frames]) => el.animate(frames, { duration: ms, easing: "cubic-bezier(.4,0,.9,.6)", fill: "forwards" }));
+  let over = false;
+  // Hide first, then drop the exit's end state, in the same task: no frame shows the element again.
+  const end = () => { if (over) return; over = true; clearTimeout(timer); done(); anims.forEach((a) => a.cancel()); };
+  const timer = setTimeout(end, ms + 200);
+  Promise.all(anims.map((a) => a.finished)).then(end, () => {});
+  return () => { if (over) return; over = true; clearTimeout(timer); anims.forEach((a) => a.cancel()); };
+}
+
+/** Soft embers drifting up behind the hero hammer, as from a forge. CSS animates them (transform and
+ *  opacity), paused while the hero is off screen. */
+export function embers(container, count = 16) {
+  if (!container || !motionOK()) return;
+  const box = document.createElement("span");
+  box.className = "embers";
+  box.setAttribute("aria-hidden", "true");
+  box.innerHTML = Array.from({ length: count }, () => {
+    const t = 4 + Math.random() * 4;
+    return `<i style="--x:${(15 + Math.random() * 70).toFixed(1)}%;--dx:${(Math.random() * 80 - 40).toFixed(0)}px;--t:${t.toFixed(2)}s;--d:-${(Math.random() * t).toFixed(2)}s;--s:${(2 + Math.random() * 2.5).toFixed(1)}px"></i>`;
+  }).join("");
+  container.prepend(box);
+}
+
+/** The toast springs in and its timer bar runs down over `ms`. */
+export function toastIn(el, ms) {
+  if (!el || !motionOK()) return;
+  if (split) el.animate({ scale: ["0.9", "1.04", "1"] }, { duration: 420, easing: "ease-out" });
+  el.querySelector(".toast-bar")?.animate({ transform: ["scaleX(1)", "scaleX(0)"] }, { duration: ms, easing: "linear", fill: "forwards" });
+}
+
+/** A quarter-turn spin into place (the theme button's sun or moon). */
+export function spin(el) {
+  if (!el || !split || !motionOK()) return;
+  el.animate({ rotate: ["-120deg", "0deg"], scale: ["0.5", "1"] }, { duration: 520, easing: EASE });
 }

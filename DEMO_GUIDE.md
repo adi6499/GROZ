@@ -63,6 +63,9 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Watch the hero search box: it types example searches. The hero numbers count up when the page opens.
     - In a product's details, hover the picture: a magnifier shows it closer.
     - Scroll far down: a round arrow appears at the bottom right; press it and it lifts off back to the top.
+    - Search "micrometer", then change the sort: the cards shuffle into their new places.
+    - Close any dialog: it fades away instead of vanishing. On a phone, the menu and the filter sheet slide in and out.
+    - Save a product: a heart flies to the saved button. Watch the embers rising behind the hero hammer.
 
 On a phone-sized window, show:
 - the header search;

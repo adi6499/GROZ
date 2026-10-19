@@ -22,7 +22,7 @@ const state = {
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
-  detailId: null, unbox: null, quoteHold: 0, fxReady: false, groups: [],
+  detailId: null, unbox: null, quoteHold: 0, savedHold: 0, fxReady: false, groups: [],
 };
 
 const root = document.documentElement;
@@ -52,7 +52,8 @@ function toggleTheme(e) {
   // Glass reveal: the new theme grows from the button as a soft-edged circle while the old view
   // frosts over (View Transitions API). Instant where unsupported, on low-end devices, or when
   // the visitor asks for reduced motion.
-  if (!document.startViewTransition || reducedMotion.matches || root.classList.contains("lite")) { applyTheme(next); return; }
+  const spinIcon = () => $$("#themeBtn .i").forEach((i) => fx.spin(i));
+  if (!document.startViewTransition || reducedMotion.matches || root.classList.contains("lite")) { applyTheme(next); spinIcon(); return; }
   const r = e?.currentTarget?.getBoundingClientRect?.();
   const x = r && r.width ? r.left + r.width / 2 : innerWidth - 60, y = r && r.height ? r.top + r.height / 2 : 40;
   root.style.setProperty("--vt-x", `${Math.round(x)}px`);
@@ -60,7 +61,9 @@ function toggleTheme(e) {
   root.style.setProperty("--vt-r", `${Math.ceil(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)))}px`);
   root.classList.add("theme-switching");
   const t = document.startViewTransition(() => applyTheme(next));
+  t.ready.catch(() => { /* skipped by a newer switch: nothing to show */ });
   t.finished.finally(() => root.classList.remove("theme-switching"));
+  spinIcon();
 }
 
 applyTheme(root.dataset.theme === "dark" ? "dark" : "light");
@@ -88,8 +91,9 @@ $("#themeRow")?.addEventListener("click", toggleTheme);
 darkQuery.addEventListener("change", () => { if (store.get("groz.theme", null) == null) applyTheme(deviceTheme()); });
 
 function notify(message) {
-  toastEl.textContent = message;
+  toastEl.innerHTML = `<span>${esc(message)}</span>${fx.motionOK() ? '<i class="toast-bar" aria-hidden="true"></i>' : ""}`;
   toastEl.classList.add("show");
+  fx.toastIn(toastEl, 2600);
   clearTimeout(notify.t);
   notify.t = setTimeout(() => toastEl.classList.remove("show"), 2600);
 }
@@ -452,6 +456,8 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   grid.setAttribute("aria-busy", "false");
   setCount(`${list.length} of ${state.products.length} products`, list.length, state.products.length);
   if (!append) renderChips();
+  // Where the cards on screen are now, so the ones that stay can glide to their new places.
+  const before = !append && !quiet && !typing && state.view === "grid" ? fx.positions($$(".product", grid)) : null;
   if (!state.products.length || !list.length) {
     grid.className = "products";
     grid.innerHTML = state.products.length ? emptyHtml()
@@ -477,7 +483,7 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   const remaining = list.length - state.rendered;
   $("#moreWrap").innerHTML = remaining > 0
     ? `<button class="btn outline" type="button" id="showMore">Show ${Math.min(remaining, core.PAGE_SIZE)} more <span class="muted-on">· ${remaining} remaining</span></button>` : "";
-  fx.cascade(state.view === "grid" && !quiet ? $$(".product", grid).slice(from) : [], { fresh: !append, quick: typing });
+  fx.cascade(state.view === "grid" && !quiet ? $$(".product", grid).slice(from) : [], { fresh: !append, quick: typing, from: before });
 }
 
 function setView(view, rerender = true) {
@@ -504,7 +510,7 @@ function setQuery(value, { scroll = false, typing = false } = {}) {
 }
 
 function updateBadges() {
-  setBadge($("#savedCount"), state.saved.size);
+  if (!state.savedHold) setBadge($("#savedCount"), state.saved.size); // a flying heart sets it as it lands
   $("#savedBtn").setAttribute("aria-label", `Saved products, ${state.saved.size} saved`);
   // While a picture is flying into the Quote button, its count changes as it lands.
   if (!state.quoteHold) for (const el of $$("[data-quote-count]")) setBadge(el, state.quote.size);
@@ -583,11 +589,13 @@ function syncProductButtons(id) {
 
 // ---------------------------------------------------------------- modal
 let lastFocus = null;
+let closing = null; // stops a dialog exit that is still playing (motion.mjs leave)
 let lastClicked = null; // fallback when a click does not move focus (e.g. some browsers, scripted clicks)
 document.addEventListener("click", (e) => { const b = e.target.closest("button,a"); if (b && !modal.contains(b)) lastClicked = b; }, true);
 
 function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   stopUnbox();
+  if (closing) { closing(); closing = null; backdrop.classList.remove("closing"); } // reopened while closing
   if (!backdrop.classList.contains("open")) {
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
     // Locking the page hides its scrollbar (Windows); keep that space so the page does not reflow.
@@ -607,17 +615,26 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
 }
 
 function closeModal() {
-  if (!backdrop.classList.contains("open")) return;
+  if (!backdrop.classList.contains("open") || backdrop.classList.contains("closing")) return;
   stopUnbox();
-  backdrop.classList.remove("open");
-  document.body.classList.remove("modal-open");
-  document.body.style.paddingRight = "";
   state.detailId = null;
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+  // The dialog fades and settles back (a bottom sheet slides down) before it is hidden.
+  backdrop.classList.add("closing");
+  const sheet = matchMedia("(max-width: 720px)").matches;
+  closing = fx.leave([[backdrop, { opacity: [1, 0] }], [modal, sheet
+    ? { transform: ["none", "translateY(28%)"], opacity: [1, 0] }
+    : { transform: ["none", "translateY(10px) scale(.96)"], opacity: [1, 0] }]], () => {
+    closing = null;
+    backdrop.classList.remove("open", "closing");
+    document.body.classList.remove("modal-open");
+    document.body.style.paddingRight = "";
+  }, 200);
+  if (!backdrop.classList.contains("closing")) closing = null; // closed at once (no motion)
 }
 
 function focusTrapContainer() {
-  if (backdrop.classList.contains("open")) return modal;
+  if (backdrop.classList.contains("open") && !backdrop.classList.contains("closing")) return modal;
   if (filtersEl.classList.contains("open") && sheetQuery.matches) return filtersEl;
   return null;
 }
@@ -1076,13 +1093,41 @@ function stepQty(id, delta) {
 }
 
 // ---------------------------------------------------------------- events
+let menuLeave = null;
 function setMenuOpen(open) {
-  $("#mobileMenu").hidden = !open;
+  const menu = $("#mobileMenu");
   $("#menuBtn").setAttribute("aria-expanded", String(open));
   $("#menuBtn").setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  menuLeave?.();
+  menuLeave = null;
+  if (open) {
+    const opening = menu.hidden;
+    menu.hidden = false;
+    if (opening && fx.motionOK()) {
+      menu.animate([{ opacity: 0, transform: "translateY(-8px)" }, { opacity: 1, transform: "none" }], { duration: 220, easing: fx.EASE });
+      fx.stagger([...$$("#mobileMenu > a"), ...$$("#mobileCats > button")]);
+    }
+  } else if (!menu.hidden) {
+    menuLeave = fx.leave([[menu, { opacity: [1, 0], transform: ["none", "translateY(-6px)"] }]], () => { menu.hidden = true; menuLeave = null; }, 160);
+    if (menu.hidden) menuLeave = null;
+  }
 }
 
-function setFiltersOpen(open, { restoreFocus = true } = {}) {
+let filtersLeave = null;
+function setFiltersOpen(open, opts = {}) {
+  filtersLeave?.();
+  filtersLeave = null;
+  if (!open && sheetQuery.matches && filtersEl.classList.contains("open") && fx.motionOK()) {
+    // The bottom sheet slides down and its scrim fades before the sheet is closed.
+    $("#filtersToggle").setAttribute("aria-expanded", "false");
+    filtersLeave = fx.leave([[filtersEl, { transform: ["none", "translateY(100%)"] }], [$("#sheetScrim"), { opacity: [1, 0] }]],
+      () => { filtersLeave = null; applyFiltersOpen(false, opts); }, 240);
+    return;
+  }
+  applyFiltersOpen(open, opts);
+}
+
+function applyFiltersOpen(open, { restoreFocus = true } = {}) {
   const sheet = sheetQuery.matches;
   filtersEl.classList.toggle("open", open);
   $("#sheetScrim").hidden = !(open && sheet);
@@ -1193,8 +1238,13 @@ function wire() {
     if (!host) return;
     const id = host.dataset.id;
     if (e.target.closest("[data-save]")) {
+      const heart = host.querySelector("[data-save]");
+      if (!state.saved.has(id)) {
+        state.savedHold += 1;
+        fx.flyTo(heart.querySelector("svg"), $("#savedBtn"), () => { state.savedHold -= 1; updateBadges(); }, { bare: true });
+      }
       toggleSaved(id); syncProductButtons(id);
-      fx.burst(host.querySelector("[data-save]"), state.saved.has(id));
+      fx.burst(heart, state.saved.has(id));
       return;
     }
     if (e.target.closest("[data-quote]")) {
@@ -1225,6 +1275,7 @@ function wire() {
   const heroTool = $(".hero-tool");
   const strikeHammer = () => fx.strike(heroTool, { onImpact: () => fx.nudge($(".hero-visual")) });
   fx.heroFollow($(".hero"), { tool: heroTool, orbit: $(".orbit") });
+  fx.embers($(".hero-visual"));
   heroTool?.addEventListener("click", strikeHammer);
   let struck = false;
   try { struck = sessionStorage.getItem("groz.struck") === "1"; } catch { /* storage unavailable */ }

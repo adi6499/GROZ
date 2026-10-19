@@ -586,3 +586,15 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
 @media(hover:hover){.to-top:hover{background:var(--btn)}}
 :root[data-theme=dark] .to-top{background:#f2f2f4;color:#1d1d1f}
 @media print{.to-top{display:none}}
+/* exits and finishing touches (motion.mjs): dialog exits, the flying heart, forge embers, toast timer */
+.backdrop.closing{pointer-events:none}
+.fx-fly.bare{background:none;box-shadow:none;overflow:visible;color:var(--orange)}
+.fx-fly.bare svg{width:100%;height:100%;opacity:1;fill:currentColor;stroke:currentColor}
+.embers{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.embers i{position:absolute;bottom:-6px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:#ffc08f;box-shadow:0 0 8px 2px #f4511e80;opacity:0;animation:ember var(--t) linear var(--d) infinite}
+@keyframes ember{0%{opacity:0;transform:translate(0,0)}12%{opacity:.85}70%{opacity:.45}100%{opacity:0;transform:translate(var(--dx),-300px)}}
+.hero.paused .embers i{animation-play-state:paused}
+.lite .embers{display:none}
+@media(prefers-reduced-motion:reduce){.embers{display:none}}
+.toast{overflow:hidden}
+.toast-bar{position:absolute;left:0;right:0;bottom:0;height:2px;background:#ff9a6b;transform-origin:0 50%}
