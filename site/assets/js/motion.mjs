@@ -211,11 +211,11 @@ export function tilt(container, selector, { max = 7, lift = -3 } = {}) {
 
 // ---------------------------------------------------------------- numbers and dialogs
 /** Counts the number shown in `el` to `to`; the final value is always set, even without frames. */
-export function countTo(el, to) {
+export function countTo(el, to, ms = 480) {
   const from = Number(el.textContent);
   el.dataset.to = String(to);
   if (!motionOK() || !Number.isFinite(from) || from === to) { el.textContent = String(to); return; }
-  const start = performance.now(), ms = 480;
+  const start = performance.now();
   const step = (now) => {
     if (el.dataset.to !== String(to)) return; // a newer count took over
     const k = Math.min(1, (now - start) / ms);
@@ -393,4 +393,158 @@ export function printOut(paper) {
     { opacity: 1, transform: "rotate(-8deg) scale(1)" },
   ], { duration: 380, delay: 1150, easing: "cubic-bezier(.5,0,.75,0)", fill: "backwards" });
   if (sheet && split) sheet.animate({ translate: ["0 0", "0 3px", "0 0"] }, { duration: 200, delay: 1420, easing: "ease-out" });
+  // ...and confetti bursts from the stamp.
+  if (stamp) setTimeout(() => {
+    if (!stamp.isConnected) return;
+    const r = stamp.getBoundingClientRect();
+    confetti(r.left + r.width / 2, r.top + r.height / 2);
+  }, 1480);
+}
+// ---------------------------------------------------------------- wave 3: small delights
+/** A soft ripple spreads from where a button was pressed, clipped to the button's own shape. */
+export function ripple(btn, x, y) {
+  if (!btn?.isConnected || !motionOK()) return;
+  const r = btn.getBoundingClientRect();
+  if (!onScreen(r)) return;
+  if (!x && !y) { x = r.left + r.width / 2; y = r.top + r.height / 2; } // keyboard: from the centre
+  const size = 2 * Math.hypot(Math.max(x - r.left, r.right - x), Math.max(y - r.top, r.bottom - y));
+  const clip = document.createElement("span");
+  clip.className = "fx-rip";
+  clip.setAttribute("aria-hidden", "true");
+  const dot = document.createElement("i");
+  dot.style.cssText = `left:${x - r.left - size / 2}px;top:${y - r.top - size / 2}px;width:${size}px;height:${size}px`;
+  clip.appendChild(dot);
+  btn.appendChild(clip);
+  const a = dot.animate([{ transform: "scale(0)", opacity: 0.3 }, { transform: "scale(1)", opacity: 0 }],
+    { duration: 600, easing: "cubic-bezier(.2,.6,.3,1)", fill: "forwards" });
+  settle(clip, [a], 1000);
+}
+
+/** Primary buttons lean toward the mouse while it is over them (magnetic). Mouse only. */
+export function magnetic(selector, { pull = 0.3, max = 7 } = {}) {
+  if (!finePointer.matches || !split) return;
+  let btn = null, raf = 0, px = 0, py = 0;
+  const release = () => { if (btn) btn.style.translate = ""; btn = null; };
+  const paint = () => {
+    raf = 0;
+    if (!btn?.isConnected) { btn = null; return; }
+    const r = btn.getBoundingClientRect();
+    const clamp = (v) => Math.max(-max, Math.min(max, v));
+    btn.style.translate = `${clamp((px - (r.left + r.width / 2)) * pull).toFixed(1)}px ${clamp((py - (r.top + r.height / 2)) * pull).toFixed(1)}px`;
+  };
+  document.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse" || !motionOK()) { release(); return; }
+    const b = e.target.closest?.(selector) || null;
+    if (b !== btn) { release(); btn = b; }
+    if (!btn) return;
+    px = e.clientX;
+    py = e.clientY;
+    raf ||= requestAnimationFrame(paint);
+  }, { passive: true });
+  root.addEventListener("pointerleave", release);
+}
+
+/** The search box types example searches into its placeholder, one after another, while it is on
+ *  screen, empty and not focused; otherwise its own placeholder is shown. */
+export function typeHints(input, hints) {
+  if (!input || !hints.length || !motionOK()) return;
+  const base = input.placeholder;
+  let visible = true, word = 0, n = 0, dir = 1;
+  if ("IntersectionObserver" in window) new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(input);
+  const idle = () => !visible || document.activeElement === input || input.value || document.visibilityState !== "visible" || !motionOK();
+  const tick = () => {
+    if (idle()) { input.placeholder = base; n = 0; dir = 1; setTimeout(tick, 700); return; }
+    const text = `Try “${hints[word]}”`;
+    n = Math.max(0, Math.min(text.length, n + dir));
+    input.placeholder = text.slice(0, n);
+    let wait = dir > 0 ? 60 : 24;
+    if (dir > 0 && n >= text.length) { dir = -1; wait = 1800; }
+    else if (dir < 0 && n === 0) { dir = 1; word = (word + 1) % hints.length; wait = 420; }
+    setTimeout(tick, wait);
+  };
+  setTimeout(tick, 2200);
+}
+
+/** A magnifier over the product picture in the details (mouse only), when the picture file is
+ *  meaningfully larger than it is shown. */
+export function loupe(stage, { size = 170 } = {}) {
+  const img = stage?.querySelector(":scope > img");
+  if (!img || !finePointer.matches) return;
+  let lens = null, zoom = 1, raf = 0, px = 0, py = 0;
+  const paint = () => {
+    raf = 0;
+    if (!lens) return;
+    const s = stage.getBoundingClientRect(), r = img.getBoundingClientRect();
+    const x = px - r.left, y = py - r.top, h = size / 2;
+    lens.style.opacity = x >= 0 && y >= 0 && x <= r.width && y <= r.height ? "1" : "0";
+    lens.style.transform = `translate(${(px - s.left - h).toFixed(1)}px, ${(py - s.top - h).toFixed(1)}px)`;
+    lens.style.backgroundSize = `${(r.width * zoom).toFixed(1)}px ${(r.height * zoom).toFixed(1)}px`;
+    lens.style.backgroundPosition = `${(h - x * zoom).toFixed(1)}px ${(h - y * zoom).toFixed(1)}px`;
+  };
+  stage.addEventListener("pointerenter", (e) => {
+    if (e.pointerType !== "mouse" || lens || !img.complete || !img.naturalWidth) return;
+    zoom = Math.min(3, img.naturalWidth / img.getBoundingClientRect().width);
+    if (zoom < 1.4) return;
+    lens = document.createElement("span");
+    lens.className = "fx-loupe";
+    lens.setAttribute("aria-hidden", "true");
+    lens.style.cssText = `width:${size}px;height:${size}px;background-image:url("${(img.currentSrc || img.src).replace(/"/g, "%22")}")`;
+    stage.classList.add("zooming");
+    stage.appendChild(lens);
+    px = e.clientX; py = e.clientY;
+    paint();
+  });
+  stage.addEventListener("pointermove", (e) => { px = e.clientX; py = e.clientY; raf ||= requestAnimationFrame(paint); });
+  stage.addEventListener("pointerleave", () => { lens?.remove(); lens = null; stage.classList.remove("zooming"); });
+}
+
+/** Confetti bursting up from (x, y) and falling, in the site's colours. */
+export function confetti(x, y, count = 40) {
+  if (!motionOK() || !split) return;
+  const host = document.createElement("div");
+  host.className = "fx-confetti";
+  host.style.cssText = `left:${x}px;top:${y}px`;
+  host.innerHTML = "<i></i>".repeat(count);
+  fxLayer().appendChild(host);
+  const anims = [...host.children].map((c, i) => {
+    const angle = (-155 + Math.random() * 130) * (Math.PI / 180), speed = 70 + Math.random() * 120;
+    const dx = Math.cos(angle) * speed, dy = Math.sin(angle) * speed, spin = (Math.random() < 0.5 ? -1 : 1) * (360 + Math.random() * 540);
+    c.style.setProperty("--c", ["#f4511e", "#ff9a6b", "#1f7a49", "#3d4148", "#ffd36b"][i % 5]);
+    return c.animate([
+      { translate: "0px 0px", rotate: "0deg", opacity: 1 },
+      { translate: `${dx.toFixed(1)}px ${dy.toFixed(1)}px`, opacity: 1, offset: 0.35 },
+      { translate: `${(dx * 1.4).toFixed(1)}px ${(dy + 190 + Math.random() * 90).toFixed(1)}px`, rotate: `${spin.toFixed(0)}deg`, opacity: 0 },
+    ], { duration: 1300 + Math.random() * 600, delay: Math.random() * 90, easing: "cubic-bezier(.2,.6,.4,1)", fill: "both" });
+  });
+  settle(host, anims, 2600);
+}
+
+/** A "back to top" button that appears once the page is scrolled well down; pressed, it lifts off. */
+export function backToTop({ onTop } = {}) {
+  const btn = document.createElement("button");
+  btn.className = "to-top";
+  btn.type = "button";
+  btn.setAttribute("aria-label", "Back to top");
+  btn.innerHTML = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg>';
+  document.body.appendChild(btn);
+  let raf = 0, launch = null;
+  const update = () => {
+    raf = 0;
+    const on = scrollY > innerHeight * 1.2;
+    btn.classList.toggle("show", on);
+    // After a lift-off, the button stays out of sight until it has faded out at the top.
+    if (!on && launch) { const a = launch; launch = null; setTimeout(() => { if (!btn.classList.contains("show")) a.cancel(); else launch = a; }, 320); }
+  };
+  addEventListener("scroll", () => { raf ||= requestAnimationFrame(update); }, { passive: true });
+  update();
+  btn.addEventListener("click", () => {
+    if (motionOK() && split) {
+      launch?.cancel();
+      launch = btn.animate([{ translate: "0 0", scale: "1", opacity: 1 }, { translate: "0 8px", scale: "0.92", opacity: 1, offset: 0.2 },
+        { translate: "0 -110px", scale: "0.7", opacity: 0 }], { duration: 600, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
+    }
+    scrollTo({ top: 0, behavior: motionOK() ? "smooth" : "auto" });
+    onTop?.();
+  });
+  return btn;
 }

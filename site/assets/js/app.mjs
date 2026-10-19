@@ -205,7 +205,10 @@ function init(data) {
 // ---------------------------------------------------------------- static sections
 function renderHero() {
   const m = state.data.meta || {};
-  $("#heroStats").innerHTML = `<span><b>${state.products.length}</b> products</span><span><b>${(state.data.catalogues || []).length}</b> source catalogues</span><span><b>${m.with_confirmed_image ?? 0}</b> with catalogue images</span>`;
+  const stats = [[state.products.length, "products"], [(state.data.catalogues || []).length, "source catalogues"], [m.with_confirmed_image ?? 0, "with catalogue images"]];
+  // The numbers count up from zero (motion.mjs); without motion they are shown at once.
+  $("#heroStats").innerHTML = stats.map(([n, label]) => `<span><b>${fx.motionOK() ? 0 : n}</b> ${label}</span>`).join("");
+  $$("#heroStats b").forEach((b, i) => fx.countTo(b, stats[i][0], 1400));
 }
 
 /** "Mechanic's Tools › Tool Storage": GROZ's category, then this site's when the names differ. */
@@ -889,6 +892,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
   // Shown again in place (Save, Compare, Add to quote) or stepped to: the opening fade does not replay.
   if (dir || still) cancelEntrance();
   if (dir) fx.carousel($(".pd-stage", modal), oldPic, dir, [$(".pd-copy", modal), $(".pd-caption", modal)]);
+  fx.loupe($(".pd-stage", modal));
   if (focusNav) $(`[data-detail-nav][aria-label="${focusNav}"]`, modal)?.focus({ preventScroll: true });
 }
 
@@ -1154,6 +1158,7 @@ function wire() {
     else if (el.dataset.filter === "status") el.checked ? f.statuses.add(el.value) : f.statuses.delete(el.value);
     else if (el.dataset.filter === "notes") f.withNotes = el.checked;
     refresh();
+    fx.pop(el.isConnected ? el : $(`[data-filter="${el.dataset.filter}"][value="${CSS.escape(el.value)}"]`, filtersEl), 1.3);
   });
   $("#filterBody").addEventListener("click", (e) => {
     const b = e.target.closest("[data-expand]");
@@ -1209,6 +1214,7 @@ function wire() {
     const host = c.closest("[data-id]");
     const dock = $("#compareDock"), docked = dock.classList.contains("show");
     if (!toggleCompare(host.dataset.id, c.checked)) { c.checked = false; return; }
+    fx.pop(c, 1.3);
     // The first pick slides the compare bar up by itself; later picks fly into it.
     if (c.checked && docked) fx.flyTo(host.querySelector(".product-image > img, .product-image > svg, .thumb > img, .thumb > svg"), dock);
   });
@@ -1229,6 +1235,14 @@ function wire() {
     strikeHammer();
   }, 1500);
   fx.wordsIn($$(".hero h1, .section-head h2, .quote-card h3"));
+  fx.magnetic(".btn.primary");
+  // Example searches typed into the hero search box (each finds products in this catalogue).
+  fx.typeHints($("#mainSearch"), ["micrometer", "LED/621", "rolling tool cabinet", "sledge", "55044", "pin vice", "caliper"]);
+  fx.backToTop({ onTop: () => $(".brand")?.focus({ preventScroll: true }) });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest?.(".btn, .round-btn, .icon-btn");
+    if (b && !b.disabled) fx.ripple(b, e.clientX, e.clientY);
+  });
   fx.tilt($("#categoryGrid"), ".cat:not(.soon)", { max: 8, lift: -4 });
   $("#moreWrap").addEventListener("click", (e) => {
     if (!e.target.closest("#showMore")) return;

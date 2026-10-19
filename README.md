@@ -252,6 +252,11 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Compare: once the compare bar is showing, a newly picked product's picture flies into it.
   - Prepare request: the request feeds out of a printer slot, then a green "Ready · not sent" stamp lands on it. It says so because nothing is sent.
   - A thin orange line under the header shows how far down the page you are (CSS scroll-driven animation, where supported).
+  - Hero numbers count up from zero. The hero search box types example searches into its placeholder: micrometer, LED/621, rolling tool cabinet, sledge, 55044, pin vice, caliper. Each was checked to find products. It runs only while the box is on screen, empty and not focused.
+  - Confetti bursts from the "Ready · not sent" stamp.
+  - Buttons show a soft ripple from where they are pressed. Primary buttons lean toward the mouse (magnetic). Ticked checkboxes pop.
+  - Product details: hovering the picture shows a round magnifier (mouse only). It appears only when the picture file is at least 1.4× larger than shown, and zooms up to 3×.
+  - A round "Back to top" button appears once the page is scrolled well down. Pressed, it lifts off as the page scrolls up. It moves up while the compare bar is showing.
   - Rules:
     - Only transform and opacity move: on the element itself, through the separate `translate`/`scale` properties so its own transform is kept, or on short-lived copies in a fixed layer.
     - Each copy is removed when its animation ends, or by a timer if the page stops drawing.

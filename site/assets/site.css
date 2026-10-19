@@ -569,3 +569,20 @@ body.has-dock main{padding-bottom:110px}
   .top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#ff9a6b,var(--orange));transform-origin:0 50%;animation:scroll-progress linear both;animation-timeline:scroll(root)}
   @keyframes scroll-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 }
+/* small delights (motion.mjs): press ripples, magnetic buttons, picture magnifier, confetti, back to top */
+.btn,.round-btn{position:relative}
+.btn{transition-property:transform,background-color,box-shadow,color,translate}
+.fx-rip{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none}
+.fx-rip i{position:absolute;border-radius:50%;background:currentColor}
+.pd-stage.zooming{cursor:none}
+.fx-loupe{position:absolute;left:0;top:0;z-index:3;border-radius:50%;pointer-events:none;background-color:#fff;background-repeat:no-repeat;box-shadow:0 0 0 3px #fff,0 0 0 4px #00000014,0 16px 36px #00000038;transition:opacity .15s}
+.fx-confetti{position:absolute;width:0;height:0}
+.fx-confetti i{position:absolute;left:-4px;top:-6px;width:8px;height:12px;border-radius:2px;background:var(--c)}
+.fx-confetti i:nth-child(3n){width:7px;height:7px;border-radius:50%}
+.to-top{position:fixed;right:max(20px,var(--sar));bottom:calc(22px + var(--sab));z-index:45;width:46px;height:46px;border:0;border-radius:50%;background:#1d1d1f;color:#fff;display:grid;place-items:center;box-shadow:0 10px 26px #0000003d;opacity:0;visibility:hidden;transform:translateY(14px) scale(.9);transition:opacity .25s ease,transform .3s var(--ease),visibility 0s .3s}
+.to-top.show{opacity:1;visibility:visible;transform:none;transition:opacity .25s ease,transform .3s var(--ease),visibility 0s}
+.to-top .i{width:20px;height:20px}
+body.has-dock .to-top{bottom:calc(84px + var(--sab))}
+@media(hover:hover){.to-top:hover{background:var(--btn)}}
+:root[data-theme=dark] .to-top{background:#f2f2f4;color:#1d1d1f}
+@media print{.to-top{display:none}}

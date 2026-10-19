@@ -59,7 +59,10 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Move the mouse over the hero: a spotlight follows it. Click the hammer: it strikes, with sparks.
     - Hover the category tiles: each icon acts out its tool (lamp lights, hammer swings, drawers slide, drill spins…).
     - Tick *Compare* on a second product: its picture flies into the compare bar.
-    - *Prepare request* in the quote: the request prints out of a slot and is stamped "Ready · not sent".
+    - *Prepare request* in the quote: the request prints out of a slot and is stamped "Ready · not sent", with confetti.
+    - Watch the hero search box: it types example searches. The hero numbers count up when the page opens.
+    - In a product's details, hover the picture: a magnifier shows it closer.
+    - Scroll far down: a round arrow appears at the bottom right; press it and it lifts off back to the top.
 
 On a phone-sized window, show:
 - the header search;
