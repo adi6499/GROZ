@@ -1007,8 +1007,8 @@ function submitQuote(form) {
   const csv = core.quoteCsv(items, state.byId);
   const stamp = when.toISOString().slice(0, 10);
   openModal("Your request is ready", `
-    <p class="notice ok">${icon("check")} Your quotation request is prepared. It has <b>not been sent</b> — copy it into an email, download it or print it for your GROZ sales contact.</p>
-    <pre class="prepared" id="preparedText" tabindex="0" aria-label="Prepared quotation request">${esc(text)}</pre>
+    <p class="notice ok">${icon("check")}<span>Your quotation request is prepared. It has <b>not been sent</b> — copy it into an email, download it or print it for your GROZ sales contact.</span></p>
+    <div class="paper"><span class="slot" aria-hidden="true"></span><pre class="prepared" id="preparedText" tabindex="0" aria-label="Prepared quotation request">${esc(text)}</pre><span class="stamp" aria-hidden="true">Ready · not sent</span></div>
     <div class="detail-actions">
       <button class="btn primary" type="button" id="copyQuote" data-autofocus>${icon("copy")}Copy text</button>
       <button class="btn soft" type="button" id="dlTxt">${icon("download")}Download .txt</button>
@@ -1017,6 +1017,7 @@ function submitQuote(form) {
       <button class="btn outline" type="button" id="editQuote">Edit request</button>
       <button class="btn danger" type="button" id="newQuote">Start a new quote</button>
     </div>`, { kind: "ready" });
+  fx.printOut($(".paper", modal));
   $("#copyQuote").onclick = async () => {
     try { await navigator.clipboard.writeText(text); notify("Request copied to the clipboard"); }
     catch { selectText($("#preparedText")); notify("Copy blocked by the browser — the text is selected, press Ctrl+C."); }
@@ -1205,11 +1206,29 @@ function wire() {
   grid.addEventListener("change", (e) => {
     const c = e.target.closest("[data-compare]");
     if (!c) return;
-    const id = c.closest("[data-id]").dataset.id;
-    if (!toggleCompare(id, c.checked)) c.checked = false;
+    const host = c.closest("[data-id]");
+    const dock = $("#compareDock"), docked = dock.classList.contains("show");
+    if (!toggleCompare(host.dataset.id, c.checked)) { c.checked = false; return; }
+    // The first pick slides the compare bar up by itself; later picks fly into it.
+    if (c.checked && docked) fx.flyTo(host.querySelector(".product-image > img, .product-image > svg, .thumb > img, .thumb > svg"), dock);
   });
   grid.addEventListener("error", (e) => { if (e.target.tagName === "IMG") placeholderFor(e.target); }, true);
   fx.tilt(grid, ".product");
+  // Hero: a spotlight and a lean that follow the mouse. The hammer strikes when clicked, and once by
+  // itself when the page is first opened in a visit (remembered for the visit only).
+  const heroTool = $(".hero-tool");
+  const strikeHammer = () => fx.strike(heroTool, { onImpact: () => fx.nudge($(".hero-visual")) });
+  fx.heroFollow($(".hero"), { tool: heroTool, orbit: $(".orbit") });
+  heroTool?.addEventListener("click", strikeHammer);
+  let struck = false;
+  try { struck = sessionStorage.getItem("groz.struck") === "1"; } catch { /* storage unavailable */ }
+  if (heroTool && !struck) setTimeout(() => {
+    const r = heroTool.getBoundingClientRect();
+    if (document.visibilityState !== "visible" || r.bottom < 0 || r.top > innerHeight) return;
+    try { sessionStorage.setItem("groz.struck", "1"); } catch { /* storage unavailable */ }
+    strikeHammer();
+  }, 1500);
+  fx.wordsIn($$(".hero h1, .section-head h2, .quote-card h3"));
   fx.tilt($("#categoryGrid"), ".cat:not(.soon)", { max: 8, lift: -4 });
   $("#moreWrap").addEventListener("click", (e) => {
     if (!e.target.closest("#showMore")) return;

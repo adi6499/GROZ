@@ -248,3 +248,149 @@ export function carousel(stage, oldPic, dir, texts = []) {
   texts.filter(Boolean).forEach((el, i) => el.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
     { duration: 340, delay: 80 + i * 50, easing: EASE, fill: "backwards" }));
 }
+
+// ---------------------------------------------------------------- hero
+/** A short downward knock, as when something lands hard. */
+export function nudge(el, px = 3) {
+  if (!el || !split || !motionOK()) return;
+  el.animate({ translate: ["0 0", `0 ${px}px`, "0 0"] }, { duration: 200, easing: "ease-out" });
+}
+
+/** The hero follows the mouse: an orange spotlight under the pointer, the hammer leaning toward it
+ *  and the rings drifting the other way (CSS transitions smooth the movement). Mouse only. */
+export function heroFollow(hero, { tool, orbit } = {}) {
+  if (!hero || !finePointer.matches || !split) return;
+  const glow = document.createElement("span");
+  glow.className = "hero-glow";
+  glow.setAttribute("aria-hidden", "true");
+  hero.prepend(glow);
+  let raf = 0, px = 0, py = 0;
+  const paint = () => {
+    raf = 0;
+    if (!hero.classList.contains("lit")) return;
+    const box = hero.getBoundingClientRect();
+    const x = px - box.left, y = py - box.top, nx = x / box.width - 0.5, ny = y / box.height - 0.5;
+    glow.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    if (tool) { tool.style.translate = `${(nx * 22).toFixed(1)}px ${(ny * 16).toFixed(1)}px`; tool.style.rotate = `${(nx * 6).toFixed(2)}deg`; }
+    if (orbit) orbit.style.translate = `${(-nx * 14).toFixed(1)}px ${(-ny * 10).toFixed(1)}px`;
+  };
+  const leave = () => {
+    hero.classList.remove("lit");
+    if (tool) tool.style.translate = tool.style.rotate = "";
+    if (orbit) orbit.style.translate = "";
+  };
+  hero.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "mouse" || !motionOK()) { leave(); return; }
+    hero.classList.add("lit");
+    px = e.clientX;
+    py = e.clientY;
+    raf ||= requestAnimationFrame(paint);
+  }, { passive: true });
+  hero.addEventListener("pointerleave", leave);
+}
+
+let striking = false;
+/** The hero hammer winds up and strikes, pivoting at its grip; at the moment of impact sparks fly
+ *  from its face with a shockwave, and `onImpact` runs. One strike at a time. */
+export function strike(svg, { onImpact } = {}) {
+  const swing = svg?.querySelector(".swing"), face = svg?.querySelector(".strike-point");
+  if (!swing || !face || striking || !motionOK()) return;
+  striking = true;
+  const ms = 820, impact = 0.55;
+  const a = swing.animate([
+    { transform: "rotate(0deg)", easing: "cubic-bezier(.2,.7,.4,1)" },
+    { transform: "rotate(20deg)", offset: 0.4, easing: "cubic-bezier(.7,0,1,.6)" },
+    { transform: "rotate(-12deg)", offset: impact, easing: "ease-out" },
+    { transform: "rotate(-6deg)", offset: 0.66, easing: "cubic-bezier(.3,.6,.4,1)" },
+    { transform: "rotate(0deg)" },
+  ], { duration: ms });
+  const t = setTimeout(() => {
+    const r = face.getBoundingClientRect();
+    if (onScreen(r)) sparks(r.left + r.width / 2, r.top + r.height / 2);
+    onImpact?.();
+  }, ms * impact);
+  const done = () => { striking = false; };
+  a.finished.then(done, () => { clearTimeout(t); done(); });
+  setTimeout(done, ms + 400);
+}
+
+/** Sparks fanning out from (x, y) and falling, with an elliptical shockwave. */
+function sparks(x, y) {
+  const host = document.createElement("div");
+  host.className = "fx-sparks";
+  host.style.cssText = `left:${x}px;top:${y}px`;
+  host.innerHTML = `<i></i>${"<b></b>".repeat(14)}`;
+  fxLayer().appendChild(host);
+  const anims = [host.firstElementChild.animate({ scale: ["0.2", "2.6"], opacity: [0.85, 0] }, { duration: 620, easing: EASE, fill: "forwards" })];
+  host.querySelectorAll("b").forEach((b, i) => {
+    // Mostly up and to the sides, a few skidding along the ground; each then falls.
+    const angle = (-175 + (i / 13) * 170 + (Math.random() * 14 - 7)) * (Math.PI / 180);
+    const dist = 38 + Math.random() * 62, dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist;
+    const ms = 620 + Math.random() * 320;
+    anims.push(b.animate([
+      { translate: "0px 0px", rotate: `${(angle * 180) / Math.PI}deg`, opacity: 1, scale: "1" },
+      { translate: `${(dx * 0.75).toFixed(1)}px ${(dy * 0.75).toFixed(1)}px`, opacity: 1, offset: 0.45 },
+      { translate: `${dx.toFixed(1)}px ${(dy + 34).toFixed(1)}px`, rotate: `${(angle * 180) / Math.PI + 40}deg`, opacity: 0, scale: "0.4" },
+    ], { duration: ms, delay: Math.random() * 60, easing: "cubic-bezier(.2,.7,.5,1)", fill: "both" }));
+  });
+  settle(host, anims, 1600);
+}
+
+// ---------------------------------------------------------------- headings
+/** Wraps each word of `el` (text only; elements such as <em> and <br> stay) for the word reveal. */
+function splitWords(el) {
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    const frag = document.createDocumentFragment();
+    for (const part of node.textContent.split(/(\s+)/)) {
+      if (!part) continue;
+      if (/^\s+$/.test(part)) { frag.append(part); continue; }
+      const word = document.createElement("span");
+      word.className = "fx-w";
+      const inner = document.createElement("span");
+      inner.textContent = part;
+      word.append(inner);
+      frag.append(word);
+    }
+    node.replaceWith(frag);
+  }
+}
+
+/** Headings rise into view word by word the first time they are scrolled to. Each word is clipped
+ *  by its own inline box (clip-path), so the layout is exactly that of the plain heading. */
+export function wordsIn(headings) {
+  if (!motionOK() || !split || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      io.unobserve(en.target);
+      en.target.classList.remove("fx-words-wait");
+      if (!motionOK()) continue;
+      en.target.querySelectorAll(".fx-w > span").forEach((w, i) => w.animate(
+        [{ transform: "translateY(140%)" }, { transform: "none" }],
+        { duration: 720, delay: 60 + i * 60, easing: EASE, fill: "backwards" }));
+    }
+  }, { threshold: 0.3 });
+  for (const h of headings) {
+    splitWords(h);
+    h.classList.add("fx-words-wait");
+    io.observe(h);
+  }
+}
+
+// ---------------------------------------------------------------- quotation
+/** The prepared request feeds out of the printer slot, then the "Ready · not sent" stamp lands. */
+export function printOut(paper) {
+  if (!paper || !motionOK()) return;
+  const sheet = paper.querySelector(".prepared"), stamp = paper.querySelector(".stamp");
+  sheet?.animate([{ clipPath: "inset(0 0 100% 0)", transform: "translateY(-16px)" }, { clipPath: "inset(0 0 0% 0)", transform: "none" }],
+    { duration: 1000, delay: 120, easing: "cubic-bezier(.3,.55,.35,1)", fill: "backwards" });
+  stamp?.animate([
+    { opacity: 0, transform: "rotate(-8deg) scale(2.6)" },
+    { opacity: 1, transform: "rotate(-8deg) scale(.9)", offset: 0.7 },
+    { opacity: 1, transform: "rotate(-8deg) scale(1)" },
+  ], { duration: 380, delay: 1150, easing: "cubic-bezier(.5,0,.75,0)", fill: "backwards" });
+  if (sheet && split) sheet.animate({ translate: ["0 0", "0 3px", "0 0"] }, { duration: 200, delay: 1420, easing: "ease-out" });
+}

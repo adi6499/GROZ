@@ -241,6 +241,17 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - The product count counts up or down to the new total. Screen readers get the plain sentence through a separate live region, not the counting.
   - Details Previous/Next (buttons or arrow keys): the old picture swings out one side of its tile while the new one swings in from the other. Save, Compare and Add to quote inside the details no longer replay its fade-in.
   - The rows of the saved list and the quote rise in when those dialogs open. Buttons press in slightly when clicked.
+  - Hero: an orange spotlight follows the mouse, the hammer leans toward it and the rings drift the other way.
+    - Clicking the hammer makes it wind up and strike, pivoting at its grip. Sparks fly from its face with a shockwave, and the hero gives a small knock.
+    - It strikes once by itself the first time the page is opened in a visit (remembered in sessionStorage for that visit only).
+  - Category icons come alive on hover or keyboard focus, each with its own action:
+    - the lamp lights up; the sledge swings and taps; the drawers slide out; the measuring line draws itself;
+    - the grease gun pumps and drips; the fuel nozzle squeezes and drips; the air wrench buzzes and puffs; the drill buzzes with its bit spinning; the star turns and twinkles.
+    - The moving parts are classed `a-*` in `art.mjs` and animated in CSS.
+  - Section headings, and the hero title, rise in word by word when first scrolled to. Each word is clipped by its own inline box, so the layout is the same as the plain heading (measured: no change in width or height).
+  - Compare: once the compare bar is showing, a newly picked product's picture flies into it.
+  - Prepare request: the request feeds out of a printer slot, then a green "Ready · not sent" stamp lands on it. It says so because nothing is sent.
+  - A thin orange line under the header shows how far down the page you are (CSS scroll-driven animation, where supported).
   - Rules:
     - Only transform and opacity move: on the element itself, through the separate `translate`/`scale` properties so its own transform is kept, or on short-lived copies in a fixed layer.
     - Each copy is removed when its animation ends, or by a timer if the page stops drawing.

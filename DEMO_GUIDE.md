@@ -55,7 +55,11 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Click *Add to quote*: the picture is tossed into the Quote button, and its count rolls up.
     - Click a heart: it bursts.
     - Pick a category: the count counts down and the new cards rise in one after another.
-    - Scroll down: further cards rise as they come into view.
+    - Scroll down: further cards rise as they come into view, and the orange line under the header fills up.
+    - Move the mouse over the hero: a spotlight follows it. Click the hammer: it strikes, with sparks.
+    - Hover the category tiles: each icon acts out its tool (lamp lights, hammer swings, drawers slide, drill spins…).
+    - Tick *Compare* on a second product: its picture flies into the compare bar.
+    - *Prepare request* in the quote: the request prints out of a slot and is stamped "Ready · not sent".
 
 On a phone-sized window, show:
 - the header search;

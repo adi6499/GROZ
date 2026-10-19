@@ -506,3 +506,66 @@ body.has-dock main{padding-bottom:110px}
   body.print-quote>*:not(#printArea){display:none!important}
   body.print-quote #printArea{display:block!important;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;color:#000}
 }
+
+/* category icons come alive (art.mjs "a-" parts) when their tile is hovered or focused */
+.a-glow,.a-drop,.a-puff{opacity:0}
+.a-glow,.a-drop,.a-puff,.a-trigger,.a-star,.a-twinkle{transform-box:fill-box;transform-origin:center}
+.a-lens{transition:fill .25s}
+.a-swing{transform-origin:122px 103px}
+.a-lever{transform-box:fill-box;transform-origin:100% 0}
+.a-line{stroke-dasharray:110}
+.cat:is(:hover,:focus-visible) .a-glow{animation:a-glow .9s ease-out both}
+.cat:is(:hover,:focus-visible) .a-lens{fill:#fff3c2}
+.cat:is(:hover,:focus-visible) .a-swing{animation:a-swing .75s cubic-bezier(.3,.1,.3,1)}
+.cat:is(:hover,:focus-visible) .a-drawer{animation:a-drawer .6s calc(var(--i) * 70ms) var(--ease) backwards}
+.cat:is(:hover,:focus-visible) .a-line{animation:a-line .7s ease-out}
+.cat:is(:hover,:focus-visible) .a-lever{animation:a-pump .5s ease-in-out 2}
+.cat:is(:hover,:focus-visible) .a-drop{animation:a-drip .9s .15s ease-in 2}
+.cat:is(:hover,:focus-visible) .a-trigger{animation:a-squeeze .45s ease-in-out 2}
+.cat:is(:hover,:focus-visible) .a-buzz{animation:a-buzz .08s linear 8}
+.cat:is(:hover,:focus-visible) .a-puff{animation:a-puff .7s calc(var(--i) * 140ms) ease-out 2}
+.cat:is(:hover,:focus-visible) .a-bit{stroke-dasharray:4 3;animation:a-bit .25s linear infinite}
+.cat:is(:hover,:focus-visible) .a-star{animation:a-star .9s var(--ease)}
+.cat:is(:hover,:focus-visible) .a-twinkle{animation:a-twinkle .8s calc(var(--i) * 120ms) ease-in-out 2}
+@keyframes a-glow{0%{opacity:0;transform:scale(.6)}35%{opacity:.95}55%{opacity:.5}100%{opacity:.85;transform:scale(1.15)}}
+@keyframes a-swing{0%{transform:rotate(0)}34%{transform:rotate(16deg)}52%{transform:rotate(-9deg)}64%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+@keyframes a-drawer{0%,100%{transform:none}45%{transform:translateX(9px)}}
+@keyframes a-line{from{stroke-dashoffset:110}to{stroke-dashoffset:0}}
+@keyframes a-pump{0%,100%{transform:none}50%{transform:rotate(24deg)}}
+@keyframes a-drip{0%{opacity:0;transform:translateY(-2px) scale(.4)}25%{opacity:1;transform:none}100%{opacity:0;transform:translateY(16px) scale(.8)}}
+@keyframes a-squeeze{0%,100%{transform:none}50%{transform:scale(.8,.7)}}
+@keyframes a-buzz{0%,100%{transform:none}25%{transform:translate(1px,-1px)}75%{transform:translate(-1px,1px)}}
+@keyframes a-puff{0%{opacity:0;transform:scale(.4)}30%{opacity:.75}100%{opacity:0;transform:translate(6px,-3px) scale(1.9)}}
+@keyframes a-bit{to{stroke-dashoffset:-14}}
+@keyframes a-star{0%{transform:none}60%{transform:rotate(80deg) scale(1.15)}100%{transform:rotate(72deg)}}
+@keyframes a-twinkle{0%,100%{transform:none;opacity:1}50%{transform:scale(.3);opacity:.4}}
+.lite .cat-art *{animation:none!important}
+
+/* hero: spotlight and lean that follow the mouse; the hammer strikes (motion.mjs heroFollow, strike) */
+.hero-glow{position:absolute;left:0;top:0;z-index:-1;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:radial-gradient(closest-side,#f4511e3d,#f4511e12 55%,#f4511e00);pointer-events:none;opacity:0;transition:opacity .45s ease,transform .18s ease-out}
+.hero.lit .hero-glow{opacity:1}
+.hero-tool{cursor:pointer;transition:translate .7s var(--ease),rotate .7s var(--ease)}
+.hero-tool .swing{transform-origin:420px 258px}
+.orbit{transition:translate .9s var(--ease)}
+.fx-sparks{position:absolute;width:0;height:0}
+.fx-sparks i{position:absolute;left:-30px;top:-11px;width:60px;height:22px;border-radius:50%;border:2px solid #ffb48f}
+.fx-sparks b{position:absolute;left:-5px;top:-1.5px;width:10px;height:3px;border-radius:2px;background:linear-gradient(90deg,#fff3c4,#ff8a3d);box-shadow:0 0 6px #ff9a4d}
+
+/* headings rise word by word (motion.mjs wordsIn); each word is clipped by its own inline box */
+.fx-w{clip-path:inset(-.15em -.1em -.25em -.1em)}
+.fx-w>span{display:inline-block}
+.fx-words-wait .fx-w>span{transform:translateY(140%)}
+@media print{.fx-words-wait .fx-w>span{transform:none}}
+
+/* the prepared request feeds out of a printer slot and is stamped (motion.mjs printOut) */
+.paper{position:relative;margin:0 0 14px;padding-top:5px}
+.paper .prepared{margin:0}
+.slot{position:absolute;left:-4px;right:-4px;top:0;z-index:1;height:9px;border-radius:99px;background:linear-gradient(#18191c,#2c2d31);box-shadow:inset 0 2px 3px #000a,0 1px 0 #ffffff1f}
+.stamp{position:absolute;top:-9px;right:18px;z-index:2;padding:4px 9px;border:2px solid var(--green);border-radius:7px;background:#effaf3;color:var(--green);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-8deg);pointer-events:none}
+:root[data-theme=dark] .stamp{background:#11291c;border-color:#3fbf7a;color:#5fd497}
+
+/* scroll progress: a thin orange line under the header (scroll-driven animation where supported) */
+@supports (animation-timeline:scroll()){
+  .top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#ff9a6b,var(--orange));transform-origin:0 50%;animation:scroll-progress linear both;animation-timeline:scroll(root)}
+  @keyframes scroll-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
