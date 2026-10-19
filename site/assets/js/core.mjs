@@ -26,13 +26,13 @@ export const STATUS_ORDER = ["verified", "unverified", "needs_review"];
 // its own. A group with no categories here is not in this preview yet; `range` is what GROZ lists
 // under it.
 export const GROUPS = [
-  { name: "Lubrication", art: "grease", categories: [], range: "Grease, oil and waste-oil handling, drum handling & hose reels" },
-  { name: "Fuel & DEF", art: "fuel", categories: [], range: "Fuel and DEF pumps, meters, nozzles & specialty pumps" },
-  { name: "Air Tools", art: "air", categories: [], range: "Impact wrenches & ratchets, blow guns & air control units" },
+  { name: "Lubrication", art: "grease", categories: ["Lubrication"], range: "Grease, oil and waste-oil handling, drum handling & hose reels" },
+  { name: "Fuel & DEF", art: "fuel", categories: ["Fuel & DEF"], range: "Fuel and DEF pumps, meters, nozzles & specialty pumps" },
+  { name: "Air Tools", art: "air", categories: ["Air Tools"], range: "Impact wrenches & ratchets, blow guns & air control units" },
   { name: "Lighting", art: "light", categories: ["LED Worklights"] },
   { name: "Hand Tools", art: "sledge", categories: ["Striking Tools"] },
   { name: "Mechanic's Tools", art: "storage", categories: ["Tool Storage"] },
-  { name: "Power Tools", art: "drill", categories: [], range: "Cordless impact wrenches, drill drivers & grease guns" },
+  { name: "Power Tools", art: "drill", categories: ["Power Tools"], range: "Cordless impact wrenches, drill drivers & grease guns" },
   { name: "New & Exciting", art: "spark", categories: [], range: "GROZ's newest products" },
   { name: "Precision Tools", art: "measure", categories: ["Precision Tools"] },
 ];

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0c0d10"/>
+<title>GROZ — 3D Interactive Catalogue Flipbook</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 1 31 16 16 31 1 16Z%27 fill=%27%23f4511e%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2714%27 text-anchor=%27middle%27 fill=%27white%27%3EG%3C/text%3E%3C/svg%3E"/>
+<link rel="preload" href="assets/fonts/ubuntu-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin/>
+<link rel="stylesheet" href="assets/flipbook.css"/>
+<script src="assets/js/vendor/gsap.min.js"></script>
+</head>
+<body class="flipbook-body">
+
+<!-- Header Toolbar -->
+<header class="fb-header">
+  <div class="fb-brand-group">
+    <a class="fb-back-link" href="index.html#catalogues">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span class="fb-back-text">Catalogue Overview</span>
+      <span class="fb-back-text-mobile">Back</span>
+    </a>
+    <div class="fb-catalogue-selector">
+      <label for="catalogueSelect" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Choose catalogue</label>
+      <select id="catalogueSelect" class="fb-select">
+        <option value="GROZ_LIGHTING_GL-10_1.pdf">GROZ Lighting GL-10 (48 p.)</option>
+        <option value="tools_storage.pdf">GROZ Tool Storage (35 p.)</option>
+        <option value="Estwing_Hammer_E-03_Interactive_1.pdf">Estwing Hammers E-03 (20 p.)</option>
+        <option value="Precision_Catalogue_CA_03.pdf">GROZ Precision CA-03 (88 p.)</option>
+        <option value="groz-lubrication-equipments.pdf">GROZ Lubrication Equipment (48 p.)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fb-toolbar-actions">
+    <!-- Sound Effects Toggle -->
+    <button class="fb-btn active" id="soundToggle" type="button" title="Page Sound Effects: On">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      <span class="fb-btn-label">Page Audio</span>
+    </button>
+    <!-- Ambient Background Workshop Audio -->
+    <button class="fb-btn" id="ambientToggle" type="button" title="Ambient Workshop Audio: Off">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="fb-btn-label">Ambience</span>
+    </button>
+    <!-- Zoom Magnifier Toggle -->
+    <button class="fb-btn" id="zoomToggleBtn" type="button" title="Toggle Magnifier Zoom (2x)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+      <span class="fb-btn-label">Zoom 2x</span>
+    </button>
+    <!-- Download PDF for Offline Reading -->
+    <a class="fb-btn primary" id="downloadPdfBtn" href="../GROZ_LIGHTING_GL-10_1.pdf" download="GROZ_Lighting_GL-10.pdf" title="Download official PDF for offline use">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m-5-5l5 5 5-5M4 20h16"/></svg>
+      <span class="fb-btn-label" id="downloadPdfLabel">Download PDF (5.0 MB)</span>
+      <span class="fb-btn-label-mobile">PDF</span>
+    </a>
+  </div>
+</header>
+
+<!-- Main Stage with 3D Book -->
+<main class="fb-stage">
+  <!-- Previous Spread Arrow -->
+  <button class="fb-nav-arrow prev" id="prevBtn" type="button" aria-label="Previous page">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+
+  <!-- 3D Book Shell -->
+  <div class="fb-book-wrap" id="bookWrap">
+    <div class="fb-book" id="book">
+      <!-- Left Page Panel -->
+      <div class="fb-page-panel left" id="leftPanel">
+        <img class="fb-page-img" id="leftPageImg" src="" alt="Left Page" loading="eager"/>
+        <div class="fb-hotspot-layer" id="leftHotspots"></div>
+        <div class="fb-corner-curl" id="leftCorner" title="Click to flip backward"></div>
+      </div>
+
+      <!-- Mobile Tinder Deck Underlay (Peeks underneath the active card) -->
+      <div class="fb-deck-underlay" id="deckUnderlay" aria-hidden="true">
+        <img class="fb-page-img" id="deckUnderlayImg" src="" alt="" loading="lazy"/>
+      </div>
+
+      <!-- Right Page Panel -->
+      <div class="fb-page-panel right" id="rightPanel">
+        <img class="fb-page-img" id="rightPageImg" src="" alt="Right Page" loading="eager"/>
+        <div class="fb-hotspot-layer" id="rightHotspots"></div>
+        <div class="fb-corner-curl" id="rightCorner" title="Click to flip forward"></div>
+        <!-- Tinder Swipe Stamp Badges -->
+        <div class="fb-tinder-badge next" id="tinderBadgeNext">NEXT PAGE ➔</div>
+        <div class="fb-tinder-badge prev" id="tinderBadgePrev">⬅ PREV PAGE</div>
+      </div>
+
+      <!-- 3D Turning Leaf (Transforms during page turn) -->
+      <div class="fb-leaf" id="flipLeaf" style="display:none">
+        <div class="fb-leaf-face front" id="leafFrontFace">
+          <img class="fb-page-img" id="leafFrontImg" src="" alt=""/>
+          <div class="fb-leaf-glare" id="leafFrontGlare"></div>
+          <div class="fb-leaf-shadow" id="leafShadow"></div>
+        </div>
+        <div class="fb-leaf-face back" id="leafBackFace">
+          <img class="fb-page-img" id="leafBackImg" src="" alt=""/>
+          <div class="fb-leaf-glare" id="leafBackGlare"></div>
+          <div class="fb-leaf-shadow" id="leafBackShadow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Embedded Tool Companion (Animated Category SVG) -->
+    <div class="fb-tool-companion" id="toolCompanion" aria-hidden="true">
+      <div class="fb-companion-svg" id="companionIcon"></div>
+      <div class="fb-companion-text" id="companionText">Lighting Technology</div>
+    </div>
+  </div>
+
+  <!-- Next Spread Arrow -->
+  <button class="fb-nav-arrow next" id="nextBtn" type="button" aria-label="Next page">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+
+  <!-- Floating Quick-Spec Card (Hover Micro-Interaction) -->
+  <div class="fb-quick-card" id="quickCard"></div>
+
+  <!-- Zoom State Floating Indicator -->
+  <div class="fb-zoom-badge" id="zoomBadge" style="display:none">
+    <span>🔍 Zoom 2.2x active · Move cursor to inspect fine specs</span>
+    <button class="fb-zoom-reset" id="zoomResetBtn" type="button" title="Exit zoom mode (Esc)">Reset</button>
+  </div>
+
+  <!-- Product Specifications Collapsible Drawer -->
+  <aside class="fb-drawer" id="specsDrawer" aria-label="Page Product Specifications">
+    <div class="fb-drawer-header">
+      <div class="fb-drawer-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        Page Products &amp; Specs
+      </div>
+      <button class="fb-drawer-close" id="drawerClose" type="button" aria-label="Close specs drawer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="fb-drawer-body" id="drawerBody"></div>
+  </aside>
+</main>
+
+<!-- Bottom Toolbar with Thumbnail Scrubber -->
+<footer class="fb-footer">
+  <div class="fb-footer-left">
+    <button class="fb-btn fb-footer-nav" id="footerPrevBtn" type="button" aria-label="Previous page" title="Previous page">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="fb-page-counter" id="pageCounter" role="button" tabindex="0" title="Click to jump to a specific page">Page 1 of 48</div>
+    <button class="fb-btn fb-footer-nav" id="footerNextBtn" type="button" aria-label="Next page" title="Next page">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- Direct Page Jump Popover -->
+  <div class="fb-jump-popover" id="jumpPopover" style="display:none">
+    <span class="fb-jump-label">Go to page:</span>
+    <input type="number" id="jumpPageInput" min="1" max="100" placeholder="#"/>
+    <button type="button" id="jumpPageGo" class="fb-btn primary">Jump</button>
+  </div>
+
+  <!-- Thumbnail Hover Tooltip -->
+  <div class="fb-thumb-tooltip" id="thumbTooltip" style="display:none"></div>
+
+  <!-- Thumbnail Filmstrip Scrubber -->
+  <div class="fb-filmstrip" id="filmstrip" role="region" aria-label="Page thumbnail strip"></div>
+
+  <div class="fb-footer-tools">
+    <button class="fb-btn" id="openSpecsBtn" type="button" title="View products &amp; specs on this page spread">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span class="fb-specs-label">Inspect Page Specs</span>
+      <span class="fb-specs-label-mobile">Specs</span>
+    </button>
+    <button class="fb-btn" id="fullscreenBtn" type="button" title="Toggle Fullscreen Mode">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+  </div>
+</footer>
+
+<script type="module" src="assets/js/flipbook.mjs"></script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import * as core from "./core.mjs";
 import { art } from "./art.mjs";
 import { icon } from "./icons.mjs";
 import * as fx from "./motion.mjs";
+import * as anim from "./animations.mjs";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -18,7 +19,7 @@ const store = {
 
 const state = {
   data: null, products: [], byId: new Map(), index: new Map(), artByCategory: new Map(),
-  filters: core.emptyFilters(), sort: "catalogue", view: store.get("groz.view", "grid") === "table" ? "table" : "grid",
+  filters: core.emptyFilters(), sort: "catalogue", view: "grid",
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
@@ -202,6 +203,7 @@ function init(data) {
   renderProducts();
   updateBadges();
   state.fxReady = true;
+  anim.initUnifiedAnimationSystem();
   if ("requestIdleCallback" in window) requestIdleCallback(() => probeFrames(), { timeout: 2000 });
   else setTimeout(() => probeFrames(), 500);
 }
@@ -231,6 +233,7 @@ function renderCategories() {
       <span class="cat-art">${art(g.art)}</span><span class="cat-name">${esc(g.name)}</span><span class="cat-blurb">${esc(g.blurb)}</span><span class="cat-count">${g.soon ? "Coming soon" : plural(g.records, "product")}</span>
     </button>`;
   }).join("");
+  anim.animateCategoryOutlines($("#categoryGrid"));
 }
 
 /** The same categories in the header's Categories menu and in the phone menu, like GROZ's own site. */
@@ -246,7 +249,7 @@ function renderCatalogues() {
   $("#catalogueList").innerHTML = list.map((c) => `
     <div class="catalogue-row"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>${esc(c.title)}</strong>
       <small>${esc(groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
-      <div class="row-actions"><button class="btn soft" type="button" data-show-cat="${esc(c.category)}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
+      <div class="row-actions"><a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a><button class="btn soft" type="button" data-show-cat="${esc(c.category)}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
       <small>Hand Tools and Fluid Handling are not in this preview yet. Their products will appear once they have been extracted and reviewed.</small></div></div></div>`;
 }
@@ -483,7 +486,15 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   const remaining = list.length - state.rendered;
   $("#moreWrap").innerHTML = remaining > 0
     ? `<button class="btn outline" type="button" id="showMore">Show ${Math.min(remaining, core.PAGE_SIZE)} more <span class="muted-on">· ${remaining} remaining</span></button>` : "";
-  fx.cascade(state.view === "grid" && !quiet ? $$(".product", grid).slice(from) : [], { fresh: !append, quick: typing, from: before });
+  const newItems = !quiet
+    ? (state.view === "grid" ? $$(".product", grid).slice(from) : $$("#ptableBody tr", grid).slice(from))
+    : [];
+  if (window.gsap && !typing) {
+    if (state.view === "table") anim.animateTableRowsOnLoad(newItems);
+    else anim.animateCardsOnLoad(newItems);
+  } else {
+    fx.cascade(newItems, { fresh: !append, quick: typing, from: before });
+  }
 }
 
 function setView(view, rerender = true) {
@@ -535,7 +546,11 @@ function setBadge(el, n) {
 function tossToQuote(src) {
   const target = [$("#navQuote"), $("#mobileQuoteBtn")].find((b) => b?.getClientRects().length);
   state.quoteHold += 1;
-  fx.flyTo(src, target, () => { state.quoteHold -= 1; updateBadges(); });
+  fx.flyTo(src, target, () => {
+    state.quoteHold -= 1;
+    updateBadges();
+    anim.animateCartBounce([$("#navQuote"), $("#mobileQuoteBtn")]);
+  });
 }
 
 function toggleSaved(id) {
@@ -563,6 +578,7 @@ function addToQuote(id) {
   persist();
   updateBadges();
   notify(`${p.cat_nr} added to your quote`);
+  anim.animateCartBounce([$("#navQuote"), $("#mobileQuoteBtn")]);
 }
 
 function addManyToQuote(ids) {
@@ -604,6 +620,7 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   }
   state.detailId = null;
   modal.dataset.kind = kind;
+  backdrop.dataset.kind = kind;
   $("#modalTitle").textContent = title;
   $("#modalTools").innerHTML = tools;
   $("#modalBody").innerHTML = html;
@@ -611,6 +628,9 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   backdrop.classList.add("open");
   document.body.classList.add("modal-open");
   modal.scrollTop = 0;
+  const mBody = $("#modalBody");
+  if (mBody) mBody.scrollTop = 0;
+  if (kind === "quote") anim.openQuoteDrawer(modal, backdrop);
   ($("[data-autofocus]", modal) || $("#modalClose")).focus({ preventScroll: true });
 }
 
@@ -624,11 +644,17 @@ function closeModal() {
   const hide = () => {
     closing = null;
     backdrop.classList.remove("open", "closing");
+    backdrop.removeAttribute("data-kind");
     document.body.classList.remove("modal-open");
     document.body.style.paddingRight = "";
   };
   if (boxTo) {
     try { closing = playBoxClose(boxTo, hide); return; } catch { $$(".unbox").forEach((l) => l.remove()); /* plain exit below */ }
+  }
+  if (modal.dataset.kind === "quote" && window.gsap) {
+    closing = () => {};
+    anim.closeQuoteDrawer(modal, backdrop, hide);
+    return;
   }
   // Other dialogs fade and settle back (a bottom sheet slides down) before they are hidden.
   const sheet = matchMedia("(max-width: 720px)").matches;
@@ -1016,7 +1042,8 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
               <button class="btn soft" type="button" data-modal-save="${esc(p.id)}" aria-pressed="${saved}">${icon("heart", saved ? "filled" : "")}${saved ? "Saved" : "Save"}</button>
               <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
             </div>
-            <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue page ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
+            <a class="pd-link" href="flipbook.html?pdf=${encodeURIComponent(p.catalogue?.pdf || '')}&page=${p.page || p.catalogue?.page || 1}" target="_blank" rel="noopener">Open in 3D Flipbook (page ${p.page || p.catalogue?.page || 1}) 📖</a>
+            <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue PDF ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
           </div>
         </div>
       </div>
@@ -1107,6 +1134,16 @@ function showQuote() {
   const entering = !backdrop.classList.contains("open") || modal.dataset.kind !== "quote";
   openModal("Let’s build your quote", `
     <p class="notice">This prepares a quotation request on your device. <b>Nothing is sent</b> — when it is ready you can copy, download or print it for your GROZ sales contact.</p>
+    <div class="quote-progress-wrap" id="quoteProgressWrap">
+      <div class="quote-progress-header">
+        <span class="quote-progress-title">Quote Readiness</span>
+        <strong class="quote-progress-score" id="quoteProgressScore">35%</strong>
+      </div>
+      <div class="quote-progress-track">
+        <div class="quote-progress-fill" id="quoteProgressFill" style="width: 35%"></div>
+      </div>
+      <span class="quote-progress-hint" id="quoteProgressHint">Add your contact details to prepare request</span>
+    </div>
     <div id="quoteItems">${quoteItemsHtml()}</div><div class="err" id="err-items" tabindex="-1"></div>
     <div class="quote-totals" id="quoteTotals" aria-live="polite">${totalsHtml()}</div>
     <form class="form-grid" id="quoteForm" novalidate>
@@ -1118,6 +1155,11 @@ function showQuote() {
       ${field("notes", "What else should we know?", { full: true, area: true })}
       <div class="field full form-foot"><button class="btn primary lg" type="submit">Prepare request</button><small>Fields marked * are required. Nothing is sent.</small></div>
     </form>`, { kind: "quote" });
+  anim.updateQuoteProgress(state.quote.size, state.contact);
+  $("#quoteForm")?.addEventListener("input", () => {
+    for (const el of $("#quoteForm").elements) if (el.name) state.contact[el.name] = el.value;
+    anim.updateQuoteProgress(state.quote.size, state.contact);
+  });
   if (entering) fx.stagger($$("#quoteItems tbody tr", modal));
 }
 
@@ -1126,6 +1168,7 @@ function refreshQuoteItems() {
   if (box) box.innerHTML = quoteItemsHtml();
   const t = $("#quoteTotals");
   if (t) t.innerHTML = totalsHtml();
+  anim.updateQuoteProgress(state.quote.size, state.contact);
 }
 
 function submitQuote(form) {
@@ -1292,6 +1335,7 @@ function wire() {
     const same = cats.length === f.categories.size && cats.every((c) => f.categories.has(c));
     f.categories = toggle && same ? new Set() : new Set(cats);
     renderCategories(); renderFilters(); refresh();
+    anim.fadeProductsSequentially($$(".product", grid));
     scrollToEl($("#products"));
   };
   // A GROZ category: its products, or a note that it is not in this preview yet.
@@ -1306,11 +1350,33 @@ function wire() {
 
   // Header Categories menu (desktop) and the category list in the phone menu.
   const catMenu = $("#catMenu"), catBtn = $("#catMenuBtn");
-  const setCatMenu = (open) => { catMenu.hidden = !open; catBtn.setAttribute("aria-expanded", String(open)); };
+  const setCatMenu = (open) => {
+    catBtn.setAttribute("aria-expanded", String(open));
+    anim.animateCategoryAccordion(catMenu, open);
+  };
   catBtn.addEventListener("click", (e) => {
     setCatMenu(catMenu.hidden);
     if (!catMenu.hidden && e.detail === 0) $("button", catMenu)?.focus(); // opened from the keyboard
   });
+
+  // Accordion for legend / How to read labels
+  const legend = $(".legend");
+  const legendSummary = legend?.querySelector("summary");
+  const legendDl = legend?.querySelector("dl");
+  if (legend && legendSummary && legendDl) {
+    legendSummary.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = legend.hasAttribute("open");
+      if (!isOpen) {
+        legend.setAttribute("open", "");
+        anim.animateCategoryAccordion(legendDl, true);
+      } else {
+        anim.animateCategoryAccordion(legendDl, false, {
+          onComplete: () => legend.removeAttribute("open"),
+        });
+      }
+    });
+  }
   catMenu.addEventListener("click", (e) => { const b = e.target.closest("[data-group]"); if (b) { setCatMenu(false); openGroup(b.dataset.group, false); } });
   document.addEventListener("click", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });
   document.addEventListener("focusin", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });

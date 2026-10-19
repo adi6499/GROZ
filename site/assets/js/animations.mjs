@@ -1,0 +1,998 @@
+// GROZ Unified Immersive Animation System
+// Powered by GSAP timelines, ScrollTrigger, Web Audio API synthesis, and custom easings.
+// Rules: Entry logo assembly, Hero kinetic typography, Parallax depth, Card tilt & sparks,
+// Category elastic accordions & tool-drop sound, Quote spring drawer & progress bar,
+// Section scroll-triggered WOW effects, Dynamic gradient scroll bar, and Exit disassembly.
+
+const root = document.documentElement;
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+/** True when animations should run. */
+export function animOK() {
+  return !reducedMotion.matches && !root.classList.contains("lite");
+}
+
+/** Access GSAP and ScrollTrigger instances. */
+function getGsap() {
+  if (typeof window !== "undefined" && window.gsap) {
+    if (window.ScrollTrigger && !getGsap._registered) {
+      window.gsap.registerPlugin(window.ScrollTrigger);
+      getGsap._registered = true;
+    }
+    return window.gsap;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------- Sound Synthesis (Web Audio API)
+let audioCtx = null;
+let soundEnabled = true;
+
+function getAudioContext() {
+  if (!audioCtx && typeof window !== "undefined") {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
+
+export function isSoundEnabled() {
+  return soundEnabled;
+}
+
+export function toggleSound(force) {
+  soundEnabled = typeof force === "boolean" ? force : !soundEnabled;
+  const toggleBtn = document.querySelector("#soundToggle");
+  if (toggleBtn) {
+    toggleBtn.setAttribute("aria-pressed", String(soundEnabled));
+    toggleBtn.setAttribute("title", `Tool Sound Effects: ${soundEnabled ? "On" : "Off"}`);
+    const onIcon = toggleBtn.querySelector(".sound-on");
+    const offIcon = toggleBtn.querySelector(".sound-off");
+    if (onIcon) onIcon.style.display = soundEnabled ? "block" : "none";
+    if (offIcon) offIcon.style.display = soundEnabled ? "none" : "block";
+  }
+  return soundEnabled;
+}
+
+/**
+ * Synthesizes a crisp, metallic "tool-drop / impact" sound effect via Web Audio API.
+ * Zero external MP3 files needed; instantaneous response with metallic harmonics.
+ */
+export function playToolDropSound(pitchMult = 1) {
+  if (!soundEnabled || !animOK()) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const now = ctx.currentTime;
+
+    // 1. Primary metallic fundamental strike
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(840 * pitchMult, now);
+    osc1.frequency.exponentialRampToValueAtTime(260 * pitchMult, now + 0.08);
+
+    gain1.gain.setValueAtTime(0.24, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+    // 2. High metallic ring (anvil overtone)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "triangle";
+    osc2.frequency.setValueAtTime(2240 * pitchMult, now);
+    osc2.frequency.exponentialRampToValueAtTime(1100 * pitchMult, now + 0.16);
+
+    gain2.gain.setValueAtTime(0.15, now);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+
+    // 3. Bandpass filter for authentic tool resonance
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(1600 * pitchMult, now);
+    filter.Q.setValueAtTime(3.2, now);
+
+    osc1.connect(gain1);
+    osc2.connect(gain2);
+    gain1.connect(filter);
+    gain2.connect(filter);
+    filter.connect(ctx.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.14);
+    osc2.stop(now + 0.22);
+  } catch (e) {
+    // AudioContext autoplay restrictions are handled gracefully
+  }
+}
+
+// ---------------------------------------------------------------- 1. Entry Animation (Page Load)
+
+/**
+ * Full-screen entry sequence where the GROZ logo assembles like precision tools
+ * snapping together, transitioning seamlessly into the kinetic hero typography.
+ */
+export function initEntryAnimation() {
+  const overlay = document.querySelector("#introOverlay");
+  if (!overlay || !animOK()) {
+    overlay?.remove();
+    animateHeroTagline();
+    return;
+  }
+
+  // Allow skipping via button or if already shown in current session
+  const skipBtn = document.querySelector("#introSkipBtn");
+  const onSkip = () => {
+    overlay.remove();
+    animateHeroTagline();
+  };
+  skipBtn?.addEventListener("click", onSkip);
+
+  const gsap = getGsap();
+  if (!gsap) {
+    setTimeout(onSkip, 400);
+    return;
+  }
+
+  const partWrench = overlay.querySelector("#partWrench");
+  const partHammer = overlay.querySelector("#partHammer");
+  const partCaliper = overlay.querySelector("#partCaliper");
+  const partBracket = overlay.querySelector("#partBracket");
+  const partDiamond = overlay.querySelector("#partDiamond");
+  const partInnerDiamond = overlay.querySelector("#partInnerDiamond");
+  const partLetterG = overlay.querySelector("#partLetterG");
+  const partGlowRing = overlay.querySelector("#partGlowRing");
+  const brandName = overlay.querySelector("#introBrandName");
+  const tagline = overlay.querySelector("#introTagline");
+
+  // Initial tool part positions scattered outside the frame
+  gsap.set(partWrench, { y: -160, x: -80, rotate: -40, opacity: 0, transformOrigin: "center center" });
+  gsap.set(partHammer, { y: -80, x: 180, rotate: 45, opacity: 0, transformOrigin: "center center" });
+  gsap.set(partCaliper, { y: 160, x: 80, rotate: -30, opacity: 0, transformOrigin: "center center" });
+  gsap.set(partBracket, { y: 80, x: -180, rotate: 35, opacity: 0, transformOrigin: "center center" });
+  gsap.set([partDiamond, partInnerDiamond], { scale: 0.2, rotate: 180, opacity: 0, transformOrigin: "center center" });
+  gsap.set(partLetterG, { scale: 0, opacity: 0, transformOrigin: "center center" });
+  gsap.set([brandName, tagline], { opacity: 0, y: 16 });
+
+  const introTl = gsap.timeline({
+    defaults: { ease: "power2.out" },
+    onComplete: () => {
+      gsap.to(overlay, {
+        opacity: 0,
+        scale: 1.05,
+        duration: 0.55,
+        ease: "power2.inOut",
+        onComplete: () => {
+          overlay.remove();
+          animateHeroTagline();
+        },
+      });
+    },
+  });
+
+  introTl
+    // Step 1: Diamond Core expands into view
+    .to([partDiamond, partInnerDiamond], { scale: 1, rotate: 0, opacity: 1, duration: 0.55, ease: "back.out(1.6)" }, 0.1)
+    // Step 2: Tool parts fly in and snap together with elastic precision
+    .to(partWrench, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.25)
+    .to(partHammer, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.3)
+    .to(partCaliper, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.35)
+    .to(partBracket, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.4)
+    // Step 3: Mechanical strike sound & core G reveal
+    .call(() => playToolDropSound(1.1), null, 0.45)
+    .to(partLetterG, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 0.45)
+    .to(partGlowRing, { scale: 3.2, opacity: 0.9, duration: 0.3, ease: "power2.out" }, 0.48)
+    .to(partGlowRing, { opacity: 0, duration: 0.2 }, 0.7)
+    // Step 4: Kinetic brand typography reveals
+    .to(brandName, { opacity: 1, y: 0, letterSpacing: "0.22em", duration: 0.4, ease: "power2.out" }, 0.65)
+    .to(tagline, { opacity: 0.85, y: 0, letterSpacing: "0.28em", duration: 0.35, ease: "power2.out" }, 0.75)
+    // Hold momentarily for cinematic impact
+    .to({}, { duration: 0.4 });
+}
+
+// ---------------------------------------------------------------- 2. Hero Section Animations
+
+/**
+ * Animate the tagline "Find your tool" with kinetic typography and staggered letter reveals.
+ */
+export function animateHeroTagline() {
+  const gsap = getGsap();
+  if (!animOK()) return;
+  const title = document.querySelector("#heroTitle");
+  if (!title) return;
+
+  // Split "Find your tool." into individual character wrappers if not already prepared
+  let charInners = title.querySelectorAll(".hero-char");
+  if (!charInners.length) {
+    const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+    const textNode = walker.nextNode();
+    if (textNode && textNode.textContent.includes("Find your tool")) {
+      const container = document.createElement("span");
+      container.className = "hero-tagline";
+      container.setAttribute("aria-label", "Find your tool.");
+      const text = textNode.textContent.trim();
+      for (const char of text) {
+        const wrap = document.createElement("span");
+        wrap.className = "hero-char-wrap";
+        wrap.style.cssText = "display:inline-block; overflow:hidden; vertical-align:bottom; margin-right:0.015em; perspective:500px;";
+        const inner = document.createElement("span");
+        inner.className = "hero-char";
+        inner.style.cssText = "display:inline-block; transform:translateY(120%) rotateX(-65deg); opacity:0; will-change:transform,opacity;";
+        inner.innerHTML = char === " " ? "&nbsp;" : char;
+        wrap.appendChild(inner);
+        container.appendChild(wrap);
+      }
+      textNode.replaceWith(container);
+    }
+    charInners = title.querySelectorAll(".hero-char");
+  }
+
+  const em = title.querySelector("em");
+  if (gsap && charInners.length) {
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    tl.to(charInners, {
+      y: "0%",
+      rotateX: 0,
+      opacity: 1,
+      duration: 0.44,
+      stagger: 0.034,
+      ease: "power2.out",
+    });
+    if (em) {
+      tl.fromTo(em,
+        { y: 22, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.48, ease: "back.out(1.4)" },
+        "-=0.2"
+      );
+    }
+    return tl;
+  }
+}
+
+/**
+ * Slide in subtle tool silhouettes from the sides and animate hero parallax depth.
+ */
+export function initHeroParallax() {
+  const gsap = getGsap();
+  if (!animOK() || !gsap || !window.ScrollTrigger) return;
+  const hero = document.querySelector(".hero");
+  if (!hero || hero.dataset.parallaxReady) return;
+  hero.dataset.parallaxReady = "true";
+
+  const visual = hero.querySelector(".hero-visual");
+  const orbit = hero.querySelector(".orbit");
+  const copy = hero.querySelector(".hero-copy");
+  const leftSilhouette = hero.querySelector(".hero-silhouette.left");
+  const rightSilhouette = hero.querySelector(".hero-silhouette.right");
+
+  // Entrance for side silhouettes
+  if (leftSilhouette) {
+    gsap.fromTo(leftSilhouette,
+      { x: -70, opacity: 0 },
+      { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.2 }
+    );
+    gsap.to(leftSilhouette, {
+      y: 90,
+      ease: "none",
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
+    });
+  }
+
+  if (rightSilhouette) {
+    gsap.fromTo(rightSilhouette,
+      { x: 70, opacity: 0 },
+      { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.3 }
+    );
+    gsap.to(rightSilhouette, {
+      y: 110,
+      ease: "none",
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
+    });
+  }
+
+  if (visual) {
+    gsap.to(visual, {
+      y: 65,
+      ease: "none",
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
+    });
+  }
+  if (orbit) {
+    gsap.to(orbit, {
+      y: 85,
+      rotate: 15,
+      ease: "none",
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
+    });
+  }
+  if (copy) {
+    gsap.to(copy, {
+      y: 35,
+      ease: "none",
+      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
+    });
+  }
+}
+
+/**
+ * Scroll cue with gentle, natural bouncing arrow animation at the bottom of the hero.
+ */
+export function initScrollCue() {
+  const cue = document.querySelector("#heroScrollCue");
+  const gsap = getGsap();
+  if (!cue || !gsap || !animOK()) return;
+
+  gsap.fromTo(cue,
+    { opacity: 0, y: -8 },
+    { opacity: 1, y: 0, duration: 0.6, delay: 0.8, ease: "power2.out" }
+  );
+
+  const arrow = cue.querySelector(".scroll-cue-arrow");
+  if (arrow) {
+    gsap.to(arrow, {
+      y: 6,
+      duration: 0.85,
+      repeat: -1,
+      yoyo: true,
+      ease: "power1.inOut",
+    });
+  }
+
+  cue.addEventListener("click", (e) => {
+    e.preventDefault();
+    const target = document.querySelector("#categories");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+// ---------------------------------------------------------------- 3. Product Cards Animations
+
+/**
+ * On load / render: cards cascade in with staggered slide-up motion and scale overshoot.
+ */
+export function animateCardsOnLoad(cards, { stagger = 0.038, duration = 0.46 } = {}) {
+  const gsap = getGsap();
+  if (!animOK() || !cards || !cards.length) return;
+  const list = Array.isArray(cards) ? cards : [...cards];
+  const onScreen = (r) => r.top < window.innerHeight + 80 && r.bottom > -80;
+  const targets = list.filter((c) => onScreen(c.getBoundingClientRect()));
+  const batch = targets.length ? targets : list.slice(0, 16);
+
+  if (gsap) {
+    gsap.fromTo(batch,
+      { opacity: 0, y: 32, scale: 0.95 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration,
+        stagger,
+        ease: "back.out(1.2)",
+        clearProps: "transform,opacity,scale",
+      }
+    );
+  } else {
+    batch.forEach((c, i) => {
+      c.animate(
+        [{ opacity: 0, transform: "translateY(32px) scale(0.95)" }, { opacity: 1, transform: "none" }],
+        { duration: duration * 1000, delay: i * stagger * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)", fill: "backwards" }
+      );
+    });
+  }
+}
+
+/**
+ * On load / render / filter in table mode: rows cascade in with staggered slide-up motion and fade in.
+ */
+export function animateTableRowsOnLoad(rows, { stagger = 0.03, duration = 0.38 } = {}) {
+  const gsap = getGsap();
+  if (!animOK() || !rows || !rows.length) return;
+  const list = Array.isArray(rows) ? rows : [...rows];
+  const onScreen = (r) => r.top < window.innerHeight + 80 && r.bottom > -80;
+  const targets = list.filter((c) => onScreen(c.getBoundingClientRect()));
+  const batch = targets.length ? targets : list.slice(0, 24);
+
+  if (gsap) {
+    gsap.fromTo(batch,
+      { opacity: 0, y: 18 },
+      {
+        opacity: 1,
+        y: 0,
+        duration,
+        stagger,
+        ease: "power2.out",
+        clearProps: "transform,opacity",
+      }
+    );
+  } else {
+    batch.forEach((c, i) => {
+      c.animate(
+        [{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
+        { duration: duration * 1000, delay: i * stagger * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)", fill: "backwards" }
+      );
+    });
+  }
+}
+
+/**
+ * Micro-particle spark effects that burst and drift upward when a product card or table row is hovered.
+ */
+export function spawnCardSparks(cardEl) {
+  if (!animOK()) return;
+  const rect = cardEl.getBoundingClientRect();
+  const host = document.createElement("div");
+  host.className = "fx-card-sparks-host";
+  host.style.cssText = `position:fixed; left:${rect.left + Math.min(rect.width / 2, 80)}px; top:${rect.top + 20}px; pointer-events:none; z-index:9999;`;
+  document.body.appendChild(host);
+
+  const colors = ["#f4511e", "#ff8051", "#ffd36b", "#ffb48a"];
+  const count = 5;
+
+  for (let i = 0; i < count; i++) {
+    const spark = document.createElement("span");
+    const color = colors[i % colors.length];
+    const size = 3 + Math.random() * 2.5;
+    spark.style.cssText = `position:absolute; width:${size}px; height:${size}px; border-radius:50%; background:${color}; box-shadow:0 0 6px ${color}; opacity:1;`;
+    host.appendChild(spark);
+
+    const angle = (Math.random() * 120 - 150) * (Math.PI / 180);
+    const dist = 24 + Math.random() * 32;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+
+    const gsap = getGsap();
+    if (gsap) {
+      gsap.to(spark, {
+        x: dx,
+        y: dy - 15,
+        scale: 0.2,
+        opacity: 0,
+        duration: 0.45 + Math.random() * 0.2,
+        ease: "power2.out",
+        onComplete: () => {
+          spark.remove();
+          if (!host.children.length) host.remove();
+        },
+      });
+    } else {
+      spark.animate(
+        [{ transform: "translate(0, 0) scale(1)", opacity: 1 }, { transform: `translate(${dx}px, ${dy - 15}px) scale(0.2)`, opacity: 0 }],
+        { duration: 450, easing: "ease-out" }
+      ).onfinish = () => {
+        spark.remove();
+        if (!host.children.length) host.remove();
+      };
+    }
+  }
+}
+
+/**
+ * Initializes card & table row hover listener to emit micro spark particles.
+ */
+export function initCardSparkListeners(container = document) {
+  container.addEventListener("pointerenter", (e) => {
+    const item = e.target.closest?.(".product, .ptable tbody tr");
+    if (item && e.pointerType === "mouse") spawnCardSparks(item);
+  }, true);
+}
+
+// ---------------------------------------------------------------- 4. Category Navigation
+
+/**
+ * Smooth accordion expand/collapse with elastic easing.
+ */
+export function animateCategoryAccordion(element, open, { duration = 0.42, onComplete } = {}) {
+  const gsap = getGsap();
+  if (!element) return;
+  if (!animOK()) {
+    element.hidden = !open;
+    onComplete?.();
+    return;
+  }
+
+  if (gsap) {
+    if (open) {
+      element.hidden = false;
+      playToolDropSound(1.2);
+      gsap.fromTo(element,
+        { height: 0, opacity: 0, transformOrigin: "top center", scaleY: 0.9 },
+        {
+          height: "auto",
+          opacity: 1,
+          scaleY: 1,
+          duration,
+          ease: "back.out(1.5)",
+          onComplete: () => {
+            gsap.set(element, { clearProps: "height,transformOrigin,scaleY" });
+            onComplete?.();
+          },
+        }
+      );
+    } else {
+      gsap.to(element, {
+        height: 0,
+        opacity: 0,
+        scaleY: 0.94,
+        duration: Math.max(0.24, duration - 0.1),
+        ease: "power2.inOut",
+        onComplete: () => {
+          element.hidden = true;
+          gsap.set(element, { clearProps: "all" });
+          onComplete?.();
+        },
+      });
+    }
+  } else {
+    element.hidden = !open;
+    onComplete?.();
+  }
+}
+
+/**
+ * Fade in product lists sequentially with upward motion and tool-drop sound when a category opens.
+ */
+export function fadeProductsSequentially(cards, { duration = 0.42, stagger = 0.038 } = {}) {
+  const gsap = getGsap();
+  playToolDropSound(0.95);
+  if (!animOK() || !cards || !cards.length) return;
+  const list = Array.isArray(cards) ? cards : [...cards];
+  const targets = list.slice(0, 24);
+
+  if (gsap) {
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    tl.fromTo(targets,
+      { opacity: 0, y: 26, scale: 0.96 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration,
+        stagger,
+        ease: "back.out(1.2)",
+        clearProps: "transform,opacity,scale",
+      }
+    );
+    return tl;
+  } else {
+    targets.forEach((c, i) => {
+      c.animate(
+        [{ opacity: 0, transform: "translateY(26px)" }, { opacity: 1, transform: "none" }],
+        { duration: duration * 1000, delay: i * stagger * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)", fill: "backwards" }
+      );
+    });
+  }
+}
+
+// ---------------------------------------------------------------- 5. Quote Builder Animations
+
+/**
+ * Animate the cart icon with spring bounce/pulse when items are added.
+ */
+export function animateCartBounce(elements) {
+  const gsap = getGsap();
+  playToolDropSound(1.3);
+  if (!animOK() || !elements) return;
+  const targets = (Array.isArray(elements) ? elements : [elements]).filter(Boolean);
+  if (!targets.length) return;
+
+  if (gsap) {
+    const tl = gsap.timeline();
+    tl.to(targets, { scale: 1.34, rotate: -7, duration: 0.16, ease: "back.out(2)" })
+      .to(targets, { scale: 0.9, rotate: 4, duration: 0.14, ease: "power2.inOut" })
+      .to(targets, { scale: 1.12, rotate: -2, duration: 0.12, ease: "power2.out" })
+      .to(targets, { scale: 1, rotate: 0, duration: 0.18, ease: "elastic.out(1, 0.4)", clearProps: "transform" });
+    return tl;
+  } else {
+    targets.forEach((el) => {
+      el.animate(
+        [
+          { transform: "scale(1) rotate(0deg)" },
+          { transform: "scale(1.34) rotate(-7deg)", offset: 0.3 },
+          { transform: "scale(0.9) rotate(4deg)", offset: 0.6 },
+          { transform: "scale(1.12) rotate(-2deg)", offset: 0.8 },
+          { transform: "scale(1) rotate(0deg)" },
+        ],
+        { duration: 480, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
+      );
+    });
+  }
+}
+
+/**
+ * Slide in the quote summary drawer from the right with spring physics.
+ */
+export function openQuoteDrawer(modalEl, backdropEl) {
+  const gsap = getGsap();
+  if (!modalEl) return;
+  if (!animOK() || !gsap) return;
+
+  gsap.fromTo(modalEl,
+    { x: "100%", opacity: 0.6 },
+    { x: "0%", opacity: 1, duration: 0.48, ease: "back.out(1.15)" }
+  );
+  if (backdropEl) {
+    gsap.fromTo(backdropEl,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.35, ease: "power2.out" }
+    );
+  }
+}
+
+/**
+ * Slide out the quote summary drawer to the right with easing.
+ */
+export function closeQuoteDrawer(modalEl, backdropEl, onComplete) {
+  const gsap = getGsap();
+  if (!modalEl || !animOK() || !gsap) {
+    onComplete?.();
+    return;
+  }
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.set([modalEl, backdropEl].filter(Boolean), { clearProps: "all" });
+      onComplete?.();
+    },
+  });
+  tl.to(modalEl, { x: "100%", opacity: 0.6, duration: 0.32, ease: "power2.in" }, 0);
+  if (backdropEl) {
+    tl.to(backdropEl, { opacity: 0, duration: 0.32, ease: "power2.in" }, 0);
+  }
+  return tl;
+}
+
+/**
+ * Dynamically updates the animated quote readiness progress bar based on entered details.
+ */
+export function updateQuoteProgress(quoteSize = 0, contact = {}) {
+  const wrap = document.querySelector("#quoteProgressWrap");
+  const fill = document.querySelector("#quoteProgressFill");
+  const score = document.querySelector("#quoteProgressScore");
+  const hint = document.querySelector("#quoteProgressHint");
+  if (!wrap || !fill || !score) return;
+
+  let percent = 0;
+  if (quoteSize > 0) percent += 35;
+  if (contact.name && contact.name.trim().length > 1) percent += 25;
+  if (contact.email && contact.email.includes("@")) percent += 25;
+  if (contact.phone || contact.location) percent += 15;
+  percent = Math.min(100, Math.max(15, percent));
+
+  score.textContent = `${percent}%`;
+  if (hint) {
+    if (percent < 50) hint.textContent = "Add your contact details to prepare request";
+    else if (percent < 90) hint.textContent = "Almost ready — add location or phone number";
+    else hint.textContent = "Ready to generate clear quotation!";
+  }
+
+  const gsap = getGsap();
+  if (gsap && animOK()) {
+    gsap.to(fill, {
+      width: `${percent}%`,
+      duration: 0.45,
+      ease: "back.out(1.2)",
+    });
+  } else {
+    fill.style.width = `${percent}%`;
+  }
+}
+
+// ---------------------------------------------------------------- 6. Scroll-Triggered WOW Effects
+
+/**
+ * Unique motion effects per major category and section:
+ * - Hand Tools: hammer icon strikes with impact sparks
+ * - Lighting: luminous glow blooms around products
+ * - Sections fade in with upward motion
+ */
+export function initSectionScrollTriggers() {
+  const gsap = getGsap();
+  if (!animOK() || !gsap || !window.ScrollTrigger) return;
+
+  // 1. General major section reveals
+  const sections = document.querySelectorAll(".trust-strip, #categories, #products, #about, #catalogues");
+  sections.forEach((sec) => {
+    if (sec.dataset.scrollTriggered) return;
+    sec.dataset.scrollTriggered = "true";
+
+    gsap.fromTo(sec,
+      { opacity: 0, y: 36 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.54,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sec,
+          start: "top 86%",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      }
+    );
+  });
+
+  // 2. Hand Tools Sledge Strike trigger
+  const categoriesSec = document.querySelector("#categories");
+  if (categoriesSec && !categoriesSec.dataset.strikeBound) {
+    categoriesSec.dataset.strikeBound = "true";
+    window.ScrollTrigger.create({
+      trigger: categoriesSec,
+      start: "top 78%",
+      once: true,
+      onEnter: () => {
+        const sledgeTile = document.querySelector('.cat[data-group="Hand Tools"]');
+        if (sledgeTile) {
+          gsap.fromTo(sledgeTile,
+            { scale: 0.94 },
+            {
+              scale: 1,
+              duration: 0.45,
+              ease: "elastic.out(1, 0.5)",
+              onStart: () => playToolDropSound(0.9),
+            }
+          );
+        }
+      },
+    });
+  }
+
+  // 3. Lighting Section Glow effect trigger
+  const productsSec = document.querySelector("#products");
+  if (productsSec && !productsSec.dataset.lightingGlowBound) {
+    productsSec.dataset.lightingGlowBound = "true";
+    window.ScrollTrigger.create({
+      trigger: productsSec,
+      start: "top 70%",
+      once: true,
+      onEnter: () => {
+        const lightTile = document.querySelector('.cat[data-group="Lighting"]');
+        if (lightTile) {
+          lightTile.classList.add("bloom-glow");
+          setTimeout(() => lightTile.classList.remove("bloom-glow"), 1200);
+        }
+      },
+    });
+  }
+}
+
+/**
+ * Top scroll progress bar with energetic dynamic gradient that animates as the user scrolls.
+ */
+export function initScrollProgressBar() {
+  let bar = document.querySelector("#scrollProgress");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "scrollProgress";
+    bar.className = "scroll-progress-bar";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.prepend(bar);
+  }
+
+  const gsap = getGsap();
+  if (animOK() && gsap && window.ScrollTrigger) {
+    gsap.to(bar, {
+      scaleX: 1,
+      backgroundPosition: "100% 0%",
+      ease: "none",
+      scrollTrigger: {
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.12,
+      },
+    });
+  } else {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? window.scrollY / max : 0;
+      bar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+  }
+}
+
+// ---------------------------------------------------------------- 7. Closing Animation (Exit Sequence)
+
+/**
+ * Triggers the closing animation:
+ * - GROZ logo disassembles into tool parts in reverse
+ * - Fade-to-black cinematic transition with "Made for the work ahead" tagline
+ * - "Return to Catalogue" button smoothly restores the view
+ */
+export function triggerExitSequence() {
+  const overlay = document.querySelector("#exitOverlay");
+  if (!overlay) return;
+  overlay.hidden = false;
+  overlay.style.display = "flex";
+
+  const logoWrap = overlay.querySelector("#exitLogoWrap");
+  if (logoWrap && !logoWrap.children.length) {
+    logoWrap.innerHTML = `
+      <svg class="exit-logo-svg" viewBox="0 0 300 300">
+        <defs>
+          <linearGradient id="exitOrange" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ff7b47"/>
+            <stop offset="50%" stop-color="#f4511e"/>
+            <stop offset="100%" stop-color="#bf360c"/>
+          </linearGradient>
+          <linearGradient id="exitSteel" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="50%" stop-color="#c4c9d1"/>
+            <stop offset="100%" stop-color="#69717d"/>
+          </linearGradient>
+        </defs>
+        <path id="exitPart1" class="exit-part" d="M150 20 L210 80 L185 105 L150 70 L115 105 L90 80 Z" fill="url(#exitSteel)" stroke="#515863" stroke-width="3"/>
+        <path id="exitPart2" class="exit-part" d="M280 150 L220 210 L195 185 L230 150 L195 115 L220 90 Z" fill="url(#exitSteel)" stroke="#515863" stroke-width="3"/>
+        <path id="exitPart3" class="exit-part" d="M150 280 L90 220 L115 195 L150 230 L185 195 L210 220 Z" fill="url(#exitSteel)" stroke="#515863" stroke-width="3"/>
+        <path id="exitPart4" class="exit-part" d="M20 150 L80 90 L105 115 L70 150 L105 185 L80 210 Z" fill="url(#exitSteel)" stroke="#515863" stroke-width="3"/>
+        <polygon id="exitDiamond" class="exit-part" points="150,45 255,150 150,255 45,150" fill="url(#exitOrange)" stroke="#8e2508" stroke-width="4"/>
+        <text id="exitLetterG" class="exit-part" x="150" y="196" font-family="Arial, sans-serif" font-weight="900" font-size="125" text-anchor="middle" fill="#ffffff">G</text>
+      </svg>`;
+  }
+
+  const gsap = getGsap();
+  if (!gsap || !animOK()) {
+    overlay.querySelector("#exitReturnBtn")?.addEventListener("click", () => {
+      overlay.hidden = true;
+      overlay.style.display = "none";
+    });
+    return;
+  }
+
+  const title = overlay.querySelector(".exit-title");
+  const sub = overlay.querySelector(".exit-sub");
+  const returnBtn = overlay.querySelector("#exitReturnBtn");
+
+  const p1 = overlay.querySelector("#exitPart1");
+  const p2 = overlay.querySelector("#exitPart2");
+  const p3 = overlay.querySelector("#exitPart3");
+  const p4 = overlay.querySelector("#exitPart4");
+  const diamond = overlay.querySelector("#exitDiamond");
+  const gLetter = overlay.querySelector("#exitLetterG");
+
+  gsap.set(overlay, { opacity: 0 });
+  gsap.set([p1, p2, p3, p4, diamond, gLetter], { x: 0, y: 0, rotate: 0, opacity: 1, scale: 1, transformOrigin: "center center" });
+  gsap.set([title, sub, returnBtn], { opacity: 0, y: 18 });
+
+  const exitTl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+  exitTl
+    .to(overlay, { opacity: 1, duration: 0.45 })
+    // Disassemble tool parts outward
+    .to(p1, { y: -160, x: -80, rotate: -45, opacity: 0, duration: 0.6, ease: "power2.in" }, 0.2)
+    .to(p2, { y: -80, x: 180, rotate: 50, opacity: 0, duration: 0.6, ease: "power2.in" }, 0.25)
+    .to(p3, { y: 160, x: 80, rotate: -35, opacity: 0, duration: 0.6, ease: "power2.in" }, 0.3)
+    .to(p4, { y: 80, x: -180, rotate: 40, opacity: 0, duration: 0.6, ease: "power2.in" }, 0.35)
+    .to(gLetter, { scale: 0.3, opacity: 0, duration: 0.4 }, 0.2)
+    .to(diamond, { scale: 0.4, rotate: 90, opacity: 0, duration: 0.5 }, 0.3)
+    // Reveal closing tagline
+    .to(title, { opacity: 1, y: 0, duration: 0.5 }, 0.55)
+    .to(sub, { opacity: 0.9, y: 0, duration: 0.5 }, 0.65)
+    .to(returnBtn, { opacity: 1, y: 0, duration: 0.4 }, 0.8);
+
+  const onReturn = () => {
+    gsap.to(overlay, {
+      opacity: 0,
+      duration: 0.4,
+      onComplete: () => {
+        overlay.hidden = true;
+        overlay.style.display = "none";
+      },
+    });
+  };
+  returnBtn?.replaceWith(returnBtn.cloneNode(true));
+  overlay.querySelector("#exitReturnBtn")?.addEventListener("click", onReturn);
+}
+
+// ---------------------------------------------------------------- SVG Stroke Animations
+
+/**
+ * Tool icons and SVG paths “draw themselves” on load using stroke animation.
+ */
+export function animateSvgDraw(svg, { duration = 0.55, delay = 0, stagger = 0.04 } = {}) {
+  const gsap = getGsap();
+  if (!svg || !animOK()) return;
+  const elements = svg.querySelectorAll("path, line, polyline, polygon, circle, rect");
+  const stroked = [...elements].filter((el) => {
+    const s = el.getAttribute("stroke") || getComputedStyle(el).stroke;
+    return s && s !== "none" && s !== "transparent" && s !== "rgba(0, 0, 0, 0)";
+  });
+  if (!stroked.length) return;
+
+  if (gsap) {
+    const tl = gsap.timeline({ delay, defaults: { ease: "power2.out" } });
+    stroked.forEach((el, i) => {
+      let len = 100;
+      try {
+        len = el.getTotalLength ? el.getTotalLength() : 100;
+      } catch {
+        len = 100;
+      }
+      if (len <= 0) len = 100;
+      gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
+      tl.to(el, { strokeDashoffset: 0, duration, ease: "power2.out" }, i * stagger);
+    });
+    return tl;
+  }
+}
+
+/**
+ * Category icons animate their outlines when revealed into view.
+ */
+export function animateCategoryOutlines(categories) {
+  const gsap = getGsap();
+  if (!animOK()) return;
+  const cats = (Array.isArray(categories) ? categories : [...(categories ? categories.querySelectorAll(".cat") : document.querySelectorAll("#categoryGrid .cat"))]).filter(Boolean);
+  if (!cats.length) return;
+
+  const runDraw = () => {
+    cats.forEach((cat, idx) => {
+      const svg = cat.querySelector(".cat-art svg");
+      if (svg) animateSvgDraw(svg, { duration: 0.52, delay: idx * 0.045, stagger: 0.035 });
+    });
+  };
+
+  if (gsap && window.ScrollTrigger) {
+    window.ScrollTrigger.create({
+      trigger: "#categoryGrid",
+      start: "top 86%",
+      once: true,
+      onEnter: runDraw,
+    });
+  } else {
+    runDraw();
+  }
+}
+
+// ---------------------------------------------------------------- Master Bootstrapper
+
+/**
+ * Initialize the full unified animation system across the site.
+ */
+export function initUnifiedAnimationSystem() {
+  if (!animOK()) return;
+  initScrollProgressBar();
+  initEntryAnimation();
+  initHeroParallax();
+  initScrollCue();
+  initSectionScrollTriggers();
+  initCardSparkListeners();
+
+  // Initial tool icons stroke drawing
+  const heroTool = document.querySelector(".hero-tool");
+  if (heroTool) animateSvgDraw(heroTool, { duration: 0.6, delay: 0.2, stagger: 0.06 });
+
+  document.querySelectorAll(".trust-icon svg").forEach((svg, i) => {
+    animateSvgDraw(svg, { duration: 0.48, delay: 0.25 + i * 0.08, stagger: 0.04 });
+  });
+
+  animateCategoryOutlines();
+
+  // Ensure exit overlay is strictly hidden on startup
+  const exitOverlay = document.querySelector("#exitOverlay");
+  if (exitOverlay) {
+    exitOverlay.hidden = true;
+    exitOverlay.style.display = "none";
+    document.querySelector("#exitReturnBtn")?.addEventListener("click", () => {
+      exitOverlay.hidden = true;
+      exitOverlay.style.display = "none";
+    });
+  }
+
+  // Bind exit buttons
+  document.querySelectorAll("#exitBtn, #footerExitBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      triggerExitSequence();
+    });
+  });
+
+  // Bind sound toggle button
+  const soundBtn = document.querySelector("#soundToggle");
+  soundBtn?.addEventListener("click", () => toggleSound());
+}
