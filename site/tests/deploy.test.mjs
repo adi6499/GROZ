@@ -26,10 +26,16 @@ test(".vercelignore keeps the page, the data, every product picture and the link
   // The rule that caused it would be caught here too.
   assert.ok(excludes("/output_v2/*", "output_v2/images/a.png"));
   const data = JSON.parse(read("site/data/catalogue.json"));
-  const local = (href) => href.replace(/^\.\.\//, "").split("#")[0];
+  const local = (href) => decodeURIComponent(new URL(href, "https://site.test/site/index.html").pathname.slice(1)); // from the page
   const needed = new Set(["site/index.html", "site/data/catalogue.json", "site/assets/js/app.mjs",
-    ...data.products.filter((p) => p.image).map((p) => local(p.image.src)),
+    ...data.products.filter((p) => p.image).flatMap((p) => [local(p.image.src), local(p.image.thumb)]),
     ...data.catalogues.map((c) => local(c.href))]);
+  // every picture is one of the clear WebP copies (tools/build_display_images.py), and it exists
+  for (const p of data.products.filter((x) => x.image)) {
+    assert.match(p.image.src, /^img\/full\/.+\.webp$/, p.id);
+    assert.match(p.image.thumb, /^img\/thumb\/.+\.webp$/, p.id);
+    for (const f of [p.image.src, p.image.thumb]) assert.ok(existsSync(new URL(`../${f}`, import.meta.url)), `missing site/${f}`);
+  }
   assert.ok(needed.size > 200, `only ${needed.size} files to check`); // 262 distinct pictures on 17 Oct 2026
   for (const path of needed) {
     for (const rule of rules) assert.ok(!excludes(rule, path), `${rule} would leave out ${path}`);

@@ -86,8 +86,11 @@ def test_only_supported_image_associations_are_shown(source, site):
             assert p["image_candidate_unconfirmed"] == any(im["association_type"] == "unresolved" for im in r["images"])
         else:
             assert p["image"]["evidence"] == allowed[0]["association_type"]
-            path = p["image"]["src"].replace("../", "", 1)
-            assert os.path.isfile(path)
+            # the clear WebP copies (tools/build_display_images.py) of exactly that dataset picture
+            stem = os.path.splitext(os.path.basename(allowed[0]["file_path"]))[0]
+            assert (p["image"]["src"], p["image"]["thumb"]) == (f"img/full/{stem}.webp", f"img/thumb/{stem}.webp")
+            for rel in (p["image"]["src"], p["image"]["thumb"]):
+                assert os.path.isfile(os.path.join("site", rel))
 
 
 def test_values_awaiting_a_pending_correction_are_withheld(source, tmp_path):

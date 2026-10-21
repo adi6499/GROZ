@@ -39,6 +39,9 @@ PREVIEW_DATASETS: Tuple[Tuple[str, str], ...] = ()
 PREVIEW_SITE_DATA = os.path.join("site", "data", "catalogue.preview.json")
 PREVIEW_GLOB = os.path.join("review", "preview_*.csv")
 TITLE_REVIEW = os.path.join("review", "display_titles.csv")
+# Clear WebP copies of the pictures the site shows (tools/build_display_images.py): full/ for product
+# details, thumb/ for cards and lists. The dataset PNGs stay the extraction's evidence.
+DISPLAY_IMAGES = os.path.join("site", "img")
 
 # Catalogue-level facts: which category a catalogue covers and whose brand it carries.
 CATALOGUES: Dict[str, Dict[str, str]] = {
@@ -201,8 +204,11 @@ def load_pending_corrections(pattern: str = PREVIEW_GLOB) -> Dict[Tuple[str, int
 def _image(r: Dict[str, Any], base: str = "output_v2") -> Optional[Dict[str, Any]]:
     for im in r.get("images") or []:
         if im.get("association_type") in EVIDENCE_LABELS:
-            return {
-                "src": f"../{base}/" + im["file_path"].replace("\\", "/"),
+            stem = os.path.splitext(os.path.basename(im["file_path"]))[0]
+            copies = all(os.path.isfile(os.path.join(DISPLAY_IMAGES, k, stem + ".webp")) for k in ("full", "thumb"))
+            return {  # paths relative to the site's pages (site/index.html, site/flipbook.html)
+                **({"src": f"img/full/{stem}.webp", "thumb": f"img/thumb/{stem}.webp"} if copies
+                   else {"src": f"../{base}/" + im["file_path"].replace("\\", "/")}),
                 "evidence": im["association_type"],
                 "evidence_label": EVIDENCE_LABELS[im["association_type"]],
                 "evidence_detail": im.get("evidence"),
