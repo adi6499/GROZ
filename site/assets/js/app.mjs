@@ -214,7 +214,8 @@ function renderHero() {
   const stats = [[state.products.length, "products"], [(state.data.catalogues || []).length, "source catalogues"], [m.with_confirmed_image ?? 0, "with catalogue images"]];
   // The numbers count up from zero (motion.mjs); without motion they are shown at once.
   $("#heroStats").innerHTML = stats.map(([n, label]) => `<span><b>${fx.motionOK() ? 0 : n}</b> ${label}</span>`).join("");
-  setTimeout(() => $$("#heroStats b").forEach((b, i) => fx.countTo(b, stats[i][0], 1400)), 40); // after the first render
+  // After the first render, and after the intro if one plays.
+  anim.introDone.then(() => setTimeout(() => $$("#heroStats b").forEach((b, i) => fx.countTo(b, stats[i][0], 1400)), 40));
 }
 
 /** "Mechanic's Tools › Tool Storage": GROZ's category, then this site's when the names differ. */
@@ -1318,6 +1319,9 @@ function applyFiltersOpen(open, { restoreFocus = true } = {}) {
 }
 
 function wire() {
+  // The intro (when the page head decided one may play) starts at once, not after the data.
+  anim.startIntro();
+  anim.initSound();
   let typing;
   const onType = (e) => { clearTimeout(typing); const v = e.target.value; typing = setTimeout(() => setQuery(v, { typing: true }), 120); };
   $("#navSearch").addEventListener("input", onType);
@@ -1476,13 +1480,13 @@ function wire() {
   heroTool?.addEventListener("click", strikeHammer);
   let struck = false;
   try { struck = sessionStorage.getItem("groz.struck") === "1"; } catch { /* storage unavailable */ }
-  if (heroTool && !struck) setTimeout(() => {
+  if (heroTool && !struck) anim.introDone.then(() => setTimeout(() => {
     const r = heroTool.getBoundingClientRect();
     if (document.visibilityState !== "visible" || r.bottom < 0 || r.top > innerHeight) return;
     try { sessionStorage.setItem("groz.struck", "1"); } catch { /* storage unavailable */ }
     strikeHammer();
-  }, 1500);
-  fx.wordsIn($$(".hero h1, .section-head h2, .quote-card h3"));
+  }, 1100));
+  fx.wordsIn($$(".hero h1, .section-head h2, .quote-card h3"), { after: anim.introDone });
   fx.magnetic(".btn.primary");
   // Example searches typed into the hero search box (each finds products in this catalogue).
   fx.typeHints($("#mainSearch"), ["micrometer", "LED/621", "rolling tool cabinet", "sledge", "55044", "pin vice", "caliper"]);

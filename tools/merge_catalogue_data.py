@@ -2,10 +2,19 @@
 """Merge extracted lubrication, fuel, air, and power tool products into site/data/catalogue.json and site/data/catalogue.csv.
 
 Normalizes fields and updates categories, catalogues, and metadata.
+
+KEPT FOR REFERENCE ONLY (Oct 2026). Its input, output_v2/lubrication_products.json from
+tools/extract_lubrication_products.py, is a quick table scrape that has not been checked. About 50
+of its 170 records are table labels rather than products ("Accuracy", "Repeatability"), every
+picture is a whole catalogue page, and some values are invented (box quantity 1, one pressure line
+copied to every product on a page, a printed-title note naming a font the PDF does not use).
+Products reach the website only through run_extraction.py (output_v2, with its checks and change
+reports) and build_site_data.py. The script refuses to run unless --force is given.
 """
 
 import json
 import csv
+import sys
 from collections import Counter
 
 CATALOGUE_JSON = "site/data/catalogue.json"
@@ -101,4 +110,7 @@ def main():
     print(f"Exported complete normalized catalogue to {CATALOGUE_CSV}")
 
 if __name__ == "__main__":
+    if "--force" not in sys.argv:
+        sys.exit("Refusing to merge unchecked records into the website data (see the note at the top). "
+                 "Use run_extraction.py and build_site_data.py instead.")
     main()

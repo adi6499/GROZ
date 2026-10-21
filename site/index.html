@@ -16,8 +16,11 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 1 31 16 16 31 1 16Z%27 fill=%27%23f4511e%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2714%27 text-anchor=%27middle%27 fill=%27white%27%3EG%3C/text%3E%3C/svg%3E"/>
 <link rel="preload" href="assets/fonts/ubuntu-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin/>
 <link rel="stylesheet" href="assets/site.css"/>
-<script src="assets/js/vendor/gsap.min.js"></script>
-<script src="assets/js/vendor/ScrollTrigger.min.js"></script>
+<!-- The intro plays only when motion is welcome, the device is not low-end, and not yet this visit;
+     otherwise its overlay stays hidden (site.css), so nobody is ever left on a black screen. -->
+<script>(function(){try{var d=document.documentElement,n=navigator,c=n.connection;if(matchMedia("(prefers-reduced-motion: reduce)").matches||(c&&c.saveData)||(n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||sessionStorage.getItem("groz.intro")==="1")return;sessionStorage.setItem("groz.intro","1");d.classList.add("intro")}catch(e){}})()</script>
+<script defer src="assets/js/vendor/gsap.min.js"></script>
+<script defer src="assets/js/vendor/ScrollTrigger.min.js"></script>
 <link rel="modulepreload" href="assets/js/core.mjs"/>
 <link rel="modulepreload" href="assets/js/motion.mjs"/>
 <link rel="modulepreload" href="assets/js/animations.mjs"/>
@@ -26,10 +29,10 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 <div class="scroll-progress-bar" id="scrollProgress" aria-hidden="true"></div>
 
 <!-- 1. Full-Screen Entry Sequence with Animated GROZ Logo Assembly -->
-<div class="intro-overlay" id="introOverlay" aria-hidden="true">
-  <div class="intro-backdrop-grid"></div>
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-backdrop-grid" aria-hidden="true"></div>
   <div class="intro-content">
-    <div class="intro-logo-assembly">
+    <div class="intro-logo-assembly" aria-hidden="true">
       <svg class="intro-logo-svg" viewBox="0 0 300 300" aria-hidden="true">
         <defs>
           <linearGradient id="introOrange" x1="0" y1="0" x2="1" y2="1">
@@ -54,8 +57,8 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
         <circle id="partGlowRing" cx="150" cy="150" r="16" fill="none" stroke="#ffad88" stroke-width="4" opacity="0"/>
       </svg>
     </div>
-    <div class="intro-brand-name" id="introBrandName">GROZ</div>
-    <div class="intro-tagline" id="introTagline">MADE FOR THE WORK AHEAD</div>
+    <div class="intro-brand-name" id="introBrandName" aria-hidden="true">GROZ</div>
+    <div class="intro-tagline" id="introTagline" aria-hidden="true">MADE FOR THE WORK AHEAD</div>
     <button class="intro-skip-btn" id="introSkipBtn" type="button">Skip Intro ➔</button>
   </div>
 </div>
@@ -192,6 +195,7 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
         <a class="btn soft" href="flipbook.html?pdf=tools_storage.pdf">Tool Storage</a>
         <a class="btn soft" href="flipbook.html?pdf=Estwing_Hammer_E-03_Interactive_1.pdf">Estwing Hammers</a>
         <a class="btn soft" href="flipbook.html?pdf=Precision_Catalogue_CA_03.pdf">Precision Tools</a>
+        <a class="btn soft" href="flipbook.html?pdf=groz-lubrication-equipments.pdf">Lubrication</a>
       </div>
     </div>
   </div>

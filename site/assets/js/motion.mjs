@@ -460,7 +460,7 @@ function splitWords(el) {
 
 /** Headings rise into view word by word the first time they are scrolled to. Each word is clipped
  *  by its own inline box (clip-path), so the layout is exactly that of the plain heading. */
-export function wordsIn(headings) {
+export function wordsIn(headings, { after = null } = {}) {
   if (!motionOK() || !split || !("IntersectionObserver" in window)) return;
   const io = new IntersectionObserver((entries) => {
     for (const en of entries) {
@@ -476,8 +476,9 @@ export function wordsIn(headings) {
   for (const h of headings) {
     splitWords(h);
     h.classList.add("fx-words-wait");
-    io.observe(h);
   }
+  // Hidden at once; they start rising once `after` (e.g. the intro) is done.
+  Promise.resolve(after).then(() => headings.forEach((h) => io.observe(h)));
 }
 
 // ---------------------------------------------------------------- quotation

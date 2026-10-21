@@ -310,8 +310,8 @@ body.flipbook-body {
   transform-style: preserve-3d;
   z-index: 35;
   pointer-events: none;
-  will-change: transform, filter;
-  filter: drop-shadow(-12px 16px 24px rgba(0, 0, 0, 0.6));
+  will-change: transform;
+  /* no filter here: it would flatten the 3D faces (and be repainted every frame) */
 }
 
 .fb-leaf-face {

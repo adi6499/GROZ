@@ -26,7 +26,9 @@ function getGsap() {
 
 // ---------------------------------------------------------------- Sound Synthesis (Web Audio API)
 let audioCtx = null;
-let soundEnabled = true;
+// Sound plays only after the visitor turns it on (remembered in this browser, shared with the
+// flipbook): browsers block audio before a click anyway, and a catalogue should not surprise anyone.
+let soundEnabled = (() => { try { return localStorage.getItem("groz.sound") === "on"; } catch { return false; } })();
 
 function getAudioContext() {
   if (!audioCtx && typeof window !== "undefined") {
@@ -45,6 +47,7 @@ export function isSoundEnabled() {
 
 export function toggleSound(force) {
   soundEnabled = typeof force === "boolean" ? force : !soundEnabled;
+  try { localStorage.setItem("groz.sound", soundEnabled ? "on" : "off"); } catch { /* storage unavailable */ }
   const toggleBtn = document.querySelector("#soundToggle");
   if (toggleBtn) {
     toggleBtn.setAttribute("aria-pressed", String(soundEnabled));
@@ -111,45 +114,53 @@ export function playToolDropSound(pitchMult = 1) {
 }
 
 // ---------------------------------------------------------------- 1. Entry Animation (Page Load)
+// The intro overlay is hidden by default (site.css). A small script in the page head adds the class
+// "intro" to <html> only when the intro may play: motion allowed, not a low-end device, and not yet
+// shown in this browser session. Then the overlay covers the page until startIntro() ends it, and a
+// CSS failsafe hides it after a few seconds whatever happens (a script that fails to load, a data
+// error), so no visitor is ever left on a black screen.
+
+let introResolve = null;
+/** Resolves when the intro is finishing (or at once when there is none): start the hero then. */
+export const introDone = new Promise((resolve) => { introResolve = resolve; });
+
+/** Removes the intro overlay and lets the page continue. Safe to call more than once. */
+export function endIntro() {
+  introResolve?.();
+  document.querySelector("#introOverlay")?.remove();
+  root.classList.remove("intro");
+}
 
 /**
- * Full-screen entry sequence where the GROZ logo assembles like precision tools
- * snapping together, transitioning seamlessly into the kinetic hero typography.
+ * Full-screen entry sequence where the GROZ logo assembles like precision tools snapping together.
+ * Runs from page load (it does not wait for the catalogue data); Skip or Escape ends it at once.
  */
-export function initEntryAnimation() {
+export function startIntro() {
   const overlay = document.querySelector("#introOverlay");
-  if (!overlay || !animOK()) {
-    overlay?.remove();
-    animateHeroTagline();
-    return;
-  }
-
-  // Allow skipping via button or if already shown in current session
-  const skipBtn = document.querySelector("#introSkipBtn");
-  const onSkip = () => {
-    overlay.remove();
-    animateHeroTagline();
-  };
-  skipBtn?.addEventListener("click", onSkip);
-
   const gsap = getGsap();
-  if (!gsap) {
-    setTimeout(onSkip, 400);
-    return;
-  }
+  if (!overlay || !root.classList.contains("intro") || !animOK() || !gsap) { endIntro(); return; }
 
-  const partWrench = overlay.querySelector("#partWrench");
-  const partHammer = overlay.querySelector("#partHammer");
-  const partCaliper = overlay.querySelector("#partCaliper");
-  const partBracket = overlay.querySelector("#partBracket");
-  const partDiamond = overlay.querySelector("#partDiamond");
-  const partInnerDiamond = overlay.querySelector("#partInnerDiamond");
-  const partLetterG = overlay.querySelector("#partLetterG");
-  const partGlowRing = overlay.querySelector("#partGlowRing");
-  const brandName = overlay.querySelector("#introBrandName");
-  const tagline = overlay.querySelector("#introTagline");
+  let finished = false;
+  const finish = (fast = false) => {
+    if (finished) return;
+    finished = true;
+    introResolve?.(); // the hero starts while the overlay fades away
+    removeEventListener("keydown", onKey);
+    if (fast) { endIntro(); return; }
+    gsap.to(overlay, { opacity: 0, scale: 1.04, duration: 0.5, ease: "power2.inOut", onComplete: endIntro });
+  };
+  const onKey = (e) => { if (e.key === "Escape") finish(true); };
+  overlay.querySelector("#introSkipBtn")?.addEventListener("click", () => finish(true));
+  addEventListener("keydown", onKey);
+  setTimeout(() => finish(true), 6000); // a stalled timeline never holds the page
 
-  // Initial tool part positions scattered outside the frame
+  const part = (id) => overlay.querySelector(id);
+  const partWrench = part("#partWrench"), partHammer = part("#partHammer"), partCaliper = part("#partCaliper");
+  const partBracket = part("#partBracket"), partDiamond = part("#partDiamond"), partInnerDiamond = part("#partInnerDiamond");
+  const partLetterG = part("#partLetterG"), partGlowRing = part("#partGlowRing");
+  const brandName = part("#introBrandName"), tagline = part("#introTagline");
+
+  // Tool parts start scattered outside the frame (they are already invisible: site.css).
   gsap.set(partWrench, { y: -160, x: -80, rotate: -40, opacity: 0, transformOrigin: "center center" });
   gsap.set(partHammer, { y: -80, x: 180, rotate: 45, opacity: 0, transformOrigin: "center center" });
   gsap.set(partCaliper, { y: 160, x: 80, rotate: -30, opacity: 0, transformOrigin: "center center" });
@@ -158,24 +169,8 @@ export function initEntryAnimation() {
   gsap.set(partLetterG, { scale: 0, opacity: 0, transformOrigin: "center center" });
   gsap.set([brandName, tagline], { opacity: 0, y: 16 });
 
-  const introTl = gsap.timeline({
-    defaults: { ease: "power2.out" },
-    onComplete: () => {
-      gsap.to(overlay, {
-        opacity: 0,
-        scale: 1.05,
-        duration: 0.55,
-        ease: "power2.inOut",
-        onComplete: () => {
-          overlay.remove();
-          animateHeroTagline();
-        },
-      });
-    },
-  });
-
-  introTl
-    // Step 1: Diamond Core expands into view
+  gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: () => finish() })
+    // Step 1: Diamond core expands into view
     .to([partDiamond, partInnerDiamond], { scale: 1, rotate: 0, opacity: 1, duration: 0.55, ease: "back.out(1.6)" }, 0.1)
     // Step 2: Tool parts fly in and snap together with elastic precision
     .to(partWrench, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.25)
@@ -192,65 +187,6 @@ export function initEntryAnimation() {
     .to(tagline, { opacity: 0.85, y: 0, letterSpacing: "0.28em", duration: 0.35, ease: "power2.out" }, 0.75)
     // Hold momentarily for cinematic impact
     .to({}, { duration: 0.4 });
-}
-
-// ---------------------------------------------------------------- 2. Hero Section Animations
-
-/**
- * Animate the tagline "Find your tool" with kinetic typography and staggered letter reveals.
- */
-export function animateHeroTagline() {
-  const gsap = getGsap();
-  if (!animOK()) return;
-  const title = document.querySelector("#heroTitle");
-  if (!title) return;
-
-  // Split "Find your tool." into individual character wrappers if not already prepared
-  let charInners = title.querySelectorAll(".hero-char");
-  if (!charInners.length) {
-    const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
-    const textNode = walker.nextNode();
-    if (textNode && textNode.textContent.includes("Find your tool")) {
-      const container = document.createElement("span");
-      container.className = "hero-tagline";
-      container.setAttribute("aria-label", "Find your tool.");
-      const text = textNode.textContent.trim();
-      for (const char of text) {
-        const wrap = document.createElement("span");
-        wrap.className = "hero-char-wrap";
-        wrap.style.cssText = "display:inline-block; overflow:hidden; vertical-align:bottom; margin-right:0.015em; perspective:500px;";
-        const inner = document.createElement("span");
-        inner.className = "hero-char";
-        inner.style.cssText = "display:inline-block; transform:translateY(120%) rotateX(-65deg); opacity:0; will-change:transform,opacity;";
-        inner.innerHTML = char === " " ? "&nbsp;" : char;
-        wrap.appendChild(inner);
-        container.appendChild(wrap);
-      }
-      textNode.replaceWith(container);
-    }
-    charInners = title.querySelectorAll(".hero-char");
-  }
-
-  const em = title.querySelector("em");
-  if (gsap && charInners.length) {
-    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-    tl.to(charInners, {
-      y: "0%",
-      rotateX: 0,
-      opacity: 1,
-      duration: 0.44,
-      stagger: 0.034,
-      ease: "power2.out",
-    });
-    if (em) {
-      tl.fromTo(em,
-        { y: 22, opacity: 0, scale: 0.95 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.48, ease: "back.out(1.4)" },
-        "-=0.2"
-      );
-    }
-    return tl;
-  }
 }
 
 /**
@@ -693,30 +629,11 @@ export function initSectionScrollTriggers() {
   const gsap = getGsap();
   if (!animOK() || !gsap || !window.ScrollTrigger) return;
 
-  // 1. General major section reveals
-  const sections = document.querySelectorAll(".trust-strip, #categories, #products, #about, #catalogues");
-  sections.forEach((sec) => {
-    if (sec.dataset.scrollTriggered) return;
-    sec.dataset.scrollTriggered = "true";
+  // Sections themselves are brought in by the existing .reveal observer (app.mjs). Animating them here
+  // too doubled the motion and left an inline transform on #products, which turned the fixed filter
+  // sheet on phones into one positioned inside the section.
 
-    gsap.fromTo(sec,
-      { opacity: 0, y: 36 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.54,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sec,
-          start: "top 86%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      }
-    );
-  });
-
-  // 2. Hand Tools Sledge Strike trigger
+  // Hand Tools Sledge Strike trigger
   const categoriesSec = document.querySelector("#categories");
   if (categoriesSec && !categoriesSec.dataset.strikeBound) {
     categoriesSec.dataset.strikeBound = "true";
@@ -733,6 +650,7 @@ export function initSectionScrollTriggers() {
               scale: 1,
               duration: 0.45,
               ease: "elastic.out(1, 0.5)",
+              clearProps: "transform",
               onStart: () => playToolDropSound(0.9),
             }
           );
@@ -741,7 +659,7 @@ export function initSectionScrollTriggers() {
     });
   }
 
-  // 3. Lighting Section Glow effect trigger
+  // Lighting Section Glow effect trigger
   const productsSec = document.querySelector("#products");
   if (productsSec && !productsSec.dataset.lightingGlowBound) {
     productsSec.dataset.lightingGlowBound = "true";
@@ -957,7 +875,6 @@ export function animateCategoryOutlines(categories) {
 export function initUnifiedAnimationSystem() {
   if (!animOK()) return;
   initScrollProgressBar();
-  initEntryAnimation();
   initHeroParallax();
   initScrollCue();
   initSectionScrollTriggers();
@@ -992,7 +909,13 @@ export function initUnifiedAnimationSystem() {
     });
   });
 
-  // Bind sound toggle button
+}
+
+/** The header's sound button: shows the remembered choice and switches it. Works with or without
+ *  motion (it is a setting, not an animation). */
+export function initSound() {
   const soundBtn = document.querySelector("#soundToggle");
-  soundBtn?.addEventListener("click", () => toggleSound());
+  if (!soundBtn) return;
+  toggleSound(soundEnabled); // show the remembered state
+  soundBtn.addEventListener("click", () => toggleSound());
 }

@@ -238,10 +238,24 @@ function getPagesForSpread(spreadIdx) {
 
 function getMaxSpreads() {
   const cat = getActiveCatalogue();
-  return state.singlePageMode ? cat.pageCount : Math.ceil(cat.pageCount / 2);
+  // Spreads are (cover), (2,3), (4,5) ...: the last page always has a spread of its own.
+  return state.singlePageMode ? cat.pageCount : Math.floor(cat.pageCount / 2) + 1;
+}
+
+/** Turning leaf back at rest: hidden, with no transform or shading left on it. */
+function resetLeaf(leaf) {
+  if (window.gsap) window.gsap.set(leaf, { clearProps: "transform" });
+  leaf.style.display = "none";
+  for (const id of ["#leafShadow", "#leafBackShadow", "#leafFrontGlare", "#leafBackGlare"]) {
+    const el = $(id);
+    if (el) el.style.opacity = "0";
+  }
 }
 
 // ---------------------------------------------------------------- Render Functions
+const COVER_SIDE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' fill='%2314161a'%3E%3Crect width='100%25' height='100%25' fill='%2316181d'/%3E%3Ctext x='50%25' y='50%25' fill='%23555' font-family='sans-serif' font-size='18' text-anchor='middle'%3EGROZ Product Catalogue%3C/text%3E%3C/svg%3E";
+const END_PAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' fill='%2314161a'%3E%3Crect width='100%25' height='100%25' fill='%2316181d'/%3E%3Ctext x='50%25' y='50%25' fill='%23555' font-family='sans-serif' font-size='18' text-anchor='middle'%3EEnd of Catalogue%3C/text%3E%3C/svg%3E";
+
 export function renderActiveSpread() {
   const cat = getActiveCatalogue();
   const { left, right } = getPagesForSpread(state.currentSpread);
@@ -260,7 +274,7 @@ export function renderActiveSpread() {
     renderHotspots(leftHotspots, left);
   } else {
     leftPanel.style.display = state.singlePageMode ? "none" : "";
-    leftImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' fill='%2314161a'%3E%3Crect width='100%25' height='100%25' fill='%2316181d'/%3E%3Ctext x='50%25' y='50%25' fill='%23555' font-family='sans-serif' font-size='18' text-anchor='middle'%3EGROZ Product Catalogue%3C/text%3E%3C/svg%3E";
+    leftImg.src = COVER_SIDE;
     leftHotspots.innerHTML = "";
   }
 
@@ -282,7 +296,7 @@ export function renderActiveSpread() {
       rightPanel.style.aspectRatio = "";
     }
   } else {
-    rightImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' fill='%2314161a'%3E%3Crect width='100%25' height='100%25' fill='%2316181d'/%3E%3Ctext x='50%25' y='50%25' fill='%23555' font-family='sans-serif' font-size='18' text-anchor='middle'%3EEnd of Catalogue%3C/text%3E%3C/svg%3E";
+    rightImg.src = END_PAGE;
     rightHotspots.innerHTML = "";
     rightPanel.style.aspectRatio = "";
   }
@@ -328,7 +342,7 @@ export function renderActiveSpread() {
     } else {
       const p1 = left || 1;
       const p2 = Math.min(right, cat.pageCount);
-      counter.textContent = `Pages ${p1}–${p2} of ${cat.pageCount}`;
+      counter.textContent = p1 === p2 ? `Page ${p1} of ${cat.pageCount}` : `Pages ${p1}–${p2} of ${cat.pageCount}`;
     }
   }
 
@@ -678,6 +692,11 @@ export function flipToNext() {
 
   if (frontImg) frontImg.src = getPageImgUrl(currentRight) || "";
   if (backImg) backImg.src = getPageImgUrl(nextLeft || nextRight) || "";
+  // Underneath the lifting page, the next right-hand page is already there (or the end).
+  const rightImg = $("#rightPageImg");
+  const underRight = getPageImgUrl(nextRight);
+  if (rightImg) rightImg.src = underRight || END_PAGE;
+  $("#rightHotspots")?.replaceChildren();
 
   leaf.style.display = "block";
 
@@ -688,28 +707,25 @@ export function flipToNext() {
     // 3. Roll-down settle: rolls onto left spread with natural deceleration
     const tl = window.gsap.timeline({
       onComplete: () => {
-        leaf.style.display = "none";
-        window.gsap.set(leaf, { clearProps: "all" });
+        // Clear only what the turn set: "all" would also wipe the inline display:none and leave the
+        // finished leaf lying over the new right-hand page.
+        resetLeaf(leaf);
         state.currentSpread = nextSpread;
         renderActiveSpread();
         state.isTurning = false;
       },
     });
+    state.turn = tl;
 
-    window.gsap.set(leaf, {
-      rotateY: 0,
-      rotateZ: 0,
-      skewY: 0,
-      translateZ: 0,
-      filter: "drop-shadow(-4px 8px 12px rgba(0, 0, 0, 0.45))",
-    });
+    // No CSS filter on the leaf: a filter flattens its 3D faces (the back page never showed) and a
+    // blurred drop-shadow is repainted on every frame. The shadow layer below does the shading.
+    window.gsap.set(leaf, { rotateY: 0, rotateZ: 0, skewY: 0, translateZ: 0 });
 
     tl.to(leaf, {
       rotateY: -90,
       translateZ: 85, // Authentic curved 3D arch
       rotateZ: -3.5, // Diagonal corner lift
       skewY: 4.5, // Paper flex & curl drag
-      filter: "drop-shadow(-28px 30px 45px rgba(0, 0, 0, 0.65))",
       duration: 0.32,
       ease: "power2.in",
       onUpdate: function () {
@@ -722,7 +738,6 @@ export function flipToNext() {
       translateZ: 0,
       rotateZ: 0,
       skewY: 0,
-      filter: "drop-shadow(-4px 8px 12px rgba(0, 0, 0, 0.35))",
       duration: 0.34,
       ease: "power2.out",
       onUpdate: function () {
@@ -804,34 +819,32 @@ export function flipToPrev() {
 
   if (frontImg) frontImg.src = getPageImgUrl(prevRight) || "";
   if (backImg) backImg.src = getPageImgUrl(currentLeft) || "";
+  // Underneath the lifting page, the previous left-hand page is already there (or the cover side).
+  const { left: prevLeft } = getPagesForSpread(prevSpread);
+  const leftImg = $("#leftPageImg");
+  if (leftImg) leftImg.src = getPageImgUrl(prevLeft) || COVER_SIDE;
+  $("#leftHotspots")?.replaceChildren();
 
   leaf.style.display = "block";
 
   if (window.gsap) {
     const tl = window.gsap.timeline({
       onComplete: () => {
-        leaf.style.display = "none";
-        window.gsap.set(leaf, { clearProps: "all" });
+        resetLeaf(leaf);
         state.currentSpread = prevSpread;
         renderActiveSpread();
         state.isTurning = false;
       },
     });
+    state.turn = tl;
 
-    window.gsap.set(leaf, {
-      rotateY: -180,
-      rotateZ: 0,
-      skewY: 0,
-      translateZ: 0,
-      filter: "drop-shadow(4px 8px 12px rgba(0, 0, 0, 0.45))",
-    });
+    window.gsap.set(leaf, { rotateY: -180, rotateZ: 0, skewY: 0, translateZ: 0 });
 
     tl.to(leaf, {
       rotateY: -90,
       translateZ: 85, // Curved 3D arch lift
       rotateZ: 3.5, // Natural backward corner flex
       skewY: -4.5,
-      filter: "drop-shadow(28px 30px 45px rgba(0, 0, 0, 0.65))",
       duration: 0.32,
       ease: "power2.in",
       onUpdate: function () {
@@ -844,7 +857,6 @@ export function flipToPrev() {
       translateZ: 0,
       rotateZ: 0,
       skewY: 0,
-      filter: "drop-shadow(4px 8px 12px rgba(0, 0, 0, 0.35))",
       duration: 0.34,
       ease: "power2.out",
       onUpdate: function () {
@@ -904,8 +916,8 @@ function renderFilmstrip() {
 
   for (let s = 1; s <= maxSpreads; s++) {
     const { left, right } = getPagesForSpread(s);
-    const imgUrl = getPageImgUrl(right) || "assets/flipbook/lighting/page-01.png";
-    const label = state.singlePageMode ? `Page ${right}` : (left ? `Pages ${left}–${Math.min(right, cat.pageCount)}` : "Cover");
+    const imgUrl = getPageImgUrl(right) || getPageImgUrl(left) || "";
+    const label = state.singlePageMode ? `Page ${right}` : (!left ? "Cover" : right > cat.pageCount ? `Page ${left}` : `Pages ${left}–${right}`);
     items.push(`
       <div class="fb-thumb-item${s === state.currentSpread ? " active" : ""}" data-spread="${s}" data-label="${label}">
         <img src="${esc(imgUrl)}" alt="${label}" loading="lazy"/>
