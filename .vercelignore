@@ -31,3 +31,6 @@
 /output_v2/images/lubrication/
 /output_v2/lubrication_products.json
 /output_v2/lubrication_products.csv
+# The local preview of products not approved yet (batch_3_fluid) is never deployed.
+/site/data/catalogue.preview.json
+/output_preview_fluid/

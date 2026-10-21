@@ -6,3 +6,6 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Local preview data of products not approved yet (build_site_data.py --preview)
+site/data/catalogue.preview.json

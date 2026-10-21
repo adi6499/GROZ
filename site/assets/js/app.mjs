@@ -168,10 +168,14 @@ function renderError(err) {
   $("#retryLoad")?.addEventListener("click", load);
 }
 
+// ?data=preview: the local preview of newly extracted products that are not approved yet
+// (site/data/catalogue.preview.json, built by build_site_data.py --preview; never deployed).
+const PREVIEW = new URLSearchParams(location.search).get("data") === "preview";
+
 async function load() {
   renderLoading();
   try {
-    const res = await fetch("data/catalogue.json", { cache: "no-cache" });
+    const res = await fetch(PREVIEW ? "data/catalogue.preview.json" : "data/catalogue.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`The data file returned HTTP ${res.status}.`);
     const data = await res.json();
     if (!data || !Array.isArray(data.products)) throw new Error("The data file is not in the expected format.");
@@ -183,6 +187,14 @@ async function load() {
 }
 
 function init(data) {
+  if (PREVIEW) {
+    const bar = document.createElement("div");
+    bar.className = "preview-bar";
+    bar.setAttribute("role", "note");
+    const n = data.meta?.preview?.fuel_duplicates_left_out;
+    bar.innerHTML = `<b>Preview — not approved, not on the live site.</b> It includes products just extracted from the Fluid Handling CC-07 and Fuel CAT 400 catalogues, for review.${n ? ` ${n} Fuel CAT 400 products that CC-07 also prints are shown once, from CC-07.` : ""} <a href="./">Back to the live catalogue</a>`;
+    document.body.prepend(bar);
+  }
   state.data = data;
   state.products = data.products;
   state.byId = new Map(data.products.map((p) => [p.id, p]));
@@ -249,8 +261,8 @@ function renderCatalogues() {
   const list = state.data.catalogues || [];
   $("#catalogueList").innerHTML = list.map((c) => `
     <div class="catalogue-row"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>${esc(c.title)}</strong>
-      <small>${esc(groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
-      <div class="row-actions"><a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a><button class="btn soft" type="button" data-show-cat="${esc(c.category)}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
+      <small>${esc(c.categories ? [...new Set(c.categories.map((x) => core.groupOf(x)?.name || x))].join(", ") : groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
+      <div class="row-actions"><a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a><button class="btn soft" type="button" data-show-cat="${esc((c.categories || [c.category]).join("|"))}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
       <small>Hand Tools and Fluid Handling are not in this preview yet. Their products will appear once they have been extracted and reviewed.</small></div></div></div>`;
 }
@@ -1354,7 +1366,7 @@ function wire() {
     else showCategories(g.categories, toggle);
   };
   $("#categoryGrid").addEventListener("click", (e) => { const c = e.target.closest("[data-group]"); if (c) openGroup(c.dataset.group, true); });
-  $("#catalogueList").addEventListener("click", (e) => { const b = e.target.closest("[data-show-cat]"); if (b) showCategories([b.dataset.showCat], false); });
+  $("#catalogueList").addEventListener("click", (e) => { const b = e.target.closest("[data-show-cat]"); if (b) showCategories(b.dataset.showCat.split("|"), false); });
 
   // Header Categories menu (desktop) and the category list in the phone menu.
   const catMenu = $("#catMenu"), catBtn = $("#catMenuBtn");

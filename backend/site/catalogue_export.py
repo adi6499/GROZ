@@ -32,6 +32,10 @@ from .titles import TitleReader, relation
 
 DATASET = os.path.join("output_v2", "extracted_products.json")
 SITE_DATA = os.path.join("site", "data", "catalogue.json")
+# The Fluid Handling CC-07 / FUEL CAT 400 extraction (batch_3_fluid), shown only in the local preview
+# (site/data/catalogue.preview.json, never deployed) until the owner approves it.
+PREVIEW_DATASET = os.path.join("output_preview_fluid", "batches", "batch_3_fluid.json")
+PREVIEW_SITE_DATA = os.path.join("site", "data", "catalogue.preview.json")
 PREVIEW_GLOB = os.path.join("review", "preview_*.csv")
 TITLE_REVIEW = os.path.join("review", "display_titles.csv")
 
@@ -49,9 +53,58 @@ CATALOGUES: Dict[str, Dict[str, str]] = {
     "tools_storage.pdf": {
         "category": "Tool Storage", "brand": "GROZ", "title": "GROZ Tool Storage",
         "art": "storage", "blurb": "Cabinets, tool boxes & workbenches"},
+    # Several categories: each product's comes from the catalogue's own contents sections (below).
+    "Fluid_Handling_Catalogue_spread.pdf": {
+        "category": "Greasing Equipment", "brand": "GROZ", "title": "GROZ Fluid Handling CC-07",
+        "art": "grease", "blurb": "Lubrication, fuel & DEF, drum and air handling"},
+    "FUEL.pdf": {
+        "category": "Fuel & DEF Handling", "brand": "GROZ", "title": "GROZ Fuel Equipment CAT 400",
+        "art": "fuel", "blurb": "Fuel pumps, meters, nozzles & filters"},
 }
 CATALOGUE_ORDER = ("tools_storage.pdf", "GROZ_LIGHTING_GL-10_1.pdf", "Estwing_Hammer_E-03_Interactive_1.pdf",
-                   "Precision_Catalogue_CA_03.pdf")
+                   "Precision_Catalogue_CA_03.pdf", "Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf")
+
+# Every category the site shows, in this order, with its tile picture and description (presentation).
+CATEGORY_INFO: Dict[str, Tuple[str, str]] = {
+    "Tool Storage": ("storage", "Cabinets, tool boxes & workbenches"),
+    "LED Worklights": ("light", "Worklights, floodlights & inspection lamps"),
+    "Striking Tools": ("sledge", "Sledgehammers, mallets, axes & bars"),
+    "Precision Tools": ("measure", "Measuring tools & machine accessories"),
+    "Greasing Equipment": ("grease", "Grease guns, pumps, couplers, fittings & accessories"),
+    "Oiling Equipment": ("grease", "Oil pumps, dispensers, meters, control guns, cans & funnels"),
+    "Hose Reels": ("grease", "Metal hose reels for grease, oil, air & water"),
+    "Waste Oil Handling": ("grease", "Waste oil pumps, drains, extractors & drain pans"),
+    "Drum Handling": ("grease", "Drum dollies, trolleys, cradles, taps & bung tools"),
+    "Fuel & DEF Handling": ("fuel", "Fuel & DEF pumps, meters, nozzles, filters & hoses"),
+    "Air Handling": ("air", "Regulators, filters, lubricators, blow guns, couplers & tyre gauges"),
+    "Battery Grease Guns": ("drill", "Battery powered & rechargeable grease guns"),
+}
+
+# Fluid Handling CC-07: the sections of its contents pages (pages 4-7), by printed page.
+FH_PDF = "Fluid_Handling_Catalogue_spread.pdf"
+FH_SECTIONS: Tuple[Tuple[int, int, str], ...] = (
+    (8, 125, "Greasing Equipment"),      # I   GREASING EQUIPMENT AND ACCESSORIES
+    (126, 199, "Oiling Equipment"),      # II  OILING EQUIPMENT AND ACCESSORIES
+    (200, 203, "Hose Reels"),            # III METAL HOSE REELS
+    (204, 219, "Waste Oil Handling"),    # IV  WASTE OIL HANDLING
+    (220, 297, "Fuel & DEF Handling"),   # V   FUEL HANDLING (with DEF)
+    (298, 310, "Drum Handling"),         # VI  DRUM HANDLING
+    (311, 999, "Air Handling"),          # VII AIR HANDLING
+)
+
+
+def category_for(r: Dict[str, Any], title: Optional[str]) -> str:
+    """A product's category: its catalogue's, or for CC-07 the contents section its printed page is in.
+    Grease guns whose printed title names a battery are Battery Grease Guns (GROZ lists them under
+    Power Tools; owner's choice, 21 Oct 2026)."""
+    cat = CATALOGUES.get(r["source_pdf"], {"category": "Other"})["category"]
+    if r["source_pdf"] == FH_PDF:
+        m = re.match(r"\d+", str(r.get("catalog_page_label") or ""))
+        printed = int(m.group()) if m else 0
+        cat = next((name for lo, hi, name in FH_SECTIONS if lo <= printed <= hi), cat)
+        if title and re.search(r"battery", title, re.I) and re.search(r"grease gun", title, re.I):
+            cat = "Battery Grease Guns"
+    return cat
 
 SPEC_LABELS: Dict[str, str] = {
     "variant_label": "Variant (printed column)",
@@ -125,11 +178,11 @@ def load_pending_corrections(pattern: str = PREVIEW_GLOB) -> Dict[Tuple[str, int
     return out
 
 
-def _image(r: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def _image(r: Dict[str, Any], base: str = "output_v2") -> Optional[Dict[str, Any]]:
     for im in r.get("images") or []:
         if im.get("association_type") in EVIDENCE_LABELS:
             return {
-                "src": "../output_v2/" + im["file_path"].replace("\\", "/"),
+                "src": f"../{base}/" + im["file_path"].replace("\\", "/"),
                 "evidence": im["association_type"],
                 "evidence_label": EVIDENCE_LABELS[im["association_type"]],
                 "evidence_detail": im.get("evidence"),
@@ -160,7 +213,8 @@ def _review_overlay(r: Dict[str, Any], decision: Tuple[Optional[str], Optional[D
 
 def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], str],
                   printed_title: Optional[Dict[str, Any]] = None,
-                  decision: Tuple[Optional[str], Optional[Dict[str, Any]]] = (None, None)) -> Dict[str, Any]:
+                  decision: Tuple[Optional[str], Optional[Dict[str, Any]]] = (None, None),
+                  image_base: str = "output_v2") -> Dict[str, Any]:
     cat = CATALOGUES.get(r["source_pdf"], {"category": "Other", "brand": "", "title": r["source_pdf"], "art": "tool"})
     status, status_label, review_notes, verified_info = _review_overlay(r, decision)
     specs_in = r.get("specifications") or {}
@@ -175,7 +229,7 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
         specs.append({"key": key, "label": spec_label(key), "value": str(value)})
     # Fields being removed by a pending correction (present in the dataset, value withheld above) are
     # listed as under review; fields a correction would add are not shown (not in the dataset).
-    image = _image(r)
+    image = _image(r, image_base)
     unresolved = any(im.get("association_type") == "unresolved" for im in r.get("images") or [])
     return {
         "id": record_id(r),
@@ -186,7 +240,7 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
         "title_source": {k: printed_title[k] for k in ("rule", "pdf_page", "evidence")} if printed_title else None,
         "heading": heading_text(r),
         "heading_relation": relation(r.get("sub_title"), printed_title["text"] if printed_title else None),
-        "category": cat["category"],
+        "category": category_for(r, printed_title["text"] if printed_title else None),
         "brand": cat["brand"],
         "catalogue": {"pdf": r["source_pdf"], "title": cat["title"], "href": f"../{r['source_pdf']}#page={r['physical_page_number']}"},
         "page": r["physical_page_number"],
@@ -208,17 +262,36 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
     }
 
 
+def fuel_duplicates(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """FUEL CAT 400 products also printed in Fluid Handling CC-07 (same ORD NR., or the same CAT NR. when
+    no order number is printed): the site shows each product once, from CC-07, the fuller catalogue."""
+    fh = [r for r in records if r["source_pdf"] == FH_PDF]
+    ords = {r["ord_nr"] for r in fh if r.get("ord_nr")}
+    cats = {r["cat_nr"] for r in fh if r.get("cat_nr")}
+    return [r for r in records if r["source_pdf"] == "FUEL.pdf"
+            and ((r.get("ord_nr") and r["ord_nr"] in ords) or (not r.get("ord_nr") and r.get("cat_nr") in cats))]
+
+
 def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".",
-          ledger_path: str = verification.LEDGER) -> Dict[str, Any]:
+          ledger_path: str = verification.LEDGER, extra: Tuple[Tuple[str, str], ...] = ()) -> Dict[str, Any]:
+    """The site data. `extra`: further datasets (path, image folder) shown with output_v2 (the local
+    preview of batch_3_fluid)."""
     with open(dataset_path, "rb") as f:
         raw = f.read()
-    records = json.loads(raw.decode("utf-8"))
+    sources = [(r, "output_v2") for r in json.loads(raw.decode("utf-8"))]
+    for path, base in extra:
+        with open(path, encoding="utf-8") as f:
+            sources += [(r, base) for r in json.load(f)]
+    dups = {id(r) for r in fuel_duplicates([r for r, _ in sources])}
+    duplicates = [r for r, _ in sources if id(r) in dups]
+    sources = [(r, b) for r, b in sources if id(r) not in dups]
+    records = [r for r, _ in sources]
     pending = load_pending_corrections(preview_glob)
     ledger = verification.load_ledger(ledger_path)
     reader = TitleReader(pdf_root)
     try:
-        items = [export_record(r, pending, reader.title_for(r), verification.state_for(ledger, record_id(r), r))
-                 for r in records]
+        items = [export_record(r, pending, reader.title_for(r), verification.state_for(ledger, record_id(r), r), base)
+                 for r, base in sources]
     finally:
         reader.close()
     review_counts = verification.summary(ledger, [(record_id(r), r) for r in records])
@@ -229,10 +302,14 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
     by_cat = Counter(i["category"] for i in items)
     catalogues = []
     for pdf in CATALOGUE_ORDER:
-        if pdf in CATALOGUES:
+        n = sum(1 for i in items if i["catalogue"]["pdf"] == pdf)
+        if pdf in CATALOGUES and n:  # catalogues without products on the site are not listed
             c = CATALOGUES[pdf]
-            catalogues.append({"pdf": pdf, "href": f"../{pdf}", **c,
-                               "records": sum(1 for i in items if i["catalogue"]["pdf"] == pdf)})
+            cats = [name for name in CATEGORY_INFO if any(i["category"] == name and i["catalogue"]["pdf"] == pdf for i in items)]
+            entry = {"pdf": pdf, "href": f"../{pdf}", **c, "records": n}
+            if len(cats) > 1:
+                entry["categories"] = cats
+            catalogues.append(entry)
     return {
         "meta": {
             "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -247,9 +324,11 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "with_confirmed_image": sum(1 for i in items if i["image"]),
             "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
             "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
+            **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra],
+                            "fuel_duplicates_left_out": len(duplicates)}} if extra else {}),
         },
-        "categories": [{"name": c["category"], "art": c["art"], "blurb": c["blurb"], "records": by_cat[c["category"]]}
-                       for c in catalogues],
+        "categories": [{"name": name, "art": art, "blurb": blurb, "records": by_cat[name]}
+                       for name, (art, blurb) in CATEGORY_INFO.items() if by_cat[name]],
         "catalogues": catalogues,
         "products": items,
     }
