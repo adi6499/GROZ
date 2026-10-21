@@ -1399,3 +1399,67 @@ body.flipbook-body {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------- Magnifying glass */
+.fb-lens {
+  --lens: 210px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1150;
+  width: var(--lens);
+  height: var(--lens);
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px var(--fb-orange), 0 22px 48px rgba(0, 0, 0, 0.6), inset 0 0 22px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.14s ease, transform 0.22s var(--fb-spring);
+  will-change: translate, transform;
+}
+.fb-lens.show {
+  opacity: 1;
+  transform: none;
+}
+.fb-lens-zoom {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  translate: -50% 0;
+  padding: 2px 9px;
+  border-radius: 99px;
+  background: rgba(20, 22, 26, 0.85);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+/* with the lens on, the pointer is the lens; a finger on the page moves it (no page swipe) */
+.fb-stage.lens-on .fb-page-panel {
+  cursor: none;
+  touch-action: none;
+}
+.fb-lens-hint-touch {
+  display: none;
+}
+@media (hover: none) {
+  .fb-lens-hint-mouse {
+    display: none;
+  }
+  .fb-lens-hint-touch {
+    display: inline;
+  }
+}
+@media (max-width: 600px) {
+  .fb-lens {
+    --lens: 160px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fb-lens {
+    transition: none;
+  }
+}

@@ -466,6 +466,7 @@ export function renderActiveSpread() {
   });
   if (counter) announce(counter.textContent);
   preloadAround();
+  if (LENS.shown) requestLens();
 
   // Update Embedded Tool Companion Icon & Text
   const companionIcon = $("#companionIcon");
@@ -1114,6 +1115,7 @@ export function toggleZoom(force) {
   const next = typeof force === "boolean" ? force : !isZoomed;
   if (next === isZoomed) return;
   isZoomed = next;
+  if (isZoomed) toggleLens(false);
 
   const stage = $(".fb-stage");
   const wrap = $("#bookWrap");
@@ -1150,6 +1152,167 @@ function panZoomed(e) {
   const maxX = Math.max(0, (wrap.offsetWidth * ZOOM - box.width) / 2);
   const maxY = Math.max(0, (wrap.offsetHeight * ZOOM - box.height) / 2);
   window.gsap.to(wrap, { x: -rx * 2 * maxX, y: -ry * 2 * maxY, duration: animate() ? 0.35 : 0, ease: "power3.out", overwrite: "auto" });
+}
+
+// ---------------------------------------------------------------- Magnifying glass
+// A round lens follows the pointer over a page and shows that spot enlarged (scroll, or + and -, to
+// change how much). Inside it the page is drawn sharper: a 200 DPI render (hires/), fetched only for a
+// page someone looks at; until it has arrived the lens shows the page already on screen. On a touch
+// screen, hold a finger on the page: the lens floats above it.
+const LENS = { on: false, active: false, zoom: 2.5, min: 1.5, max: 5, x: 0, y: 0, touch: false, raf: 0, shown: false, url: "" };
+const sharp = new Map(); // hi-res page url -> its decoded Image, or "loading" / "failed"
+
+function getHiresUrl(pageNum) {
+  const cat = getActiveCatalogue();
+  if (!cat.folder || !(pageNum >= 1 && pageNum <= cat.pageCount)) return null;
+  return `${cat.folder}/hires/page-${String(pageNum).padStart(2, "0")}.webp`;
+}
+
+/** Where the page in `img` is drawn on screen (the image is fitted inside its box: object-fit contain). */
+function drawnBox(img) {
+  const r = img.getBoundingClientRect();
+  const nw = img.naturalWidth;
+  const nh = img.naturalHeight;
+  if (!nw || !nh || !r.width || !r.height) return null;
+  const s = Math.min(r.width / nw, r.height / nh);
+  const w = nw * s;
+  const h = nh * s;
+  return { left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, width: w, height: h };
+}
+
+/** The catalogue page under a point on screen, if any. */
+function pageAt(x, y) {
+  const { left, right } = getPagesForSpread(state.currentSpread);
+  for (const [img, page] of [[$("#rightPageImg"), right], [$("#leftPageImg"), left]]) {
+    if (!img || !page || !getPageImgUrl(page) || img.offsetParent === null) continue;
+    const box = drawnBox(img);
+    if (box && x >= box.left && x <= box.left + box.width && y >= box.top && y <= box.top + box.height) return { page, box };
+  }
+  return null;
+}
+
+/** The sharp page once it is decoded; meanwhile the page already on screen (and the sharp one is fetched). */
+function lensUrl(page) {
+  const hi = getHiresUrl(page);
+  const got = sharp.get(hi);
+  if (got instanceof Image) return hi;
+  if (!got && hi) {
+    sharp.set(hi, "loading");
+    const im = new Image();
+    im.decoding = "async";
+    im.src = hi;
+    im.decode().then(() => {
+      sharp.set(hi, im);
+      for (const [url, v] of sharp) if (sharp.size > 8 && v instanceof Image && url !== hi) sharp.delete(url);
+      requestLens();
+    }, () => sharp.set(hi, "failed"));
+  }
+  return getPageImgUrl(page);
+}
+
+function requestLens() {
+  if (!LENS.raf) LENS.raf = requestAnimationFrame(drawLens);
+}
+
+/** Once per display frame at most: the lens moves to the pointer and shows the spot under it. */
+function drawLens() {
+  LENS.raf = 0;
+  const lens = $("#fbLens");
+  if (!lens) return;
+  const hit = LENS.on && LENS.active && !state.isTurning ? pageAt(LENS.x, LENS.y) : null;
+  if (!hit) {
+    showLens(lens, false);
+    return;
+  }
+  const size = lens.offsetWidth;
+  const url = lensUrl(hit.page);
+  if (url !== LENS.url) {
+    lens.style.backgroundImage = `url("${url}")`;
+    LENS.url = url;
+  }
+  const bw = hit.box.width * LENS.zoom;
+  const bh = hit.box.height * LENS.zoom;
+  const fx = (LENS.x - hit.box.left) / hit.box.width;
+  const fy = (LENS.y - hit.box.top) / hit.box.height;
+  lens.style.backgroundSize = `${bw}px ${bh}px`;
+  lens.style.backgroundPosition = `${size / 2 - fx * bw}px ${size / 2 - fy * bh}px`;
+  // On a touch screen the lens floats above the finger, which would otherwise cover that very spot.
+  const lift = LENS.touch ? size * 0.7 : 0;
+  // The place goes in `translate` (applied after the CSS scale), so the lens grows in place when it appears.
+  lens.style.translate = `${LENS.x - size / 2}px ${LENS.y - size / 2 - lift}px`;
+  showLens(lens, true);
+}
+
+function showLens(lens, on) {
+  if (LENS.shown === on) return;
+  LENS.shown = on;
+  lens.classList.toggle("show", on);
+}
+
+function setLensZoom(z) {
+  LENS.zoom = Math.min(LENS.max, Math.max(LENS.min, z));
+  const chip = $("#fbLensZoom");
+  if (chip) chip.textContent = `${LENS.zoom.toFixed(1).replace(/\.0$/, "")}×`;
+  requestLens();
+}
+
+/** Turns the magnifying glass on or off (it and the 2x zoom take turns). */
+export function toggleLens(force) {
+  const next = typeof force === "boolean" ? force : !LENS.on;
+  if (next === LENS.on) return;
+  LENS.on = next;
+  LENS.active = false;
+  if (next) {
+    toggleZoom(false);
+    hideQuickCardImmediately();
+  }
+  $(".fb-stage")?.classList.toggle("lens-on", next);
+  const btn = $("#lensToggleBtn");
+  btn?.classList.toggle("active", next);
+  btn?.setAttribute("aria-pressed", String(next));
+  const badge = $("#lensBadge");
+  if (badge) badge.style.display = next ? "flex" : "none";
+  announce(next ? "Magnifying glass on. Move over a page to enlarge it; scroll, or press plus and minus, to change how much." : "Magnifying glass off.");
+  requestLens();
+}
+
+function initLens() {
+  const wrap = $("#bookWrap");
+  if (!wrap) return;
+  const track = (e) => {
+    LENS.x = e.clientX;
+    LENS.y = e.clientY;
+    LENS.touch = e.pointerType !== "mouse";
+  };
+  wrap.addEventListener("pointermove", (e) => {
+    if (!LENS.on) return;
+    if (e.pointerType === "mouse") LENS.active = true;
+    else if (!LENS.active) return; // a finger shows the lens only while it is down
+    track(e);
+    requestLens();
+  });
+  wrap.addEventListener("pointerdown", (e) => {
+    if (!LENS.on || e.pointerType === "mouse") return;
+    LENS.active = true;
+    track(e);
+    requestLens();
+  });
+  const end = () => {
+    if (!LENS.on) return;
+    LENS.active = false;
+    requestLens();
+  };
+  wrap.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") end(); });
+  wrap.addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") end(); });
+  wrap.addEventListener("pointercancel", end);
+  // Scrolling over the lens (or pinching on a trackpad) changes how much it enlarges.
+  wrap.addEventListener("wheel", (e) => {
+    if (!LENS.on || !LENS.shown) return;
+    e.preventDefault();
+    setLensZoom(LENS.zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12));
+  }, { passive: false });
+  $("#lensToggleBtn")?.addEventListener("click", () => toggleLens());
+  $("#lensOffBtn")?.addEventListener("click", () => toggleLens(false));
 }
 
 // ---------------------------------------------------------------- Fullscreen & Responsive
@@ -1259,7 +1422,7 @@ export function initTinderSwipe() {
   }
 
   rightPanel.addEventListener("pointerdown", (e) => {
-    if (!state.singlePageMode || state.isTurning) return;
+    if (!state.singlePageMode || state.isTurning || LENS.on) return;
     if (e.button !== 0 && e.pointerType === "mouse") return;
     if (e.target.closest(".fb-page-products") || e.target.closest("#quickCard") || e.target.closest("button")) return;
 
@@ -1497,7 +1660,7 @@ export async function initFlipbook() {
 
   // Keyboard navigation (Arrow Left / Right, Spacebar, Zoom 'Z', Escape)
   window.addEventListener("keydown", (e) => {
-    if (e.target.matches("input, textarea, select") || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.matches?.("input, textarea, select") || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === " " && e.target !== document.body) return; // Space on a button presses that button
     if (e.key === "ArrowLeft") {
       hideQuickCardImmediately();
@@ -1511,9 +1674,15 @@ export async function initFlipbook() {
     if (e.key.toLowerCase() === "z") {
       toggleZoom();
     }
+    if (e.key.toLowerCase() === "m") {
+      toggleLens();
+    }
+    if (LENS.on && (e.key === "+" || e.key === "=")) setLensZoom(LENS.zoom * 1.25);
+    if (LENS.on && (e.key === "-" || e.key === "_")) setLensZoom(LENS.zoom / 1.25);
     if (e.key === "Escape") {
       closeDrawer();
       toggleZoom(false);
+      toggleLens(false);
       hideQuickCardImmediately();
       $("#jumpPopover")?.style.setProperty("display", "none");
     }
@@ -1528,7 +1697,7 @@ export async function initFlipbook() {
     touchStartX = e.touches[0].clientX;
   }, { passive: true });
   bookWrapEl?.addEventListener("touchend", (e) => {
-    if (state.singlePageMode || isZoomed) return;
+    if (state.singlePageMode || isZoomed || LENS.on) return;
     const diff = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(diff) > 45) {
       hideQuickCardImmediately();
@@ -1548,7 +1717,7 @@ export async function initFlipbook() {
 
   // Double Click on Book toggles Magnifier Zoom
   $("#book")?.addEventListener("dblclick", (e) => {
-    if (e.target.closest(".fb-page-products")) return;
+    if (e.target.closest(".fb-page-products") || LENS.on) return;
     toggleZoom();
   });
 
@@ -1558,6 +1727,9 @@ export async function initFlipbook() {
   // Zoom Button Controls
   $("#zoomToggleBtn")?.addEventListener("click", () => toggleZoom());
   $("#zoomResetBtn")?.addEventListener("click", () => toggleZoom(false));
+
+  // Magnifying glass
+  initLens();
 
   // Dismiss quickCard immediately when hovering empty page areas (where numbers are missing)
   const bookEl = $("#book");

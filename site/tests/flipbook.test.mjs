@@ -123,3 +123,16 @@ test("mobile flipbook supports Tinder card swipe navigation with stamp badges an
   assert.ok(js.includes("deckUnderlayImg.src"), "Must preload underlay image for seamless card deck stack");
 });
 
+
+test("flipbook has a magnifying glass that shows sharper pages", () => {
+  const html = readFileSync("site/flipbook.html", "utf8");
+  assert.ok(html.includes('id="lensToggleBtn"'), "toolbar button for the magnifier");
+  assert.ok(html.includes('id="fbLens"'), "the lens element");
+  assert.ok(html.includes('id="lensBadge"'), "a hint while the magnifier is on");
+  const js = readFileSync("site/assets/js/flipbook.mjs", "utf8");
+  assert.ok(js.includes("export function toggleLens"), "toggleLens is exported");
+  assert.ok(js.includes("/hires/page-"), "the lens loads the sharper (hires) page renders");
+  assert.ok(js.includes("LENS.on) return;"), "a finger moves the lens instead of swiping while it is on");
+  const css = readFileSync("site/assets/flipbook.css", "utf8");
+  assert.ok(css.includes(".fb-lens {"), "the lens is styled");
+});

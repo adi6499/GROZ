@@ -49,6 +49,11 @@
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
       <span class="fb-btn-label">Zoom 2x</span>
     </button>
+    <!-- Magnifying glass: a lens that follows the pointer over the page -->
+    <button class="fb-btn" id="lensToggleBtn" type="button" aria-pressed="false" aria-label="Magnifying glass" title="Magnifying glass (M)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/><path d="M7.4 8.6a3 3 0 0 1 2.4-2.1"/></svg>
+      <span class="fb-btn-label">Magnifier</span>
+    </button>
     <!-- Download PDF for Offline Reading -->
     <a class="fb-btn primary" id="downloadPdfBtn" href="../GROZ_LIGHTING_GL-10_1.pdf" download="GROZ_Lighting_GL-10.pdf" title="Download official PDF for offline use">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12m-5-5l5 5 5-5M4 20h16"/></svg>
@@ -126,6 +131,12 @@
     <button class="fb-zoom-reset" id="zoomResetBtn" type="button" title="Exit zoom mode (Esc)">Reset</button>
   </div>
 
+  <!-- Magnifier mode indicator -->
+  <div class="fb-zoom-badge" id="lensBadge" style="display:none">
+    <span><span class="fb-lens-hint-mouse">🔍 Magnifier · scroll or + / − to change size</span><span class="fb-lens-hint-touch">🔍 Hold a finger on the page</span></span>
+    <button class="fb-zoom-reset" id="lensOffBtn" type="button" title="Turn the magnifier off (Esc)">Done</button>
+  </div>
+
   <!-- Product Specifications Collapsible Drawer -->
   <aside class="fb-drawer" id="specsDrawer" aria-label="Products on these pages" inert>
     <div class="fb-drawer-header">
@@ -177,6 +188,9 @@
     </button>
   </div>
 </footer>
+
+<!-- the magnifying glass (flipbook.mjs moves it; the page inside is a sharper render) -->
+<div class="fb-lens" id="fbLens" aria-hidden="true"><span class="fb-lens-zoom" id="fbLensZoom">2.5×</span></div>
 
 <!-- page changes and quote additions, read out by screen readers -->
 <div class="sr-only" id="fbLive" aria-live="polite"></div>

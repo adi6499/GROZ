@@ -36,7 +36,7 @@ test(".vercelignore keeps the page, the data, every product picture and the link
   }
 });
 
-test(".vercelignore keeps every flipbook page, thumbnail and PDF, and leaves out the PNG renders", () => {
+test(".vercelignore keeps every flipbook page, thumbnail, magnifier page and PDF, and leaves out the PNG renders", () => {
   const rules = read(".vercelignore").split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
   const js = read("site/assets/js/flipbook.mjs");
   const books = [...js.matchAll(/href: "\.\.\/([^"]+)",\s+folder: "([^"]+)",\s+pageCount: (\d+)/g)];
@@ -48,9 +48,11 @@ test(".vercelignore keeps every flipbook page, thumbnail and PDF, and leaves out
       const name = `page-${String(n).padStart(2, "0")}.webp`;
       needed.add(`site/${folder}/${name}`);
       needed.add(`site/${folder}/thumbs/${name}`);
+      needed.add(`site/${folder}/hires/${name}`);
       // the files the page asks for are really there (tools/build_flipbook_webp.py)
-      assert.ok(existsSync(new URL(`../${folder}/${name}`, import.meta.url)), `missing site/${folder}/${name}`);
-      assert.ok(existsSync(new URL(`../${folder}/thumbs/${name}`, import.meta.url)), `missing site/${folder}/thumbs/${name}`);
+      for (const sub of ["", "thumbs/", "hires/"]) {
+        assert.ok(existsSync(new URL(`../${folder}/${sub}${name}`, import.meta.url)), `missing site/${folder}/${sub}${name}`);
+      }
     }
   }
   for (const path of needed) {
