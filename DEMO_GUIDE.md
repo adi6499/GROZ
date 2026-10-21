@@ -66,6 +66,15 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Search "micrometer", then change the sort: the cards shuffle into their new places.
     - Close any dialog: it fades away instead of vanishing. On a phone, the menu and the filter sheet slide in and out.
     - Save a product: a heart flies to the saved button. Watch the embers rising behind the hero hammer.
+    - Open the site in a new tab: the GROZ logo assembles from tool parts first (once per visit; *Skip* or <kbd>Esc</kbd> ends it).
+    - Sounds are off at first. Turn them on with the speaker button in the header; the site remembers the choice.
+
+13. **Flipbook.**
+    - In *Catalogues*, open the 3D flipbook (or a catalogue's *Interactive Flipbook*). Turn pages with the arrows, the page corners, ← → or a swipe; pick a page in the filmstrip or click the page counter to type one.
+    - Pages with products show "N products on this page": hover it for the list, click it for the specifications drawer. The drawer shows each product's status ("Not yet verified"), where its picture comes from and a link to the PDF page.
+    - *Add to quote* in the drawer adds to the same quote as the catalogue page (go back: the Quote count includes it).
+    - *Zoom 2x* (or double-click, or <kbd>Z</kbd>): move the pointer to look around the page.
+    - The Lubrication catalogue can be read in the flipbook, but its products are not in the product list yet (see below).
 
 On a phone-sized window, show:
 - the header search;
@@ -86,7 +95,8 @@ On a phone-sized window, show:
 - **Pictures are linked by page evidence** (decision G, rules 2.3.0, applied 15 Oct 2026; `review/applied/2026-10-15_rules-2.3.0/`).
   - 879 of 941 products show a picture: 90 printed beside (or on the tag above) their own code, 789 family pictures (their section's picture, or one labelled for their base model or caption). Each says why on the product page, and each picture is shown alone, without the catalogue text around it (rules 2.3.1).
   - **62 products** have no confirmed image: 59 have a nearby picture that the page does not tie to them ("Image not confirmed"), 3 have none ("Image unavailable"). Mostly variants whose page pictures other variants but not them.
-- Hand Tool and Fluid Handling catalogues are not included yet. The Hand Tool pilot is prepared but has not been run.
+- Hand Tool and Fluid Handling catalogues are not included yet. The five-page Hand Tool pilot was approved and run on 17 Oct 2026; the full Hand Tool catalogue has not been extracted.
+- **Lubrication:** a quick table scrape of the Lubrication catalogue was on the site briefly (Oct 2026) and was taken off, because about a third of its "products" were table labels, its pictures were whole pages and some values were made up. The catalogue stays readable in the flipbook. Its products will be extracted with the same checks as the others and shown for approval before they go live.
 
 ## Still open
 
@@ -95,4 +105,5 @@ On a phone-sized window, show:
   - Enter your name. For each product, compare its values with the printed row, then press <kbd>V</kbd> (verified) or <kbd>F</kbd> (flag a problem).
   - Press "Update catalogue site" to show the results on the catalogue.
 - **C:** catalogue index discrepancies (documented only; questions for GROZ).
-- **The five-page Hand Tool pilot**, then the rest of the Hand Tool and Fluid Handling catalogues.
+- **Hand Tool pilot fixes** (awaiting approval), then the rest of the Hand Tool and Fluid Handling catalogues.
+- **Lubrication products:** a proper extraction through `run_extraction.py`, previewed for approval before it goes on the site.

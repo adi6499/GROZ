@@ -241,6 +241,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - They appear as category tiles, in a Categories menu in the header and in the phone menu, and as the Category filter. Chips and the details heading show them too, for example "Mechanic's Tools › Tool Storage". Searching a category name finds its products.
   - Lubrication, Fuel & DEF, Air Tools, Power Tools and New & Exciting have no products in this preview, so they say "Coming soon". Their descriptions list what GROZ's menu shows under them. No products are made up for them.
     - The Fluid Handling catalogue (likely Lubrication and Fuel & DEF) and the full Hand Tools catalogue are in the project but not extracted yet. There is no catalogue here for Air Tools or Power Tools.
+    - The GROZ Lubrication Equipment catalogue (`groz-lubrication-equipments.pdf`) can be read in the flipbook, but its products are not on the site. A quick table scrape of it (`tools/extract_lubrication_products.py`, Oct 2026) was merged into the site data and then taken off again (21 Oct 2026). About 50 of its 170 records were table labels such as "Accuracy" and "Repeatability". Every picture was a whole page, and some values were made up (box quantity 1, one pressure line copied to every product on a page). Its products will come through `run_extraction.py` with the same checks as the others, previewed for approval first. `tools/merge_catalogue_data.py` refuses to run without `--force`.
   - A data category that no group lists is shown as a category of its own, so no product drops out of the navigation (tested).
 - **Motion** (`site/assets/js/motion.mjs`, styles under "decorative motion" in `site.css`):
   - Add to quote: the product picture is tossed in an arc into the Quote button, which pops as its count rolls to the new number. This works from cards, table rows, the details and the saved list. The button's check mark draws itself.
@@ -260,7 +261,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Section headings, and the hero title, rise in word by word when first scrolled to. Each word is clipped by its own inline box, so the layout is the same as the plain heading (measured: no change in width or height).
   - Compare: once the compare bar is showing, a newly picked product's picture flies into it.
   - Prepare request: the request feeds out of a printer slot, then a green "Ready · not sent" stamp lands on it. It says so because nothing is sent.
-  - A thin orange line under the header shows how far down the page you are (CSS scroll-driven animation, where supported).
+  - A glowing orange bar along the top of the window shows how far down the page you are (`animations.mjs` adds it). Where the browser supports scroll-driven animations, CSS moves it, off the main thread; elsewhere GSAP scales it.
   - Hero numbers count up from zero. The hero search box types example searches into its placeholder: micrometer, LED/621, rolling tool cabinet, sledge, 55044, pin vice, caliper. Each was checked to find products. It runs only while the box is on screen, empty and not focused.
   - Confetti bursts from the "Ready · not sent" stamp.
   - Buttons show a soft ripple from where they are pressed. Primary buttons lean toward the mouse (magnetic). Ticked checkboxes pop.
@@ -286,17 +287,59 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - Only transform and opacity move: on the element itself, through the separate `translate`/`scale` properties so its own transform is kept, or on short-lived copies in a fixed layer.
     - Each copy is removed when its animation ends, or by a timer if the page stops drawing.
     - Nothing waits for an effect. With reduced motion, on low-end devices, or without Web Animations support, every effect is skipped and the page behaves as before.
+- **Intro, sound and GSAP effects** (`site/assets/js/animations.mjs`, with GSAP 3.12.5 and ScrollTrigger vendored in `site/assets/js/vendor/`, GreenSock standard license):
+  - **Intro:** the GROZ logo assembles from tool parts, then the page appears. It plays once per visit, and only when motion is allowed and the device is not low-end. A small script in the page head decides this before the first paint (`html.intro`).
+    - Skip, <kbd>Esc</kbd> and a 6-second timer end it. A CSS failsafe hides the overlay after 7 seconds even if no script runs, so the page is never left black.
+    - The hero count-up, the hammer strike, the heading reveal and the icon drawing wait for it (`introDone`).
+  - **Sound** (synthesized, no audio files): off until the visitor turns it on with the speaker button. The choice is remembered in this browser (`groz.sound`) and shared with the flipbook.
+  - **Effects:**
+    - Hero silhouettes and parallax on scroll.
+    - A scroll cue whose arrow bobs (CSS, paused off screen).
+    - Sparks when the mouse enters a card or table row.
+    - Table rows rise in.
+    - The Quote button bounces once per added product.
+    - The quote opens as a drawer from the right (from below on phones).
+    - A quote readiness bar.
+    - The Categories menu and the label legend unfold.
+    - The Hand Tools tile knocks and the Lighting tile glows when scrolled to.
+    - Icons draw their outlines once.
+  - **Rules learned (21 Oct 2026):**
+    - GSAP must not animate a property that has a CSS transition on the same element. The transition re-times every GSAP frame, which caused the lag in cards, buttons and the drawer. Cards use the Web Animations cascade (`motion.mjs`); rows and the cart bounce use Web Animations.
+    - No GSAP tween may stay on a section. A leftover transform on `#products` turned the fixed phone filter sheet into one positioned inside it.
+    - `main` uses `overflow-x: clip`, not `hidden`: `hidden` made it a scroll container, and the results bar stopped sticking on phones.
+    - There is no backdrop blur over anything that moves.
+    - Dropdowns and accordions animate transform and opacity only, not height.
+- **Flipbook** (`site/flipbook.html`, `site/assets/js/flipbook.mjs`, `site/assets/flipbook.css`): the five catalogues as a book with 3D page turns (GSAP), opened from the Catalogues section.
+  - **Pages:** WebP copies of the PDF page renders, plus 96 px thumbnails for the filmstrip, made by `tools/build_flipbook_webp.py`. That is 21 MB instead of 100 MB of PNGs. The PNGs stay in the project and are not deployed.
+    - Pages next to the open spread are fetched and decoded ahead.
+    - A turn starts once its pages are decoded (300 ms at most), so the turning page is never blank.
+    - The page under the lifting leaf is already the next one. The last page has a spread of its own (25 spreads for 48 pages).
+  - **Turns:**
+    - A jump, a catalogue switch or a resize during a turn stops it cleanly (`stopTurn`).
+    - The leaf has no CSS filter: it flattened the 3D faces and repainted a blurred shadow every frame.
+    - With reduced motion, pages change at once.
+  - **Phones:** one page at a time, swiped like a card, with the next page waiting underneath at the same size.
+  - **Products on a page:** the data records which page a product is printed on, not where on the page. So each page with products shows one "N products on this page" button instead of pins at made-up spots. Hovering it lists them; clicking it opens the specifications drawer.
+    - The drawer shows the same values as the catalogue page: status ("Not yet verified"), picture evidence and a link to the PDF page.
+    - **Add to quote** adds to the real quote kept in this browser (`groz.quote`), which the catalogue page shows.
+  - **Other features:**
+    - Zoom is exactly 2×. The pointer's position chooses which part of the enlarged page is in view, edge to edge.
+    - Keyboard: <kbd>←</kbd> <kbd>→</kbd>, <kbd>Space</kbd>, <kbd>Z</kbd> zoom, <kbd>Esc</kbd>. The page counter is a button that opens "go to page".
+    - Page changes are read out to screen readers.
+    - The drawer is `inert` while closed, and focus moves into it and back.
+    - The stage clips instead of scrolling, so nothing can push the book out of view.
+  - Its sounds (page rustle, ambience) are off until turned on; the ambience stops fully when turned off.
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.
-  - `site/assets/js/app.mjs`: page behaviour. `site/assets/js/motion.mjs`: decorative motion only.
+  - `site/assets/js/app.mjs`: page behaviour. `site/assets/js/motion.mjs`: decorative motion only. `site/assets/js/animations.mjs`: intro, sound and the GSAP effects.
   - `site/assets/js/art.mjs`: category icons from the reference design. `site/assets/js/icons.mjs`: interface icons (inline SVG).
 - Responsive and touch:
   - Tested at 320, 375, 430, 768, 1024 and 1440 px with no horizontal page scrolling.
   - Touch screens get 44 px targets and 16 px form text (no zoom on focus).
   - On phones, filters and dialogs open as bottom sheets that respect the safe areas, and quote lines stack, with − / + quantity buttons.
 - Motion and performance:
-  - Only `transform` and `opacity` are animated, with CSS (no JavaScript animation loops, so displays at 60–144 Hz run them at their own rate).
+  - Only `transform` and `opacity` are animated: with CSS or Web Animations, and with GSAP in `animations.mjs` and the flipbook. Displays at 60 to 144 Hz run them at their own rate.
   - The hero's looping motion pauses off screen. Hover effects apply only where a pointer can hover.
   - `prefers-reduced-motion` turns motion off.
   - A *lite* mode (data saver, ≤ 2 GB memory or ≤ 2 CPU cores, or a measured median frame time over 34 ms) turns off decorative motion and blur, keeping every function.
@@ -337,3 +380,6 @@ Then open http://127.0.0.1:8963/verify/. The tool runs on this computer only and
 ## Tools
 
 - `tools/dump_page.py <pdf> <page>`: prints a page's words line by line with x positions (read-only). Use it to check a table layout before changing the parser.
+- `tools/build_flipbook_webp.py`: makes the flipbook's WebP pages and thumbnails from the page PNGs (only new or changed pages; `--force` rebuilds all).
+- `tools/sync_catalogue_pipeline.py`: renders missing flipbook page PNGs (pdftoppm), builds their WebP copies, writes `site/data/catalogue.csv` from `catalogue.json` and runs the website tests. It never adds products (`--csv` only exports the CSV).
+- `tools/extract_lubrication_products.py` and `tools/merge_catalogue_data.py`: the Oct 2026 lubrication scrape, kept for reference only (see Website › GROZ categories).
