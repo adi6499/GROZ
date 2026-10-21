@@ -31,7 +31,7 @@ from ..extractor.product_builder import ProductBuilder
 from ..validator.schema import ProductRecord
 from .batches import BATCHES, RESTRICTED_SOURCES, SUPPLEMENTARY_SOURCES, Batch
 
-PIPELINE_VERSION = "3.0.0"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G; 2.3.1 = clean pictures; 3.0.0 = column reader for Fluid Handling CC-07 / FUEL CAT 400, batch_3_fluid)
+PIPELINE_VERSION = "3.0.1"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G; 2.3.1 = clean pictures; 3.0.0 = column reader for Fluid Handling CC-07 / FUEL CAT 400, batch_3_fluid; 3.0.1 = its review fixes)
 LEGACY_OUTPUT_DIR = "output"
 DEFAULT_OUTPUT_DIR = "output_v2"
 

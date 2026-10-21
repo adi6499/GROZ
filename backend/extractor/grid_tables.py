@@ -86,13 +86,20 @@ def _phrases(line: List[Any], gap: float = 6.5) -> List[Dict[str, Any]]:
     return out
 
 
+# CC-07 prints its check marks in Wingdings 2, where the letter "P" (extracted as U+F050) is drawn as a
+# check mark (verified on the rendered pages, e.g. CC-07 p56). No other symbol is translated.
+SYMBOLS = {"\uf050": "\u2713"}
+
+
 def _cell_text(words: List[Any]) -> str:
     text = " ".join(" ".join(w[4] for w in l) for l in _lines(words))
+    for k, v in SYMBOLS.items():
+        text = text.replace(k, v)
     return re.sub(r"\s+", " ", text).strip()
 
 
 def _key(label: str) -> str:
-    return re.sub(r"\s+", "_", label.strip().lower())
+    return re.sub(r"\s+", "_", label.strip())
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -251,6 +258,12 @@ def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
         right = leaves[i + 1] if i + 1 < len(leaves) else None
         c["lo"] = ((left["x1"] + c["x0"]) / 2 if left["x1"] < c["x0"] else (left["cx"] + c["cx"]) / 2) if left else -1e9
         c["hi"] = ((c["x1"] + right["x0"]) / 2 if c["x1"] < right["x0"] else (c["cx"] + right["cx"]) / 2) if right else 1e9
+    # BOX QTY. is a narrow column of numbers centred under its header: it starts just left of the header,
+    # so a long description in the column before it keeps all its words
+    for i, c in enumerate(leaves):
+        if _norm_label(c["label"]) in ("BOXQTY", "QTY") and i:
+            c["lo"] = max(c["lo"], c["x0"] - 14)
+            leaves[i - 1]["hi"] = c["lo"]
     return leaves
 
 
@@ -328,7 +341,7 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
         ps = _phrases(line_words, gap=9)
         if len(ps) != 1 or ps[0]["x0"] >= shared_x0 or any(ORD_WORD.match(_clean(w[4])) for w in line_words):
             return None
-        if any(_hdr(w[4]) in HEADER_TOKENS for w in line_words) or not re.search(r"[A-Za-z]{3}", ps[0]["text"]):
+        if any(_hdr(w[4]) in HEADER_TOKENS for w in line_words) or not re.search(r"[A-Za-z]{2}", ps[0]["text"]):
             return None
         return ps[0]["text"] if ps[0]["x1"] >= shared_x0 else None
 
@@ -350,7 +363,7 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
         if len(groups) > 1 and len(phrases) > 1 and len(set(owners)) == len(owners) and None not in owners:
             return ("labels", {gi: p["text"] for p, gi in zip(phrases, owners)})
         text = " ".join(p["text"] for p in phrases)
-        return ("section", text) if re.search(r"[A-Za-z]{3}", text) else None
+        return ("section", text) if re.search(r"[A-Za-z]{2}", text) else None
 
     shared_head = [w for l in head_lines if not (l[0][1] > hy + 9 and section_line(l)) for w in l if w[0] >= shared_x0]
     try:
@@ -471,8 +484,8 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
 
 
 def spec_key(label: str) -> str:
-    """The specification key for a printed column label (kept readable: "MAX. PRESSURE (PSI)" ->
-    "max._pressure_(psi)"; the website shows the printed label)."""
+    """The specification key for a printed column label: the label as printed, spaces as "_"
+    ("MAX. PRESSURE (PSI)" -> "MAX._PRESSURE_(PSI)"); the website shows it in sentence case."""
     return _key(label)
 
 

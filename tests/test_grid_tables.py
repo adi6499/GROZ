@@ -149,3 +149,13 @@ def test_page_numbers_contents_and_titles(fh, fuel):
     assert (t["text"], t["rule"]) == ("FUEL CONTROL NOZZLES - AUTOMATIC", "contents")
     t = PageTitles(fh, FH).title_for(11, (0, 606, 467, 781), "9")
     assert (t["text"], t["rule"]) == ("Lever Grease Guns Heavy Duty", "facing")
+
+
+def test_review_fixes_check_marks_box_column_and_short_sections(fh):
+    """Found when the first preview was checked against the pages (21 Oct 2026)."""
+    kit = next(x for x in rows(fh, 56) if x["cat_nr"] == "BGG/F/20-4/L1/EU")
+    assert kit["column_specs"]["GREASE GUN ASSEMBLY"] == "\u2713"  # Wingdings 2 "P", drawn as a check mark
+    assert kit["column_specs"]["GROZ BATTERY CHARGER"] == "\u2713 EU plug"
+    pump = next(x for x in rows(fh, 239) if x["cat_nr"] == "RBP/3V/H/MT")
+    assert pump["box_qty"] == 2 and pump["description"].endswith("Mechanical Fuel Meter (Litres)")
+    assert rows(fh, 66)[3]["table_section"] == "14 OZ. (400 GM)"

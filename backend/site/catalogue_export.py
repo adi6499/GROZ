@@ -133,8 +133,27 @@ STATUS_LABELS = {
 }
 
 
+# Abbreviations and units kept in capitals when a printed column label is shown in sentence case.
+KEEP_CAPS = {"PSI", "BAR", "LPM", "GPM", "CFM", "BSP", "BSPT", "NPT", "ID", "OD", "I.D.", "O.D.", "US", "UK", "EU",
+             "AU", "AC", "DC", "DEF", "GROZ", "FRL", "LI-ION", "SAE", "UNF", "NBR", "PTFE", "L", "W", "H", "D", "D1", "D2"}
+
+
 def spec_label(key: str) -> str:
-    return SPEC_LABELS.get(key, key.replace("_", " ").capitalize())
+    """How a specification is labelled on the site. Printed column labels (rules 3.0.0 keys keep the
+    printed capitals) are shown in sentence case, with units and abbreviations as printed."""
+    if key in SPEC_LABELS:
+        return SPEC_LABELS[key]
+    if key == key.lower():
+        return key.replace("_", " ").capitalize()
+    out = []
+    for i, word in enumerate(key.split("_")):
+        core = word.strip("()*,")
+        if core.upper() in KEEP_CAPS or "°" in core or any(ch.isdigit() for ch in core) or core != core.upper():
+            out.append(word)
+        else:
+            out.append(word.lower())
+    text = " ".join(out)
+    return text[:1].upper() + text[1:]
 
 
 def record_id(r: Dict[str, Any]) -> str:
@@ -283,7 +302,7 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
         with open(path, encoding="utf-8") as f:
             sources += [(r, base) for r in json.load(f)]
     dups = {id(r) for r in fuel_duplicates([r for r, _ in sources])}
-    duplicates = [r for r, _ in sources if id(r) in dups]
+    fuel_dups = [r for r, _ in sources if id(r) in dups]
     sources = [(r, b) for r, b in sources if id(r) not in dups]
     records = [r for r, _ in sources]
     pending = load_pending_corrections(preview_glob)
@@ -325,7 +344,7 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
             "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
             **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra],
-                            "fuel_duplicates_left_out": len(duplicates)}} if extra else {}),
+                            "fuel_duplicates_left_out": len(fuel_dups)}} if extra else {}),
         },
         "categories": [{"name": name, "art": art, "blurb": blurb, "records": by_cat[name]}
                        for name, (art, blurb) in CATEGORY_INFO.items() if by_cat[name]],
