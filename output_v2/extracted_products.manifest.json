@@ -1,7 +1,8 @@
 {
   "batches": {
     "batch_1": 150,
-    "batch_2": 791
+    "batch_2": 791,
+    "batch_3_fluid": 2024
   },
-  "record_count": 941
+  "record_count": 2965
 }
