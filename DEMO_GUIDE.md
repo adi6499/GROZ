@@ -18,7 +18,7 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 ## Walkthrough (about 5 minutes)
 
-1. **Home.** 941 products from 4 GROZ catalogues. The note above the products says plainly that none is verified yet; open "How to read the labels" to explain the badges.
+1. **Home.** 2892 products from 6 GROZ catalogues. The note above the products says plainly that none is verified yet; open "How to read the labels" to explain the badges.
 2. **Find.**
    - Type `led 621`, then `55044` (an order number), then `club hammers` or `micrometer`.
    - Codes match in any spelling (`LED/621`, `led-621`).
@@ -47,8 +47,8 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
 
 11. **GROZ categories.**
     - Open *Categories* in the header (on a phone, the menu): GROZ's own eight categories in GROZ's order, plus Precision Tools.
-    - Lighting, Hand Tools, Mechanic's Tools and Precision Tools show their products.
-    - The others say "Coming soon": their products are not in this preview yet.
+    - Lubrication, Fuel & DEF, Air Tools, Lighting, Hand Tools, Mechanic's Tools, Power Tools and Precision Tools show their products.
+    - New & Exciting says "Coming soon": there is no catalogue for it yet.
 
 12. **Motion.**
     - Move the mouse over a card: it leans toward the pointer with a soft glare.
@@ -95,17 +95,16 @@ On a phone-sized window, show:
   - The catalogue's own inconsistencies carry review notes rather than guesses.
   - Every changed value, before and after, is in `review/applied/2026-10-14_rules-2.2.0/`.
 - **Pictures are linked by page evidence** (decision G, rules 2.3.0, applied 15 Oct 2026; `review/applied/2026-10-15_rules-2.3.0/`).
-  - 879 of 941 products show a picture: 90 printed beside (or on the tag above) their own code, 789 family pictures (their section's picture, or one labelled for their base model or caption). Each says why on the product page, and each picture is shown alone, without the catalogue text around it (rules 2.3.1).
+  - Before the Fluid Handling catalogues went live, 879 of 941 products showed a picture: 90 printed beside (or on the tag above) their own code, 789 family pictures (their section's picture, or one labelled for their base model or caption). Each says why on the product page, and each picture is shown alone, without the catalogue text around it (rules 2.3.1).
   - **62 products** have no confirmed image: 59 have a nearby picture that the page does not tie to them ("Image not confirmed"), 3 have none ("Image unavailable"). Mostly variants whose page pictures other variants but not them.
-- Hand Tool and Fluid Handling catalogues are not included yet. The five-page Hand Tool pilot was approved and run on 17 Oct 2026; the full Hand Tool catalogue has not been extracted.
+- The Fluid Handling CC-07 and Fuel CAT 400 catalogues went live on 21 Oct 2026 (1951 products, after the owner approved their preview). The full Hand Tool catalogue is not included yet: its five-page pilot was approved and run on 17 Oct 2026, but the rest has not been extracted.
 - **Lubrication:** a quick table scrape of the Lubrication catalogue was on the site briefly (Oct 2026) and was taken off, because about a third of its "products" were table labels, its pictures were whole pages and some values were made up. The catalogue stays readable in the flipbook. Its products will be extracted with the same checks as the others and shown for approval before they go live.
 
 ## Still open
 
-- **Verification:** checking the 941 products in the verification tool.
+- **Verification:** checking the products in the verification tool (none is verified yet).
   - Start it with `.venv/Scripts/python.exe verify_server.py`, then open http://127.0.0.1:8963/verify/.
   - Enter your name. For each product, compare its values with the printed row, then press <kbd>V</kbd> (verified) or <kbd>F</kbd> (flag a problem).
   - Press "Update catalogue site" to show the results on the catalogue.
 - **C:** catalogue index discrepancies (documented only; questions for GROZ).
-- **Hand Tool pilot fixes** (awaiting approval), then the rest of the Hand Tool and Fluid Handling catalogues.
-- **Fluid Handling CC-07 + Fuel CAT 400 (batch_3_fluid):** extracted on 21 Oct 2026 into a preview, awaiting approval. 1951 products: Lubrication 1202, Fuel & DEF 259, Air Tools 461, Power Tools (battery grease guns) 29. To look at it: `.venv/Scripts/python.exe build_site_data.py --preview`, then open http://127.0.0.1:8962/site/?data=preview (a yellow bar marks the preview; the live site is unchanged).
+- **Hand Tool pilot fixes** (awaiting approval), then the rest of the Hand Tool catalogue.

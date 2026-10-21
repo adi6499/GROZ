@@ -1,5 +1,6 @@
 # Files the website does not use; kept out of the Vercel deployment to keep it small.
-# The site needs: site/ (page, assets, data), output_v2/images/ and the four catalogue PDFs it links to.
+# The site needs: site/ (page, assets, data), output_v2/images/ and the catalogue PDFs it links to
+# (since 21 Oct 2026 also Fluid_Handling_Catalogue_spread.pdf and FUEL.pdf, whose products are live).
 # No "!" re-include rules: Vercel did not apply "!/output_v2/images/" after "/output_v2/*", so every
 # product picture was left out of the deployment (404). List what to leave out instead
 # (site/tests/deploy.test.mjs checks this).
@@ -10,7 +11,6 @@
 /output_v2/extracted_products.manifest.json
 /output_v2/review.html
 /output_pilot_handtool/
-/Fluid_Handling_Catalogue_spread.pdf
 /Fluid_Handling_mini_min_2.pdf
 /Hand_Tool_Catalogue_low_res_with_cover.pdf
 /Workshop_mini-compress.pdf
@@ -25,12 +25,12 @@
 /verify/
 # Flipbook pages: the site loads the WebP copies (tools/build_flipbook_webp.py), not the PNG renders.
 /site/assets/flipbook/*/page-*.png
-# Not used by the website: an unlinked PDF, and the unchecked lubrication scrape (Oct 2026) that was
-# taken off the site (its products await a proper extraction).
-/FUEL.pdf
+# Not used by the website: the unchecked lubrication scrape (Oct 2026) that was taken off the site
+# (the lubrication products now come from the Fluid Handling extraction, batch_3_fluid).
 /output_v2/images/lubrication/
 /output_v2/lubrication_products.json
 /output_v2/lubrication_products.csv
-# The local preview of products not approved yet (batch_3_fluid) is never deployed.
+# The local preview of batches not approved yet is never deployed (output_preview_fluid/ holds the
+# batch_3_fluid preview as it was approved on 21 Oct 2026).
 /site/data/catalogue.preview.json
 /output_preview_fluid/

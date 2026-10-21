@@ -9,15 +9,23 @@ import re
 import pymupdf
 import pytest
 
-from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, export_record, heading_text,
-                                           load_pending_corrections, title_review_rows)
+from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, category_for, export_record,
+                                           fuel_duplicates, heading_text, load_pending_corrections, title_review_rows)
 from backend.site.titles import relation
 
 
 @pytest.fixture(scope="module")
-def source():
+def dataset():
     with open(DATASET, encoding="utf-8") as f:
         return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def source(dataset):
+    """The dataset records the site shows: every one, except the Fuel CAT 400 products that CC-07 also
+    prints (same order number), which are shown once, from CC-07."""
+    dups = {id(r) for r in fuel_duplicates(dataset)}
+    return [r for r in dataset if id(r) not in dups]
 
 
 @pytest.fixture(scope="module")
@@ -28,6 +36,14 @@ def site(source):
     with open(DATASET, "rb") as f:
         assert hashlib.sha256(f.read()).hexdigest() == before, "building site data must not modify the dataset"
     return data
+
+
+def test_only_fuel_cat_400_duplicates_of_cc07_products_are_left_out(dataset, source, site):
+    left_out = fuel_duplicates(dataset)
+    assert len(dataset) - len(source) == len(left_out) == site["meta"]["fuel_duplicates_left_out"] == 73
+    cc07 = [r for r in dataset if r["source_pdf"] == "Fluid_Handling_Catalogue_spread.pdf"]
+    ords, cats = {r["ord_nr"] for r in cc07 if r["ord_nr"]}, {r["cat_nr"] for r in cc07 if r["cat_nr"]}
+    assert all(r["source_pdf"] == "FUEL.pdf" and (r["ord_nr"] in ords if r["ord_nr"] else r["cat_nr"] in cats) for r in left_out)
 
 
 def test_every_record_exported_once_with_its_own_identifiers(source, site):
@@ -109,8 +125,12 @@ def test_rules_2_2_applied_nothing_is_withheld(site):
 
 
 def test_categories_follow_the_source_catalogue(source, site):
+    """One category per catalogue, except CC-07: the section of its contents a product's printed page is
+    in (and Battery Grease Guns for grease guns whose printed title names a battery)."""
     for r, p in zip(source, site["products"]):
-        assert p["category"] == CATALOGUES[r["source_pdf"]]["category"]
+        assert p["category"] == category_for(r, p["title"])
+        if r["source_pdf"] != "Fluid_Handling_Catalogue_spread.pdf":
+            assert p["category"] == CATALOGUES[r["source_pdf"]]["category"]
     assert sum(c["records"] for c in site["categories"]) == len(source)
 
 
@@ -162,12 +182,18 @@ def test_every_display_title_is_printed_on_its_cited_page(site):
     words = lambda s: re.findall(r"[0-9a-z]+", s.lower().replace("’", "'"))
     pages = {}
     for p in site["products"]:
-        assert p["title"] and p["title_source"]["rule"] in {"above", "page", "spread", "facing"}
+        if not p["title"]:  # CC-07: two product families start on the same page, so no title is chosen
+            assert p["title_source"] is None and p["catalogue"]["pdf"] == "Fluid_Handling_Catalogue_spread.pdf"
+            continue
+        assert p["title_source"]["rule"] in {"above", "page", "spread", "facing", "contents"}
         key = (p["catalogue"]["pdf"], p["title_source"]["pdf_page"])
         if key not in pages:
             with pymupdf.open(key[0]) as doc:
                 pages[key] = " ".join(words(doc[key[1] - 1].get_text()))
         assert " ".join(words(p["title"])) in pages[key], (p["cat_nr"], p["title"], key)
+        if p["title_source"]["rule"] == "contents":  # the family the contents page lists for this printed page
+            assert f"contents on PDF page {key[1]}" in p["title_source"]["evidence"]
+            continue
         assert f"PDF page {key[1]}" in p["title_source"]["evidence"]
         if p["title_source"]["rule"] != "facing":
             assert key[1] == p["page"]

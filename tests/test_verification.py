@@ -131,8 +131,10 @@ def test_server_lists_every_product_with_its_fingerprint(server):
     base, _ = server
     code, body, _ = call(base, "/api/review/records")
     data = json.loads(body)
-    assert code == 200 and data["total"] == 941 and data["can_publish"] is False
-    assert data["counts"] == {"verified": 0, "flagged": 0, "stale": 0, "to_check": 941}
+    with open(cx.DATASET, encoding="utf-8") as f:
+        total = len(json.load(f))  # every extracted record, including the Fuel CAT 400 ones also printed in CC-07
+    assert code == 200 and data["total"] == total == 2965 and data["can_publish"] is False
+    assert data["counts"] == {"verified": 0, "flagged": 0, "stale": 0, "to_check": total}
     g = next(r for r in data["records"] if r["cat_nr"] == "G/10/M1")
     assert {x["label"]: x["value"] for x in g["values"]}["Table caption (printed)"] == "TAPER SHANK ARBORS - DIN 238"
 

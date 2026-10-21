@@ -196,7 +196,7 @@ function init(data) {
     bar.className = "preview-bar";
     bar.setAttribute("role", "note");
     const n = data.meta?.preview?.fuel_duplicates_left_out;
-    bar.innerHTML = `<b>Preview — not approved, not on the live site.</b> It includes products just extracted from the Fluid Handling CC-07 and Fuel CAT 400 catalogues, for review.${n ? ` ${n} Fuel CAT 400 products that CC-07 also prints are shown once, from CC-07.` : ""} <a href="./">Back to the live catalogue</a>`;
+    bar.innerHTML = `<b>Preview — not approved, not on the live site.</b> It includes products just extracted for review.${n ? ` ${n} Fuel CAT 400 products that CC-07 also prints are shown once, from CC-07.` : ""} <a href="./">Back to the live catalogue</a>`;
     document.body.prepend(bar);
   }
   state.data = data;
@@ -240,7 +240,7 @@ function groupLabel(category) {
   return g && g.name !== category ? `${g.name} › ${category}` : category;
 }
 
-/** GROZ's categories as tiles, in GROZ's order; those not in this preview yet say "Coming soon". */
+/** GROZ's categories as tiles, in GROZ's order; those without products yet say "Coming soon". */
 function renderCategories() {
   const f = state.filters.categories;
   $("#categoryGrid").innerHTML = state.groups.map((g) => {
@@ -268,7 +268,7 @@ function renderCatalogues() {
       <small>${esc(c.categories ? [...new Set(c.categories.map((x) => core.groupOf(x)?.name || x))].join(", ") : groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
       <div class="row-actions">${FLIPBOOK_PDFS.has(c.pdf) ? `<a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a>` : ""}<button class="btn soft" type="button" data-show-cat="${esc((c.categories || [c.category]).join("|"))}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
-      <small>Hand Tools and Fluid Handling are not in this preview yet. Their products will appear once they have been extracted and reviewed.</small></div></div></div>`;
+      <small>The full GROZ Hand Tool catalogue is not on the site yet. Its products will appear once they have been extracted and reviewed.</small></div></div></div>`;
 }
 
 function renderDataNote() {
@@ -449,7 +449,7 @@ function emptyHtml() {
   const nq = core.norm(q);
   const soon = nq.length > 2 && state.groups.find((g) => g.soon && (core.norm(g.name).includes(nq) || nq.includes(core.norm(g.name))));
   return `<div class="empty">${icon("search", "state-icon")}<strong>No matches${q ? ` for “${esc(q)}”` : ""}.</strong>
-    ${soon ? `<p><b>${esc(soon.name)}</b> is coming soon: its products are not in this preview yet.</p>` : ""}
+    ${soon ? `<p><b>${esc(soon.name)}</b> is coming soon: its products are not on the site yet.</p>` : ""}
     <p>Try a catalogue number such as <b>LED/621</b>, an order number such as <b>55044</b>, or a word such as <b>micrometer</b>${core.activeFilterCount(state.filters) > (q ? 1 : 0) ? ", or remove a filter" : ""}.</p>
     <button class="btn soft" type="button" data-reset>Reset search and filters</button></div>`;
 }
@@ -1362,11 +1362,11 @@ function wire() {
     anim.playToolDropSound(0.95);
     scrollToEl($("#products"));
   };
-  // A GROZ category: its products, or a note that it is not in this preview yet.
+  // A GROZ category: its products, or a note that it has none on the site yet.
   const openGroup = (name, toggle) => {
     const g = state.groups.find((x) => x.name === name);
     if (!g) return;
-    if (g.soon) notify(`${g.name} is coming soon: its products are not in this preview yet.`);
+    if (g.soon) notify(`${g.name} is coming soon: its products are not on the site yet.`);
     else showCategories(g.categories, toggle);
   };
   $("#categoryGrid").addEventListener("click", (e) => { const c = e.target.closest("[data-group]"); if (c) openGroup(c.dataset.group, true); });

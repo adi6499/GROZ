@@ -178,6 +178,11 @@ test("quotation exports use the printed title", () => {
 test("real catalogue data: every product has a printed title with its source page", () => {
   const data = JSON.parse(readFileSync(new URL("../data/catalogue.json", import.meta.url), "utf8"));
   for (const p of data.products) {
+    if (!p.title && p.catalogue.pdf === "Fluid_Handling_Catalogue_spread.pdf") {
+      // CC-07: two product families start on the same page, so no title is chosen rather than a guess
+      assert.equal(p.title_source, null);
+      continue;
+    }
     assert.ok(core.displayTitle(p), `${p.cat_nr} has no title`);
     assert.ok(p.title_source && /PDF page \d+/.test(p.title_source.evidence), `${p.cat_nr} title has no evidence`);
   }
