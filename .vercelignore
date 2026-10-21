@@ -23,3 +23,11 @@
 /.venv/
 *.py
 /verify/
+# Flipbook pages: the site loads the WebP copies (tools/build_flipbook_webp.py), not the PNG renders.
+/site/assets/flipbook/*/page-*.png
+# Not used by the website: an unlinked PDF, and the unchecked lubrication scrape (Oct 2026) that was
+# taken off the site (its products await a proper extraction).
+/FUEL.pdf
+/output_v2/images/lubrication/
+/output_v2/lubrication_products.json
+/output_v2/lubrication_products.csv

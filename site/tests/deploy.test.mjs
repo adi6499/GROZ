@@ -2,7 +2,7 @@
 // Run:  node --test "site/tests/*.test.mjs"
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 const read = (rel) => readFileSync(new URL(`../../${rel}`, import.meta.url), "utf8");
 
@@ -34,4 +34,27 @@ test(".vercelignore keeps the page, the data, every product picture and the link
   for (const path of needed) {
     for (const rule of rules) assert.ok(!excludes(rule, path), `${rule} would leave out ${path}`);
   }
+});
+
+test(".vercelignore keeps every flipbook page, thumbnail and PDF, and leaves out the PNG renders", () => {
+  const rules = read(".vercelignore").split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+  const js = read("site/assets/js/flipbook.mjs");
+  const books = [...js.matchAll(/href: "\.\.\/([^"]+)",\s+folder: "([^"]+)",\s+pageCount: (\d+)/g)];
+  assert.equal(books.length, 5, "five catalogues in the flipbook");
+  const needed = new Set(["site/flipbook.html", "site/assets/flipbook.css", "site/assets/js/flipbook.mjs"]);
+  for (const [, pdf, folder, pages] of books) {
+    needed.add(pdf);
+    for (let n = 1; n <= Number(pages); n++) {
+      const name = `page-${String(n).padStart(2, "0")}.webp`;
+      needed.add(`site/${folder}/${name}`);
+      needed.add(`site/${folder}/thumbs/${name}`);
+      // the files the page asks for are really there (tools/build_flipbook_webp.py)
+      assert.ok(existsSync(new URL(`../${folder}/${name}`, import.meta.url)), `missing site/${folder}/${name}`);
+      assert.ok(existsSync(new URL(`../${folder}/thumbs/${name}`, import.meta.url)), `missing site/${folder}/thumbs/${name}`);
+    }
+  }
+  for (const path of needed) {
+    for (const rule of rules) assert.ok(!excludes(rule, path), `${rule} would leave out ${path}`);
+  }
+  assert.ok(rules.some((r) => excludes(r, "site/assets/flipbook/lighting/page-01.png")), "PNG renders stay out of the deployment");
 });
