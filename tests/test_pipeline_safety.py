@@ -111,8 +111,8 @@ def test_cumulative_refuses_the_same_page_from_two_batches(tmp_path):
 def test_batch_definitions():
     assert batches_mod.BATCHES["batch_3_pilot"].approved is True  # approved by the owner, 17 Oct 2026
     assert batches_mod.BATCHES["batch_3_pilot"].sources[0].pages == (8, 11, 12, 53, 224)
-    fluid = batches_mod.BATCHES["batch_3_fluid"]  # approved by the owner, 21 Oct 2026 (preview first)
-    assert fluid.approved is True and fluid.output_dir == "output_preview_fluid"
+    fluid = batches_mod.BATCHES["batch_3_fluid"]  # approved by the owner, 21 Oct 2026; its preview too, the same day
+    assert fluid.approved is True and fluid.output_dir is None  # the main dataset (output_v2)
     assert [s.pdf for s in fluid.sources] == ["Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"]
     assert fluid.sources[0].pages == tuple(range(1, 373))
     lighting = [s for s in batches_mod.BATCHES["batch_1"].sources if s.pdf.startswith("GROZ_LIGHTING")][0]
@@ -150,24 +150,22 @@ def _approved_pilot(monkeypatch):
     monkeypatch.setattr(runner_mod, "BATCHES", patched)
 
 
-def test_pilot_and_fluid_preview_have_their_own_output_folders():
+def test_pilot_has_its_own_output_folder_and_the_approved_fluid_batch_is_in_the_main_dataset():
     assert BATCHES["batch_3_pilot"].output_dir == "output_pilot_handtool"
-    assert BATCHES["batch_3_fluid"].output_dir == "output_preview_fluid"
-    assert {runner_mod.batch_output_dir(BATCHES[n]) for n in ("batch_1", "batch_2")} == {"output_v2"}
+    assert {runner_mod.batch_output_dir(BATCHES[n]) for n in ("batch_1", "batch_2", "batch_3_fluid")} == {"output_v2"}
 
 
-@pytest.mark.parametrize("target", ["output_v2", "output", "output_pilot_handtool"])
-def test_fluid_preview_cannot_write_anywhere_else(no_extraction, target):
+@pytest.mark.parametrize("target", ["output", "output_pilot_handtool"])
+def test_fluid_batch_cannot_write_into_protected_folders(no_extraction, target):
     with pytest.raises(UnsafeOutputError):
         run_batch("batch_3_fluid", out_dir=target)
 
 
-def test_cumulative_never_merges_the_fluid_preview(tmp_path):
+def test_cumulative_merges_the_approved_fluid_batch(tmp_path):
     out = str(tmp_path / "out")
     _write_batch(out, "batch_1", [_rec()])
     _write_batch(out, "batch_3_fluid", [_rec(pdf="FUEL.pdf", batch="batch_3_fluid")])
-    with pytest.raises(UnsafeOutputError):
-        build_cumulative(out, log=lambda *_: None)
+    assert [r["extraction_batch"] for r in build_cumulative(out, log=lambda *_: None)] == ["batch_1", "batch_3_fluid"]
 
 
 @pytest.mark.parametrize("target", ["output_v2", "output", "some_other_folder"])

@@ -32,9 +32,10 @@ from .titles import TitleReader, relation
 
 DATASET = os.path.join("output_v2", "extracted_products.json")
 SITE_DATA = os.path.join("site", "data", "catalogue.json")
-# The Fluid Handling CC-07 / FUEL CAT 400 extraction (batch_3_fluid), shown only in the local preview
-# (site/data/catalogue.preview.json, never deployed) until the owner approves it.
-PREVIEW_DATASET = os.path.join("output_preview_fluid", "batches", "batch_3_fluid.json")
+# Extracted batches awaiting the owner's approval: (batch file, image folder), shown only in the local
+# preview (site/data/catalogue.preview.json, never deployed). None at the moment: batch_3_fluid (Fluid
+# Handling CC-07 / FUEL CAT 400) was previewed from output_preview_fluid/ and approved on 21 Oct 2026.
+PREVIEW_DATASETS: Tuple[Tuple[str, str], ...] = ()
 PREVIEW_SITE_DATA = os.path.join("site", "data", "catalogue.preview.json")
 PREVIEW_GLOB = os.path.join("review", "preview_*.csv")
 TITLE_REVIEW = os.path.join("review", "display_titles.csv")
@@ -294,7 +295,7 @@ def fuel_duplicates(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".",
           ledger_path: str = verification.LEDGER, extra: Tuple[Tuple[str, str], ...] = ()) -> Dict[str, Any]:
     """The site data. `extra`: further datasets (path, image folder) shown with output_v2 (the local
-    preview of batch_3_fluid)."""
+    preview of batches awaiting approval, PREVIEW_DATASETS)."""
     with open(dataset_path, "rb") as f:
         raw = f.read()
     sources = [(r, "output_v2") for r in json.loads(raw.decode("utf-8"))]
@@ -343,8 +344,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "with_confirmed_image": sum(1 for i in items if i["image"]),
             "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
             "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
-            **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra],
-                            "fuel_duplicates_left_out": len(fuel_dups)}} if extra else {}),
+            "fuel_duplicates_left_out": len(fuel_dups),
+            **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra]}} if extra else {}),
         },
         "categories": [{"name": name, "art": art, "blurb": blurb, "records": by_cat[name]}
                        for name, (art, blurb) in CATEGORY_INFO.items() if by_cat[name]],

@@ -46,11 +46,10 @@ BATCHES: Dict[str, Batch] = {
     "batch_3_fluid": Batch(
         "batch_3_fluid",
         "Fluid Handling CC-07 (all 372 pages: lubrication, fuel & DEF, air handling) and FUEL CAT 400 (32 pages), "
-        "read with the column reader of rules 3.0.0, into a preview folder. Approved by the project owner on "
-        "21 Oct 2026 (\"Extract all, preview\"): nothing from it goes on the website until the preview is approved.",
+        "read with the column reader of rules 3.0.x. Approved by the project owner on 21 Oct 2026 "
+        "(\"Extract all, preview\"); the preview (output_preview_fluid/) was approved for the website the same day "
+        "(\"approve the preview and make it live\"), so the batch is now part of the main dataset.",
         (Source("Fluid_Handling_Catalogue_spread.pdf", tuple(range(1, 373))), Source("FUEL.pdf")),
-        approved=True,
-        output_dir="output_preview_fluid",
     ),
 }
 
