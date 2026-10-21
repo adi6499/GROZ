@@ -136,3 +136,11 @@ test("flipbook has a magnifying glass that shows sharper pages", () => {
   const css = readFileSync("site/assets/flipbook.css", "utf8");
   assert.ok(css.includes(".fb-lens {"), "the lens is styled");
 });
+
+test("product details link to the flipbook only for catalogues the flipbook has", () => {
+  const app = readFileSync("site/assets/js/app.mjs", "utf8");
+  const flip = readFileSync("site/assets/js/flipbook.mjs", "utf8");
+  const listed = [...app.match(/FLIPBOOK_PDFS = new Set\(\[([^\]]+)\]/)[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]).sort();
+  const books = [...flip.matchAll(/^  "([^"]+\.pdf)": \{/gm)].map((m) => m[1]).sort();
+  assert.deepEqual(listed, books);
+});

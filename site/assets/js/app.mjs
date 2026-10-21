@@ -168,6 +168,10 @@ function renderError(err) {
   $("#retryLoad")?.addEventListener("click", load);
 }
 
+// The catalogues the flipbook can show (flipbook.mjs CATALOGUES); others get no flipbook link.
+const FLIPBOOK_PDFS = new Set(["GROZ_LIGHTING_GL-10_1.pdf", "tools_storage.pdf", "Estwing_Hammer_E-03_Interactive_1.pdf",
+  "Precision_Catalogue_CA_03.pdf", "groz-lubrication-equipments.pdf"]);
+
 // ?data=preview: the local preview of newly extracted products that are not approved yet
 // (site/data/catalogue.preview.json, built by build_site_data.py --preview; never deployed).
 const PREVIEW = new URLSearchParams(location.search).get("data") === "preview";
@@ -262,7 +266,7 @@ function renderCatalogues() {
   $("#catalogueList").innerHTML = list.map((c) => `
     <div class="catalogue-row"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>${esc(c.title)}</strong>
       <small>${esc(c.categories ? [...new Set(c.categories.map((x) => core.groupOf(x)?.name || x))].join(", ") : groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
-      <div class="row-actions"><a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a><button class="btn soft" type="button" data-show-cat="${esc((c.categories || [c.category]).join("|"))}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
+      <div class="row-actions">${FLIPBOOK_PDFS.has(c.pdf) ? `<a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a>` : ""}<button class="btn soft" type="button" data-show-cat="${esc((c.categories || [c.category]).join("|"))}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
       <small>Hand Tools and Fluid Handling are not in this preview yet. Their products will appear once they have been extracted and reviewed.</small></div></div></div>`;
 }
@@ -1059,7 +1063,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
               <button class="btn soft" type="button" data-modal-save="${esc(p.id)}" aria-pressed="${saved}">${icon("heart", saved ? "filled" : "")}${saved ? "Saved" : "Save"}</button>
               <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
             </div>
-            <a class="pd-link" href="flipbook.html?pdf=${encodeURIComponent(p.catalogue?.pdf || '')}&page=${p.page || p.catalogue?.page || 1}" target="_blank" rel="noopener">Open in 3D Flipbook (page ${p.page || p.catalogue?.page || 1}) 📖</a>
+            ${FLIPBOOK_PDFS.has(p.catalogue?.pdf) ? `<a class="pd-link" href="flipbook.html?pdf=${encodeURIComponent(p.catalogue?.pdf || '')}&page=${p.page || p.catalogue?.page || 1}" target="_blank" rel="noopener">Open in 3D Flipbook (page ${p.page || p.catalogue?.page || 1}) 📖</a>` : ""}
             <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue PDF ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
           </div>
         </div>

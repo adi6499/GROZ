@@ -99,10 +99,28 @@ Pipeline version: `2.3.1` (`backend/pipeline/runner.py`). Bump it whenever an ex
 |---|---|---|
 | `batch_1` | `tools_storage.pdf` + `GROZ_LIGHTING_GL-10_1.pdf`, all pages (includes the former pilot p6–10 and p5 / LED/695) | approved |
 | `batch_2` | `Estwing_Hammer_E-03_Interactive_1.pdf` + `Precision_Catalogue_CA_03.pdf`, all pages | approved |
-| `batch_3_pilot` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` pages 8, 11, 12, 53, 224 → `output_pilot_handtool/` | prepared, **not approved, not run** |
+| `batch_3_pilot` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` pages 8, 11, 12, 53, 224 → `output_pilot_handtool/` | approved and run 17 Oct 2026 (73 records); its proposed fixes await approval |
+| `batch_3_fluid` | `Fluid_Handling_Catalogue_spread.pdf` (CC-07, all 372 pages) + `FUEL.pdf` (CAT 400, 32 pages) → `output_preview_fluid/` | approved 21 Oct 2026 ("extract all, preview"); run; **preview awaiting approval**, nothing on the live site |
 
-Supplementary sources (no product records by default; used later for images, features and descriptions; genuinely new products or specifications are flagged for review): `Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`.
-Not yet scheduled: `Fluid_Handling_Catalogue_spread.pdf`, and the rest of the Hand Tool catalogue.
+Supplementary sources (no product records by default; used later for images, features and descriptions; genuinely new products or specifications are flagged for review): `Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`. `groz-lubrication-equipments.pdf` prints no CAT or ORD numbers at all: it is shown in the flipbook only, never a source of product records.
+Not yet scheduled: the rest of the Hand Tool catalogue.
+
+### `batch_3_fluid`: Fluid Handling CC-07 and FUEL CAT 400 (rules 3.0.x)
+
+- **Column reader** (`backend/extractor/grid_tables.py`, used only for these two PDFs; batches 1 and 2 keep their rules and re-extract with 0 changes). Each ordering table is read as printed:
+  - one record per printed CAT NR.; best-seller / new marks and footnote stars are not part of a code;
+  - the ORD NR. of the same row ("ORDERING #" in CAT 400; beside the code when a header omits the ORD column); in a table with ORD columns, a row without an order number is no product;
+  - every value column, verbatim, as a specification named after its printed header, up to four header lines ("MAX. PRESSURE (PSI)"); "-" cells left out; check marks (Wingdings 2) as "✓";
+  - BOX QTY., SIZE / DIMENSION (INCH) (MM) and DESCRIPTION into their own fields; labels under each CAT/ORD pair (BSP / NPT THREADS) as the variant, section rows across a table (ALUMINUM DIE CAST HEAD) as its section;
+  - accessory tiles outside tables (a code with its ORD NR. printed under it);
+  - a table that prints its units above the column names is not guessed: those rows keep code, order number and box quantity, with a review note.
+- **Completeness:** CC-07's numerical index (pages 365–369) lists 1942 order numbers. Every one printed on a product page is read. 49 appear only in the index, on no product page; they cannot be extracted. About 30 products printed with an order number are missing from the index.
+- **Titles:** CC-07 prints them in Mont-Heavy 16 (rules above / page / spread / facing). A last rule, `contents`, takes the family the catalogue's contents page lists for that printed page; CAT 400 prints no product titles, so its titles all come from its contents page. Where two families start on the same page, no title is given.
+- **Pictures** (`grid_picture`): the product's own code beside a picture; else the most specific family tag its code begins with (picture "G1-HD" for G1R/HD/B); else, on a page with one ordering table and no labelled pictures, its largest picture. Otherwise the picture stays unconfirmed and is not shown. A picture labelled for other products is never used.
+- **Categories** (site): CC-07 products take the section of the contents their printed page is in: Greasing Equipment, Oiling Equipment, Hose Reels, Waste Oil Handling, Drum Handling (all under Lubrication), Fuel & DEF Handling (Fuel & DEF), Air Handling (Air Tools). Grease guns whose printed title names a battery are Battery Grease Guns (Power Tools, owner's choice). CAT 400 products are Fuel & DEF Handling.
+- **Duplicates:** 73 CAT 400 products are also printed in CC-07 (same ORD NR.). The site shows each once, from CC-07.
+- **Preview:** `.venv/Scripts/python.exe build_site_data.py --preview` writes `site/data/catalogue.preview.json` (git-ignored, never deployed). Open http://127.0.0.1:8962/site/?data=preview. A yellow bar says it is a preview. `output_preview_fluid/` is git-ignored as well.
+- **Going live, after approval:** the batch moves into the main dataset (its `output_dir` becomes `output_v2`), then the cumulative file and `build_site_data.py` are rebuilt. `.vercelignore` must then deploy `FUEL.pdf` and `Fluid_Handling_Catalogue_spread.pdf` (82 MB), because products link to their pages. `site/tests/deploy.test.mjs` fails until it does.
 
 ## Outputs
 

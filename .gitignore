@@ -9,3 +9,6 @@ __pycache__/
 
 # Local preview data of products not approved yet (build_site_data.py --preview)
 site/data/catalogue.preview.json
+# The batch_3_fluid preview run (output_preview_fluid/, ~120 MB of pictures): local review only. Once
+# approved, the products are extracted into the main dataset (output_v2) the usual way.
+output_preview_fluid/

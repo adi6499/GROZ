@@ -108,4 +108,4 @@ On a phone-sized window, show:
   - Press "Update catalogue site" to show the results on the catalogue.
 - **C:** catalogue index discrepancies (documented only; questions for GROZ).
 - **Hand Tool pilot fixes** (awaiting approval), then the rest of the Hand Tool and Fluid Handling catalogues.
-- **Lubrication products:** a proper extraction through `run_extraction.py`, previewed for approval before it goes on the site.
+- **Fluid Handling CC-07 + Fuel CAT 400 (batch_3_fluid):** extracted on 21 Oct 2026 into a preview, awaiting approval. 1951 products: Lubrication 1202, Fuel & DEF 259, Air Tools 461, Power Tools (battery grease guns) 29. To look at it: `.venv/Scripts/python.exe build_site_data.py --preview`, then open http://127.0.0.1:8962/site/?data=preview (a yellow bar marks the preview; the live site is unchanged).
