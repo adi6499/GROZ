@@ -66,3 +66,14 @@ test(".vercelignore keeps every flipbook page, thumbnail, magnifier page and PDF
   }
   assert.ok(rules.some((r) => excludes(r, "site/assets/flipbook/lighting/page-01.png")), "PNG renders stay out of the deployment");
 });
+
+test("Vercel serves the site as static files, never as a Python app", () => {
+  // A new Vercel project took requirements.txt for a Python app and failed (PYTHON_ENTRYPOINT_NOT_FOUND).
+  const config = JSON.parse(read("vercel.json"));
+  assert.ok("framework" in config && config.framework === null, 'vercel.json must set "framework": null (Other)');
+  assert.ok(!config.functions && !config.builds, "no serverless functions or legacy builds");
+  const rules = read(".vercelignore").split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+  for (const path of ["requirements.txt", "requirements-lock.txt", "build_site_data.py", "backend/site/catalogue_export.py"]) {
+    assert.ok(rules.some((rule) => excludes(rule, path)), `${path} must not be deployed`);
+  }
+});

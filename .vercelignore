@@ -22,6 +22,12 @@
 /venv/
 /.venv/
 *.py
+# The Python files are offline extraction tools, not a server. New Vercel projects took the
+# requirements files for a Python app and failed (PYTHON_ENTRYPOINT_NOT_FOUND, 21 Oct 2026);
+# vercel.json also sets "framework": null (Other: static files, no build).
+/requirements.txt
+/requirements-lock.txt
+/pytest.ini
 /verify/
 # Flipbook pages: the site loads the WebP copies (tools/build_flipbook_webp.py), not the PNG renders.
 /site/assets/flipbook/*/page-*.png

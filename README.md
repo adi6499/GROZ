@@ -416,6 +416,10 @@ Then open http://127.0.0.1:8963/verify/. The tool runs on this computer only and
   - `backend/review/verification.py` (ledger rules), `verify_server.py` (local server).
   - `verify/` (page). Tests: `tests/test_verification.py` and `verify/tests/`.
 
+## Deployment (Vercel)
+
+Every push to `main` on GitHub deploys the site as **static files**: `vercel.json` sets `"framework": null` ("Other": no build, no server), redirects `/` to `/site/` and keeps search engines out (`X-Robots-Tag: noindex`). `.vercelignore` leaves out everything the site does not load (extraction code, datasets, PNG renders, `requirements*.txt`). A Vercel project created on 21 Oct 2026 took `requirements.txt` for a Python app and failed with `PYTHON_ENTRYPOINT_NOT_FOUND`; the Python here is offline tooling only. `site/tests/deploy.test.mjs` checks all of this.
+
 ## Tools
 
 - `tools/dump_page.py <pdf> <page>`: prints a page's words line by line with x positions (read-only). Use it to check a table layout before changing the parser.
