@@ -43,15 +43,25 @@ BATCHES: Dict[str, Batch] = {
         approved=True,
         output_dir="output_pilot_handtool",
     ),
+    "batch_3_fluid": Batch(
+        "batch_3_fluid",
+        "Fluid Handling CC-07 (all 372 pages: lubrication, fuel & DEF, air handling) and FUEL CAT 400 (32 pages), "
+        "read with the column reader of rules 3.0.0, into a preview folder. Approved by the project owner on "
+        "21 Oct 2026 (\"Extract all, preview\"): nothing from it goes on the website until the preview is approved.",
+        (Source("Fluid_Handling_Catalogue_spread.pdf", tuple(range(1, 373))), Source("FUEL.pdf")),
+        approved=True,
+        output_dir="output_preview_fluid",
+    ),
 }
 
-BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot")
+BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot", "batch_3_fluid")
 
-# Catalogues of the not-yet-approved Batch 3: only the pages listed here may be processed, so no
-# batch definition (or edit of one) can run Batch 3 by accident. Fluid Handling: no pages yet.
+# Batch 3 catalogues: only the pages listed here may be processed, so no batch definition (or edit of
+# one) can run more of them by accident. Hand Tool: the five pilot pages (the full catalogue is not
+# approved). Fluid Handling: every page, approved for batch_3_fluid on 21 Oct 2026.
 RESTRICTED_SOURCES: Dict[str, Tuple[int, ...]] = {
     "Hand_Tool_Catalogue_low_res_with_cover.pdf": (8, 11, 12, 53, 224),
-    "Fluid_Handling_Catalogue_spread.pdf": (),
+    "Fluid_Handling_Catalogue_spread.pdf": tuple(range(1, 373)),
 }
 
 # Brochure editions without order numbers. Policy (approved 14 Oct 2026): supplementary sources for
@@ -66,4 +76,5 @@ SUPPLEMENTARY_SOURCES: Dict[str, str] = {
 INDEX_PAGES: Dict[str, Tuple[int, ...]] = {
     "Precision_Catalogue_CA_03.pdf": (82, 83),
     "Hand_Tool_Catalogue_low_res_with_cover.pdf": (254, 255, 256, 257),
+    "Fluid_Handling_Catalogue_spread.pdf": (365, 366, 367, 368, 369),
 }

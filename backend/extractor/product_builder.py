@@ -15,6 +15,7 @@ from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor, table_cell_rects
 from .image_sections import caption_picture, section_picture
 from .printed_titles import PageTitles, table_caption
+from .grid_tables import GRID_PDFS, grid_picture, printed_page_number, spec_key
 
 
 def _words_in_order(phrase: str, text: str) -> bool:
@@ -57,13 +58,19 @@ class ProductBuilder:
             if d not in seen_digits:
                 seen_digits.append(d)
         catalog_label = "-".join(seen_digits[:2]) if seen_digits else str(page_number)
+        grid = source_pdf in GRID_PDFS
+        if grid:
+            # CC-07 / FUEL CAT 400: the page number printed in the bottom margin (pages run past 150, and
+            # CC-07 prints it 55 pt above the edge, outside the 45 pt band read above)
+            catalog_label = printed_page_number(page) or str(page_number)
 
         # 1. Extract ordering table records
         ordering_rows = TableExtractor.extract_ordering_records(page, source_pdf, page_number)
         
         # 2. Extract candidate images (codes printed in the ordering tables are not image labels)
         candidate_images = self.image_extractor.extract_page_product_images(
-            page, source_pdf, page_number, table_cells=table_cell_rects(page, ordering_rows)
+            # a tile's code is its picture's caption, not a table cell (grid_tables.extract_tile_rows)
+            page, source_pdf, page_number, table_cells=table_cell_rects(page, [r for r in ordering_rows if not r.get("tile")])
         )
         page_tables = sorted({tuple(r["table_bbox"]) for r in ordering_rows if r.get("table_bbox")})
         page_words = page.get_text("words")
@@ -105,13 +112,20 @@ class ProductBuilder:
             text_region = "full_spread" if is_unified_spread else row.get("region_half", "left")
 
             # Determine product name & subtitle
-            product_name, subtitle, desc, features = self._extract_product_text_details(
-                page, model_code, text_region, mid_x
-            )
+            if grid:
+                # rules 3.0.0: no layout guesses (banner lines, lead paragraph); the title comes from the
+                # printed title type or the contents page below, the row's own cells from its table
+                product_name, subtitle, desc, features = model_code, None, None, []
+            else:
+                product_name, subtitle, desc, features = self._extract_product_text_details(
+                    page, model_code, text_region, mid_x
+                )
 
             # Specific override for row description if provided by table (e.g. "Worklight complete with tripod")
             row_description = None
-            if row.get("description"):
+            if grid:
+                row_description = row.get("description")
+            elif row.get("description"):
                 if "tripod" in row["description"].lower():
                     product_name = f"{model_code} (With Tripod)"
                     subtitle = row["description"]
@@ -137,14 +151,20 @@ class ProductBuilder:
                 clip_rect = pymupdf.Rect(mid_x, 0, page.rect.width, page.rect.height)
 
             region_tables = tables_in_region(text_region)
-            specs = self._extract_specifications(
-                page, clip_rect,
-                lighting_context=self._is_lighting_context(cat_nr, page.get_text("text", clip=clip_rect)),
-                single_table_region=(region_tables == 1),
-            )
-            # Capacity / net weight: read from this product's own panel or table area (see
-            # _storage_specs_for); never copied from a neighbouring variant's block.
-            specs.update(self._storage_specs_for(row, cat_nr, labelled_blocks, clip_rect, region_tables))
+            if grid:
+                # every printed column of the product's own row, named after its printed header
+                specs = {spec_key(label): value for label, value in (row.get("column_specs") or {}).items()}
+                if row.get("table_section"):
+                    specs["table_section"] = row["table_section"]
+            else:
+                specs = self._extract_specifications(
+                    page, clip_rect,
+                    lighting_context=self._is_lighting_context(cat_nr, page.get_text("text", clip=clip_rect)),
+                    single_table_region=(region_tables == 1),
+                )
+                # Capacity / net weight: read from this product's own panel or table area (see
+                # _storage_specs_for); never copied from a neighbouring variant's block.
+                specs.update(self._storage_specs_for(row, cat_nr, labelled_blocks, clip_rect, region_tables))
 
             # Printed text that the heading used to carry is kept verbatim (decision F): the table
             # caption above the product's table, and the row's own description cell.
@@ -279,6 +299,23 @@ class ProductBuilder:
                     )
                 )
 
+            if grid and not ord_nr:
+                editorial_notes.append(EditorialReviewNote(
+                    field_name="ord_nr", published_value="[Not in table]",
+                    suspected_issue="The ordering table prints this product's CAT NR. but no ORD NR. (its header has no ORD column).",
+                    suggested_correction=None,
+                    source_page_reference=f"{source_pdf} Physical Page {page_number}, ordering table",
+                    review_status="pending_review"))
+            if grid and row.get("columns_note"):
+                editorial_notes.append(EditorialReviewNote(
+                    field_name="specifications", published_value="[Not read]",
+                    suspected_issue=("The values in this table's columns were not read: its header prints the units "
+                                     "above the column names, so which column a value belongs to is not certain. "
+                                     "Code, order number and box quantity were read."),
+                    suggested_correction=None,
+                    source_page_reference=f"{source_pdf} Physical Page {page_number}, ordering table",
+                    review_status="pending_review"))
+
             # Decision D (approved 14 Oct 2026): kg and lb figures printed for the same net weight disagree.
             if cat_nr in ("TCHL/14-10D/2/BL/GRZ", "TCHL/14-10D/2/OR/GRZ") and specs.get("net_weight") == "4 KG (21 LBS)":
                 editorial_notes.append(
@@ -310,17 +347,30 @@ class ProductBuilder:
             if row.get("variant_label"):
                 specs["variant_label"] = row["variant_label"]
 
-            # Match images (pass text_region so unified spreads search across whole spread)
-            matched_images = self.image_extractor.match_image_to_product(
-                candidate_images, model_code, cat_nr, text_region,
-                other_codes=page_codes, region_table_count=region_tables,
-            )
+            if grid:
+                # rules 3.0.0 (grid_tables.grid_picture): own code, then family tag, then the single
+                # unlabelled main picture; a picture labelled for other products is never used
+                prev = page.parent[page_number - 2] if page_number > 1 else None
+                facing = facing_candidates() if (prev is not None and catalog_label.isdigit() and int(catalog_label) % 2 == 1
+                                                  and not prev.search_for("ORDERING INFORMATION")) else []
+                pick = grid_picture(cat_nr, candidate_images, facing, len(page_tables))
+                matched_images = [self.image_extractor.make_ref(pick[0], pick[1], pick[2], 0.9 if pick[1] == "direct_product" else 0.7)] if pick else []
+                if not pick and candidate_images:
+                    unresolved = max(candidate_images, key=lambda c: c["area"])
+                    matched_images = [self.image_extractor.make_ref(unresolved, "unresolved",
+                                                                    "only page proximity links this picture to the product", 0.2)]
+            else:
+                # Match images (pass text_region so unified spreads search across whole spread)
+                matched_images = self.image_extractor.match_image_to_product(
+                    candidate_images, model_code, cat_nr, text_region,
+                    other_codes=page_codes, region_table_count=region_tables,
+                )
             # Rules 2.3.0: without a picture labelled for it (own code, base model, tripod text), a
             # product takes the picture printed with its table caption, or its section's single (or
             # clearly largest) picture; the region-wide "largest picture" layout rule comes after.
             weak = (not matched_images or matched_images[0].association_type == "unresolved"
                     or (matched_images[0].evidence or "").startswith("largest product image in the same page region"))
-            if weak:
+            if weak and not grid:
                 own = [c for c in (cat_nr, model_code) if c]
                 others = [c for c in page_codes if c not in own]
                 siblings = [c for r2 in ordering_rows if r2 is not row and r2.get("table_bbox") == row.get("table_bbox")

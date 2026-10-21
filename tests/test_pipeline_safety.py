@@ -53,7 +53,15 @@ def no_extraction(monkeypatch):
     monkeypatch.setattr(ProductBuilder, "process_page", refuse)
 
 
-def test_unapproved_batch_does_not_run(no_extraction):
+def _unapproved(monkeypatch, name="batch_3_pilot"):
+    """The batch as it was before its approval (approval = the flag in batches.py, in a commit)."""
+    patched = dict(runner_mod.BATCHES)
+    patched[name] = dataclasses.replace(patched[name], approved=False)
+    monkeypatch.setattr(runner_mod, "BATCHES", patched)
+
+
+def test_unapproved_batch_does_not_run(no_extraction, monkeypatch):
+    _unapproved(monkeypatch)
     pilot_dir = BATCHES["batch_3_pilot"].output_dir
     existed = os.path.exists(pilot_dir)
     with pytest.raises(PermissionError):
@@ -101,8 +109,12 @@ def test_cumulative_refuses_the_same_page_from_two_batches(tmp_path):
 
 
 def test_batch_definitions():
-    assert batches_mod.BATCHES["batch_3_pilot"].approved is False
+    assert batches_mod.BATCHES["batch_3_pilot"].approved is True  # approved by the owner, 17 Oct 2026
     assert batches_mod.BATCHES["batch_3_pilot"].sources[0].pages == (8, 11, 12, 53, 224)
+    fluid = batches_mod.BATCHES["batch_3_fluid"]  # approved by the owner, 21 Oct 2026 (preview first)
+    assert fluid.approved is True and fluid.output_dir == "output_preview_fluid"
+    assert [s.pdf for s in fluid.sources] == ["Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"]
+    assert fluid.sources[0].pages == tuple(range(1, 373))
     lighting = [s for s in batches_mod.BATCHES["batch_1"].sources if s.pdf.startswith("GROZ_LIGHTING")][0]
     assert lighting.pages is None  # every page, so page 5 (LED/695) cannot be skipped again
     for b in batches_mod.BATCHES.values():
@@ -138,11 +150,24 @@ def _approved_pilot(monkeypatch):
     monkeypatch.setattr(runner_mod, "BATCHES", patched)
 
 
-def test_pilot_is_unapproved_and_has_its_own_output_folder():
-    pilot = BATCHES["batch_3_pilot"]
-    assert pilot.approved is False
-    assert pilot.output_dir == "output_pilot_handtool"
+def test_pilot_and_fluid_preview_have_their_own_output_folders():
+    assert BATCHES["batch_3_pilot"].output_dir == "output_pilot_handtool"
+    assert BATCHES["batch_3_fluid"].output_dir == "output_preview_fluid"
     assert {runner_mod.batch_output_dir(BATCHES[n]) for n in ("batch_1", "batch_2")} == {"output_v2"}
+
+
+@pytest.mark.parametrize("target", ["output_v2", "output", "output_pilot_handtool"])
+def test_fluid_preview_cannot_write_anywhere_else(no_extraction, target):
+    with pytest.raises(UnsafeOutputError):
+        run_batch("batch_3_fluid", out_dir=target)
+
+
+def test_cumulative_never_merges_the_fluid_preview(tmp_path):
+    out = str(tmp_path / "out")
+    _write_batch(out, "batch_1", [_rec()])
+    _write_batch(out, "batch_3_fluid", [_rec(pdf="FUEL.pdf", batch="batch_3_fluid")])
+    with pytest.raises(UnsafeOutputError):
+        build_cumulative(out, log=lambda *_: None)
 
 
 @pytest.mark.parametrize("target", ["output_v2", "output", "some_other_folder"])
@@ -157,7 +182,9 @@ def test_main_batches_cannot_write_into_the_pilot_folder(no_extraction):
         run_batch("batch_1", out_dir="output_pilot_handtool")
 
 
-def test_command_line_has_no_approval_bypass(no_extraction, capsys):
+def test_command_line_has_no_approval_bypass(no_extraction, capsys, monkeypatch):
+    _unapproved(monkeypatch)
+    monkeypatch.setattr(run_extraction, "BATCHES", runner_mod.BATCHES)
     with pytest.raises(SystemExit):  # the old --allow-unapproved flag no longer exists
         run_extraction.main(["batch", "batch_3_pilot", "--allow-unapproved"])
     with pytest.raises(PermissionError):
@@ -170,7 +197,8 @@ def test_command_line_has_no_approval_bypass(no_extraction, capsys):
 @pytest.mark.parametrize("pdf,pages", [
     (HAND_TOOL, (13,)),                                 # a Hand Tool page outside the pilot = Batch 3
     (HAND_TOOL, None),                                  # the whole Hand Tool catalogue = Batch 3
-    ("Fluid_Handling_Catalogue_spread.pdf", (10,)),     # Fluid Handling = Batch 3
+    ("Fluid_Handling_Catalogue_spread.pdf", None),      # Fluid Handling: pages must be listed
+    ("Fluid_Handling_Catalogue_spread.pdf", (373,)),    # Fluid Handling: no such page
     ("Workshop_mini-compress.pdf", (2,)),               # brochure
     ("Fluid_Handling_mini_min_2.pdf", (2,)),            # brochure
 ])

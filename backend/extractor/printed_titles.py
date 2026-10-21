@@ -10,6 +10,9 @@ belongs to a product's ordering table can be read back from the page:
 3. "spread": a two-page spread that prints exactly one product title.
 4. "facing": a right-hand page that prints no title of its own continues the title printed on the
              facing left-hand page (the previous PDF page), when that page prints exactly one title.
+5. "contents": (Fluid Handling CC-07 and FUEL CAT 400 only, rules 3.0.0) otherwise, the title the
+             catalogue's contents page lists for the product family that starts on or before this
+             printed page, when exactly one family starts there.
 
 Anything else gets no title (the page is ambiguous). Used by the extractor (sub_title) and by the
 website builder (title evidence), so both apply the same rules.
@@ -29,6 +32,7 @@ TITLE_TYPE: Dict[str, Tuple[str, float]] = {
     "GROZ_LIGHTING_GL-10_1.pdf": ("Mont-Heavy", 16.0),
     "Precision_Catalogue_CA_03.pdf": ("Mont-Heavy", 16.0),
     "tools_storage.pdf": ("Mont-Heavy", 16.0),
+    "Fluid_Handling_Catalogue_spread.pdf": ("Mont-Heavy", 16.0),
 }
 # Lighting titles have a second line printed directly below in a lighter type ("Worklight" /
 # "Impact Resistant"); it is part of the printed title.
@@ -99,6 +103,32 @@ class PageTitles:
         self.doc, self.pdf = doc, pdf
         self._pages: Dict[int, Tuple[float, List[Dict[str, Any]]]] = {}
         self._words: Dict[int, List[Any]] = {}
+        self._contents: Optional[List[Dict[str, Any]]] = None
+
+    def contents_title(self, number: int) -> Optional[Dict[str, Any]]:
+        """Rule 5 ("contents"): the family the contents page lists as starting on, or most recently
+        before, this page's printed number (CC-07 and FUEL CAT 400 only)."""
+        from .grid_tables import CONTENTS_PAGES, contents_entries, printed_page_number
+        if self.pdf not in CONTENTS_PAGES or not 1 <= number <= len(self.doc):
+            return None
+        if self._contents is None:
+            self._contents = contents_entries(self.doc, CONTENTS_PAGES[self.pdf])
+        label = printed_page_number(self.doc[number - 1])
+        if not label:
+            return None
+        printed = int(label)
+        starts = [e["page"] for e in self._contents if e["page"] <= printed]
+        if not starts:
+            return None
+        start = max(starts)
+        fams = [e for e in self._contents if e["page"] == start]
+        if len(fams) != 1:
+            return None  # two families start on that page: the contents cannot tell which this is
+        e = fams[0]
+        return {"text": e["title"], "rule": "contents", "pdf_page": e["contents_page"], "type": "contents entry",
+                "block": (e["contents_page"], float(start), 0.0),
+                "evidence": (f"Title the catalogue's contents lists for the product family starting on printed page "
+                             f"{start} (contents on PDF page {e['contents_page']}; this is printed page {printed}).")}
 
     def anchor_x(self, number: int, bbox: Sequence[float], cat_nr: Optional[str]) -> Optional[float]:
         """Horizontal centre of the product's CAT NR as printed in its table (its own column)."""
@@ -127,8 +157,10 @@ class PageTitles:
         When two titles are printed side by side at the same height above one table (two tables
         detected as one), the title over the product's own CAT NR wins (rules 2.3.0)."""
         info = self.page(number)
-        if not info or not bbox or self.pdf not in TITLE_TYPE:
+        if not info or not bbox:
             return None
+        if self.pdf not in TITLE_TYPE:
+            return self.contents_title(number)
         width, blocks = info
         bx0, by0, bx1, _ = bbox
         spread = width > SPREAD_MIN_WIDTH
@@ -161,7 +193,7 @@ class PageTitles:
             if prev and prev[0] <= SPREAD_MIN_WIDTH and len(prev[1]) == 1:
                 return found(prev[1][0], "facing", number - 1,
                              "This right-hand page prints no title of its own; title printed on the facing page")
-        return None
+        return self.contents_title(number)
 
 
 def section_of_point(titles: "PageTitles", number: int, x: float, y: float) -> Optional[Tuple[int, float, float]]:
