@@ -200,17 +200,19 @@ export function initHeroParallax() {
   hero.dataset.parallaxReady = "true";
 
   const visual = hero.querySelector(".hero-visual");
-  const orbit = hero.querySelector(".orbit");
   const copy = hero.querySelector(".hero-copy");
   const leftSilhouette = hero.querySelector(".hero-silhouette.left");
   const rightSilhouette = hero.querySelector(".hero-silhouette.right");
 
-  // Entrance for side silhouettes
+  // Side silhouettes slide in once the intro (if any) is over; until then they wait out of sight.
+  if (leftSilhouette) gsap.set(leftSilhouette, { x: -70, opacity: 0 });
+  if (rightSilhouette) gsap.set(rightSilhouette, { x: 70, opacity: 0 });
+  introDone.then(() => {
+    if (leftSilhouette) gsap.to(leftSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.2 });
+    if (rightSilhouette) gsap.to(rightSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.3 });
+  });
+
   if (leftSilhouette) {
-    gsap.fromTo(leftSilhouette,
-      { x: -70, opacity: 0 },
-      { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.2 }
-    );
     gsap.to(leftSilhouette, {
       y: 90,
       ease: "none",
@@ -219,10 +221,6 @@ export function initHeroParallax() {
   }
 
   if (rightSilhouette) {
-    gsap.fromTo(rightSilhouette,
-      { x: 70, opacity: 0 },
-      { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.3 }
-    );
     gsap.to(rightSilhouette, {
       y: 110,
       ease: "none",
@@ -237,14 +235,7 @@ export function initHeroParallax() {
       scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
     });
   }
-  if (orbit) {
-    gsap.to(orbit, {
-      y: 85,
-      rotate: 15,
-      ease: "none",
-      scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
-    });
-  }
+  // (No scroll tween on .orbit: its own CSS animation sets its transform, so the tween never showed.)
   if (copy) {
     gsap.to(copy, {
       y: 35,
@@ -262,21 +253,11 @@ export function initScrollCue() {
   const gsap = getGsap();
   if (!cue || !gsap || !animOK()) return;
 
-  gsap.fromTo(cue,
-    { opacity: 0, y: -8 },
-    { opacity: 1, y: 0, duration: 0.6, delay: 0.8, ease: "power2.out" }
-  );
-
-  const arrow = cue.querySelector(".scroll-cue-arrow");
-  if (arrow) {
-    gsap.to(arrow, {
-      y: 6,
-      duration: 0.85,
-      repeat: -1,
-      yoyo: true,
-      ease: "power1.inOut",
-    });
-  }
+  // Fades in after the intro. Opacity only: its position and hover lift are CSS transforms. The arrow's
+  // bob is a CSS animation (site.css), which pauses with the hero when it is off screen; an endless
+  // GSAP tween would keep running on every frame.
+  gsap.set(cue, { opacity: 0 });
+  introDone.then(() => gsap.to(cue, { opacity: 1, duration: 0.6, delay: 0.8, ease: "power2.out", clearProps: "opacity" }));
 
   cue.addEventListener("click", (e) => {
     e.preventDefault();
@@ -325,33 +306,19 @@ export function animateCardsOnLoad(cards, { stagger = 0.038, duration = 0.46 } =
  * On load / render / filter in table mode: rows cascade in with staggered slide-up motion and fade in.
  */
 export function animateTableRowsOnLoad(rows, { stagger = 0.03, duration = 0.38 } = {}) {
-  const gsap = getGsap();
   if (!animOK() || !rows || !rows.length) return;
   const list = Array.isArray(rows) ? rows : [...rows];
   const onScreen = (r) => r.top < window.innerHeight + 80 && r.bottom > -80;
   const targets = list.filter((c) => onScreen(c.getBoundingClientRect()));
   const batch = targets.length ? targets : list.slice(0, 24);
-
-  if (gsap) {
-    gsap.fromTo(batch,
-      { opacity: 0, y: 18 },
-      {
-        opacity: 1,
-        y: 0,
-        duration,
-        stagger,
-        ease: "power2.out",
-        clearProps: "transform,opacity",
-      }
+  // Web Animations rather than GSAP: on phones the rows have a CSS transform transition, which re-timed
+  // every GSAP frame and made the rows lag behind.
+  batch.forEach((c, i) => {
+    c.animate(
+      [{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
+      { duration: duration * 1000, delay: i * stagger * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)", fill: "backwards" }
     );
-  } else {
-    batch.forEach((c, i) => {
-      c.animate(
-        [{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
-        { duration: duration * 1000, delay: i * stagger * 1000, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)", fill: "backwards" }
-      );
-    });
-  }
+  });
 }
 
 /**
@@ -410,9 +377,10 @@ export function spawnCardSparks(cardEl) {
  * Initializes card & table row hover listener to emit micro spark particles.
  */
 export function initCardSparkListeners(container = document) {
+  // pointerenter fires for every element the pointer enters; only entering the card or row itself
+  // counts (moving over its picture, title or buttons used to burst sparks again each time).
   container.addEventListener("pointerenter", (e) => {
-    const item = e.target.closest?.(".product, .ptable tbody tr");
-    if (item && e.pointerType === "mouse") spawnCardSparks(item);
+    if (e.pointerType === "mouse" && e.target.matches?.(".product, .ptable tbody tr")) spawnCardSparks(e.target);
   }, true);
 }
 
@@ -421,50 +389,33 @@ export function initCardSparkListeners(container = document) {
 /**
  * Smooth accordion expand/collapse with elastic easing.
  */
-export function animateCategoryAccordion(element, open, { duration = 0.42, onComplete } = {}) {
+export function animateCategoryAccordion(element, open, { duration = 0.3, onComplete } = {}) {
   const gsap = getGsap();
   if (!element) return;
-  if (!animOK()) {
-    element.hidden = !open;
+  // A new open or close replaces one still playing (its onComplete never runs).
+  gsap?.killTweensOf(element);
+  const done = () => {
+    gsap?.set(element, { clearProps: "opacity,transform,transformOrigin" });
     onComplete?.();
+  };
+  if (!animOK() || !gsap) {
+    element.hidden = !open;
+    done();
     return;
   }
-
-  if (gsap) {
-    if (open) {
-      element.hidden = false;
-      playToolDropSound(1.2);
-      gsap.fromTo(element,
-        { height: 0, opacity: 0, transformOrigin: "top center", scaleY: 0.9 },
-        {
-          height: "auto",
-          opacity: 1,
-          scaleY: 1,
-          duration,
-          ease: "back.out(1.5)",
-          onComplete: () => {
-            gsap.set(element, { clearProps: "height,transformOrigin,scaleY" });
-            onComplete?.();
-          },
-        }
-      );
-    } else {
-      gsap.to(element, {
-        height: 0,
-        opacity: 0,
-        scaleY: 0.94,
-        duration: Math.max(0.24, duration - 0.1),
-        ease: "power2.inOut",
-        onComplete: () => {
-          element.hidden = true;
-          gsap.set(element, { clearProps: "all" });
-          onComplete?.();
-        },
-      });
-    }
+  // Transform and opacity only: animating the height re-laid out the page on every frame.
+  if (open) {
+    element.hidden = false;
+    playToolDropSound(1.2);
+    gsap.fromTo(element,
+      { opacity: 0, y: -8, scaleY: 0.94, transformOrigin: "top center" },
+      { opacity: 1, y: 0, scaleY: 1, duration, ease: "back.out(1.6)", onComplete: done }
+    );
   } else {
-    element.hidden = !open;
-    onComplete?.();
+    gsap.to(element, {
+      opacity: 0, y: -6, scaleY: 0.96, transformOrigin: "top center", duration: 0.18, ease: "power2.in",
+      onComplete: () => { element.hidden = true; done(); },
+    });
   }
 }
 
@@ -509,51 +460,47 @@ export function fadeProductsSequentially(cards, { duration = 0.42, stagger = 0.0
  * Animate the cart icon with spring bounce/pulse when items are added.
  */
 export function animateCartBounce(elements) {
-  const gsap = getGsap();
   playToolDropSound(1.3);
   if (!animOK() || !elements) return;
   const targets = (Array.isArray(elements) ? elements : [elements]).filter(Boolean);
   if (!targets.length) return;
-
-  if (gsap) {
-    const tl = gsap.timeline();
-    tl.to(targets, { scale: 1.34, rotate: -7, duration: 0.16, ease: "back.out(2)" })
-      .to(targets, { scale: 0.9, rotate: 4, duration: 0.14, ease: "power2.inOut" })
-      .to(targets, { scale: 1.12, rotate: -2, duration: 0.12, ease: "power2.out" })
-      .to(targets, { scale: 1, rotate: 0, duration: 0.18, ease: "elastic.out(1, 0.4)", clearProps: "transform" });
-    return tl;
-  } else {
-    targets.forEach((el) => {
-      el.animate(
-        [
-          { transform: "scale(1) rotate(0deg)" },
-          { transform: "scale(1.34) rotate(-7deg)", offset: 0.3 },
-          { transform: "scale(0.9) rotate(4deg)", offset: 0.6 },
-          { transform: "scale(1.12) rotate(-2deg)", offset: 0.8 },
-          { transform: "scale(1) rotate(0deg)" },
-        ],
-        { duration: 480, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
-      );
-    });
-  }
+  // Web Animations rather than GSAP: the buttons have CSS transform transitions, which re-timed every
+  // GSAP frame (the bounce lagged).
+  targets.forEach((el) => {
+    el.animate(
+      [
+        { transform: "scale(1) rotate(0deg)" },
+        { transform: "scale(1.34) rotate(-7deg)", offset: 0.3 },
+        { transform: "scale(0.9) rotate(4deg)", offset: 0.6 },
+        { transform: "scale(1.12) rotate(-2deg)", offset: 0.8 },
+        { transform: "scale(1) rotate(0deg)" },
+      ],
+      { duration: 480, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
+    );
+  });
 }
 
 /**
  * Slide in the quote summary drawer from the right with spring physics.
  */
+const drawerFrom = () => (matchMedia("(max-width: 720px)").matches ? { y: "100%" } : { x: "100%" });
+
 export function openQuoteDrawer(modalEl, backdropEl) {
   const gsap = getGsap();
   if (!modalEl) return;
   if (!animOK() || !gsap) return;
-
+  const parts = [modalEl, backdropEl].filter(Boolean);
+  gsap.killTweensOf(parts);
+  // From the side (from below on phones, where it is a bottom sheet). No overshoot: it is flush with
+  // the screen edge, and bouncing past it opened a gap. Nothing is left inline afterwards.
   gsap.fromTo(modalEl,
-    { x: "100%", opacity: 0.6 },
-    { x: "0%", opacity: 1, duration: 0.48, ease: "back.out(1.15)" }
+    { ...drawerFrom(), opacity: 0.6 },
+    { x: 0, y: 0, opacity: 1, duration: 0.42, ease: "power3.out", clearProps: "transform,opacity" }
   );
   if (backdropEl) {
     gsap.fromTo(backdropEl,
       { opacity: 0 },
-      { opacity: 1, duration: 0.35, ease: "power2.out" }
+      { opacity: 1, duration: 0.3, ease: "power2.out", clearProps: "opacity" }
     );
   }
 }
@@ -568,13 +515,14 @@ export function closeQuoteDrawer(modalEl, backdropEl, onComplete) {
     return;
   }
 
+  gsap.killTweensOf([modalEl, backdropEl].filter(Boolean));
   const tl = gsap.timeline({
     onComplete: () => {
-      gsap.set([modalEl, backdropEl].filter(Boolean), { clearProps: "all" });
-      onComplete?.();
+      onComplete?.(); // hidden first, then the inline styles go (no flash of the drawer back in place)
+      gsap.set([modalEl, backdropEl].filter(Boolean), { clearProps: "transform,opacity" });
     },
   });
-  tl.to(modalEl, { x: "100%", opacity: 0.6, duration: 0.32, ease: "power2.in" }, 0);
+  tl.to(modalEl, { ...drawerFrom(), opacity: 0.6, duration: 0.3, ease: "power2.in" }, 0);
   if (backdropEl) {
     tl.to(backdropEl, { opacity: 0, duration: 0.32, ease: "power2.in" }, 0);
   }
@@ -605,16 +553,7 @@ export function updateQuoteProgress(quoteSize = 0, contact = {}) {
     else hint.textContent = "Ready to generate clear quotation!";
   }
 
-  const gsap = getGsap();
-  if (gsap && animOK()) {
-    gsap.to(fill, {
-      width: `${percent}%`,
-      duration: 0.45,
-      ease: "back.out(1.2)",
-    });
-  } else {
-    fill.style.width = `${percent}%`;
-  }
+  fill.style.width = `${percent}%`; // its CSS transition animates the change
 }
 
 // ---------------------------------------------------------------- 6. Scroll-Triggered WOW Effects
@@ -691,11 +630,13 @@ export function initScrollProgressBar() {
     document.body.prepend(bar);
   }
 
+  // Where the browser supports scroll-driven animations, site.css moves the bar off the main thread.
+  if (window.CSS?.supports?.("animation-timeline: scroll()")) return;
   const gsap = getGsap();
   if (animOK() && gsap && window.ScrollTrigger) {
+    // Transform only: animating the gradient's position repainted the bar on every frame.
     gsap.to(bar, {
       scaleX: 1,
-      backgroundPosition: "100% 0%",
       ease: "none",
       scrollTrigger: {
         start: "top top",
@@ -833,7 +774,7 @@ export function animateSvgDraw(svg, { duration = 0.55, delay = 0, stagger = 0.04
       }
       if (len <= 0) len = 100;
       gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
-      tl.to(el, { strokeDashoffset: 0, duration, ease: "power2.out" }, i * stagger);
+      tl.to(el, { strokeDashoffset: 0, duration, ease: "power2.out", clearProps: "strokeDasharray,strokeDashoffset" }, i * stagger);
     });
     return tl;
   }
@@ -842,14 +783,17 @@ export function animateSvgDraw(svg, { duration = 0.55, delay = 0, stagger = 0.04
 /**
  * Category icons animate their outlines when revealed into view.
  */
-export function animateCategoryOutlines(categories) {
+let outlinesBound = false;
+export function animateCategoryOutlines() {
   const gsap = getGsap();
-  if (!animOK()) return;
-  const cats = (Array.isArray(categories) ? categories : [...(categories ? categories.querySelectorAll(".cat") : document.querySelectorAll("#categoryGrid .cat"))]).filter(Boolean);
-  if (!cats.length) return;
+  // Once per visit: the tiles are rebuilt on every category click, and each rebuild used to add another
+  // trigger that redrew all the icons straight away.
+  if (!animOK() || outlinesBound) return;
+  outlinesBound = true;
 
+  // The tiles on the page when the grid scrolls into view (not the ones that existed when this ran).
   const runDraw = () => {
-    cats.forEach((cat, idx) => {
+    document.querySelectorAll("#categoryGrid .cat").forEach((cat, idx) => {
       const svg = cat.querySelector(".cat-art svg");
       if (svg) animateSvgDraw(svg, { duration: 0.52, delay: idx * 0.045, stagger: 0.035 });
     });
@@ -880,12 +824,13 @@ export function initUnifiedAnimationSystem() {
   initSectionScrollTriggers();
   initCardSparkListeners();
 
-  // Initial tool icons stroke drawing
-  const heroTool = document.querySelector(".hero-tool");
-  if (heroTool) animateSvgDraw(heroTool, { duration: 0.6, delay: 0.2, stagger: 0.06 });
-
-  document.querySelectorAll(".trust-icon svg").forEach((svg, i) => {
-    animateSvgDraw(svg, { duration: 0.48, delay: 0.25 + i * 0.08, stagger: 0.04 });
+  // Tool icons draw themselves once the intro (if any) is over, not unseen underneath it.
+  introDone.then(() => {
+    const heroTool = document.querySelector(".hero-tool");
+    if (heroTool) animateSvgDraw(heroTool, { duration: 0.6, delay: 0.2, stagger: 0.06 });
+    document.querySelectorAll(".trust-icon svg").forEach((svg, i) => {
+      animateSvgDraw(svg, { duration: 0.48, delay: 0.25 + i * 0.08, stagger: 0.04 });
+    });
   });
 
   animateCategoryOutlines();

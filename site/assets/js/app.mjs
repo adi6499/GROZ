@@ -487,14 +487,14 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   const remaining = list.length - state.rendered;
   $("#moreWrap").innerHTML = remaining > 0
     ? `<button class="btn outline" type="button" id="showMore">Show ${Math.min(remaining, core.PAGE_SIZE)} more <span class="muted-on">· ${remaining} remaining</span></button>` : "";
-  const newItems = !quiet
-    ? (state.view === "grid" ? $$(".product", grid).slice(from) : $$("#ptableBody tr", grid).slice(from))
-    : [];
-  if (window.gsap && !typing) {
-    if (state.view === "table") anim.animateTableRowsOnLoad(newItems);
-    else anim.animateCardsOnLoad(newItems);
-  } else {
-    fx.cascade(newItems, { fresh: !append, quick: typing, from: before });
+  // Cards cascade in, cards already on screen glide to their new places, and cards further down rise
+  // as they scroll into view (motion.mjs); table rows rise in (animations.mjs). Both run on the Web
+  // Animations API, which the cards' own CSS hover transitions cannot slow down (GSAP's inline
+  // styles were re-timed by them, so the cards lagged).
+  if (state.view === "grid") fx.cascade(quiet ? [] : $$(".product", grid).slice(from), { fresh: !append, quick: typing, from: before });
+  else {
+    fx.cascade([], { fresh: !append });
+    if (!quiet && !typing) anim.animateTableRowsOnLoad($$("#ptableBody tr", grid).slice(from));
   }
 }
 
@@ -579,7 +579,8 @@ function addToQuote(id) {
   persist();
   updateBadges();
   notify(`${p.cat_nr} added to your quote`);
-  anim.animateCartBounce([$("#navQuote"), $("#mobileQuoteBtn")]);
+  // A tossed picture bounces the Quote button as it lands (tossToQuote); otherwise bounce it now.
+  if (!state.quoteHold) anim.animateCartBounce([$("#navQuote"), $("#mobileQuoteBtn")]);
 }
 
 function addManyToQuote(ids) {
@@ -612,6 +613,8 @@ document.addEventListener("click", (e) => { const b = e.target.closest("button,a
 
 function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   stopUnbox();
+  // The quote drawer slides in when it opens (or is reopened while closing), not when it is rebuilt.
+  const slideIn = kind === "quote" && (!backdrop.classList.contains("open") || backdrop.classList.contains("closing") || modal.dataset.kind !== "quote");
   if (closing) { closing(); closing = null; backdrop.classList.remove("closing"); } // reopened while closing
   if (!backdrop.classList.contains("open")) {
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
@@ -631,7 +634,7 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   modal.scrollTop = 0;
   const mBody = $("#modalBody");
   if (mBody) mBody.scrollTop = 0;
-  if (kind === "quote") anim.openQuoteDrawer(modal, backdrop);
+  if (slideIn) anim.openQuoteDrawer(modal, backdrop);
   ($("[data-autofocus]", modal) || $("#modalClose")).focus({ preventScroll: true });
 }
 
@@ -652,9 +655,10 @@ function closeModal() {
   if (boxTo) {
     try { closing = playBoxClose(boxTo, hide); return; } catch { $$(".unbox").forEach((l) => l.remove()); /* plain exit below */ }
   }
-  if (modal.dataset.kind === "quote" && window.gsap) {
-    closing = () => {};
-    anim.closeQuoteDrawer(modal, backdrop, hide);
+  if (modal.dataset.kind === "quote") {
+    const tl = anim.closeQuoteDrawer(modal, backdrop, hide); // none: it closed at once (no motion)
+    // Reopened while sliding out: stop the slide, so the old exit cannot hide the new dialog.
+    if (tl) closing = () => { tl.kill(); window.gsap.set([modal, backdrop], { clearProps: "transform,opacity" }); };
     return;
   }
   // Other dialogs fade and settle back (a bottom sheet slides down) before they are hidden.
@@ -1338,8 +1342,8 @@ function wire() {
     const f = state.filters;
     const same = cats.length === f.categories.size && cats.every((c) => f.categories.has(c));
     f.categories = toggle && same ? new Set() : new Set(cats);
-    renderCategories(); renderFilters(); refresh();
-    anim.fadeProductsSequentially($$(".product", grid));
+    renderCategories(); renderFilters(); refresh(); // the cards cascade in (renderProducts)
+    anim.playToolDropSound(0.95);
     scrollToEl($("#products"));
   };
   // A GROZ category: its products, or a note that it is not in this preview yet.
@@ -1354,13 +1358,17 @@ function wire() {
 
   // Header Categories menu (desktop) and the category list in the phone menu.
   const catMenu = $("#catMenu"), catBtn = $("#catMenuBtn");
+  // Open or closed is aria-expanded: while the menu fades out it is still visible, so "hidden" would
+  // read as open and a click then would close it again instead of reopening it.
+  const catOpen = () => catBtn.getAttribute("aria-expanded") === "true";
   const setCatMenu = (open) => {
+    if (open === catOpen()) return;
     catBtn.setAttribute("aria-expanded", String(open));
     anim.animateCategoryAccordion(catMenu, open);
   };
   catBtn.addEventListener("click", (e) => {
-    setCatMenu(catMenu.hidden);
-    if (!catMenu.hidden && e.detail === 0) $("button", catMenu)?.focus(); // opened from the keyboard
+    setCatMenu(!catOpen());
+    if (catOpen() && e.detail === 0) $("button", catMenu)?.focus(); // opened from the keyboard
   });
 
   // Accordion for legend / How to read labels
@@ -1370,20 +1378,22 @@ function wire() {
   if (legend && legendSummary && legendDl) {
     legendSummary.addEventListener("click", (e) => {
       e.preventDefault();
-      const isOpen = legend.hasAttribute("open");
+      const isOpen = legend.hasAttribute("open") && !legend.dataset.closing;
       if (!isOpen) {
+        delete legend.dataset.closing; // reopened while closing: the close is stopped
         legend.setAttribute("open", "");
         anim.animateCategoryAccordion(legendDl, true);
       } else {
+        legend.dataset.closing = "1";
         anim.animateCategoryAccordion(legendDl, false, {
-          onComplete: () => legend.removeAttribute("open"),
+          onComplete: () => { delete legend.dataset.closing; legend.removeAttribute("open"); },
         });
       }
     });
   }
   catMenu.addEventListener("click", (e) => { const b = e.target.closest("[data-group]"); if (b) { setCatMenu(false); openGroup(b.dataset.group, false); } });
-  document.addEventListener("click", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });
-  document.addEventListener("focusin", (e) => { if (!catMenu.hidden && !e.target.closest(".nav-cats")) setCatMenu(false); });
+  document.addEventListener("click", (e) => { if (catOpen() && !e.target.closest(".nav-cats")) setCatMenu(false); });
+  document.addEventListener("focusin", (e) => { if (catOpen() && !e.target.closest(".nav-cats")) setCatMenu(false); });
   $("#mobileCats").addEventListener("click", (e) => { const b = e.target.closest("[data-group]"); if (b) { setMenuOpen(false); openGroup(b.dataset.group, false); } });
 
   $("#filterBody").addEventListener("change", (e) => {

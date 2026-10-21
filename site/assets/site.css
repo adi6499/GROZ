@@ -611,9 +611,10 @@ body.has-dock main{padding-bottom:110px}
 .stamp{position:absolute;top:-9px;right:18px;z-index:2;padding:4px 9px;border:2px solid var(--green);border-radius:7px;background:#effaf3;color:var(--green);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-8deg);pointer-events:none}
 :root[data-theme=dark] .stamp{background:#11291c;border-color:#3fbf7a;color:#5fd497}
 
-/* scroll progress: a thin orange line under the header (scroll-driven animation where supported) */
+/* scroll progress: the bar at the top (animations.mjs adds it) follows the scroll on the browser's
+   compositor where scroll-driven animations are supported; elsewhere GSAP scales it */
 @supports (animation-timeline:scroll()){
-  .top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,#ff9a6b,var(--orange));transform-origin:0 50%;animation:scroll-progress linear both;animation-timeline:scroll(root)}
+  .scroll-progress-bar{animation:scroll-progress linear both;animation-timeline:scroll(root)}
   @keyframes scroll-progress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 }
 /* small delights (motion.mjs): press ripples, magnetic buttons, picture magnifier, confetti, back to top */
@@ -664,8 +665,7 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, #f4511e, #ff8051, #ffd36b, #ff5722, #f4511e);
-  background-size: 300% 100%;
+  background: linear-gradient(90deg, #f4511e, #ff8051, #ffd36b);
   transform-origin: left center;
   transform: scaleX(0);
   z-index: 99999;
@@ -693,9 +693,10 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   justify-content: flex-end;
   align-items: stretch;
   padding: 0;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: #00000080; /* a tint, not a backdrop blur: that was recomputed on every frame of the slide */
 }
+/* the drawer's own slide (animations.mjs) fades the backdrop; the generic fade would fight it */
+.backdrop[data-kind="quote"].open { animation: none; }
 .backdrop[data-kind="quote"] .modal {
   width: min(640px, 100%);
   height: 100vh;
@@ -838,7 +839,7 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   height: 340px;
   pointer-events: none;
   opacity: 0.22;
-  color: var(--ink3);
+  color: var(--muted);
   z-index: 0;
   transition: opacity 0.4s ease;
 }
@@ -863,7 +864,7 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 99px;
   color: var(--ink2);
@@ -872,10 +873,9 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   letter-spacing: 0.02em;
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* no backdrop blur: the hero behind it moves all the time, so it would be redrawn on every frame */
   z-index: 2;
-  transition: all 0.24s var(--ease);
+  transition: background-color 0.24s, color 0.24s, border-color 0.24s, box-shadow 0.24s, transform 0.24s var(--ease);
 }
 .hero-scroll-cue:hover {
   background: #ffffff;
@@ -885,7 +885,7 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   transform: translateX(-50%) translateY(-2px);
 }
 :root[data-theme="dark"] .hero-scroll-cue {
-  background: rgba(28, 28, 30, 0.75);
+  background: rgba(28, 28, 30, 0.94);
   border-color: rgba(255, 255, 255, 0.12);
   color: var(--ink2);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -898,7 +898,12 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
 .scroll-cue-arrow {
   width: 14px;
   height: 14px;
+  animation: cue-bob 1.7s ease-in-out infinite;
 }
+@keyframes cue-bob { 50% { transform: translateY(6px); } }
+.hero.paused .scroll-cue-arrow { animation-play-state: paused; }
+.lite .scroll-cue-arrow { animation: none; }
+@media (prefers-reduced-motion: reduce) { .scroll-cue-arrow { animation: none; } }
 
 /* ==========================================================================
    3. Sound Toggle & Nav Exit Buttons
@@ -1111,3 +1116,10 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
 html.intro .intro-overlay{display:flex;animation:intro-failsafe .4s 7s forwards}
 html.intro .intro-part,html.intro #introBrandName,html.intro #introTagline{opacity:0}
 @keyframes intro-failsafe{to{opacity:0;visibility:hidden}}
+
+/* the Categories menu's entrance is GSAP's (animations.mjs); the CSS pop as well played it twice */
+.cat-menu{animation:none}
+/* the flipbook banner is always dark: its text needs a light grey to be readable */
+.fb-cat-banner-content p{color:#b9b9c0}
+/* phones: the header's icon buttons look 38px but are tapped as 44px */
+@media(max-width:720px){.icon-btn:after{content:"";position:absolute;inset:-3px}}
