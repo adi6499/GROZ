@@ -67,6 +67,28 @@ const CATALOGUES = {
     art: "grease",
     companionText: "Lubrication & Fuel Tech",
   },
+  "Fluid_Handling_Catalogue_spread.pdf": {
+    id: "fluid",
+    title: "GROZ Fluid Handling CC-07",
+    pdf: "Fluid_Handling_Catalogue_spread.pdf",
+    href: "../Fluid_Handling_Catalogue_spread.pdf",
+    folder: "assets/flipbook/fluid",
+    pageCount: 372,
+    size: "82.2 MB",
+    art: "grease",
+    companionText: "Lubrication, Fuel & Air",
+  },
+  "FUEL.pdf": {
+    id: "fuel",
+    title: "GROZ Fuel Equipment CAT 400",
+    pdf: "FUEL.pdf",
+    href: "../FUEL.pdf",
+    folder: "assets/flipbook/fuel",
+    pageCount: 32,
+    size: "6.0 MB",
+    art: "fuel",
+    companionText: "Fuel & DEF Handling",
+  },
 };
 
 // ---------------------------------------------------------------- Audio Synthesis (Web Audio API)
@@ -544,7 +566,7 @@ function showQuickCard(pageNum, anchor) {
     </div>
     <ul class="fb-quick-list">${shown.map((p) => `
       <li><button class="fb-quick-item" type="button" data-show-product="${esc(p.id)}">
-        <span class="fb-quick-thumb">${p.image?.src ? `<img src="${esc(p.image.src)}" alt="" loading="lazy"/>` : art(artFor(p))}</span>
+        <span class="fb-quick-thumb">${p.image?.src ? `<img src="${esc(p.image.thumb || p.image.src)}" alt="" loading="lazy"/>` : art(artFor(p))}</span>
         <span class="fb-quick-info"><span class="fb-quick-code">${esc(p.cat_nr)}</span>${p.title || p.heading ? `<span class="fb-quick-title">${esc(p.title || p.heading)}</span>` : ""}</span>
       </button></li>`).join("")}
     </ul>

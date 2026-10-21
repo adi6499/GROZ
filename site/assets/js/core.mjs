@@ -145,7 +145,8 @@ export function activeFilterCount(f) {
   return n;
 }
 
-/** Specification filters that make sense for the given products: 2-14 distinct values, used by 3+ products. */
+/** Specification filters that make sense for the given products: 2-14 distinct values, used by 3+ products;
+ *  those printed for the most products first. */
 export function facetGroups(products) {
   const groups = new Map();
   for (const p of products) {
@@ -160,8 +161,10 @@ export function facetGroups(products) {
     .map((g) => ({
       key: g.key,
       label: g.label,
+      products: [...g.counts.values()].reduce((a, b) => a + b, 0),
       values: [...g.counts].map(([value, count]) => ({ value, count })).sort((a, b) => naturalCompare(a.value, b.value)),
-    }));
+    }))
+    .sort((a, b) => b.products - a.products);
 }
 
 export function sortProducts(list, mode) {
@@ -277,12 +280,28 @@ function productLine(p) {
   return { code: p.cat_nr || "Not specified", ord: p.ord_nr || "Not printed in catalogue", heading: displayTitle(p) || "", where };
 }
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const pad2 = (n) => String(n).padStart(2, "0");
+
+/** When the request was prepared, in the device's own time: "21 Oct 2026, 14:18 (UTC+05:30)". */
+export function quoteTime(when) {
+  const off = -when.getTimezoneOffset(), a = Math.abs(off);
+  return `${when.getDate()} ${MONTHS[when.getMonth()]} ${when.getFullYear()}, ${pad2(when.getHours())}:${pad2(when.getMinutes())} `
+    + `(UTC${off < 0 ? "-" : "+"}${pad2(Math.floor(a / 60))}:${pad2(a % 60)})`;
+}
+
+/** The request's own reference, from the time it was prepared (also the download file name). */
+export function quoteRef(when) {
+  return `QR-${when.getFullYear()}${pad2(when.getMonth() + 1)}${pad2(when.getDate())}-${pad2(when.getHours())}${pad2(when.getMinutes())}`;
+}
+
 export function quoteText(items, byId, contact, when = new Date()) {
   const t = quoteTotals(items);
   const lines = [
     "GROZ QUOTATION REQUEST",
-    "Prepared locally in the GROZ catalogue preview. Not sent to anyone.",
-    `Prepared: ${when.toISOString().slice(0, 16).replace("T", " ")} UTC`,
+    "Prepared on the GROZ catalogue website. Not sent to anyone.",
+    `Your reference: ${quoteRef(when)}`,
+    `Prepared: ${quoteTime(when)}`,
     "",
     "CONTACT",
     ...[["Name", contact.name], ["Company", contact.company], ["Email", contact.email], ["Phone", contact.phone],
@@ -303,6 +322,62 @@ export function quoteText(items, byId, contact, when = new Date()) {
   if (String(contact.notes ?? "").trim()) lines.push("", "NOTES", String(contact.notes).trim());
   lines.push("", "Product data was extracted from GROZ catalogues and has not been verified. Please confirm codes, order numbers and specifications with GROZ.");
   return lines.join("\n");
+}
+
+const html = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+/**
+ * The request as a formatted document. Inline styles only, so it looks the same on screen, on paper
+ * and pasted into an email. `screen` adds the product pictures, the logo and the phone layout hooks
+ * (site.css .qd); the email copy leaves them out, as an email cannot load pictures from this site.
+ */
+export function quoteHtml(items, byId, contact, when = new Date(), { screen = true } = {}) {
+  const t = quoteTotals(items);
+  const val = (k) => String(contact[k] ?? "").trim();
+  const label = (s) => `<div style="font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#c2410c;margin:0 0 5px">${s}</div>`;
+  const muted = "color:#6a6a70";
+  const cell = "padding:9px 8px;border-bottom:1px solid #e7e7ea;vertical-align:top";
+  const head = "padding:7px 8px;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#55555b;background:#f5f5f7;border-bottom:2px solid #1d1d1f;text-align:left;white-space:nowrap";
+  const logo = screen ? '<svg width="26" height="26" viewBox="0 0 28 28" aria-hidden="true" style="vertical-align:-6px;margin-right:8px"><path d="M14 0 28 14 14 28 0 14Z" fill="#f4511e"/><text x="14" y="18.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Arial,sans-serif">G</text></svg>' : "";
+  const rows = items.map((it, n) => {
+    const p = byId.get(it.id);
+    if (!p) return "";
+    const l = productLine(p);
+    const src = `${html(p.catalogue?.title)}<br/><span style="${muted}">printed p. ${html(p.printed_page ?? "not printed")} · PDF p. ${html(p.page)}</span>`;
+    const pic = screen && p.image?.src
+      ? `<img class="qd-pic" src="${html(p.image.thumb || p.image.src)}" alt="" width="46" height="46" style="width:46px;height:46px;object-fit:contain;background:#f5f5f7;border-radius:7px;flex:none"/>` : "";
+    const text = `<div style="font-weight:700;font-family:Consolas,ui-monospace,monospace;font-size:12px;overflow-wrap:anywhere">${html(l.code)}</div>`
+      + (l.heading ? `<div style="font-size:11.5px;color:#3a3a3f;margin-top:2px">${html(l.heading)}</div>` : "")
+      + `<div style="font-size:10.5px;${muted};margin-top:2px">${html(p.category)}</div>`
+      + (screen ? `<div class="qd-src-inline" style="display:none;font-size:10.5px;${muted};margin-top:4px">${html(p.catalogue?.title)}, printed p. ${html(p.printed_page ?? "not printed")}</div>` : "");
+    const product = pic ? `<div style="display:flex;gap:10px;align-items:flex-start">${pic}<div style="min-width:0">${text}</div></div>` : text;
+    const ord = p.ord_nr ? html(p.ord_nr) : '<span style="color:#8a5a00">Not printed in catalogue</span>';
+    return `<tr style="break-inside:avoid"><td style="${cell};${muted};width:22px">${n + 1}</td><td style="${cell}">${product}</td>`
+      + `<td style="${cell};font-family:Consolas,ui-monospace,monospace;white-space:nowrap">${ord}</td>`
+      + `<td class="qd-src" style="${cell};font-size:11px">${src}</td>`
+      + `<td style="${cell};text-align:right;font-weight:700;font-size:13px">${parseQty(it.qty) ?? "—"}</td></tr>`;
+  }).join("");
+  const who = ["company", "email", "phone"].map((k) => val(k)).filter(Boolean).map((v) => `<div>${html(v)}</div>`).join("");
+  const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  return `<div class="qd" style="font-family:'Ubuntu Sans',Arial,Helvetica,sans-serif;color:#1d1d1f;font-size:12px;line-height:1.45;letter-spacing:0">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
+<td style="vertical-align:middle;white-space:nowrap;padding-right:12px">${logo}<span style="font-size:22px;font-weight:800;letter-spacing:-.03em">GROZ</span></td>
+<td style="vertical-align:middle;text-align:right"><div style="font-size:18px;font-weight:750;letter-spacing:-.02em">Quotation request</div>
+<div style="font-size:11px;${muted}">Ref. ${quoteRef(when)} · ${quoteTime(when)}</div></td></tr></table>
+<div style="height:3px;background:#f4511e;border-radius:2px;margin:12px 0 18px"></div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
+<td style="vertical-align:top;width:55%;padding:0 16px 16px 0">${label("Requested by")}<div style="font-size:13px;font-weight:700">${html(val("name"))}</div>${who}</td>
+<td style="vertical-align:top;padding:0 0 16px">${val("location") ? `${label("Delivery location")}<div style="margin-bottom:10px">${html(val("location"))}</div>` : ""}${label("Summary")}<div>${plural(t.lines, "product line")} · ${plural(t.units, "unit")}</div></td>
+</tr></table>
+<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+<thead><tr><th style="${head}">#</th><th style="${head}">Product</th><th style="${head}">ORD NR</th><th class="qd-src" style="${head}">Catalogue</th><th style="${head};text-align:right">Qty</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot><tr><td colspan="4" style="padding:10px 8px;text-align:right;font-weight:700">Total units</td><td style="padding:10px 8px;text-align:right;font-weight:800;font-size:14px">${t.units}</td></tr></tfoot>
+</table>
+${val("notes") ? `<div style="margin-top:16px;padding:10px 12px;border-left:3px solid #f4511e;background:#fff6f2;border-radius:0 8px 8px 0">${label("Notes")}<div style="white-space:pre-wrap">${html(val("notes"))}</div></div>` : ""}
+<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e7e7ea;font-size:10.5px;${muted}"><b style="color:#1d1d1f">Not sent.</b> Prepared on the GROZ catalogue website; please send it to your GROZ sales contact yourself.
+Product data was extracted from GROZ catalogues and has not been verified. Please confirm codes, order numbers and specifications with GROZ.</div>
+</div>`;
 }
 
 function csvCell(v) {

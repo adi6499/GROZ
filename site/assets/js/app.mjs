@@ -20,7 +20,7 @@ const store = {
 const state = {
   data: null, products: [], byId: new Map(), index: new Map(), artByCategory: new Map(),
   filters: core.emptyFilters(), sort: "catalogue", view: "grid",
-  results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(),
+  results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(), moreFacets: "",
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
   quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
   detailId: null, unbox: null, quoteHold: 0, savedHold: 0, fxReady: false, groups: [],
@@ -170,7 +170,7 @@ function renderError(err) {
 
 // The catalogues the flipbook can show (flipbook.mjs CATALOGUES); others get no flipbook link.
 const FLIPBOOK_PDFS = new Set(["GROZ_LIGHTING_GL-10_1.pdf", "tools_storage.pdf", "Estwing_Hammer_E-03_Interactive_1.pdf",
-  "Precision_Catalogue_CA_03.pdf", "groz-lubrication-equipments.pdf"]);
+  "Precision_Catalogue_CA_03.pdf", "groz-lubrication-equipments.pdf", "Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"]);
 
 // ?data=preview: the local preview of newly extracted products that are not approved yet
 // (site/data/catalogue.preview.json, built by build_site_data.py --preview; never deployed).
@@ -204,6 +204,7 @@ function init(data) {
   state.byId = new Map(data.products.map((p) => [p.id, p]));
   state.index = core.buildIndex(data.products);
   state.artByCategory = new Map((data.categories || []).map((c) => [c.name, c.art]));
+  state.pdfSize = new Map((data.catalogues || []).map((c) => [c.pdf, c.size_mb]));
   state.groups = core.siteGroups(data.categories || []);
   // Drop saved/quoted ids that are no longer in the dataset (e.g. after a data rebuild).
   for (const id of [...state.saved]) if (!state.byId.has(id)) state.saved.delete(id);
@@ -243,8 +244,19 @@ function groupLabel(category) {
 /** GROZ's categories as tiles, in GROZ's order; those without products yet say "Coming soon". */
 function renderCategories() {
   const f = state.filters.categories;
+  const isOn = (g) => !g.soon && g.categories.every((c) => f.has(c));
+  const tiles = $$("#categoryGrid .cat");
+  if (tiles.length === state.groups.length && tiles.every((el, i) => el.dataset.group === state.groups[i].name)) {
+    // Built already: only the selection changes (rebuilding the tiles and their pictures took ~50 ms a click).
+    tiles.forEach((el, i) => {
+      const g = state.groups[i], on = isOn(g);
+      el.classList.toggle("active", on);
+      if (!g.soon) el.setAttribute("aria-pressed", String(on));
+    });
+    return;
+  }
   $("#categoryGrid").innerHTML = state.groups.map((g) => {
-    const on = !g.soon && g.categories.every((c) => f.has(c));
+    const on = isOn(g);
     return `
     <button class="cat${g.soon ? " soon" : ""}${on ? " active" : ""}" type="button" data-group="${esc(g.name)}" ${g.soon ? 'aria-disabled="true"' : `aria-pressed="${on}"`}>
       <span class="cat-art">${art(g.art)}</span><span class="cat-name">${esc(g.name)}</span><span class="cat-blurb">${esc(g.blurb)}</span><span class="cat-count">${g.soon ? "Coming soon" : plural(g.records, "product")}</span>
@@ -265,7 +277,7 @@ function renderCatalogues() {
   const list = state.data.catalogues || [];
   $("#catalogueList").innerHTML = list.map((c) => `
     <div class="catalogue-row"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>${esc(c.title)}</strong>
-      <small>${esc(c.categories ? [...new Set(c.categories.map((x) => core.groupOf(x)?.name || x))].join(", ") : groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}</small></div></div>
+      <small>${esc(c.categories ? [...new Set(c.categories.map((x) => core.groupOf(x)?.name || x))].join(", ") : groupLabel(c.category))} · ${plural(c.records, "product")} · ${esc(c.pdf)}${c.size_mb ? ` · ${c.size_mb} MB` : ""}</small></div></div>
       <div class="row-actions">${FLIPBOOK_PDFS.has(c.pdf) ? `<a class="btn primary" href="flipbook.html?pdf=${encodeURIComponent(c.pdf)}">Interactive Flipbook 📖</a>` : ""}<button class="btn soft" type="button" data-show-cat="${esc((c.categories || [c.category]).join("|"))}">Show products</button><a class="btn outline" href="${esc(c.href)}" target="_blank" rel="noopener">Open catalogue PDF ${icon("external")}<span class="sr-only">(opens in a new tab)</span></a></div></div>`).join("")
     + `<div class="catalogue-row pending"><div class="catalogue-info"><div class="pdf-icon">${icon("file")}</div><div><strong>More GROZ catalogues</strong>
       <small>The full GROZ Hand Tool catalogue is not on the site yet. Its products will appear once they have been extracted and reviewed.</small></div></div></div>`;
@@ -288,16 +300,24 @@ function categoryScope() {
 }
 
 const STATUS_LABEL = { verified: "Verified", unverified: "Not yet verified", needs_review: "Needs review" };
+const FACETS_SHOWN = 8;
 
 function renderFilters() {
   const f = state.filters;
   const soon = state.groups.filter((g) => g.soon).map((g) => g.name);
   // Specification filters are offered per category: across all categories they would be a long,
   // mixed list (beam angles next to drawer capacities).
-  const groups = f.categories.size ? core.facetGroups(categoryScope()) : [];
+  const all = f.categories.size ? core.facetGroups(categoryScope()) : [];
   for (const [key, values] of [...f.facets]) {
-    if (!groups.some((g) => g.key === key) && values.size) f.facets.delete(key);
+    if (!all.some((g) => g.key === key) && values.size) f.facets.delete(key);
   }
+  // The specifications printed for the most products come first; the rest wait behind a button, so a
+  // large category (Lubrication prints over a hundred) neither floods the panel nor slows every click.
+  const scope = [...f.categories].sort().join("|");
+  const more = state.moreFacets === scope;
+  const groups = more ? all : all.filter((g, i) => i < FACETS_SHOWN || f.facets.get(g.key)?.size);
+  const moreButton = all.length > FACETS_SHOWN
+    ? `<div class="filter-group"><button class="filter-more" type="button" data-more-facets aria-expanded="${more}">${more ? "Show fewer specifications" : `Show ${all.length - groups.length} more specifications`}</button></div>` : "";
   const count = (pred) => state.products.filter(pred).length;
   const statusCounts = core.STATUS_ORDER.map((s) => [s, count((p) => p.status === s)]).filter(([, n]) => n > 0);
   const option = (attrs, checked, label, n) =>
@@ -314,7 +334,7 @@ function renderFilters() {
     <fieldset class="filter-group"><legend>Category</legend>${state.groups.filter((g) => !g.soon).map((g) =>
       option(`data-filter="group" value="${esc(g.name)}"`, g.categories.every((c) => f.categories.has(c)), g.name, g.records)).join("")}
       ${soon.length ? `<p class="filter-hint soon-hint">Coming soon: ${esc(soon.join(", "))}.</p>` : ""}</fieldset>
-    ${facetHtml || (f.categories.size ? "" : `<div class="filter-group"><p class="filter-hint">Choose a category to filter by its specifications.</p></div>`)}
+    ${facetHtml ? facetHtml + moreButton : (f.categories.size ? "" : `<div class="filter-group"><p class="filter-hint">Choose a category to filter by its specifications.</p></div>`)}
     <fieldset class="filter-group"><legend>Images</legend>${option('data-filter="image"', f.withImage, "Only with a catalogue image", count((p) => !!p.image))}</fieldset>
     <fieldset class="filter-group"><legend>Review status</legend>${statusCounts.map(([s, n]) =>
       option(`data-filter="status" value="${s}"`, f.statuses.has(s), STATUS_LABEL[s], n)).join("")}
@@ -325,9 +345,14 @@ function renderChips() {
   const f = state.filters;
   const chips = [];
   if (f.query.trim()) chips.push(["query", "", `Search: “${f.query.trim()}”`]);
+  const inGroupChip = new Set();
   for (const c of f.categories) {
+    if (inGroupChip.has(c)) continue;
     const g = state.groups.find((x) => x.categories.includes(c));
-    chips.push(["category", c, g?.categories.length === 1 ? g.name : groupLabel(c)]);
+    if (g && g.categories.length > 1 && g.categories.every((x) => f.categories.has(x))) {
+      g.categories.forEach((x) => inGroupChip.add(x)); // a whole group (Lubrication's five sections): one chip
+      chips.push(["group", g.name, g.name]);
+    } else chips.push(["category", c, g?.categories.length === 1 ? g.name : groupLabel(c)]);
   }
   for (const [key, values] of f.facets) {
     const label = state.products.find((p) => p.specs.some((s) => s.key === key))?.specs.find((s) => s.key === key)?.label || key;
@@ -339,7 +364,7 @@ function renderChips() {
   $("#activeChips").innerHTML = chips.map(([type, value, label]) =>
     `<button class="chip" type="button" data-chip="${esc(type)}" data-value="${esc(value)}" aria-label="Remove filter: ${esc(label)}"><span>${esc(label)}</span>${icon("x")}</button>`).join("")
     + (chips.length > 1 ? '<button class="chip clear" type="button" data-chip="all">Clear all</button>' : "");
-  const n = core.activeFilterCount(f);
+  const n = chips.length; // as many as the chips show (a whole group counts once)
   $("#filterBadge").textContent = n ? String(n) : "";
   $("#filterBadge").hidden = !n;
 }
@@ -359,7 +384,7 @@ function imageHtml(p) {
   const st = core.imageState(p);
   if (p.image) {
     const tag = st.kind === "family" ? `<span class="img-tag">${st.label}</span>` : "";
-    return `<img src="${esc(p.image.src)}" alt="Catalogue image for ${esc(p.cat_nr)}${st.kind === "family" ? " (product family)" : ""}" loading="lazy" decoding="async" width="200" height="150"/>${tag}`;
+    return `<img src="${esc(p.image.thumb || p.image.src)}" alt="Catalogue image for ${esc(p.cat_nr)}${st.kind === "family" ? " (product family)" : ""}" loading="lazy" decoding="async" width="200" height="150"/>${tag}`;
   }
   return `${art(state.artByCategory.get(p.category))}<span class="img-tag muted">${st.label}</span>`;
 }
@@ -428,7 +453,7 @@ function cardHtml(p) {
 
 function rowHtml(p) {
   return `<tr data-id="${esc(p.id)}">
-      <td><button class="thumb" type="button" data-detail aria-label="View details for ${esc(p.cat_nr)}">${p.image ? `<img src="${esc(p.image.src)}" alt="" loading="lazy" decoding="async" width="54" height="44"/>` : art(state.artByCategory.get(p.category))}</button></td>
+      <td><button class="thumb" type="button" data-detail aria-label="View details for ${esc(p.cat_nr)}">${p.image ? `<img src="${esc(p.image.thumb || p.image.src)}" alt="" loading="lazy" decoding="async" width="54" height="44"/>` : art(state.artByCategory.get(p.category))}</button></td>
       <td><button class="title-btn code" type="button" data-detail>${esc(p.cat_nr)}</button>${titleHtml(p, "ptitle row")}</td>
       <td>${p.ord_nr ? esc(p.ord_nr) : '<span class="muted">Not printed</span>'}</td>
       <td class="hide-sm">${core.summarySpecs(p, 2).map((s) => `${esc(s.label)}: <b>${esc(s.value)}</b>`).join("<br/>") || '<span class="muted">See details</span>'}</td>
@@ -503,6 +528,7 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   const remaining = list.length - state.rendered;
   $("#moreWrap").innerHTML = remaining > 0
     ? `<button class="btn outline" type="button" id="showMore">Show ${Math.min(remaining, core.PAGE_SIZE)} more <span class="muted-on">· ${remaining} remaining</span></button>` : "";
+  if (remaining > 0) watchMore();
   // Cards cascade in, cards already on screen glide to their new places, and cards further down rise
   // as they scroll into view (motion.mjs); table rows rise in (animations.mjs). Both run on the Web
   // Animations API, which the cards' own CSS hover transitions cannot slow down (GSAP's inline
@@ -512,6 +538,22 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
     fx.cascade([], { fresh: !append });
     if (!quiet && !typing) anim.animateTableRowsOnLoad($$("#ptableBody tr", grid).slice(from));
   }
+}
+
+// Further products load by themselves as the end of the list comes near (the button stays, for keyboards
+// and as a fallback), so a long category (Lubrication has 1202 products) needs no click after click.
+const moreWatcher = "IntersectionObserver" in window ? new IntersectionObserver((entries) => {
+  if (!entries.some((e) => e.isIntersecting) || !$("#showMore")) return;
+  state.shown += core.PAGE_SIZE;
+  renderProducts({ append: true });
+}, { rootMargin: "0px 0px 600px 0px" }) : null;
+
+/** (Re)starts watching the end of the list; observing again reports whether it is already near. */
+function watchMore() {
+  const el = $("#moreWrap");
+  if (!moreWatcher || !el) return;
+  moreWatcher.unobserve(el);
+  moreWatcher.observe(el);
 }
 
 function setView(view, rerender = true) {
@@ -1064,7 +1106,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
               <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
             </div>
             ${FLIPBOOK_PDFS.has(p.catalogue?.pdf) ? `<a class="pd-link" href="flipbook.html?pdf=${encodeURIComponent(p.catalogue?.pdf || '')}&page=${p.page || p.catalogue?.page || 1}" target="_blank" rel="noopener">Open in 3D Flipbook (page ${p.page || p.catalogue?.page || 1}) 📖</a>` : ""}
-            <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue PDF ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
+            <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue PDF${state.pdfSize?.get(p.catalogue.pdf) >= 10 ? ` (${Math.round(state.pdfSize.get(p.catalogue.pdf))} MB)` : ""} ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
           </div>
         </div>
       </div>
@@ -1108,7 +1150,7 @@ function showSaved() {
   const list = [...state.saved].map((id) => state.byId.get(id)).filter(Boolean);
   const entering = !backdrop.classList.contains("open") || modal.dataset.kind !== "saved";
   openModal("Saved for later", list.length ? `<div class="saved-list">${list.map((p) => `
-    <div class="saved-item" data-id="${esc(p.id)}"><div class="thumb">${p.image ? `<img src="${esc(p.image.src)}" alt="" width="54" height="44"/>` : art(state.artByCategory.get(p.category))}</div>
+    <div class="saved-item" data-id="${esc(p.id)}"><div class="thumb">${p.image ? `<img src="${esc(p.image.thumb || p.image.src)}" alt="" width="54" height="44" decoding="async"/>` : art(state.artByCategory.get(p.category))}</div>
       <div class="grow"><strong>${esc(p.cat_nr)}</strong>${titleHtml(p, "ptitle row")}<div class="sku">${skuHtml(p)}</div></div>
       <div class="acts"><button class="btn soft sm" type="button" data-saved-view="${esc(p.id)}">View</button><button class="btn ${state.quote.has(p.id) ? "in-quote" : "primary"} sm" type="button" data-saved-quote="${esc(p.id)}">${state.quote.has(p.id) ? "In quote" : "Add to quote"}</button><button class="btn danger sm" type="button" data-saved-remove="${esc(p.id)}" aria-label="Remove ${esc(p.cat_nr)} from saved">Remove</button></div></div>`).join("")}</div>
     <div class="detail-actions"><button class="btn primary" type="button" data-saved-quote-all>Add all to quote</button></div>`
@@ -1128,60 +1170,99 @@ function typedQuoteItems() {
 
 function quoteItemsHtml() {
   const items = quoteItems();
-  if (!items.length) return `<div class="empty plain"><strong>Your quote is empty.</strong><p>Use “Add to quote” on any product, or add your saved or compared products.</p>
-    <div class="detail-actions center">${state.saved.size ? '<button class="btn soft" type="button" data-quote-saved>Add saved products</button>' : ""}${state.compare.size ? '<button class="btn soft" type="button" data-quote-compared>Add compared products</button>' : ""}</div></div>`;
-  return `<table class="quote-table"><thead><tr><th scope="col">Product</th><th scope="col">ORD NR</th><th scope="col">Quantity</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody>
-    ${items.map(({ id, qty }) => { const p = state.byId.get(id); return `<tr data-qid="${esc(id)}">
-      <td class="q-product"><button class="title-btn" type="button" data-quote-view="${esc(id)}"><b>${esc(p.cat_nr)}</b></button><div class="sku">${esc(core.displayTitle(p) || p.category)}</div></td>
-      <td class="q-ord"><span class="q-label">ORD NR </span>${p.ord_nr ? esc(p.ord_nr) : '<span class="v-missing">Not printed</span>'}</td>
-      <td class="q-qty"><div class="stepper"><button class="step" type="button" data-step="-1" data-step-id="${esc(id)}" aria-label="Decrease quantity for ${esc(p.cat_nr)}">${icon("minus")}</button><input class="qty" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${esc(qty)}" data-qty="${esc(id)}" aria-label="Quantity for ${esc(p.cat_nr)}" aria-describedby="qtyerr-${esc(id)}"/><button class="step" type="button" data-step="1" data-step-id="${esc(id)}" aria-label="Increase quantity for ${esc(p.cat_nr)}">${icon("plus")}</button></div><div class="err" id="qtyerr-${esc(id)}"></div></td>
-      <td class="q-remove"><button class="btn danger sm" type="button" data-quote-remove="${esc(id)}" aria-label="Remove ${esc(p.cat_nr)} from quote">Remove</button></td></tr>`; }).join("")}</tbody></table>`;
+  if (!items.length) return `<div class="q-empty">${icon("quote")}<strong>Your quote is empty</strong><p>Use “Add to quote” on any product to collect what you need here.</p>
+    <div class="detail-actions center">${state.saved.size ? '<button class="btn soft" type="button" data-quote-saved>Add saved products</button>' : ""}${state.compare.size ? '<button class="btn soft" type="button" data-quote-compared>Add compared products</button>' : ""}<button class="btn primary" type="button" data-quote-browse>Browse products</button></div></div>`;
+  return `<ul class="q-list">${items.map(({ id, qty }) => { const p = state.byId.get(id); return `<li class="q-item" data-id="${esc(id)}">
+      <button class="q-thumb" type="button" data-quote-view="${esc(id)}" aria-label="View details for ${esc(p.cat_nr)}" tabindex="-1">${p.image ? `<img src="${esc(p.image.thumb || p.image.src)}" alt="" width="56" height="56" decoding="async"/>` : art(state.artByCategory.get(p.category))}</button>
+      <div class="q-info"><button class="q-code" type="button" data-quote-view="${esc(id)}">${esc(p.cat_nr)}</button>
+        <div class="q-title">${esc(core.displayTitle(p) || p.category)}</div>
+        <div class="q-meta">ORD NR ${p.ord_nr ? `<b>${esc(p.ord_nr)}</b>` : '<span class="v-missing">not printed</span>'} · ${esc(p.category)}</div></div>
+      <div class="q-qty"><div class="stepper"><button class="step" type="button" data-step="-1" data-step-id="${esc(id)}" aria-label="Decrease quantity for ${esc(p.cat_nr)}">${icon("minus")}</button><input class="qty" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="${esc(qty)}" data-qty="${esc(id)}" aria-label="Quantity for ${esc(p.cat_nr)}" aria-describedby="qtyerr-${esc(id)}"/><button class="step" type="button" data-step="1" data-step-id="${esc(id)}" aria-label="Increase quantity for ${esc(p.cat_nr)}">${icon("plus")}</button></div><div class="err" id="qtyerr-${esc(id)}"></div></div>
+      <button class="q-remove" type="button" data-quote-remove="${esc(id)}" aria-label="Remove ${esc(p.cat_nr)} from quote" title="Remove">${icon("x")}</button></li>`; }).join("")}</ul>`;
 }
 
 function totalsHtml(items = quoteItems()) {
   const t = core.quoteTotals(items);
-  return `<span>Products: <b>${t.lines}</b></span><span>Total units: <b>${t.units}</b></span>${t.invalid ? `<span class="v-review">${t.invalid} quantit${t.invalid > 1 ? "ies need" : "y needs"} fixing</span>` : ""}`;
+  return `<span><b>${t.lines}</b> ${t.lines === 1 ? "product" : "products"}</span><span><b>${t.units}</b> ${t.units === 1 ? "unit" : "units"}</span>${t.invalid ? `<span class="v-review">${t.invalid} quantit${t.invalid > 1 ? "ies need" : "y needs"} fixing</span>` : ""}`;
 }
 
-function field(id, label, { type = "text", required = false, full = false, area = false, autocomplete = "", inputmode = "" } = {}) {
+/** The drawer's three steps: products chosen, contact details given, ready to prepare. */
+function updateQuoteSteps() {
+  const steps = $("#quoteSteps");
+  if (!steps) return;
+  const items = state.quote.size > 0;
+  const details = !Object.keys(core.validateQuote([], state.contact)).some((k) => k === "name" || k === "email");
+  const states = [items ? "done" : "current", details ? "done" : items ? "current" : "", items && details ? "current" : ""];
+  $$("li", steps).forEach((li, i) => {
+    if (li.dataset.state === states[i]) return;
+    li.dataset.state = states[i];
+    $(".q-step-dot", li).innerHTML = states[i] === "done" ? icon("check") : String(i + 1);
+  });
+  const count = $("#quoteCount");
+  if (count) count.textContent = String(state.quote.size);
+}
+
+/** Removes a product from the quote: its card slides away and the cards below close the gap. */
+function removeFromQuote(id, card) {
+  const before = fx.positions($$(".q-item", modal));
+  const done = () => {
+    state.quote.delete(id);
+    persist();
+    updateBadges();
+    syncProductButtons(id);
+    refreshQuoteItems();
+    for (const el of $$(".q-item", modal)) {
+      const was = before.get(el.dataset.id), now = el.getBoundingClientRect();
+      if (was && Math.abs(was.top - now.top) > 1) el.animate([{ transform: `translateY(${was.top - now.top}px)` }, { transform: "none" }], { duration: 300, easing: "cubic-bezier(.2,.8,.2,1)" });
+    }
+    ($("[data-qty]", modal) || $("#q-name"))?.focus({ preventScroll: true });
+  };
+  if (!card || !fx.motionOK()) return done();
+  card.style.pointerEvents = "none";
+  card.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateX(28px) scale(.97)" }], { duration: 200, easing: "ease-in", fill: "forwards" })
+    .finished.then(done, done);
+}
+
+function field(id, label, { type = "text", required = false, full = false, area = false, autocomplete = "", inputmode = "", placeholder = "" } = {}) {
   const value = esc(state.contact[id] ?? "");
   const input = area
     ? `<textarea id="q-${id}" name="${id}" rows="3" placeholder="Model variants, delivery timing, anything else…">${value}</textarea>`
-    : `<input id="q-${id}" name="${id}" type="${type}" value="${value}" ${required ? 'required aria-required="true"' : ""} ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${inputmode ? `inputmode="${inputmode}"` : ""} aria-describedby="err-${id}"/>`;
+    : `<input id="q-${id}" name="${id}" type="${type}" value="${value}" ${placeholder ? `placeholder="${esc(placeholder)}"` : ""} ${required ? 'required aria-required="true"' : ""} ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${inputmode ? `inputmode="${inputmode}"` : ""} aria-describedby="err-${id}"/>`;
   return `<div class="field${full ? " full" : ""}"><label for="q-${id}">${label}${required ? ' <span aria-hidden="true">*</span>' : ""}</label>${input}<div class="err" id="err-${id}"></div></div>`;
 }
 
 function showQuote() {
   const entering = !backdrop.classList.contains("open") || modal.dataset.kind !== "quote";
-  openModal("Let’s build your quote", `
-    <p class="notice">This prepares a quotation request on your device. <b>Nothing is sent</b> — when it is ready you can copy, download or print it for your GROZ sales contact.</p>
-    <div class="quote-progress-wrap" id="quoteProgressWrap">
-      <div class="quote-progress-header">
-        <span class="quote-progress-title">Quote Readiness</span>
-        <strong class="quote-progress-score" id="quoteProgressScore">35%</strong>
-      </div>
-      <div class="quote-progress-track">
-        <div class="quote-progress-fill" id="quoteProgressFill" style="width: 35%"></div>
-      </div>
-      <span class="quote-progress-hint" id="quoteProgressHint">Add your contact details to prepare request</span>
-    </div>
-    <div id="quoteItems">${quoteItemsHtml()}</div><div class="err" id="err-items" tabindex="-1"></div>
-    <div class="quote-totals" id="quoteTotals" aria-live="polite">${totalsHtml()}</div>
-    <form class="form-grid" id="quoteForm" novalidate>
-      ${field("name", "Full name", { required: true, autocomplete: "name" })}
-      ${field("company", "Company", { autocomplete: "organization" })}
-      ${field("email", "Work email", { type: "email", required: true, autocomplete: "email", inputmode: "email" })}
-      ${field("phone", "Phone", { type: "tel", autocomplete: "tel", inputmode: "tel" })}
-      ${field("location", "Delivery location", { full: true, autocomplete: "address-level2" })}
-      ${field("notes", "What else should we know?", { full: true, area: true })}
-      <div class="field full form-foot"><button class="btn primary lg" type="submit">Prepare request</button><small>Fields marked * are required. Nothing is sent.</small></div>
-    </form>`, { kind: "quote" });
-  anim.updateQuoteProgress(state.quote.size, state.contact);
+  openModal("Your quote", `
+    <ol class="q-steps" id="quoteSteps">
+      <li><span class="q-step-dot">1</span><span>Products</span></li>
+      <li><span class="q-step-dot">2</span><span>Your details</span></li>
+      <li><span class="q-step-dot">3</span><span>Prepare</span></li>
+    </ol>
+    <p class="q-note">${icon("info")}<span>Nothing is sent from this website: you get a ready request to email, print or save as a PDF for your GROZ sales contact.</span></p>
+    <section class="q-section" aria-labelledby="qProductsHead">
+      <div class="q-section-head"><h3 id="qProductsHead">Products <span class="q-count" id="quoteCount">${state.quote.size}</span></h3></div>
+      <div id="quoteItems">${quoteItemsHtml()}</div><div class="err" id="err-items" tabindex="-1"></div>
+    </section>
+    <section class="q-section" aria-labelledby="qDetailsHead">
+      <div class="q-section-head"><h3 id="qDetailsHead">Your details</h3><small>* required</small></div>
+      <form class="form-grid" id="quoteForm" novalidate>
+        ${field("name", "Full name", { required: true, autocomplete: "name", placeholder: "Your name" })}
+        ${field("company", "Company", { autocomplete: "organization", placeholder: "Company name" })}
+        ${field("email", "Work email", { type: "email", required: true, autocomplete: "email", inputmode: "email", placeholder: "name@company.com" })}
+        ${field("phone", "Phone", { type: "tel", autocomplete: "tel", inputmode: "tel", placeholder: "Phone number" })}
+        ${field("location", "Delivery location", { full: true, autocomplete: "address-level2", placeholder: "City or site" })}
+        ${field("notes", "What else should we know?", { full: true, area: true })}
+      </form>
+    </section>
+    <div class="q-footer"><div class="quote-totals" id="quoteTotals" aria-live="polite">${totalsHtml()}</div>
+      <button class="btn primary lg" type="submit" form="quoteForm" id="prepareQuote">Prepare request${icon("right")}</button></div>`, { kind: "quote" });
+  updateQuoteSteps();
   $("#quoteForm")?.addEventListener("input", () => {
     for (const el of $("#quoteForm").elements) if (el.name) state.contact[el.name] = el.value;
-    anim.updateQuoteProgress(state.quote.size, state.contact);
+    updateQuoteSteps();
   });
-  if (entering) fx.stagger($$("#quoteItems tbody tr", modal));
+  if (entering) fx.stagger($$("#quoteItems .q-item", modal));
 }
 
 function refreshQuoteItems() {
@@ -1189,7 +1270,7 @@ function refreshQuoteItems() {
   if (box) box.innerHTML = quoteItemsHtml();
   const t = $("#quoteTotals");
   if (t) t.innerHTML = totalsHtml();
-  anim.updateQuoteProgress(state.quote.size, state.contact);
+  updateQuoteSteps();
 }
 
 function submitQuote(form) {
@@ -1219,27 +1300,40 @@ function submitQuote(form) {
   }
   const when = new Date();
   const text = core.quoteText(items, state.byId, state.contact, when);
+  const doc = core.quoteHtml(items, state.byId, state.contact, when);
   const csv = core.quoteCsv(items, state.byId);
-  const stamp = when.toISOString().slice(0, 10);
+  const name = `groz-quote-${core.quoteRef(when)}`;
   openModal("Your request is ready", `
-    <p class="notice ok">${icon("check")}<span>Your quotation request is prepared. It has <b>not been sent</b> — copy it into an email, download it or print it for your GROZ sales contact.</span></p>
-    <div class="paper"><span class="slot" aria-hidden="true"></span><pre class="prepared" id="preparedText" tabindex="0" aria-label="Prepared quotation request">${esc(text)}</pre><span class="stamp" aria-hidden="true">Ready · not sent</span></div>
-    <div class="detail-actions">
-      <button class="btn primary" type="button" id="copyQuote" data-autofocus>${icon("copy")}Copy text</button>
-      <button class="btn soft" type="button" id="dlTxt">${icon("download")}Download .txt</button>
-      <button class="btn soft" type="button" id="dlCsv">${icon("download")}Download .csv</button>
-      <button class="btn soft" type="button" id="printQuote">${icon("print")}Print</button>
-      <button class="btn outline" type="button" id="editQuote">Edit request</button>
-      <button class="btn danger" type="button" id="newQuote">Start a new quote</button>
+    <p class="notice ok">${icon("check")}<span>Prepared on this device and <b>not sent</b>. Copy it into an email to your GROZ sales contact, or print it or save it as a PDF.</span></p>
+    <div class="paper"><span class="slot" aria-hidden="true"></span><div class="prepared doc" id="preparedDoc" tabindex="0" role="document" aria-label="Prepared quotation request">${doc}</div><span class="stamp" aria-hidden="true">Ready · not sent</span></div>
+    <div class="ready-actions">
+      <button class="btn primary" type="button" id="copyQuote" data-autofocus>${icon("copy")}Copy for email</button>
+      <button class="btn soft" type="button" id="printQuote">${icon("print")}Print or save as PDF</button>
+      <button class="btn soft" type="button" id="dlCsv">${icon("download")}Excel (.csv)</button>
+      <button class="btn soft" type="button" id="dlTxt">${icon("download")}Text (.txt)</button>
+    </div>
+    <div class="ready-more">
+      <button class="btn outline sm" type="button" id="editQuote">${icon("left")}Edit request</button>
+      <button class="btn danger sm" type="button" id="newQuote">Start a new quote</button>
     </div>`, { kind: "ready" });
   fx.printOut($(".paper", modal));
   $("#copyQuote").onclick = async () => {
-    try { await navigator.clipboard.writeText(text); notify("Request copied to the clipboard"); }
-    catch { selectText($("#preparedText")); notify("Copy blocked by the browser — the text is selected, press Ctrl+C."); }
+    // As formatted text (the table survives being pasted into an email), with plain text for other apps.
+    try {
+      if (window.ClipboardItem && navigator.clipboard?.write) {
+        const email = core.quoteHtml(items, state.byId, state.contact, when, { screen: false });
+        await navigator.clipboard.write([new ClipboardItem({
+          "text/html": new Blob([email], { type: "text/html" }), "text/plain": new Blob([text], { type: "text/plain" }) })]);
+        notify("Copied — paste it into an email: the table keeps its layout");
+      } else {
+        await navigator.clipboard.writeText(text);
+        notify("Request copied to the clipboard");
+      }
+    } catch { selectText($("#preparedDoc")); notify("Copy blocked by the browser — the request is selected, press Ctrl+C."); }
   };
-  $("#dlTxt").onclick = () => download(`groz-quote-request-${stamp}.txt`, text, "text/plain");
-  $("#dlCsv").onclick = () => download(`groz-quote-request-${stamp}.csv`, "﻿" + csv, "text/csv");
-  $("#printQuote").onclick = () => printText(text);
+  $("#dlTxt").onclick = () => download(`${name}.txt`, text, "text/plain");
+  $("#dlCsv").onclick = () => download(`${name}.csv`, "﻿" + csv, "text/csv");
+  $("#printQuote").onclick = () => printDoc(doc);
   $("#editQuote").onclick = showQuote;
   $("#newQuote").onclick = () => {
     if (!confirm("Clear the products in your quote? Your contact details stay filled in.")) return;
@@ -1269,8 +1363,12 @@ function download(name, content, type) {
   notify(`Downloaded ${name}`);
 }
 
-function printText(text) {
-  $("#printArea").textContent = text;
+/** Prints the formatted request alone, on A4 (site.css "print"), once its pictures have loaded. */
+async function printDoc(doc) {
+  const area = $("#printArea");
+  area.innerHTML = doc;
+  await Promise.all($$("img", area).map((img) => img.complete ? null
+    : new Promise((done) => { img.onload = img.onerror = done; setTimeout(done, 2500); })));
   document.body.classList.add("print-quote");
   const done = () => { document.body.classList.remove("print-quote"); window.removeEventListener("afterprint", done); };
   window.addEventListener("afterprint", done);
@@ -1433,6 +1531,13 @@ function wire() {
     fx.pop(el.isConnected ? el : $(`[data-filter="${el.dataset.filter}"][value="${CSS.escape(el.value)}"]`, filtersEl), 1.3);
   });
   $("#filterBody").addEventListener("click", (e) => {
+    if (e.target.closest("[data-more-facets]")) {
+      const scope = [...state.filters.categories].sort().join("|");
+      state.moreFacets = state.moreFacets === scope ? "" : scope;
+      renderFilters();
+      $("[data-more-facets]", filtersEl)?.focus();
+      return;
+    }
     const b = e.target.closest("[data-expand]");
     if (!b) return;
     const k = b.dataset.expand;
@@ -1448,6 +1553,7 @@ function wire() {
     if (type === "query") setQuery("");
     else {
       if (type === "category") { f.categories.delete(value); renderCategories(); }
+      else if (type === "group") { state.groups.find((g) => g.name === value)?.categories.forEach((c) => f.categories.delete(c)); renderCategories(); }
       else if (type === "image") f.withImage = false;
       else if (type === "status") f.statuses.delete(value);
       else if (type === "notes") f.withNotes = false;
@@ -1604,8 +1710,9 @@ function wire() {
     }
     else if (d.savedRemove) { state.saved.delete(d.savedRemove); persist(); updateBadges(); syncProductButtons(d.savedRemove); showSaved(); }
     else if ("savedQuoteAll" in d) { addManyToQuote(state.saved); showQuote(); }
-    else if (d.quoteRemove) { state.quote.delete(d.quoteRemove); persist(); updateBadges(); syncProductButtons(d.quoteRemove); refreshQuoteItems(); ($("[data-qty]", modal) || $("#q-name"))?.focus(); }
+    else if (d.quoteRemove) removeFromQuote(d.quoteRemove, t.closest(".q-item"));
     else if (d.quoteView) showDetails(d.quoteView);
+    else if ("quoteBrowse" in d) { closeModal(); scrollToEl($("#products")); }
     else if ("quoteSaved" in d) { addManyToQuote(state.saved); refreshQuoteItems(); }
     else if ("quoteCompared" in d) { addManyToQuote(state.compare); refreshQuoteItems(); }
     else if (d.step) stepQty(d.stepId, Number(d.step));

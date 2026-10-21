@@ -529,33 +529,6 @@ export function closeQuoteDrawer(modalEl, backdropEl, onComplete) {
   return tl;
 }
 
-/**
- * Dynamically updates the animated quote readiness progress bar based on entered details.
- */
-export function updateQuoteProgress(quoteSize = 0, contact = {}) {
-  const wrap = document.querySelector("#quoteProgressWrap");
-  const fill = document.querySelector("#quoteProgressFill");
-  const score = document.querySelector("#quoteProgressScore");
-  const hint = document.querySelector("#quoteProgressHint");
-  if (!wrap || !fill || !score) return;
-
-  let percent = 0;
-  if (quoteSize > 0) percent += 35;
-  if (contact.name && contact.name.trim().length > 1) percent += 25;
-  if (contact.email && contact.email.includes("@")) percent += 25;
-  if (contact.phone || contact.location) percent += 15;
-  percent = Math.min(100, Math.max(15, percent));
-
-  score.textContent = `${percent}%`;
-  if (hint) {
-    if (percent < 50) hint.textContent = "Add your contact details to prepare request";
-    else if (percent < 90) hint.textContent = "Almost ready — add location or phone number";
-    else hint.textContent = "Ready to generate clear quotation!";
-  }
-
-  fill.style.width = `${percent}%`; // its CSS transition animates the change
-}
-
 // ---------------------------------------------------------------- 6. Scroll-Triggered WOW Effects
 
 /**

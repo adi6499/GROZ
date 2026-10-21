@@ -333,6 +333,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             c = CATALOGUES[pdf]
             cats = [name for name in CATEGORY_INFO if any(i["category"] == name and i["catalogue"]["pdf"] == pdf for i in items)]
             entry = {"pdf": pdf, "href": f"../{pdf}", **c, "records": n}
+            if os.path.isfile(os.path.join(pdf_root, pdf)):  # shown next to links to the whole PDF
+                entry["size_mb"] = round(os.path.getsize(os.path.join(pdf_root, pdf)) / 1e6, 1)
             if len(cats) > 1:
                 entry["categories"] = cats
             catalogues.append(entry)

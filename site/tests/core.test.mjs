@@ -114,6 +114,24 @@ test("prepared quotation states it was not sent and never invents an order numbe
   assert.match(text, /Total: 2 product lines, 12 units/);
   assert.match(text, /Deliver to Pune/);
   assert.doesNotMatch(text, /Company:/); // empty fields are left out, not filled in
+  assert.match(text, /Your reference: QR-\d{8}-\d{4}\nPrepared: \d{1,2} Oct 2026, \d\d:\d\d \(UTC[+-]\d\d:\d\d\)/);
+});
+
+test("the formatted request shows the same lines, escapes every value and states it was not sent", () => {
+  const byId = new Map(ALL.map((p) => [p.id, p]));
+  const contact = { name: "Asha <b>", email: "a@x.com", company: "", location: "Pune", notes: "Call first & deliver" };
+  const doc = core.quoteHtml([{ id: "a", qty: 10 }, { id: "c", qty: "2" }], byId, contact, new Date("2026-10-14T08:00:00Z"));
+  assert.match(doc, /Quotation request/);
+  assert.match(doc, /Not sent\./);
+  assert.match(doc, /LED\/550/);
+  assert.match(doc, />55046</);
+  assert.match(doc, /Not printed in catalogue/); // EPAX-336F has no ORD NR: never invented
+  assert.match(doc, /2 product lines · 12 units/);
+  assert.match(doc, /Asha &lt;b&gt;/);
+  assert.match(doc, /Call first &amp; deliver/);
+  assert.doesNotMatch(doc, /Asha <b>/);
+  const email = core.quoteHtml([{ id: "a", qty: 10 }], byId, contact, new Date(), { screen: false });
+  assert.doesNotMatch(email, /<img|<svg/); // an email cannot load the site's pictures
 });
 
 test("CSV export escapes quotes and neutralises spreadsheet formulas", () => {

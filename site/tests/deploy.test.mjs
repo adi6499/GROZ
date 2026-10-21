@@ -46,7 +46,7 @@ test(".vercelignore keeps every flipbook page, thumbnail, magnifier page and PDF
   const rules = read(".vercelignore").split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
   const js = read("site/assets/js/flipbook.mjs");
   const books = [...js.matchAll(/href: "\.\.\/([^"]+)",\s+folder: "([^"]+)",\s+pageCount: (\d+)/g)];
-  assert.equal(books.length, 5, "five catalogues in the flipbook");
+  assert.equal(books.length, 7, "seven catalogues in the flipbook");
   const needed = new Set(["site/flipbook.html", "site/assets/flipbook.css", "site/assets/js/flipbook.mjs"]);
   for (const [, pdf, folder, pages] of books) {
     needed.add(pdf);

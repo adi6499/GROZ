@@ -212,6 +212,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - **Fields listed as changed in a pending correction preview** (`review/preview_*.csv`) show "Under review" instead of the current value, until the correction is applied to `output_v2`.
   - **Images:** only `direct_product` and `product_family` images are shown, each with its evidence. Family images are tagged "Family image". `unresolved` candidates are labelled "Image not confirmed" and never shown; products without any image say "Image unavailable".
     - A shown picture that fails to load (for example, the local server stopped) is retried once, then labelled "Picture didn't load". "Image unavailable" stays reserved for products that have no picture.
+    - **Clear pictures** (`tools/build_display_images.py`, 21 Oct 2026): most catalogue pictures are printed small (often 250–450 px wide), and the 200 DPI extraction render had enlarged each real pixel into a block of about 3 × 3, so they looked torn. The site shows WebP copies instead: each picture is taken back to its real pixels and enlarged smoothly (Lanczos, light unsharp mask), with nothing invented. `site/img/full/` (at most 1200 px, product details, quote, flipbook) and `site/img/thumb/` (480 px, cards, lists): 663 pictures, about 18 MB instead of about 200 MB of PNGs. The dataset PNGs stay the extraction's evidence and are not deployed. Run the tool after an extraction adds pictures, then `build_site_data.py` (it uses a copy only where both sizes exist; a test fails if one is missing).
   - **Verification:** cards and table rows show a badge only for products a person has checked ("Verified") or that need review; one note above the catalogue covers the rest. Every product's details show its status, including "Not yet verified". Nothing is marked verified by the site.
   - **Printed title:** the title the catalogue prints for the product's ordering table, in the catalogue's title type (Mont-Heavy 16 pt for GROZ, Futura-Bold 12 pt for Estwing). The rules are the same as for `sub_title` (shared module `backend/extractor/printed_titles.py`).
     - Since rules 2.2.0 the title and `sub_title` agree for all 941 products.
@@ -332,8 +333,9 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - `main` uses `overflow-x: clip`, not `hidden`: `hidden` made it a scroll container, and the results bar stopped sticking on phones.
     - There is no backdrop blur over anything that moves.
     - Dropdowns and accordions animate transform and opacity only, not height.
-- **Flipbook** (`site/flipbook.html`, `site/assets/js/flipbook.mjs`, `site/assets/flipbook.css`): the five catalogues as a book with 3D page turns (GSAP), opened from the Catalogues section.
-  - **Pages:** WebP copies of the PDF page renders, plus 96 px thumbnails for the filmstrip, made by `tools/build_flipbook_webp.py`. That is 21 MB instead of 100 MB of PNGs. The PNGs stay in the project and are not deployed.
+- **Flipbook** (`site/flipbook.html`, `site/assets/js/flipbook.mjs`, `site/assets/flipbook.css`): seven catalogues as a book with 3D page turns (GSAP), opened from the Catalogues section and from every product ("Open in 3D Flipbook").
+  - **Pages:** WebP copies of the PDF page renders, plus 96 px thumbnails for the filmstrip, made by `tools/build_flipbook_webp.py`. That is 21 MB instead of 100 MB of PNGs for the first five. The PNGs stay in the project and are not deployed.
+    - Fluid Handling CC-07 (372 pages) and Fuel CAT 400 (32 pages) were added on 21 Oct 2026, when their products went live. Their pages are rendered straight from the PDFs (no PNGs). A product opens at its own page there instead of downloading the whole 82 MB PDF.
     - Pages next to the open spread are fetched and decoded ahead.
     - A turn starts once its pages are decoded (300 ms at most), so the turning page is never blank.
     - The page under the lifting leaf is already the next one. The last page has a spread of its own (25 spreads for 48 pages).
@@ -370,10 +372,15 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - The hero's looping motion pauses off screen. Hover effects apply only where a pointer can hover.
   - `prefers-reduced-motion` turns motion off.
   - A *lite* mode (data saver, ≤ 2 GB memory or ≤ 2 CPU cores, or a measured median frame time over 34 ms) turns off decorative motion and blur, keeping every function.
-  - Cards render 36 at a time and "Show more" appends instead of rebuilding.
+  - Cards render 36 at a time and "Show more" appends instead of rebuilding. Further cards also load by themselves as the end of the list comes near (an IntersectionObserver on the button), so a long category needs no click after click.
+  - Filter panel: a category's specification filters come in order of how many of its products print them; the first 8 are shown and the rest wait behind "Show N more specifications" (Lubrication prints over a hundred). Choosing a category updates the category tiles in place. A click on a filter takes about 35 ms (it was about 300 ms with all of Lubrication's filters).
+  - A whole category group chosen (Lubrication's five sections) shows as one chip, and the Filters badge counts chips.
   - Images are lazy-loaded in fixed-size boxes; layout shift on load measured 0.
 - Saved products, the quote list and the grid/table choice are kept in the browser (`localStorage`). Contact details typed into the quote form are not stored.
-- **Quotations are prepared locally only.** They can be copied, downloaded (.txt / .csv) or printed. Nothing is emailed or sent anywhere: there is no backend.
+- **Quotations are prepared locally only.** Nothing is emailed or sent anywhere: there is no backend.
+  - The quote drawer shows three steps (products, your details, prepare), each product as a card with its picture, quantity buttons and a remove button (the card slides away and the others close the gap), and a footer with the totals and "Prepare request" that stays in view.
+  - The prepared request is a formatted document (`core.quoteHtml`): GROZ letterhead, your reference (`QR-yyyymmdd-hhmm`, the time it was prepared) and the local time, requested by / delivery / summary, a product table with pictures, catalogue and printed page, total units, notes, and a "Not sent" footer. It is shown as a white sheet in both themes.
+  - **Copy for email** copies it as formatted text (the table survives being pasted into an email; pictures are left out, as an email cannot load them from this site), with plain text for other apps. **Print or save as PDF** prints the document alone on A4 once its pictures have loaded. Excel (.csv) and Text (.txt) downloads are named after the reference.
 - The untracked `index.html` in the project root is a separate "Local Portal" page for the review dashboards; the website does not use it.
 
 ## Verification tool (people check products against the catalogue)
@@ -407,6 +414,7 @@ Then open http://127.0.0.1:8963/verify/. The tool runs on this computer only and
 ## Tools
 
 - `tools/dump_page.py <pdf> <page>`: prints a page's words line by line with x positions (read-only). Use it to check a table layout before changing the parser.
-- `tools/build_flipbook_webp.py`: makes the flipbook's WebP pages and thumbnails from the page PNGs, and the magnifier's 200 DPI pages from the PDFs (only new or changed pages; `--force` rebuilds all; needs `.venv` for PyMuPDF).
+- `tools/build_flipbook_webp.py`: makes the flipbook's WebP pages and thumbnails from the page PNGs, and the magnifier's 200 DPI pages from the PDFs; catalogues in `PDF_ONLY` (Fluid Handling, Fuel) are rendered straight from their PDFs (only new or changed pages; `--force` rebuilds all; needs `.venv` for PyMuPDF).
+- `tools/build_display_images.py`: the clear WebP copies of every picture the site shows (`site/img/`; only new or changed pictures; `--force` rebuilds all; needs `.venv`).
 - `tools/sync_catalogue_pipeline.py`: renders missing flipbook page PNGs (pdftoppm), builds their WebP copies, writes `site/data/catalogue.csv` from `catalogue.json` and runs the website tests. It never adds products (`--csv` only exports the CSV).
 - `tools/extract_lubrication_products.py` and `tools/merge_catalogue_data.py`: the Oct 2026 lubrication scrape, kept for reference only (see Website › GROZ categories).
