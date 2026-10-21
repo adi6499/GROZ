@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """GROZ catalogue sync: flipbook page images and the website's product list export.
 
-Renders flipbook page images for each catalogue PDF (when they are missing) and writes
-site/data/catalogue.csv from site/data/catalogue.json.
+Renders flipbook page images for each catalogue PDF (when they are missing), makes their WebP copies
+and thumbnails (tools/build_flipbook_webp.py), and writes site/data/catalogue.csv from
+site/data/catalogue.json.
 
 It does NOT add products to the website. Products reach site/data/catalogue.json only through the
 reviewed pipeline: run_extraction.py writes output_v2 (with its checks and change reports), and
@@ -25,6 +26,8 @@ import subprocess
 import sys
 import time
 from datetime import datetime
+
+from build_flipbook_webp import build as build_flipbook_webp
 
 CATALOGUE_JSON = "site/data/catalogue.json"
 CATALOGUE_CSV = "site/data/catalogue.csv"
@@ -75,6 +78,7 @@ def sync():
     for pdf, folder in CATALOGUE_FOLDERS.items():
         if os.path.exists(pdf):
             print(f"  {pdf}: {render_flipbook_pages(pdf, folder)} pages in {folder}")
+    build_flipbook_webp()  # the site loads WebP pages and thumbnails made from the PNG renders
     export_site_csv()
     print("\nRunning the website tests...")
     res = subprocess.run(["node", "--test", "site/tests/core.test.mjs", "site/tests/flipbook.test.mjs", "site/tests/deploy.test.mjs"],

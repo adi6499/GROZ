@@ -3,6 +3,15 @@
    Realistic paper physics, 3D page fold, spine shading, hotspots, and responsive layouts.
    ========================================================================== */
 
+@font-face {
+  font-family: "Ubuntu Sans";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url(fonts/ubuntu-sans-latin-wght-normal.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   --fb-bg: #0c0d10;
   --fb-surface: #14161a;
@@ -47,14 +56,13 @@ body.flipbook-body {
 /* ---------------------------------------------------------------- Top Toolbar */
 .fb-header {
   height: 60px;
-  background: rgba(20, 22, 26, 0.88);
+  background: rgba(20, 22, 26, 0.97);
   border-bottom: 1px solid var(--fb-line);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* no backdrop blur: whatever moves behind it would make the browser redraw the blur every frame */
   z-index: 50;
   flex-shrink: 0;
 }
@@ -159,6 +167,7 @@ body.flipbook-body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  overflow: clip; /* not a scroll container: nothing (a scrollIntoView) can push the book sideways */
   perspective: 2500px;
   background: radial-gradient(circle at center, #181a20 0%, #0a0b0e 85%);
 }
@@ -171,16 +180,15 @@ body.flipbook-body {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(27, 30, 36, 0.75);
+  background: rgba(27, 30, 36, 0.92);
   border: 1px solid var(--fb-line);
   color: var(--fb-text);
   display: grid;
   place-items: center;
   cursor: pointer;
   z-index: 40;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.25s var(--fb-ease);
+  /* no backdrop blur: whatever moves behind it would make the browser redraw the blur every frame */
+  transition: background-color 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s, transform 0.25s var(--fb-ease), opacity 0.25s;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 .fb-nav-arrow:hover:not(:disabled) {
@@ -206,7 +214,7 @@ body.flipbook-body {
   align-items: center;
   justify-content: center;
   transform-style: preserve-3d;
-  transition: transform 0.4s var(--fb-ease);
+  /* no transform transition: GSAP zooms and pans this, and a transition re-timed each of its frames */
 }
 
 .fb-book {
@@ -341,7 +349,7 @@ body.flipbook-body {
     transparent 50%, 
     rgba(0, 0, 0, 0.15) 80%,
     rgba(0, 0, 0, 0.4) 100%);
-  transition: opacity 0.15s ease;
+  /* no opacity transition: the turn sets it on every frame */
 }
 
 .fb-leaf-glare {
@@ -356,10 +364,10 @@ body.flipbook-body {
     rgba(255, 255, 255, 0.4) 58%, 
     transparent 80%);
   mix-blend-mode: overlay;
-  transition: opacity 0.15s ease;
 }
 
-/* ---------------------------------------------------------------- Product Hotspots */
+/* ---------------------------------------------------------------- Products on a page */
+/* The data says which page a product is on, not where on it: one button per page lists them. */
 .fb-hotspot-layer {
   position: absolute;
   inset: 0;
@@ -367,48 +375,55 @@ body.flipbook-body {
   z-index: 15;
 }
 
-.fb-hotspot {
+.fb-page-products {
   position: absolute;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
   pointer-events: auto;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  z-index: 50;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 14px 6px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(244, 81, 30, 0.55);
+  background: rgba(20, 22, 26, 0.9);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: background-color 0.2s, transform 0.2s var(--fb-spring);
 }
-
-.fb-hotspot-pulse {
+.fb-page-products:hover {
+  background: var(--fb-orange);
+  transform: translateX(-50%) translateY(-2px);
+}
+.fb-page-products:focus-visible {
+  outline: 3px solid #ffb48a;
+  outline-offset: 2px;
+}
+.fb-page-products-dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fb-orange);
+  flex: none;
+}
+.fb-page-products:hover .fb-page-products-dot {
+  background: #fff;
+}
+.fb-page-products-dot::after {
+  content: "";
   position: absolute;
-  width: 32px;
-  height: 32px;
+  inset: -5px;
   border-radius: 50%;
   background: var(--fb-orange-glow);
   animation: fbPulse 2s infinite ease-out;
-  pointer-events: none !important;
-}
-
-.fb-hotspot-pin {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--fb-orange);
-  border: 2.5px solid #ffffff;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s var(--fb-spring);
-  pointer-events: none !important;
-}
-.fb-hotspot:hover .fb-hotspot-pin {
-  transform: scale(1.3);
-  background: #ff6e40;
 }
 
 @keyframes fbPulse {
@@ -428,8 +443,6 @@ body.flipbook-body {
   pointer-events: none;
   z-index: 1000;
   opacity: 0;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   will-change: transform, opacity;
 }
 .fb-quick-card.active {
@@ -457,8 +470,8 @@ body.flipbook-body {
   background: transparent;
   border: none;
   color: var(--fb-text-muted);
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -492,6 +505,48 @@ body.flipbook-body {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+}
+.fb-quick-thumb svg {
+  width: 80%;
+  height: 80%;
+  opacity: 0.55;
+}
+.fb-quick-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.fb-quick-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fb-quick-item:hover,
+.fb-quick-item:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+}
+.fb-quick-item .fb-quick-thumb {
+  width: 40px;
+  height: 40px;
+}
+.fb-quick-info {
+  display: grid;
+}
+.fb-quick-more {
+  font-size: 11px;
+  color: var(--fb-text-muted);
+  margin: -4px 0 10px 5px;
 }
 .fb-quick-info {
   min-width: 0;
@@ -543,10 +598,15 @@ body.flipbook-body {
   justify-content: center;
   gap: 6px;
 }
-.fb-quick-add-btn:hover {
+.fb-quick-add-btn:hover:not(:disabled) {
   background: #ff6e40;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(244, 81, 30, 0.5);
+}
+.fb-quick-add-btn.added {
+  background: #1f7a49;
+  box-shadow: none;
+  cursor: default;
 }
 
 /* ---------------------------------------------------------------- Interactive Tool Companion */
@@ -554,15 +614,14 @@ body.flipbook-body {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: rgba(20, 22, 26, 0.75);
+  background: rgba(20, 22, 26, 0.9);
   border: 1px solid var(--fb-line);
   border-radius: 12px;
   padding: 8px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* no backdrop blur: whatever moves behind it would make the browser redraw the blur every frame */
   z-index: 25;
   pointer-events: none;
 }
@@ -592,9 +651,9 @@ body.flipbook-body {
   flex-direction: column;
   z-index: 60;
   transform: translateX(100%);
-  transition: transform 0.4s var(--fb-spring);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* no spring overshoot: the panel is flush with the screen edge, and bouncing past it opened a gap */
+  transition: transform 0.34s var(--fb-ease);
+  user-select: text; /* codes and specifications can be copied */
 }
 .fb-drawer.open {
   transform: translateX(0%);
@@ -618,8 +677,8 @@ body.flipbook-body {
 .fb-drawer-close {
   background: rgba(255, 255, 255, 0.08);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   color: #fff;
   cursor: pointer;
@@ -644,13 +703,9 @@ body.flipbook-body {
   border-radius: 10px;
   padding: 14px;
   margin-bottom: 14px;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: all 0.25s var(--fb-ease);
-}
-.fb-spec-card.revealed {
-  opacity: 1;
-  transform: translateY(0);
+  /* visible as it is: the drawer's reveal (GSAP) starts it from below; a "transition: all" here
+     re-timed each of that animation's frames */
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 .fb-spec-card:hover {
   border-color: rgba(244, 81, 30, 0.5);
@@ -672,8 +727,54 @@ body.flipbook-body {
   mix-blend-mode: multiply;
   flex-shrink: 0;
 }
+.fb-spec-thumb.art {
+  display: grid;
+  place-items: center;
+  mix-blend-mode: normal;
+  color: #555;
+}
+.fb-spec-thumb.art svg {
+  width: 80%;
+  height: 80%;
+  opacity: 0.55;
+}
 .fb-spec-details {
   flex: 1;
+  min-width: 0;
+}
+.fb-spec-status {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #d6d6db;
+  background: rgba(255, 255, 255, 0.08);
+}
+.fb-spec-status.verified {
+  color: #5fd39b;
+  background: rgba(95, 211, 155, 0.12);
+}
+.fb-spec-status.needs_review {
+  color: #f0b54f;
+  background: rgba(240, 181, 79, 0.12);
+}
+.fb-spec-evidence {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--fb-text-muted);
+  margin: 0 0 10px;
+}
+.fb-spec-evidence a {
+  color: var(--fb-amber);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.fb-drawer-empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--fb-text-muted);
 }
 .fb-spec-cat {
   font-size: 14px;
@@ -708,14 +809,13 @@ body.flipbook-body {
 /* ---------------------------------------------------------------- Bottom Controls & Filmstrip */
 .fb-footer {
   height: 72px;
-  background: rgba(20, 22, 26, 0.92);
+  background: rgba(20, 22, 26, 0.97);
   border-top: 1px solid var(--fb-line);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* no backdrop blur: whatever moves behind it would make the browser redraw the blur every frame */
   z-index: 50;
   flex-shrink: 0;
 }
@@ -765,6 +865,9 @@ body.flipbook-body {
 }
 
 .fb-thumb-item {
+  display: block;
+  padding: 0;
+  font: inherit;
   width: 36px;
   height: 48px;
   border-radius: 4px;
@@ -777,9 +880,15 @@ body.flipbook-body {
   background: #252830;
 }
 .fb-thumb-item img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.fb-thumb-item:focus-visible {
+  outline: 2px solid var(--fb-amber);
+  outline-offset: 2px;
+  opacity: 1;
 }
 .fb-thumb-item:hover {
   opacity: 0.85;
@@ -824,8 +933,7 @@ body.flipbook-body {
   color: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
   z-index: 1200;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* no backdrop blur: whatever moves behind it would make the browser redraw the blur every frame */
   animation: fbFadeIn 0.2s ease-out;
 }
 .fb-zoom-badge span {
@@ -871,8 +979,6 @@ body.flipbook-body {
   align-items: center;
   gap: 8px;
   box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   z-index: 1000;
 }
 .fb-jump-label {
@@ -984,6 +1090,7 @@ body.flipbook-body {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    overflow: clip;
   }
   .fb-book-wrap {
     width: 100%;
@@ -1080,22 +1187,20 @@ body.flipbook-body {
     z-index: 80;
     opacity: 0;
     will-change: opacity, transform;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
   .fb-tinder-badge.next {
     right: 18px;
     border: 3px solid var(--fb-orange);
     color: var(--fb-orange);
-    background: rgba(244, 81, 30, 0.22);
+    background: rgba(20, 22, 26, 0.86);
     transform: rotate(12deg);
   }
   .fb-tinder-badge.prev {
     left: 18px;
     border: 3px solid #00e676;
     color: #00e676;
-    background: rgba(0, 230, 118, 0.22);
+    background: rgba(20, 22, 26, 0.86);
     transform: rotate(-12deg);
   }
   .fb-page-img {
@@ -1197,7 +1302,6 @@ body.flipbook-body {
     bottom: 68px !important;
     width: calc(100vw - 20px) !important;
     max-width: 360px !important;
-    transform: translateX(-50%) !important;
     border-radius: 12px;
     padding: 12px 14px;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(244, 81, 30, 0.4);
@@ -1238,5 +1342,60 @@ body.flipbook-body {
   }
   .fb-footer-nav {
     padding: 5px 7px;
+  }
+}
+
+/* ---------------------------------------------------------------- Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.fb-btn:focus-visible,
+.fb-back-link:focus-visible,
+.fb-select:focus-visible,
+.fb-page-counter:focus-visible,
+.fb-nav-arrow:focus-visible,
+.fb-drawer-close:focus-visible,
+.fb-quick-add-btn:focus-visible {
+  outline: 3px solid #ffb48a;
+  outline-offset: 2px;
+}
+/* touch screens: controls big enough to tap */
+@media (pointer: coarse) {
+  .fb-btn,
+  .fb-back-link,
+  .fb-select,
+  .fb-page-counter,
+  .fb-footer-nav {
+    min-height: 40px;
+  }
+  .fb-toolbar-actions .fb-btn {
+    min-width: 40px;
+  }
+  .fb-page-products {
+    min-height: 40px;
+  }
+}
+/* less motion: no pulsing, no sliding panels (page turns are instant: flipbook.mjs) */
+@media (prefers-reduced-motion: reduce) {
+  .fb-page-products-dot::after {
+    animation: none;
+  }
+  .fb-drawer,
+  .fb-thumb-item,
+  .fb-corner-curl,
+  .fb-nav-arrow,
+  .fb-page-products {
+    transition: none;
+  }
+  .fb-zoom-badge {
+    animation: none;
   }
 }

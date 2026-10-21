@@ -70,11 +70,11 @@ const CATALOGUES = {
 };
 
 // ---------------------------------------------------------------- Audio Synthesis (Web Audio API)
-let audioCtx = null;
-let sfxEnabled = true;
+let audioCtx = null; // created on the first sound, after a click (browsers block audio before one)
+// Page sounds play only after the visitor turns them on; the choice is shared with the catalogue page.
+let sfxEnabled = (() => { try { return localStorage.getItem("groz.sound") === "on"; } catch { return false; } })();
 let ambientEnabled = false;
-let ambientOsc = null;
-let ambientGain = null;
+let ambient = null; // { osc, lfo, gain } while the hum plays
 
 function getAudioContext() {
   if (!audioCtx && typeof window !== "undefined") {
@@ -163,12 +163,12 @@ export function toggleAmbientAudio() {
   if (!ctx) return false;
 
   ambientEnabled = !ambientEnabled;
+  const now = ctx.currentTime;
   if (ambientEnabled) {
-    const now = ctx.currentTime;
-    ambientOsc = ctx.createOscillator();
-    ambientGain = ctx.createGain();
-    ambientOsc.type = "sine";
-    ambientOsc.frequency.setValueAtTime(110, now); // Low harmonic drone
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(110, now); // Low harmonic drone
 
     const lfo = ctx.createOscillator();
     lfo.type = "sine";
@@ -176,26 +176,32 @@ export function toggleAmbientAudio() {
     const lfoGain = ctx.createGain();
     lfoGain.gain.setValueAtTime(4, now);
     lfo.connect(lfoGain);
-    lfoGain.connect(ambientOsc.frequency);
+    lfoGain.connect(osc.frequency);
 
-    ambientGain.gain.setValueAtTime(0.0001, now);
-    ambientGain.gain.exponentialRampToValueAtTime(0.045, now + 1.2);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.045, now + 1.2);
 
-    ambientOsc.connect(ambientGain);
-    ambientGain.connect(ctx.destination);
-    ambientOsc.start(now);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
     lfo.start(now);
-  } else if (ambientGain) {
-    ambientGain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.6);
-    setTimeout(() => {
-      ambientOsc?.stop();
-      ambientOsc = null;
-    }, 700);
+    ambient = { osc, lfo, gain };
+  } else if (ambient) {
+    // Fade out from where the hum is now, then stop both oscillators: the slow wobble one used to keep
+    // running, and a quick off-on stopped the new hum instead of the old one.
+    const { osc, lfo, gain } = ambient;
+    ambient = null;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    osc.stop(now + 0.65);
+    lfo.stop(now + 0.65);
   }
 
   const btn = $("#ambientToggle");
   if (btn) {
     btn.classList.toggle("active", ambientEnabled);
+    btn.setAttribute("aria-pressed", String(ambientEnabled));
     btn.setAttribute("title", `Ambient Background Audio: ${ambientEnabled ? "On" : "Off"}`);
   }
   return ambientEnabled;
@@ -207,24 +213,86 @@ export const state = {
   activeCatalogueKey: "GROZ_LIGHTING_GL-10_1.pdf",
   currentSpread: 1, // Desktop displays spreads (Spread 1 = Page 1 / Page 2)
   isTurning: false,
+  turn: null, // the GSAP timeline of the page turn playing
+  turnToken: 0, // a new number cancels a turn still waiting for its pages to decode
   zoomLevel: 1,
   singlePageMode: false,
   productsByPage: new Map(),
-  quote: new Set(),
+  artByCategory: new Map(),
 };
+
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+/** Pages turn with motion only when GSAP is loaded and the visitor has not asked for less motion. */
+const animate = () => !!window.gsap && !reduceMotion.matches;
+
+/** The visitor's quote, shared with the catalogue page (localStorage "groz.quote": [[id, quantity], ...]). */
+function readQuote() {
+  try { return new Map(JSON.parse(localStorage.getItem("groz.quote") || "[]")); } catch { return new Map(); }
+}
+function writeQuote(quote) {
+  try { localStorage.setItem("groz.quote", JSON.stringify([...quote])); return true; } catch { return false; }
+}
+
+/** Says something to screen readers (page changes, quote additions). */
+function announce(text) {
+  const live = $("#fbLive");
+  if (live) live.textContent = text;
+}
+
+const artFor = (p) => state.artByCategory.get(p.category) || getActiveCatalogue().art;
 
 // ---------------------------------------------------------------- Page Helpers
 function getActiveCatalogue() {
   return CATALOGUES[state.activeCatalogueKey] || CATALOGUES["GROZ_LIGHTING_GL-10_1.pdf"];
 }
 
+// Pages are WebP copies of the rendered PNGs, a fifth of the size; the filmstrip uses 96 px thumbnails
+// (tools/build_flipbook_webp.py makes both).
 function getPageImgUrl(pageNum) {
   const cat = getActiveCatalogue();
   if (cat.folder && pageNum >= 1 && pageNum <= cat.pageCount) {
     const pad = String(pageNum).padStart(2, "0");
-    return `${cat.folder}/page-${pad}.png`;
+    return `${cat.folder}/page-${pad}.webp`;
   }
   return null;
+}
+
+function getThumbUrl(pageNum) {
+  const cat = getActiveCatalogue();
+  if (!cat.folder || !(pageNum >= 1 && pageNum <= cat.pageCount)) return null;
+  return `${cat.folder}/thumbs/page-${String(pageNum).padStart(2, "0")}.webp`;
+}
+
+// Pages near the open spread are fetched and decoded ahead, so a turn never shows a blank page.
+const warmed = new Map(); // url -> Image, most recent last (a few kept, so they stay decoded)
+function warm(url) {
+  let im = warmed.get(url);
+  if (im) warmed.delete(url);
+  else {
+    im = new Image();
+    im.decoding = "async";
+    im.src = url;
+  }
+  warmed.set(url, im);
+  if (warmed.size > 16) warmed.delete(warmed.keys().next().value);
+  return im;
+}
+
+/** Resolves when these pages are decoded, or after `ms` at most (a slow page never holds a turn). */
+function whenDecoded(urls, ms = 300) {
+  const jobs = urls.filter((u) => u && !u.startsWith("data:")).map((u) => warm(u).decode?.().catch(() => {}));
+  return Promise.race([Promise.all(jobs), new Promise((r) => setTimeout(r, ms))]);
+}
+
+function preloadAround() {
+  const urls = [];
+  for (const s of [state.currentSpread + 1, state.currentSpread - 1, state.currentSpread + 2]) {
+    if (s < 1 || s > getMaxSpreads()) continue;
+    const { left, right } = getPagesForSpread(s);
+    urls.push(getPageImgUrl(left), getPageImgUrl(right));
+  }
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+  idle(() => urls.filter(Boolean).forEach((u) => warm(u).decode?.().catch(() => {})));
 }
 
 function getPagesForSpread(spreadIdx) {
@@ -240,6 +308,32 @@ function getMaxSpreads() {
   const cat = getActiveCatalogue();
   // Spreads are (cover), (2,3), (4,5) ...: the last page always has a spread of its own.
   return state.singlePageMode ? cat.pageCount : Math.floor(cat.pageCount / 2) + 1;
+}
+
+/** A turn has played: the leaf goes, the new spread is drawn. */
+function finishTurn(spread) {
+  const leaf = $("#flipLeaf");
+  if (leaf) resetLeaf(leaf);
+  state.turn = null;
+  state.currentSpread = spread;
+  renderActiveSpread();
+  state.isTurning = false;
+}
+
+/** Ends a turn at once (a jump, a catalogue switch or a resize while it plays); the caller redraws. */
+function stopTurn() {
+  state.turnToken += 1;
+  if (!state.isTurning) return;
+  state.turn?.kill();
+  state.turn = null;
+  const leaf = $("#flipLeaf");
+  if (leaf) resetLeaf(leaf);
+  const panel = $("#rightPanel");
+  if (window.gsap && panel) {
+    window.gsap.killTweensOf([panel, $("#deckUnderlay"), $("#tinderBadgeNext"), $("#tinderBadgePrev")].filter(Boolean));
+    window.gsap.set(panel, { clearProps: "transform,opacity" });
+  }
+  state.isTurning = false;
 }
 
 /** Turning leaf back at rest: hidden, with no transform or shading left on it. */
@@ -289,6 +383,7 @@ export function renderActiveSpread() {
         if (rightImg.naturalWidth && rightImg.naturalHeight) {
           rightPanel.style.aspectRatio = `${rightImg.naturalWidth} / ${rightImg.naturalHeight}`;
         }
+        fitDeck();
       };
       if (rightImg.complete && rightImg.naturalWidth) applyRatio();
       else rightImg.onload = applyRatio;
@@ -354,10 +449,23 @@ export function renderActiveSpread() {
   if ($("#footerPrevBtn")) $("#footerPrevBtn").disabled = prevDisabled;
   if ($("#footerNextBtn")) $("#footerNextBtn").disabled = nextDisabled;
 
-  // Update thumbnail filmstrip selection
+  // Update thumbnail filmstrip selection (and keep the active one in view, scrolling the strip only)
+  const filmstrip = $("#filmstrip");
   $$(".fb-thumb-item").forEach((thumb, i) => {
-    thumb.classList.toggle("active", i + 1 === state.currentSpread);
+    const on = i + 1 === state.currentSpread;
+    thumb.classList.toggle("active", on);
+    if (on) thumb.setAttribute("aria-current", "true");
+    else thumb.removeAttribute("aria-current");
+    if (on && filmstrip) {
+      const strip = filmstrip.getBoundingClientRect();
+      const box = thumb.getBoundingClientRect();
+      if (box.left < strip.left || box.right > strip.right) {
+        filmstrip.scrollBy({ left: box.left - strip.left - (strip.width - box.width) / 2, behavior: animate() ? "smooth" : "auto" });
+      }
+    }
   });
+  if (counter) announce(counter.textContent);
+  preloadAround();
 
   // Update Embedded Tool Companion Icon & Text
   const companionIcon = $("#companionIcon");
@@ -370,42 +478,32 @@ export function renderActiveSpread() {
 }
 
 // ---------------------------------------------------------------- Hotspots & Floating Cards
+/** A page's products: one button on the page that lists them. The catalogue data records the page each
+ *  product is printed on, not where on the page, so nothing is pinned to a made-up spot. */
 function renderHotspots(container, pageNum) {
-  container.innerHTML = "";
+  container.replaceChildren();
   const products = state.productsByPage.get(pageNum) || [];
   if (!products.length) return;
+  const count = products.length === 1 ? "1 product" : `${products.length} products`;
 
-  products.forEach((p, idx) => {
-    // Generate well-distributed positions across the page for products
-    const col = idx % 2;
-    const row = Math.floor(idx / 2);
-    const top = 22 + row * 24 + (idx % 3) * 3;
-    const left = col === 0 ? 28 + (idx % 2) * 8 : 72 - (idx % 2) * 8;
-    const pinNumber = idx + 1;
-
-    const el = document.createElement("div");
-    el.className = "fb-hotspot";
-    el.style.top = `${Math.min(88, top)}%`;
-    el.style.left = `${Math.min(88, left)}%`;
-    el.dataset.id = p.id;
-    el.dataset.pin = String(pinNumber);
-    el.innerHTML = `
-      <div class="fb-hotspot-pulse"></div>
-      <div class="fb-hotspot-pin">${pinNumber}</div>
-    `;
-
-    el.addEventListener("pointerenter", (e) => {
-      cancelHideQuickCard();
-      showQuickCard(p, e, pinNumber);
-    });
-    el.addEventListener("pointerleave", () => scheduleHideQuickCard(160));
-    el.addEventListener("click", () => {
-      openDrawer();
-      highlightDrawerProduct(p.id);
-    });
-
-    container.appendChild(el);
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "fb-page-products";
+  btn.dataset.page = String(pageNum);
+  btn.setAttribute("aria-label", `${count} on page ${pageNum}: show codes and specifications`);
+  btn.innerHTML = `<span class="fb-page-products-dot" aria-hidden="true"></span>${count} on this page`;
+  btn.addEventListener("pointerenter", (e) => {
+    if (e.pointerType !== "mouse") return;
+    cancelHideQuickCard();
+    showQuickCard(pageNum, btn);
   });
+  btn.addEventListener("pointerleave", () => scheduleHideQuickCard(160));
+  btn.addEventListener("click", () => {
+    hideQuickCardImmediately();
+    openDrawer();
+    highlightDrawerProduct(products[0].id);
+  });
+  container.appendChild(btn);
 }
 
 const quickCard = $("#quickCard");
@@ -422,41 +520,36 @@ export function hideQuickCardImmediately() {
   activeCardProductId = null;
 }
 
-function showQuickCard(p, e, pinNumber = 1) {
+function showQuickCard(pageNum, anchor) {
   clearTimeout(hideCardTimer);
   if (!quickCard) return;
+  const products = state.productsByPage.get(pageNum) || [];
+  if (!products.length) return;
 
-  // If already displaying this product and the card is visible, don't restart animation
-  if (activeCardProductId === p.id && quickCard.classList.contains("active")) {
+  // If already displaying this page's card and it is visible, don't restart the animation
+  const key = `page-${pageNum}`;
+  if (activeCardProductId === key && quickCard.classList.contains("active")) {
     return;
   }
-  activeCardProductId = p.id;
+  activeCardProductId = key;
 
-  const rect = e.currentTarget.getBoundingClientRect();
-  const specs = (p.specs || []).slice(0, 3).map((s) => `<b>${esc(s.label)}:</b> ${esc(s.value)}`).join("<br/>");
-  const imgSrc = p.image?.src || "";
-
+  const rect = anchor.getBoundingClientRect();
+  const shown = products.slice(0, 4);
+  const more = products.length - shown.length;
   quickCard.innerHTML = `
     <div class="fb-quick-header">
-      <span class="fb-quick-badge">Pin #${pinNumber} · Page ${p.page || ""}</span>
-      <button class="fb-quick-close" id="quickCardCloseBtn" type="button" aria-label="Close card">✕</button>
+      <span class="fb-quick-badge">Page ${pageNum} · ${products.length === 1 ? "1 product" : `${products.length} products`}</span>
+      <button class="fb-quick-close" type="button" aria-label="Close card">✕</button>
     </div>
-    <div class="fb-quick-body">
-      ${imgSrc ? `<div class="fb-quick-thumb"><img src="${esc(imgSrc)}" alt="${esc(p.cat_nr)}" loading="lazy"/></div>` : ""}
-      <div class="fb-quick-info">
-        <div class="fb-quick-code">${esc(p.cat_nr)}</div>
-        <div class="fb-quick-title">${esc(p.heading || p.title || "GROZ Industrial Tool")}</div>
-      </div>
-    </div>
-    <div class="fb-quick-specs">${specs || "Precision engineered for heavy industrial use."}</div>
-    <button class="fb-quick-add-btn" type="button" data-add-quote="${esc(p.id)}">Add to Shortlist Quote ✳</button>
+    <ul class="fb-quick-list">${shown.map((p) => `
+      <li><button class="fb-quick-item" type="button" data-show-product="${esc(p.id)}">
+        <span class="fb-quick-thumb">${p.image?.src ? `<img src="${esc(p.image.src)}" alt="" loading="lazy"/>` : art(artFor(p))}</span>
+        <span class="fb-quick-info"><span class="fb-quick-code">${esc(p.cat_nr)}</span>${p.title || p.heading ? `<span class="fb-quick-title">${esc(p.title || p.heading)}</span>` : ""}</span>
+      </button></li>`).join("")}
+    </ul>
+    ${more > 0 ? `<div class="fb-quick-more">and ${more} more</div>` : ""}
+    <button class="fb-quick-add-btn" type="button" data-open-drawer>Codes &amp; specifications</button>
   `;
-
-  // Close button on card
-  $("#quickCardCloseBtn")?.addEventListener("click", (evt) => {
-    evt.stopPropagation();
-    hideQuickCardImmediately();
-  });
 
   // Handle mobile bottom card positioning vs desktop anchored positioning
   const isMobile = state.singlePageMode || window.innerWidth <= 600;
@@ -563,70 +656,97 @@ function renderDrawerSpecs(pageNumbers) {
 
   if (!products.length) {
     body.innerHTML = `
-      <div style="padding: 30px; text-align: center; color: var(--fb-text-muted);">
-        <p>No individual item codes listed on this page spread.</p>
-        <small>Browse neighbouring pages or check the catalogue overview.</small>
+      <div class="fb-drawer-empty">
+        <p>No products from ${pageNumbers.length > 1 ? "these pages" : "this page"} are in the website's product list yet.</p>
+        <small>Pages with products show a “products on this page” button.</small>
       </div>`;
     return;
   }
 
+  // Everything shown comes from the catalogue data, as on the catalogue page: no filler text, the
+  // product's check status, where its picture and its row come from, and the real quote.
+  const quote = readQuote();
+  const cat = getActiveCatalogue();
   body.innerHTML = products.map((p) => {
-    const specsHtml = (p.specs || []).map((s) => `
-      <tr><td class="label">${esc(s.label)}</td><td class="val">${esc(s.value)}</td></tr>
-    `).join("");
-    const imgSrc = p.image ? p.image.src : "../output_v2/images/placeholder.png";
+    const rows = [
+      ["ORD NR", p.ord_nr || "—"],
+      p.dimensions_mm ? ["Dimensions", `${p.dimensions_mm} mm`] : null,
+      p.box_qty ? ["Box quantity", p.box_qty] : null,
+      ...(p.specs || []).map((s) => [s.label, s.value]),
+    ].filter(Boolean);
+    const inQuote = quote.has(p.id);
+    const where = p.printed_page ? `catalogue page ${p.printed_page} (PDF page ${p.page})` : `PDF page ${p.page}`;
 
     return `
-      <div class="fb-spec-card" id="spec-${esc(p.id)}" data-product-id="${esc(p.id)}">
+      <article class="fb-spec-card" id="spec-${esc(p.id)}" data-product-id="${esc(p.id)}">
         <div class="fb-spec-card-head">
-          <img class="fb-spec-thumb" src="${esc(imgSrc)}" alt="${esc(p.cat_nr)}" loading="lazy"/>
+          ${p.image?.src
+            ? `<img class="fb-spec-thumb" src="${esc(p.image.src)}" alt="${esc(p.cat_nr)}" loading="lazy"/>`
+            : `<span class="fb-spec-thumb art" aria-hidden="true">${art(artFor(p))}</span>`}
           <div class="fb-spec-details">
             <div class="fb-spec-cat">${esc(p.cat_nr)}</div>
-            <div class="fb-spec-title">${esc(p.heading || p.title || "Industrial Tool")}</div>
+            ${p.title || p.heading ? `<div class="fb-spec-title">${esc(p.title || p.heading)}</div>` : ""}
+            <span class="fb-spec-status ${esc(p.status || "unverified")}">${esc(p.status_label || "Not yet verified")}</span>
           </div>
         </div>
         <table class="fb-spec-table">
-          <tbody>
-            <tr><td class="label">ORD NR</td><td class="val">${esc(p.ord_nr || "—")}</td></tr>
-            ${p.dimensions_mm ? `<tr><td class="label">Dimensions</td><td class="val">${esc(p.dimensions_mm)} mm</td></tr>` : ""}
-            ${p.box_qty ? `<tr><td class="label">Box Quantity</td><td class="val">${esc(p.box_qty)}</td></tr>` : ""}
-            ${specsHtml}
-          </tbody>
+          <tbody>${rows.map(([label, value]) => `<tr><td class="label">${esc(label)}</td><td class="val">${esc(value)}</td></tr>`).join("")}</tbody>
         </table>
-        <button class="fb-quick-add-btn" type="button" data-add-quote="${esc(p.id)}">Add to Shortlist Quote</button>
-      </div>`;
+        <p class="fb-spec-evidence">${p.image?.evidence_label ? `Picture: ${esc(p.image.evidence_label)}. ` : "No catalogue picture confirmed. "}Printed on ${esc(where)} ·
+          <a href="${esc(p.catalogue?.href || cat.href)}" target="_blank" rel="noopener">open the PDF<span class="sr-only"> (opens in a new tab)</span></a></p>
+        <button class="fb-quick-add-btn${inQuote ? " added" : ""}" type="button" data-add-quote="${esc(p.id)}"${inQuote ? " disabled" : ""}>${inQuote ? "In your quote ✓" : "Add to quote"}</button>
+      </article>`;
   }).join("");
 
-  // Scroll-triggered staggered reveal of cards
+  // Staggered reveal of the cards (they are visible without it)
   const cards = $$(".fb-spec-card", body);
-  if (window.gsap) {
+  if (animate()) {
     window.gsap.fromTo(cards,
       { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 0.38, stagger: 0.05, ease: "power2.out" }
+      { opacity: 1, y: 0, duration: 0.38, stagger: 0.05, ease: "power2.out", clearProps: "opacity,transform" }
     );
-  } else {
-    cards.forEach((c) => c.classList.add("revealed"));
   }
 }
 
+let drawerReturn = null; // where focus goes back to when the drawer closes
+
 export function openDrawer() {
-  $("#specsDrawer")?.classList.add("open");
-  $("#openSpecsBtn")?.classList.add("active");
+  const drawer = $("#specsDrawer");
+  if (!drawer || drawer.classList.contains("open")) return;
+  drawerReturn = document.activeElement;
+  drawer.classList.add("open");
+  drawer.inert = false; // closed, it is inert: off screen and out of the tab order
+  const btn = $("#openSpecsBtn");
+  btn?.classList.add("active");
+  btn?.setAttribute("aria-expanded", "true");
+  $("#drawerClose")?.focus({ preventScroll: true });
 }
 
 export function closeDrawer() {
-  $("#specsDrawer")?.classList.remove("open");
-  $("#openSpecsBtn")?.classList.remove("active");
+  const drawer = $("#specsDrawer");
+  if (!drawer || !drawer.classList.contains("open")) return;
+  const hadFocus = drawer.contains(document.activeElement);
+  drawer.classList.remove("open");
+  drawer.inert = true;
+  const btn = $("#openSpecsBtn");
+  btn?.classList.remove("active");
+  btn?.setAttribute("aria-expanded", "false");
+  const back = drawerReturn && drawerReturn !== document.body && document.contains(drawerReturn) ? drawerReturn : btn;
+  if (hadFocus) back?.focus({ preventScroll: true });
 }
 
 function highlightDrawerProduct(id) {
   const card = document.getElementById(`spec-${id}`);
-  if (card) {
-    card.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    if (window.gsap) {
-      window.gsap.fromTo(card,
-        { scale: 0.95, borderColor: "var(--fb-orange)" },
-        { scale: 1, borderColor: "var(--fb-line)", duration: 0.6, ease: "elastic.out(1, 0.4)" }
+  const body = $("#drawerBody");
+  if (card && body) {
+    // Scroll the drawer's own list only. scrollIntoView also scrolled the stage sideways (the drawer is
+    // still sliding in from off screen), which pushed the whole book out of view.
+    const top = card.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop - 8;
+    body.scrollTo({ top, behavior: animate() ? "smooth" : "auto" });
+    if (animate()) {
+      card.animate(
+        [{ transform: "scale(0.97)", boxShadow: "0 0 0 2px #f4511e" }, { transform: "none", boxShadow: "0 0 0 2px #f4511e00" }],
+        { duration: 700, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
       );
     }
   }
@@ -648,7 +768,7 @@ export function flipToNext() {
     const deckUnderlay = $("#deckUnderlay");
     const badgeNext = $("#tinderBadgeNext");
 
-    if (window.gsap && rightPanel) {
+    if (animate() && rightPanel) {
       if (badgeNext) {
         window.gsap.to(badgeNext, { opacity: 1, duration: 0.1 });
       }
@@ -689,69 +809,67 @@ export function flipToNext() {
   const { right: currentRight } = getPagesForSpread(state.currentSpread);
   const nextSpread = state.currentSpread + 1;
   const { left: nextLeft, right: nextRight } = getPagesForSpread(nextSpread);
+  hideQuickCardImmediately();
+  if (!animate()) { finishTurn(nextSpread); return; } // less motion: the next spread at once
 
-  if (frontImg) frontImg.src = getPageImgUrl(currentRight) || "";
-  if (backImg) backImg.src = getPageImgUrl(nextLeft || nextRight) || "";
-  // Underneath the lifting page, the next right-hand page is already there (or the end).
-  const rightImg = $("#rightPageImg");
-  const underRight = getPageImgUrl(nextRight);
-  if (rightImg) rightImg.src = underRight || END_PAGE;
-  $("#rightHotspots")?.replaceChildren();
+  const frontUrl = getPageImgUrl(currentRight) || END_PAGE;
+  const backUrl = getPageImgUrl(nextLeft || nextRight) || COVER_SIDE;
+  const underUrl = getPageImgUrl(nextRight) || END_PAGE;
+  const token = state.turnToken;
+  // The turn starts once its three pages are decoded (they usually are: preloadAround), so the
+  // turning page is never blank; then they are swapped in together, in one frame.
+  whenDecoded([frontUrl, backUrl, underUrl]).then(() => {
+    if (token !== state.turnToken) return; // stopped meanwhile (stopTurn)
+    if (frontImg) frontImg.src = frontUrl;
+    if (backImg) backImg.src = backUrl;
+    // Underneath the lifting page, the next right-hand page is already there (or the end).
+    const rightImg = $("#rightPageImg");
+    if (rightImg) rightImg.src = underUrl;
+    $("#rightHotspots")?.replaceChildren();
+    leaf.style.display = "block";
+    turnForward(leaf, nextSpread, shadow, frontGlare, backGlare);
+  });
+}
 
-  leaf.style.display = "block";
+function turnForward(leaf, nextSpread, shadow, frontGlare, backGlare) {
+  // Multi-phase physical curved turn:
+  // 1. Initial corner peel: corner lifts & paper flexes
+  // 2. High curved arch: translateZ lifts up into 3D space, casting sweeping shadow
+  // 3. Roll-down settle: rolls onto left spread with natural deceleration
+  // finishTurn clears only what the turn set: clearProps "all" also wiped the inline display:none and
+  // left the finished leaf lying over the new right-hand page.
+  const tl = window.gsap.timeline({ onComplete: () => finishTurn(nextSpread) });
+  state.turn = tl;
 
-  if (window.gsap) {
-    // Multi-phase physical curved turn:
-    // 1. Initial corner peel: corner lifts & paper flexes
-    // 2. High curved arch: translateZ lifts up into 3D space, casting sweeping shadow
-    // 3. Roll-down settle: rolls onto left spread with natural deceleration
-    const tl = window.gsap.timeline({
-      onComplete: () => {
-        // Clear only what the turn set: "all" would also wipe the inline display:none and leave the
-        // finished leaf lying over the new right-hand page.
-        resetLeaf(leaf);
-        state.currentSpread = nextSpread;
-        renderActiveSpread();
-        state.isTurning = false;
-      },
-    });
-    state.turn = tl;
+  // No CSS filter on the leaf: a filter flattens its 3D faces (the back page never showed) and a
+  // blurred drop-shadow is repainted on every frame. The shadow layer below does the shading.
+  window.gsap.set(leaf, { rotateY: 0, rotateZ: 0, skewY: 0, translateZ: 0 });
 
-    // No CSS filter on the leaf: a filter flattens its 3D faces (the back page never showed) and a
-    // blurred drop-shadow is repainted on every frame. The shadow layer below does the shading.
-    window.gsap.set(leaf, { rotateY: 0, rotateZ: 0, skewY: 0, translateZ: 0 });
-
-    tl.to(leaf, {
-      rotateY: -90,
-      translateZ: 85, // Authentic curved 3D arch
-      rotateZ: -3.5, // Diagonal corner lift
-      skewY: 4.5, // Paper flex & curl drag
-      duration: 0.32,
-      ease: "power2.in",
-      onUpdate: function () {
-        const p = this.progress();
-        if (shadow) shadow.style.opacity = String(p * 0.85);
-        if (frontGlare) frontGlare.style.opacity = String(p * 0.75);
-      },
-    }).to(leaf, {
-      rotateY: -180,
-      translateZ: 0,
-      rotateZ: 0,
-      skewY: 0,
-      duration: 0.34,
-      ease: "power2.out",
-      onUpdate: function () {
-        const p = this.progress();
-        if (shadow) shadow.style.opacity = String((1 - p) * 0.85);
-        if (backGlare) backGlare.style.opacity = String((1 - p) * 0.75);
-      },
-    });
-  } else {
-    state.currentSpread = nextSpread;
-    renderActiveSpread();
-    leaf.style.display = "none";
-    state.isTurning = false;
-  }
+  tl.to(leaf, {
+    rotateY: -90,
+    translateZ: 85, // Authentic curved 3D arch
+    rotateZ: -3.5, // Diagonal corner lift
+    skewY: 4.5, // Paper flex & curl drag
+    duration: 0.32,
+    ease: "power2.in",
+    onUpdate: function () {
+      const p = this.progress();
+      if (shadow) shadow.style.opacity = String(p * 0.85);
+      if (frontGlare) frontGlare.style.opacity = String(p * 0.75);
+    },
+  }).to(leaf, {
+    rotateY: -180,
+    translateZ: 0,
+    rotateZ: 0,
+    skewY: 0,
+    duration: 0.34,
+    ease: "power2.out",
+    onUpdate: function () {
+      const p = this.progress();
+      if (shadow) shadow.style.opacity = String((1 - p) * 0.85);
+      if (backGlare) backGlare.style.opacity = String((1 - p) * 0.75);
+    },
+  });
 }
 
 export function flipToPrev() {
@@ -776,7 +894,7 @@ export function flipToPrev() {
       }
     }
 
-    if (window.gsap && rightPanel) {
+    if (animate() && rightPanel) {
       if (badgePrev) {
         window.gsap.to(badgePrev, { opacity: 1, duration: 0.1 });
       }
@@ -814,67 +932,66 @@ export function flipToPrev() {
   const backGlare = $("#leafBackGlare");
 
   const prevSpread = state.currentSpread - 1;
-  const { right: prevRight } = getPagesForSpread(prevSpread);
+  const { left: prevLeft, right: prevRight } = getPagesForSpread(prevSpread);
   const { left: currentLeft } = getPagesForSpread(state.currentSpread);
+  hideQuickCardImmediately();
+  if (!animate()) { finishTurn(prevSpread); return; } // less motion: the previous spread at once
 
-  if (frontImg) frontImg.src = getPageImgUrl(prevRight) || "";
-  if (backImg) backImg.src = getPageImgUrl(currentLeft) || "";
-  // Underneath the lifting page, the previous left-hand page is already there (or the cover side).
-  const { left: prevLeft } = getPagesForSpread(prevSpread);
-  const leftImg = $("#leftPageImg");
-  if (leftImg) leftImg.src = getPageImgUrl(prevLeft) || COVER_SIDE;
-  $("#leftHotspots")?.replaceChildren();
+  const frontUrl = getPageImgUrl(prevRight) || END_PAGE;
+  const backUrl = getPageImgUrl(currentLeft) || COVER_SIDE;
+  const underUrl = getPageImgUrl(prevLeft) || COVER_SIDE;
+  const token = state.turnToken;
+  whenDecoded([frontUrl, backUrl, underUrl]).then(() => {
+    if (token !== state.turnToken) return; // stopped meanwhile (stopTurn)
+    if (frontImg) frontImg.src = frontUrl;
+    if (backImg) backImg.src = backUrl;
+    // Underneath the lifting page, the previous left-hand page is already there (or the cover side).
+    const leftImg = $("#leftPageImg");
+    if (leftImg) leftImg.src = underUrl;
+    $("#leftHotspots")?.replaceChildren();
+    leaf.style.display = "block";
+    turnBackward(leaf, prevSpread, shadow, frontGlare, backGlare);
+  });
+}
 
-  leaf.style.display = "block";
+function turnBackward(leaf, prevSpread, shadow, frontGlare, backGlare) {
+  const tl = window.gsap.timeline({ onComplete: () => finishTurn(prevSpread) });
+  state.turn = tl;
 
-  if (window.gsap) {
-    const tl = window.gsap.timeline({
-      onComplete: () => {
-        resetLeaf(leaf);
-        state.currentSpread = prevSpread;
-        renderActiveSpread();
-        state.isTurning = false;
-      },
-    });
-    state.turn = tl;
+  window.gsap.set(leaf, { rotateY: -180, rotateZ: 0, skewY: 0, translateZ: 0 });
 
-    window.gsap.set(leaf, { rotateY: -180, rotateZ: 0, skewY: 0, translateZ: 0 });
-
-    tl.to(leaf, {
-      rotateY: -90,
-      translateZ: 85, // Curved 3D arch lift
-      rotateZ: 3.5, // Natural backward corner flex
-      skewY: -4.5,
-      duration: 0.32,
-      ease: "power2.in",
-      onUpdate: function () {
-        const p = this.progress();
-        if (shadow) shadow.style.opacity = String(p * 0.85);
-        if (backGlare) backGlare.style.opacity = String(p * 0.75);
-      },
-    }).to(leaf, {
-      rotateY: 0,
-      translateZ: 0,
-      rotateZ: 0,
-      skewY: 0,
-      duration: 0.34,
-      ease: "power2.out",
-      onUpdate: function () {
-        const p = this.progress();
-        if (shadow) shadow.style.opacity = String((1 - p) * 0.85);
-        if (frontGlare) frontGlare.style.opacity = String((1 - p) * 0.75);
-      },
-    });
-  } else {
-    state.currentSpread = prevSpread;
-    renderActiveSpread();
-    leaf.style.display = "none";
-    state.isTurning = false;
-  }
+  tl.to(leaf, {
+    rotateY: -90,
+    translateZ: 85, // Curved 3D arch lift
+    rotateZ: 3.5, // Natural backward corner flex
+    skewY: -4.5,
+    duration: 0.32,
+    ease: "power2.in",
+    onUpdate: function () {
+      const p = this.progress();
+      if (shadow) shadow.style.opacity = String(p * 0.85);
+      if (backGlare) backGlare.style.opacity = String(p * 0.75);
+    },
+  }).to(leaf, {
+    rotateY: 0,
+    translateZ: 0,
+    rotateZ: 0,
+    skewY: 0,
+    duration: 0.34,
+    ease: "power2.out",
+    onUpdate: function () {
+      const p = this.progress();
+      if (shadow) shadow.style.opacity = String((1 - p) * 0.85);
+      if (frontGlare) frontGlare.style.opacity = String((1 - p) * 0.75);
+    },
+  });
 }
 
 export function jumpToSpread(spreadIdx) {
-  if (spreadIdx < 1 || spreadIdx > getMaxSpreads() || spreadIdx === state.currentSpread) return;
+  if (spreadIdx < 1 || spreadIdx > getMaxSpreads()) return;
+  const wasTurning = state.isTurning;
+  stopTurn(); // a turn still playing would otherwise land on its own spread after the jump
+  if (spreadIdx === state.currentSpread && !wasTurning) return;
   hideQuickCardImmediately();
   state.currentSpread = spreadIdx;
   playPageFlipSound();
@@ -916,15 +1033,22 @@ function renderFilmstrip() {
 
   for (let s = 1; s <= maxSpreads; s++) {
     const { left, right } = getPagesForSpread(s);
-    const imgUrl = getPageImgUrl(right) || getPageImgUrl(left) || "";
+    const imgUrl = getThumbUrl(right) || getThumbUrl(left) || "";
     const label = state.singlePageMode ? `Page ${right}` : (!left ? "Cover" : right > cat.pageCount ? `Page ${left}` : `Pages ${left}–${right}`);
     items.push(`
-      <div class="fb-thumb-item${s === state.currentSpread ? " active" : ""}" data-spread="${s}" data-label="${label}">
-        <img src="${esc(imgUrl)}" alt="${label}" loading="lazy"/>
-      </div>`);
+      <button type="button" class="fb-thumb-item${s === state.currentSpread ? " active" : ""}" data-spread="${s}" data-label="${label}" aria-label="${label}">
+        <img src="${esc(imgUrl)}" alt="" loading="lazy" decoding="async"/>
+      </button>`);
   }
 
   filmstrip.innerHTML = items.join("");
+}
+
+/** The filmstrip's listeners, added once (renderFilmstrip runs again for every catalogue and resize). */
+function bindFilmstrip() {
+  const filmstrip = $("#filmstrip");
+  const tooltip = $("#thumbTooltip");
+  if (!filmstrip) return;
 
   filmstrip.addEventListener("click", (e) => {
     const item = e.target.closest("[data-spread]");
@@ -952,6 +1076,7 @@ function renderFilmstrip() {
 // ---------------------------------------------------------------- Catalogue Switcher
 export function switchCatalogue(pdfKey) {
   if (!CATALOGUES[pdfKey]) return;
+  stopTurn();
   hideQuickCardImmediately();
   toggleZoom(false);
   state.activeCatalogueKey = pdfKey;
@@ -976,6 +1101,7 @@ export function switchCatalogue(pdfKey) {
   if (select && select.value !== pdfKey) {
     select.value = pdfKey;
   }
+  $("#jumpPageInput")?.setAttribute("max", String(cat.pageCount));
 
   renderFilmstrip();
   renderActiveSpread();
@@ -1000,15 +1126,30 @@ export function toggleZoom(force) {
 
   hideQuickCardImmediately();
 
-  if (isZoomed) {
-    if (window.gsap && wrap) {
-      window.gsap.to(wrap, { scale: 2.15, x: 0, y: 0, duration: 0.32, ease: "power2.out" });
-    }
-  } else {
-    if (window.gsap && wrap) {
-      window.gsap.to(wrap, { scale: 1, x: 0, y: 0, duration: 0.28, ease: "power2.out" });
-    }
+  // Exactly the 2x the button says. (No CSS transition on the wrapper: it re-timed these tweens.)
+  if (wrap) {
+    const to = { scale: isZoomed ? ZOOM : 1, x: 0, y: 0, overwrite: "auto" };
+    if (animate()) window.gsap.to(wrap, { ...to, duration: isZoomed ? 0.32 : 0.28, ease: "power2.out" });
+    else if (window.gsap) window.gsap.set(wrap, to);
+    else wrap.style.transform = isZoomed ? `scale(${ZOOM})` : "";
   }
+}
+
+const ZOOM = 2;
+
+/** Zoomed in, the pointer's place over the stage chooses which part of the page is in view: from one
+ *  edge of the enlarged page to the other, wherever the pointer is. */
+function panZoomed(e) {
+  if (!isZoomed || !window.gsap) return;
+  const wrap = $("#bookWrap");
+  const stage = $(".fb-stage");
+  if (!wrap || !stage) return;
+  const box = stage.getBoundingClientRect();
+  const rx = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width)) - 0.5;
+  const ry = Math.min(1, Math.max(0, (e.clientY - box.top) / box.height)) - 0.5;
+  const maxX = Math.max(0, (wrap.offsetWidth * ZOOM - box.width) / 2);
+  const maxY = Math.max(0, (wrap.offsetHeight * ZOOM - box.height) / 2);
+  window.gsap.to(wrap, { x: -rx * 2 * maxX, y: -ry * 2 * maxY, duration: animate() ? 0.35 : 0, ease: "power3.out", overwrite: "auto" });
 }
 
 // ---------------------------------------------------------------- Fullscreen & Responsive
@@ -1024,6 +1165,7 @@ function handleResize() {
   hideQuickCardImmediately();
   const isMobile = window.matchMedia("(max-width: 860px)").matches;
   if (state.singlePageMode !== isMobile) {
+    stopTurn();
     // Preserve the current viewed page when switching between dual spread and single page
     const currentPage = state.singlePageMode ? state.currentSpread : (state.currentSpread - 1) * 2 + 1;
     state.singlePageMode = isMobile;
@@ -1032,6 +1174,21 @@ function handleResize() {
     renderFilmstrip();
     renderActiveSpread();
   }
+  fitDeck();
+}
+
+/** Phones: the card waiting underneath has the size and place of the page card on top (it filled the
+ *  whole book area, a large grey slab around landscape pages). Layout sizes, so a swipe's transform
+ *  does not change them. */
+function fitDeck() {
+  const deck = $("#deckUnderlay");
+  const panel = $("#rightPanel");
+  if (!deck || !panel || !state.singlePageMode) return;
+  deck.style.inset = "auto";
+  deck.style.left = `${panel.offsetLeft}px`;
+  deck.style.top = `${panel.offsetTop}px`;
+  deck.style.width = `${panel.offsetWidth}px`;
+  deck.style.height = `${panel.offsetHeight}px`;
 }
 
 // ---------------------------------------------------------------- Mobile Tinder Card Swipe Engine
@@ -1053,6 +1210,7 @@ export function initTinderSwipe() {
   const badgePrev = $("#tinderBadgePrev");
 
   function resetCardAndDeck(elastic = true) {
+    elastic = elastic && animate();
     isPointerDown = false;
     isSwiping = false;
     activePointerId = null;
@@ -1103,7 +1261,7 @@ export function initTinderSwipe() {
   rightPanel.addEventListener("pointerdown", (e) => {
     if (!state.singlePageMode || state.isTurning) return;
     if (e.button !== 0 && e.pointerType === "mouse") return;
-    if (e.target.closest(".fb-hotspot") || e.target.closest("#quickCard") || e.target.closest("button")) return;
+    if (e.target.closest(".fb-page-products") || e.target.closest("#quickCard") || e.target.closest("button")) return;
 
     isPointerDown = true;
     isSwiping = false;
@@ -1166,13 +1324,14 @@ export function initTinderSwipe() {
         const nextPage = Math.min(state.currentSpread + 1, cat.pageCount);
         if (state.currentSpread < cat.pageCount) {
           const url = getPageImgUrl(nextPage);
-          if (url && deckUnderlayImg.src !== url) deckUnderlayImg.src = url;
+          // (the attribute: .src is the absolute URL, so comparing it re-set the picture on every move)
+          if (url && deckUnderlayImg.getAttribute("src") !== url) deckUnderlayImg.src = url;
           deckUnderlay.style.display = "flex";
         }
       } else if (effectiveDx > 0 && state.currentSpread > 1) {
         const prevPage = state.currentSpread - 1;
         const url = getPageImgUrl(prevPage);
-        if (url && deckUnderlayImg.src !== url) deckUnderlayImg.src = url;
+        if (url && deckUnderlayImg.getAttribute("src") !== url) deckUnderlayImg.src = url;
         deckUnderlay.style.display = "flex";
       }
 
@@ -1230,7 +1389,7 @@ export function initTinderSwipe() {
       const flyRot = -25;
       if (badgeNext) badgeNext.style.opacity = "1";
 
-      if (window.gsap) {
+      if (animate()) {
         if (deckUnderlay) {
           window.gsap.to(deckUnderlay, { scale: 1, y: 0, opacity: 1, duration: 0.26, ease: "power2.out" });
         }
@@ -1263,7 +1422,7 @@ export function initTinderSwipe() {
       const flyRot = 25;
       if (badgePrev) badgePrev.style.opacity = "1";
 
-      if (window.gsap) {
+      if (animate()) {
         if (deckUnderlay) {
           window.gsap.to(deckUnderlay, { scale: 1, y: 0, opacity: 1, duration: 0.26, ease: "power2.out" });
         }
@@ -1304,10 +1463,12 @@ export async function initFlipbook() {
   try {
     const res = await fetch("data/catalogue.json");
     state.data = await res.json();
+    state.artByCategory = new Map((state.data.categories || []).map((c) => [c.name, c.art]));
     rebuildProductsByPage();
   } catch (err) {
     console.warn("Could not load catalogue JSON data:", err);
   }
+  bindFilmstrip();
 
   // 2. Responsive detection
   state.singlePageMode = window.matchMedia("(max-width: 860px)").matches;
@@ -1336,7 +1497,8 @@ export async function initFlipbook() {
 
   // Keyboard navigation (Arrow Left / Right, Spacebar, Zoom 'Z', Escape)
   window.addEventListener("keydown", (e) => {
-    if (e.target.matches("input, textarea, select")) return;
+    if (e.target.matches("input, textarea, select") || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === " " && e.target !== document.body) return; // Space on a button presses that button
     if (e.key === "ArrowLeft") {
       hideQuickCardImmediately();
       flipToPrev();
@@ -1357,14 +1519,16 @@ export async function initFlipbook() {
     }
   });
 
-  // Touch Swipe for Dual-Spread Mode (Tablets/Desktops)
+  // Touch Swipe for Dual-Spread Mode (Tablets/Desktops): on the book only, so scrolling the filmstrip
+  // or the specs drawer never turns a page.
   let touchStartX = 0;
-  window.addEventListener("touchstart", (e) => {
+  const bookWrapEl = $("#bookWrap");
+  bookWrapEl?.addEventListener("touchstart", (e) => {
     if (state.singlePageMode) return;
     touchStartX = e.touches[0].clientX;
   }, { passive: true });
-  window.addEventListener("touchend", (e) => {
-    if (state.singlePageMode) return;
+  bookWrapEl?.addEventListener("touchend", (e) => {
+    if (state.singlePageMode || isZoomed) return;
     const diff = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(diff) > 45) {
       hideQuickCardImmediately();
@@ -1384,24 +1548,12 @@ export async function initFlipbook() {
 
   // Double Click on Book toggles Magnifier Zoom
   $("#book")?.addEventListener("dblclick", (e) => {
-    if (e.target.closest(".fb-hotspot")) return;
+    if (e.target.closest(".fb-page-products")) return;
     toggleZoom();
   });
 
   // Smooth Pan when in Magnifier Zoom mode
-  const stage = $(".fb-stage");
-  stage?.addEventListener("mousemove", (e) => {
-    if (!isZoomed) return;
-    const wrap = $("#bookWrap");
-    if (!wrap) return;
-    const rx = (e.clientX / window.innerWidth) - 0.5;
-    const ry = (e.clientY / window.innerHeight) - 0.5;
-    const panX = -rx * 460;
-    const panY = -ry * 340;
-    if (window.gsap) {
-      window.gsap.to(wrap, { x: panX, y: panY, duration: 0.22, ease: "power1.out", overwrite: "auto" });
-    }
-  });
+  $(".fb-stage")?.addEventListener("mousemove", panZoomed);
 
   // Zoom Button Controls
   $("#zoomToggleBtn")?.addEventListener("click", () => toggleZoom());
@@ -1410,7 +1562,7 @@ export async function initFlipbook() {
   // Dismiss quickCard immediately when hovering empty page areas (where numbers are missing)
   const bookEl = $("#book");
   bookEl?.addEventListener("pointermove", (e) => {
-    if (!e.target.closest(".fb-hotspot") && !e.target.closest("#quickCard")) {
+    if (!e.target.closest(".fb-page-products") && !e.target.closest("#quickCard")) {
       scheduleHideQuickCard(90);
     }
   });
@@ -1435,9 +1587,18 @@ export async function initFlipbook() {
     if (!jumpPopover) return;
     const isShowing = jumpPopover.style.display !== "none";
     jumpPopover.style.display = isShowing ? "none" : "flex";
+    counterBtn.setAttribute("aria-expanded", String(!isShowing));
     if (!isShowing && jumpInput) {
       jumpInput.value = "";
       jumpInput.focus();
+    }
+  });
+  // It is a button for the keyboard too
+  counterBtn?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      counterBtn.click();
     }
   });
 
@@ -1455,33 +1616,61 @@ export async function initFlipbook() {
   });
 
   document.addEventListener("click", (e) => {
-    if (jumpPopover && !jumpPopover.contains(e.target) && e.target !== counterBtn) {
+    if (jumpPopover && jumpPopover.style.display !== "none" && !jumpPopover.contains(e.target) && e.target !== counterBtn) {
       jumpPopover.style.display = "none";
+      counterBtn?.setAttribute("aria-expanded", "false");
     }
   });
 
-  // Audio Toggles
+  // Audio Toggles (page sounds: off until turned on, remembered with the catalogue page's choice)
+  const showSfx = () => {
+    const btn = $("#soundToggle");
+    btn?.classList.toggle("active", sfxEnabled);
+    btn?.setAttribute("aria-pressed", String(sfxEnabled));
+    btn?.setAttribute("title", `Page Sound Effects: ${sfxEnabled ? "On" : "Off"}`);
+  };
+  showSfx();
   $("#soundToggle")?.addEventListener("click", () => {
     sfxEnabled = !sfxEnabled;
-    $("#soundToggle")?.classList.toggle("active", sfxEnabled);
-    $("#soundToggle")?.setAttribute("title", `Page Sound Effects: ${sfxEnabled ? "On" : "Off"}`);
+    try { localStorage.setItem("groz.sound", sfxEnabled ? "on" : "off"); } catch { /* storage unavailable */ }
+    showSfx();
   });
   $("#ambientToggle")?.addEventListener("click", toggleAmbientAudio);
 
-  // Hover bridge for quickCard
+  // Hover bridge for quickCard, and its buttons
   quickCard?.addEventListener("pointerenter", cancelHideQuickCard);
   quickCard?.addEventListener("pointerleave", () => scheduleHideQuickCard(120));
+  quickCard?.addEventListener("click", (e) => {
+    if (e.target.closest(".fb-quick-close")) {
+      e.stopPropagation();
+      hideQuickCardImmediately();
+      return;
+    }
+    const item = e.target.closest("[data-show-product]");
+    if (item || e.target.closest("[data-open-drawer]")) {
+      hideQuickCardImmediately();
+      openDrawer();
+      if (item) highlightDrawerProduct(item.dataset.showProduct);
+    }
+  });
 
-  // Add to Quote from Drawer or Quick Card
+  // Add to quote (drawer): the same quote as the catalogue page, kept in this browser
   document.body.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-add-quote]");
-    if (btn) {
-      const id = btn.dataset.addQuote;
-      state.quote.add(id);
-      playToolClink();
-      btn.textContent = "Added to Shortlist ✓";
-      btn.style.background = "#1f7a49";
+    if (!btn || btn.disabled) return;
+    const id = btn.dataset.addQuote;
+    const quote = readQuote();
+    if (!quote.has(id)) quote.set(id, 1);
+    if (!writeQuote(quote)) {
+      btn.textContent = "Could not save: this browser blocks storage";
+      return;
     }
+    playToolClink();
+    btn.textContent = "In your quote ✓";
+    btn.disabled = true;
+    btn.classList.add("added");
+    const code = btn.closest("[data-product-id]")?.querySelector(".fb-spec-cat")?.textContent || "Product";
+    announce(`${code} added to your quote. It is on the catalogue page's Quote.`);
   });
 
   // Render initial state with URL parameter deep-linking support
@@ -1504,7 +1693,8 @@ export async function initFlipbook() {
   }
 }
 
-// Auto-run if on flipbook page
+// Auto-run if on flipbook page (at once when the page has already finished loading)
 if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", initFlipbook);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initFlipbook);
+  else initFlipbook();
 }
