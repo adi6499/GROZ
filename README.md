@@ -233,15 +233,15 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Catalogue pictures keep soft light tiles in dark mode, because they are renders on white.
   - Switching shows a glass reveal (View Transitions API): the new theme grows from the button in a soft-edged circle while the old view frosts over. It is instant where unsupported, on low-end devices, and for visitors who ask for reduced motion.
 - **Product details:** the picture is the hero, beside the code, title, status and up to four key facts.
-  - Opening a product from a card plays a short 3D unboxing (about 1.5 s; the details are readable after about 1 s). The picture tile becomes a GROZ carton that tilts toward the viewer and opens its flaps. The product's own picture (or its category icon) rises out and flies to its place in the details, which grow from the box. The key specifications then fly out of the box in arcs and settle into their rows.
+  - Opening a product from a card plays a short 3D unboxing (about 0.8 s; the details are readable after about 0.6 s). The picture tile becomes a GROZ carton that tilts toward the viewer and opens its flaps. The product's own picture (or its category icon) rises out and flies to its place in the details, which grow from the box. The key specifications then fade up into their rows, one after another.
+    - Made lighter on 21 Oct 2026 (owner's request): it was about 1.6 s, with two full-size picture copies moving in 3D and up to 8 cloned specification rows (with large shadows) flying in arcs. Now the picture copies show the card's own small picture, which is already decoded (nothing waits), and the specification rows fade up in place. Measured in Edge with the CPU 4× slower: dropped frames while opening 15–21 → 7–9, while closing 10–18 → 3–5. Hovering a card also fetches its large picture, so the details are sharp when they open.
     - It is one continuous sequence: the details are built and measured before the first frame, and every movement is a Web Animation on the same timeline (`unboxThenShow`/`playUnbox` in `app.mjs`; the carton's faces are `.unbox`/`.ub-*` in `site.css`). Only transform and opacity are animated, and never opacity on the carton itself, which would flatten its 3D faces.
-    - The flying picture and specs are copies of the real ones, landing exactly on them; the real ones appear as their copies land. The dialog's usual entrance is replaced, not replayed afterwards. Nothing in the data changes.
+    - The flying picture is a copy of the real one, landing exactly on it; the real one appears as its copy lands. The dialog's usual entrance is replaced, not replayed afterwards. Nothing in the data changes.
     - If the page stops drawing (a hidden tab), a timer still ends the sequence so the details show.
     - While any dialog is open, the space of the hidden page scrollbar is kept, so the page behind does not reflow.
     - It is skipped (the details open at once) for visitors who ask for reduced motion, on low-end devices, for cards that are off screen, in Table view, and when stepping between products inside the dialog.
-    - The animations are created paused and start together once the picture copies are decoded (at most ~150 ms), so the first frames do not stall on image decoding.
-  - Closing the details plays the unboxing backwards (`playBoxClose`; about 1.4 s):
-    - the specifications lift off their rows and fly back into the carton, last first;
+    - The animations are created paused and start together once the picture copies are decoded (they show the card's picture, so this is at once; at most ~150 ms), so the first frames do not stall on image decoding.
+  - Closing the details plays the unboxing backwards (`playBoxClose`; about 0.85 s):
     - the picture flies down to the box and sinks inside;
     - the details shrink toward the box and the page comes back;
     - the flaps close and the carton settles onto the product's card and fades into its picture.

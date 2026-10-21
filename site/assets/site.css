@@ -481,9 +481,6 @@ body.has-dock main{padding-bottom:110px}
 .unbox .ub-item,.unbox .ub-fly{position:absolute;margin:0;aspect-ratio:auto}
 .unbox .ub-fly{transform-origin:0 0}
 .unbox .pd-stage img{animation:none}
-.unbox .ub-ghosts{display:contents}
-.unbox .ub-ghosts>div{position:absolute;border-radius:14px;box-shadow:0 12px 32px #0000002e}
-:root[data-theme=dark] .unbox .ub-ghosts>div{box-shadow:0 0 0 1px #ffffff14,0 12px 32px #0009}
 .modal.unboxing .modal-head{-webkit-backdrop-filter:none;backdrop-filter:none}
 
 /* decorative motion (motion.mjs): copies fly and burst in a fixed layer above everything; cards tilt,
