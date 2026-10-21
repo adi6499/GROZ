@@ -1123,3 +1123,47 @@ html.intro .intro-part,html.intro #introBrandName,html.intro #introTagline{opaci
 .fb-cat-banner-content p{color:#b9b9c0}
 /* phones: the header's icon buttons look 38px but are tapped as 44px */
 @media(max-width:720px){.icon-btn:after{content:"";position:absolute;inset:-3px}}
+
+/* ---------------------------------------------------------------- motion, wave 6 (motion.mjs glider) */
+/* header links: an orange underline glides to the link under the mouse */
+.links{position:relative}
+.fx-underline{position:absolute;left:0;top:0;width:100px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--orange),#ff9a6b);transform-origin:0 0;opacity:0;transition:opacity .2s;pointer-events:none}
+.fx-underline.on{opacity:1}
+/* Categories menu: a soft row glides to the item under the mouse (instead of each item's own hover) */
+.fx-glide-row{position:absolute;left:0;top:0;border-radius:11px;background:#f4f4f6;transform-origin:0 0;opacity:0;transition:opacity .18s;pointer-events:none}
+.fx-glide-row.on{opacity:1}
+.has-glide>.group-link{position:relative;z-index:1}
+@media(hover:hover){.has-glide>.group-link:not(.soon):hover{background:transparent}}
+:root[data-theme=dark] .fx-glide-row{background:#2a2a2d}
+/* search boxes: while typing, a light beam runs around the edge (a rotating gradient behind an inner
+   fill, clipped by the box: transform only, so the compositor draws it) */
+.nav-search,.searchbox{position:relative;isolation:isolate}
+.nav-search::before,.searchbox::before{content:"";position:absolute;z-index:-2;left:50%;top:50%;width:150%;aspect-ratio:1;translate:-50% -50%;background:conic-gradient(from 0deg,transparent 0 62%,#ffb48a 76%,var(--orange) 88%,transparent 100%);opacity:0;transition:opacity .3s;pointer-events:none}
+.nav-search::after,.searchbox::after{content:"";position:absolute;z-index:-1;inset:2px;border-radius:inherit;background:inherit;pointer-events:none}
+.nav-search:focus-within,.searchbox:focus-within{overflow:hidden}
+.nav-search:focus-within::before,.searchbox:focus-within::before{opacity:1;animation:search-beam 2.6s linear infinite}
+@keyframes search-beam{to{rotate:360deg}}
+/* primary buttons: a light sweeps across on hover */
+@media(hover:hover){
+  .btn.primary{overflow:hidden}
+  .btn.primary::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,#ffffff59 50%,transparent 70%);translate:-130% 0;pointer-events:none}
+  .btn.primary:hover::before{translate:130% 0;transition:translate .75s cubic-bezier(.2,.8,.2,1)}
+}
+/* section titles: an orange underline draws itself once the title has risen in (wordsIn) */
+.section-head h2{position:relative}
+.section-head h2::after{content:"";position:absolute;left:0;bottom:-8px;width:44px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--orange),#ff9a6b);transform-origin:0 50%}
+/* hidden at once while the title waits; drawn (with a transition) only when it is revealed */
+.section-head h2.fx-words-wait::after{transform:scaleX(0)}
+.section-head h2:not(.fx-words-wait)::after{transition:transform .7s .45s cubic-bezier(.2,.8,.2,1)}
+/* between this page and the flipbook: a soft cross-fade (cross-document view transitions) */
+@view-transition{navigation:auto;types:page}
+html:active-view-transition-type(page)::view-transition-old(root){animation:vt-page-out .24s cubic-bezier(.4,0,1,1) both}
+html:active-view-transition-type(page)::view-transition-new(root){animation:vt-page-in .4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes vt-page-out{to{opacity:0;transform:scale(.985)}}
+@keyframes vt-page-in{from{opacity:0;transform:scale(1.015)}}
+.lite .btn.primary::before,.lite .nav-search::before,.lite .searchbox::before{display:none}
+@media(prefers-reduced-motion:reduce){
+  @view-transition{navigation:none}
+  .btn.primary::before,.nav-search::before,.searchbox::before{display:none}
+  .section-head h2::after{transition:none}
+}

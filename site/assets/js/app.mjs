@@ -1365,6 +1365,7 @@ function wire() {
     if (open === catOpen()) return;
     catBtn.setAttribute("aria-expanded", String(open));
     anim.animateCategoryAccordion(catMenu, open);
+    if (open) fx.stagger($$(".group-link", catMenu)); // the items rise in one after another
   };
   catBtn.addEventListener("click", (e) => {
     setCatMenu(!catOpen());
@@ -1506,6 +1507,13 @@ function wire() {
     if (b && !b.disabled) fx.ripple(b, e.clientX, e.clientY);
   });
   fx.tilt($("#categoryGrid"), ".cat:not(.soon)", { max: 8, lift: -4 });
+  // An orange underline glides between the header links; a soft row between the Categories menu's items.
+  fx.glider($(".links"), "a, .nav-link", { cls: "fx-underline", underline: true });
+  fx.glider($("#catMenu"), ".group-link:not(.soon)", { cls: "fx-glide-row" });
+  // Moving between this page and the flipbook: a soft cross-fade (site.css, @view-transition), skipped
+  // on low-end devices like the other effects.
+  addEventListener("pageswap", (e) => { if (!fx.motionOK()) e.viewTransition?.skipTransition(); });
+  addEventListener("pagereveal", (e) => { if (!fx.motionOK()) e.viewTransition?.skipTransition(); });
   $("#moreWrap").addEventListener("click", (e) => {
     if (!e.target.closest("#showMore")) return;
     const first = state.rendered;

@@ -68,12 +68,14 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Save a product: a heart flies to the saved button. Watch the embers rising behind the hero hammer.
     - Open the site in a new tab: the GROZ logo assembles from tool parts first (once per visit; *Skip* or <kbd>Esc</kbd> ends it).
     - Sounds are off at first. Turn them on with the speaker button in the header; the site remembers the choice.
+    - Move the mouse along the header links and down the Categories menu: a highlight glides with it. Click into a search box: a light runs around its edge.
 
 13. **Flipbook.**
     - In *Catalogues*, open the 3D flipbook (or a catalogue's *Interactive Flipbook*). Turn pages with the arrows, the page corners, ← → or a swipe; pick a page in the filmstrip or click the page counter to type one.
     - Pages with products show "N products on this page": hover it for the list, click it for the specifications drawer. The drawer shows each product's status ("Not yet verified"), where its picture comes from and a link to the PDF page.
     - *Add to quote* in the drawer adds to the same quote as the catalogue page (go back: the Quote count includes it).
     - *Zoom 2x* (or double-click, or <kbd>Z</kbd>): move the pointer to look around the page.
+    - *Magnifier* (or <kbd>M</kbd>): a round lens follows the pointer and shows the page sharply enlarged; scroll to change the size. On a phone, hold a finger on the page.
     - The Lubrication catalogue can be read in the flipbook, but its products are not in the product list yet (see below).
 
 On a phone-sized window, show:

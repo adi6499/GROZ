@@ -267,6 +267,11 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - Buttons show a soft ripple from where they are pressed. Primary buttons lean toward the mouse (magnetic). Ticked checkboxes pop.
   - Product details: hovering the picture shows a round magnifier (mouse only). It appears only when the picture file is at least 1.4× larger than shown, and zooms up to 3×.
   - A round "Back to top" button appears once the page is scrolled well down. Pressed, it lifts off as the page scrolls up. It moves up while the compare bar is showing.
+  - Wave 6 (21 Oct 2026):
+    - An orange underline glides between the header links, and a soft row glides between the Categories menu's items (`glider()`: transform and opacity only, eased per frame, mouse only). The menu's items rise in one after another as it opens.
+    - While a search box is focused, a light beam runs around its edge: a rotating conic gradient behind an inner fill, clipped by the box, so the compositor draws it.
+    - Primary buttons get a light sweep on hover. Section titles get an orange underline that draws itself once the title has risen in.
+    - Moving between the catalogue page and the flipbook cross-fades: a cross-document view transition (`@view-transition`, type `page`, so the dark-mode reveal is not affected). It is skipped with reduced motion and on low-end devices.
   - Smoothness (any refresh rate, 60 to 144 Hz and above):
     - Everything that follows the mouse (card and tile tilt, the hero lean and spotlight, magnetic buttons) is driven on every display frame by `follower()` in `motion.mjs`. Its easing does not depend on the frame rate, and its CSS transitions are off while it moves. Transitions restarted on every pointer event lag or judder.
     - Tilting cards get their own compositor layer while they move.
@@ -324,6 +329,10 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - **Add to quote** adds to the real quote kept in this browser (`groz.quote`), which the catalogue page shows.
   - **Other features:**
     - Zoom is exactly 2×. The pointer's position chooses which part of the enlarged page is in view, edge to edge.
+    - **Magnifying glass** (toolbar button or <kbd>M</kbd>): a round lens follows the pointer and enlarges the spot under it, 2.5× to start. Scroll, or press <kbd>+</kbd> and <kbd>−</kbd>, to change it (1.5× to 5×); <kbd>Esc</kbd> or Done turns it off.
+      - On a touch screen, hold a finger on the page: the lens floats above it, and the page does not swipe while the lens is on.
+      - Inside the lens the page is a sharper render: the PDF page at 200 DPI (`hires/`, 40 MB for all five catalogues, made by `tools/build_flipbook_webp.py`). It is fetched only for a page someone looks at; until it arrives, the lens shows the page already on screen.
+      - The lens and the 2× zoom take turns. The lens is moved once per display frame, and its position is a `translate`, so it grows in place when it appears.
     - Keyboard: <kbd>←</kbd> <kbd>→</kbd>, <kbd>Space</kbd>, <kbd>Z</kbd> zoom, <kbd>Esc</kbd>. The page counter is a button that opens "go to page".
     - Page changes are read out to screen readers.
     - The drawer is `inert` while closed, and focus moves into it and back.
@@ -380,6 +389,6 @@ Then open http://127.0.0.1:8963/verify/. The tool runs on this computer only and
 ## Tools
 
 - `tools/dump_page.py <pdf> <page>`: prints a page's words line by line with x positions (read-only). Use it to check a table layout before changing the parser.
-- `tools/build_flipbook_webp.py`: makes the flipbook's WebP pages and thumbnails from the page PNGs (only new or changed pages; `--force` rebuilds all).
+- `tools/build_flipbook_webp.py`: makes the flipbook's WebP pages and thumbnails from the page PNGs, and the magnifier's 200 DPI pages from the PDFs (only new or changed pages; `--force` rebuilds all; needs `.venv` for PyMuPDF).
 - `tools/sync_catalogue_pipeline.py`: renders missing flipbook page PNGs (pdftoppm), builds their WebP copies, writes `site/data/catalogue.csv` from `catalogue.json` and runs the website tests. It never adds products (`--csv` only exports the CSV).
 - `tools/extract_lubrication_products.py` and `tools/merge_catalogue_data.py`: the Oct 2026 lubrication scrape, kept for reference only (see Website › GROZ categories).

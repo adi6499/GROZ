@@ -221,6 +221,57 @@ function follower(apply, speed, start) {
   };
 }
 
+// ---------------------------------------------------------------- gliding highlight
+/** A highlight glides to whichever item in `container` the mouse is over (or keyboard focus is on), and
+ *  fades out when the pointer leaves: an orange underline under the header links (`underline`), a soft
+ *  row in the Categories menu. Only its transform and opacity change, eased on every display frame
+ *  (follower), so it keeps up at any refresh rate. Mouse only; the container's content may be rebuilt
+ *  (the highlight puts itself back). */
+export function glider(container, selector, { cls = "fx-glide", underline = false } = {}) {
+  if (!container || !motionOK() || !finePointer.matches) return;
+  const bar = document.createElement("span");
+  bar.className = cls;
+  bar.setAttribute("aria-hidden", "true");
+  container.classList.add("has-glide");
+  let shown = false;
+  const f = follower((v) => { bar.style.transform = `translate(${v.x}px, ${v.y}px) scale(${v.sx}, ${v.sy})`; },
+    18, { x: 0, y: 0, sx: 1, sy: 1 });
+  const go = (item) => {
+    if (!bar.isConnected) container.prepend(bar);
+    const c = container.getBoundingClientRect();
+    const r = item.getBoundingClientRect();
+    if (!underline && !bar.dataset.sized) { // a row: the same size as the items, so it is never stretched
+      bar.style.width = `${r.width}px`;
+      bar.style.height = `${r.height}px`;
+      bar.dataset.sized = "1";
+    }
+    const x = r.left - c.left - container.clientLeft;
+    const y = underline ? r.bottom - c.top - container.clientTop - 9 : r.top - c.top - container.clientTop;
+    const v = { x, y, sx: r.width / (bar.offsetWidth || 1), sy: underline ? 1 : r.height / (bar.offsetHeight || 1) };
+    if (!shown) {
+      f.jump(v); // appears where it is needed, then glides from item to item
+      shown = true;
+      bar.classList.add("on");
+    }
+    f.to(v);
+  };
+  const hide = () => {
+    shown = false;
+    bar.classList.remove("on");
+  };
+  container.addEventListener("pointerover", (e) => {
+    if (e.pointerType !== "mouse") return;
+    const item = e.target.closest(selector);
+    if (item && container.contains(item)) go(item);
+  });
+  container.addEventListener("pointerleave", hide);
+  container.addEventListener("focusin", (e) => {
+    const item = e.target.closest(selector);
+    if (item && container.contains(item) && e.target.matches(":focus-visible")) go(item);
+  });
+  container.addEventListener("focusout", (e) => { if (!container.contains(e.relatedTarget)) hide(); });
+}
+
 // ---------------------------------------------------------------- tilt
 /** Cards in `container` lean toward the mouse, with a soft glare under the pointer and the product
  *  picture drifting the other way. Mouse only; the card eases back when the pointer leaves. Each card
