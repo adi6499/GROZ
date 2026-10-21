@@ -42,6 +42,15 @@ TITLE_REVIEW = os.path.join("review", "display_titles.csv")
 # Clear WebP copies of the pictures the site shows (tools/build_display_images.py): full/ for product
 # details, thumb/ for cards and lists. The dataset PNGs stay the extraction's evidence.
 DISPLAY_IMAGES = os.path.join("site", "img")
+DISPLAY_MANIFEST = os.path.join(DISPLAY_IMAGES, "manifest.json")  # how each copy was enlarged: ai / smooth / resized
+
+
+def display_methods() -> Dict[str, str]:
+    try:
+        with open(DISPLAY_MANIFEST, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
 
 # Catalogue-level facts: which category a catalogue covers and whose brand it carries.
 CATALOGUES: Dict[str, Dict[str, str]] = {
@@ -201,7 +210,7 @@ def load_pending_corrections(pattern: str = PREVIEW_GLOB) -> Dict[Tuple[str, int
     return out
 
 
-def _image(r: Dict[str, Any], base: str = "output_v2") -> Optional[Dict[str, Any]]:
+def _image(r: Dict[str, Any], base: str = "output_v2", methods: Optional[Dict[str, str]] = None) -> Optional[Dict[str, Any]]:
     for im in r.get("images") or []:
         if im.get("association_type") in EVIDENCE_LABELS:
             stem = os.path.splitext(os.path.basename(im["file_path"]))[0]
@@ -209,6 +218,8 @@ def _image(r: Dict[str, Any], base: str = "output_v2") -> Optional[Dict[str, Any
             return {  # paths relative to the site's pages (site/index.html, site/flipbook.html)
                 **({"src": f"img/full/{stem}.webp", "thumb": f"img/thumb/{stem}.webp"} if copies
                    else {"src": f"../{base}/" + im["file_path"].replace("\\", "/")}),
+                # enlarged with Real-ESRGAN (tools/build_display_images.py --ai): the site says so
+                **({"enlarged": "ai"} if copies and (methods or {}).get(stem) == "ai" else {}),
                 "evidence": im["association_type"],
                 "evidence_label": EVIDENCE_LABELS[im["association_type"]],
                 "evidence_detail": im.get("evidence"),
@@ -240,7 +251,7 @@ def _review_overlay(r: Dict[str, Any], decision: Tuple[Optional[str], Optional[D
 def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], str],
                   printed_title: Optional[Dict[str, Any]] = None,
                   decision: Tuple[Optional[str], Optional[Dict[str, Any]]] = (None, None),
-                  image_base: str = "output_v2") -> Dict[str, Any]:
+                  image_base: str = "output_v2", display: Optional[Dict[str, str]] = None) -> Dict[str, Any]:
     cat = CATALOGUES.get(r["source_pdf"], {"category": "Other", "brand": "", "title": r["source_pdf"], "art": "tool"})
     status, status_label, review_notes, verified_info = _review_overlay(r, decision)
     specs_in = r.get("specifications") or {}
@@ -255,7 +266,7 @@ def export_record(r: Dict[str, Any], pending: Dict[Tuple[str, int, str, str], st
         specs.append({"key": key, "label": spec_label(key), "value": str(value)})
     # Fields being removed by a pending correction (present in the dataset, value withheld above) are
     # listed as under review; fields a correction would add are not shown (not in the dataset).
-    image = _image(r, image_base)
+    image = _image(r, image_base, display)
     unresolved = any(im.get("association_type") == "unresolved" for im in r.get("images") or [])
     return {
         "id": record_id(r),
@@ -316,7 +327,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
     ledger = verification.load_ledger(ledger_path)
     reader = TitleReader(pdf_root)
     try:
-        items = [export_record(r, pending, reader.title_for(r), verification.state_for(ledger, record_id(r), r), base)
+        display = display_methods()
+        items = [export_record(r, pending, reader.title_for(r), verification.state_for(ledger, record_id(r), r), base, display)
                  for r, base in sources]
     finally:
         reader.close()

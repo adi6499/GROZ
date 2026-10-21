@@ -9,8 +9,9 @@ import re
 import pymupdf
 import pytest
 
-from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, category_for, export_record,
-                                           fuel_duplicates, heading_text, load_pending_corrections, title_review_rows)
+from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, category_for, display_methods,
+                                           export_record, fuel_duplicates, heading_text, load_pending_corrections,
+                                           title_review_rows)
 from backend.site.titles import relation
 
 
@@ -91,6 +92,8 @@ def test_only_supported_image_associations_are_shown(source, site):
             assert (p["image"]["src"], p["image"]["thumb"]) == (f"img/full/{stem}.webp", f"img/thumb/{stem}.webp")
             for rel in (p["image"]["src"], p["image"]["thumb"]):
                 assert os.path.isfile(os.path.join("site", rel))
+            # an AI-enlarged picture says so (tools/build_display_images.py --ai writes the manifest)
+            assert (p["image"].get("enlarged") == "ai") == (display_methods().get(stem) == "ai")
 
 
 def test_values_awaiting_a_pending_correction_are_withheld(source, tmp_path):
