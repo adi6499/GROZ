@@ -675,10 +675,9 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
   const slideIn = kind === "quote" && (!backdrop.classList.contains("open") || backdrop.classList.contains("closing") || modal.dataset.kind !== "quote");
   if (closing) { closing(); closing = null; backdrop.classList.remove("closing"); } // reopened while closing
   if (!backdrop.classList.contains("open")) {
+    // (The page's scrollbar space stays reserved while it is locked: html has scrollbar-gutter: stable,
+    // so opening a dialog no longer lays the whole page out again.)
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
-    // Locking the page hides its scrollbar (Windows); keep that space so the page does not reflow.
-    const bar = innerWidth - root.clientWidth;
-    if (bar > 0) document.body.style.paddingRight = `${bar}px`;
   }
   state.detailId = null;
   modal.dataset.kind = kind;
@@ -708,15 +707,13 @@ function closeModal() {
     backdrop.classList.remove("open", "closing");
     backdrop.removeAttribute("data-kind");
     document.body.classList.remove("modal-open");
-    document.body.style.paddingRight = "";
   };
   if (boxTo) {
     try { closing = playBoxClose(boxTo, hide); return; } catch { $$(".unbox").forEach((l) => l.remove()); /* plain exit below */ }
   }
   if (modal.dataset.kind === "quote") {
-    const tl = anim.closeQuoteDrawer(modal, backdrop, hide); // none: it closed at once (no motion)
-    // Reopened while sliding out: stop the slide, so the old exit cannot hide the new dialog.
-    if (tl) closing = () => { tl.kill(); window.gsap.set([modal, backdrop], { clearProps: "transform,opacity" }); };
+    // Reopened while sliding out: the returned stop ends the slide, so the old exit cannot hide the new dialog.
+    closing = anim.closeQuoteDrawer(modal, backdrop, hide); // null: it closed at once (no motion)
     return;
   }
   // Other dialogs fade and settle back (a bottom sheet slides down) before they are hidden.
@@ -1068,7 +1065,8 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
   const title = core.displayTitle(p);
   const image = p.image ? `<img src="${esc(p.image.src)}" alt="Catalogue image for ${esc(p.cat_nr)}"/>` : art(state.artByCategory.get(p.category));
   const evidence = p.image
-    ? `<b>${esc(p.image.evidence_label)}.</b>${p.image.evidence_detail ? ` Why this image: ${esc(p.image.evidence_detail)}.` : ""}`
+    ? `<b>${esc(p.image.evidence_label)}.</b>${p.image.evidence_detail ? ` Why this image: ${esc(p.image.evidence_detail)}.` : ""}${p.image.enlarged === "ai"
+      ? " Enlarged for the screen with AI upscaling (Real-ESRGAN): fine detail and small print may differ slightly; the catalogue page is the original." : ""}`
     : st.kind === "unconfirmed"
       ? "<b>Image not confirmed.</b> The catalogue page has a picture near this product, but nothing links it to this product specifically, so it is not shown. The illustration is a category icon."
       : "<b>Image unavailable.</b> No product picture was found for this product. The illustration is a category icon.";

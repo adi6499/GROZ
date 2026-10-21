@@ -483,50 +483,43 @@ export function animateCartBounce(elements) {
 /**
  * Slide in the quote summary drawer from the right with spring physics.
  */
-const drawerFrom = () => (matchMedia("(max-width: 720px)").matches ? { y: "100%" } : { x: "100%" });
+const drawerOffset = () => (matchMedia("(max-width: 720px)").matches ? "translateY(100%)" : "translateX(100%)");
+const stopAll = (els) => els.forEach((el) => el?.getAnimations().forEach((a) => a.cancel()));
 
+/**
+ * The quote drawer slides in from the side (from below on phones, where it is a bottom sheet). Web
+ * Animations on transform and opacity run on the compositor, so the slide stays smooth while the page
+ * builds the drawer's contents; the GSAP tween it replaces ran on the main thread and stuttered then.
+ * No overshoot: the drawer is flush with the screen edge. Nothing is left inline afterwards.
+ */
 export function openQuoteDrawer(modalEl, backdropEl) {
-  const gsap = getGsap();
-  if (!modalEl) return;
-  if (!animOK() || !gsap) return;
-  const parts = [modalEl, backdropEl].filter(Boolean);
-  gsap.killTweensOf(parts);
-  // From the side (from below on phones, where it is a bottom sheet). No overshoot: it is flush with
-  // the screen edge, and bouncing past it opened a gap. Nothing is left inline afterwards.
-  gsap.fromTo(modalEl,
-    { ...drawerFrom(), opacity: 0.6 },
-    { x: 0, y: 0, opacity: 1, duration: 0.42, ease: "power3.out", clearProps: "transform,opacity" }
-  );
-  if (backdropEl) {
-    gsap.fromTo(backdropEl,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.3, ease: "power2.out", clearProps: "opacity" }
-    );
-  }
+  if (!modalEl || !animOK()) return;
+  stopAll([modalEl, backdropEl]);
+  modalEl.animate([{ transform: drawerOffset(), opacity: 0.6 }, { transform: "none", opacity: 1 }],
+    { duration: 420, easing: "cubic-bezier(.215,.61,.355,1)" });
+  backdropEl?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: "ease-out" });
 }
 
 /**
- * Slide out the quote summary drawer to the right with easing.
+ * Slides the quote drawer out, then calls onComplete (which hides it). Returns a function that stops
+ * the slide (the drawer was reopened meanwhile), or null when it closed at once (no motion).
  */
 export function closeQuoteDrawer(modalEl, backdropEl, onComplete) {
-  const gsap = getGsap();
-  if (!modalEl || !animOK() || !gsap) {
+  if (!modalEl || !animOK()) {
     onComplete?.();
-    return;
+    return null;
   }
-
-  gsap.killTweensOf([modalEl, backdropEl].filter(Boolean));
-  const tl = gsap.timeline({
-    onComplete: () => {
-      onComplete?.(); // hidden first, then the inline styles go (no flash of the drawer back in place)
-      gsap.set([modalEl, backdropEl].filter(Boolean), { clearProps: "transform,opacity" });
-    },
-  });
-  tl.to(modalEl, { ...drawerFrom(), opacity: 0.6, duration: 0.3, ease: "power2.in" }, 0);
-  if (backdropEl) {
-    tl.to(backdropEl, { opacity: 0, duration: 0.32, ease: "power2.in" }, 0);
-  }
-  return tl;
+  stopAll([modalEl, backdropEl]);
+  const opts = { duration: 300, easing: "cubic-bezier(.55,.055,.675,.19)", fill: "forwards" };
+  const anims = [modalEl.animate([{ transform: "none", opacity: 1 }, { transform: drawerOffset(), opacity: 0.6 }], opts)];
+  if (backdropEl) anims.push(backdropEl.animate([{ opacity: 1 }, { opacity: 0 }], { ...opts, duration: 320 }));
+  let stopped = false;
+  Promise.all(anims.map((a) => a.finished)).then(() => {
+    if (stopped) return;
+    onComplete?.(); // hidden first, then the held end state goes (no flash of the drawer back in place)
+    anims.forEach((a) => a.cancel());
+  }, () => {});
+  return () => { stopped = true; anims.forEach((a) => a.cancel()); };
 }
 
 // ---------------------------------------------------------------- 6. Scroll-Triggered WOW Effects
