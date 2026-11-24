@@ -8,7 +8,7 @@
    to the system fonts below. Negative letter-spacing values are about half of those first tuned for
    San Francisco: Ubuntu Sans needs less tightening. */
 @font-face{font-family:"Ubuntu Sans";font-style:normal;font-weight:100 800;font-display:swap;src:url(fonts/ubuntu-sans-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-*{box-sizing:border-box}html{scrollbar-gutter:stable;scroll-behavior:smooth;scroll-padding-top:90px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+*{box-sizing:border-box}html{scrollbar-gutter:stable;scroll-behavior:smooth;scroll-padding-top:calc(90px + var(--note-h));-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Ubuntu Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:-.014em;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
 button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;touch-action:manipulation}a{color:inherit;text-decoration:none}
 fieldset{border:0;margin:0;padding:0;min-width:0}
@@ -19,6 +19,13 @@ body.modal-open,body.sheet-open{overflow:hidden}
 .sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:-1px}
 
 /* header */
+/* "Not the official GROZ website" (24 Nov 2026): one plain line at the top of every page, kept in view
+   with the header. Its height is fixed (--note-h), and the sticky parts below the header add it. */
+:root{--note-h:30px}
+.official-note{height:var(--note-h);line-height:var(--note-h);text-align:center;padding:0 16px;background:#1d1d1f;color:#d4d4d9;font-size:11.5px;white-space:nowrap;overflow:hidden}
+.official-note a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.official-note .on-short{display:none}
+footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 .top{position:sticky;top:0;z-index:40;background:#fafafc;border-bottom:1px solid #00000010;padding-top:var(--sat)}
 .nav{height:66px;max-width:1280px;margin:auto;padding:0 max(30px,var(--sar)) 0 max(30px,var(--sal));display:flex;align-items:center;gap:28px}
 .brand{display:flex;align-items:center;gap:9px;font-size:21px;font-weight:850;letter-spacing:-.039em;white-space:nowrap;min-height:44px}
@@ -79,7 +86,7 @@ main{max-width:1280px;margin:auto;padding:24px max(30px,var(--sar)) 76px max(30p
 
 /* filters */
 .catalog-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}
-.filters{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;height:max-content;position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;overscroll-behavior:contain}
+.filters{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;height:max-content;position:sticky;top:calc(84px + var(--note-h));max-height:calc(100vh - 100px - var(--note-h));overflow:auto;overscroll-behavior:contain}
 .filter-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:750;margin-bottom:6px}.filter-head-actions{display:flex;align-items:center;gap:4px}.filter-head button{border:0;background:transparent;color:var(--orange2);font-size:11.5px;font-weight:700;padding:0 6px;min-height:32px;border-radius:8px}
 .filters-close,.filters-done,.sheet-scrim{display:none}
 .filter-group{border-top:1px solid #eee;padding:12px 0}.filter-group legend{font-size:11.5px;font-weight:700;margin:0 0 6px;padding:0;float:left;width:100%}.filter-group legend+*{clear:both}
@@ -183,7 +190,7 @@ body.has-dock main{padding-bottom:110px}
 /* results bar: count, filters, sort and active filters stay reachable under the header. It tucks 1px
    under the header: on high-density screens the header's 1px border renders thinner, which would
    otherwise leave a sliver through which the scrolling cards show. */
-:root{--head-h:67px}
+:root{--head-h:calc(67px + var(--note-h))}
 .results-bar{position:sticky;top:calc(var(--head-h) + var(--sat) - 1px);z-index:30;background:var(--bg);padding-top:6px;margin-top:-6px;transition:box-shadow var(--fast)}
 .results-bar.stuck{box-shadow:0 1px 0 var(--line),0 14px 18px -16px #00000030}
 
@@ -300,6 +307,7 @@ body.has-dock main{padding-bottom:110px}
   .products{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:720px){
+  :root{--note-h:28px}.official-note{font-size:11px}.official-note .on-long{display:none}.official-note .on-short{display:inline}
   .nav{height:60px;padding:0 max(8px,var(--sar)) 0 max(8px,var(--sal));gap:2px}.links{display:none}
   .nav-search{width:auto;flex:1;margin:0 4px;height:40px;padding:0 10px;font-size:13px;min-width:80px;transition:flex .2s var(--ease),box-shadow .2s var(--ease)}
   .nav-search:focus-within{flex:1.8;box-shadow:0 0 0 3px rgba(244,81,30,0.15)}
@@ -341,7 +349,7 @@ body.has-dock main{padding-bottom:110px}
   .modal-head{padding:8px 12px 10px 18px}.modal-body{padding:14px max(14px,var(--sar)) 20px max(14px,var(--sal))}
   .detail-grid{grid-template-columns:1fr;gap:12px}.detail-art{min-height:140px;padding:10px}.detail-art img{max-height:160px}.detail-art svg{width:40%}
   .detail-actions .btn{flex:1 1 calc(50% - 6px);min-height:44px}
-  :root{--head-h:61px}.results-bar{margin:-6px -12px 0;padding:6px 12px 0}
+  :root{--head-h:calc(61px + var(--note-h))}.results-bar{margin:-6px -12px 0;padding:6px 12px 0}
   .modal[data-kind=detail] .modal-body{padding:14px max(14px,var(--sar)) 24px max(14px,var(--sal))}
   .pd-hero{grid-template-columns:1fr;gap:14px}.pd-stage{aspect-ratio:auto;height:210px;border-radius:20px;padding:16px}
   .pd-copy{padding-top:0}.pd-code{font-size:28px;margin-top:6px}.pd-title{font-size:15px}.pd-facts{margin-top:14px}.pd-facts dd{font-size:13.5px}
