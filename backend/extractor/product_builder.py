@@ -13,7 +13,7 @@ from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, Edit
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor, table_cell_rects
-from .image_sections import caption_picture, section_picture
+from .image_sections import caption_picture, front_view_picture, section_picture
 from .printed_titles import PageTitles, table_caption
 from .grid_tables import GRID_PDFS, grid_picture, printed_page_number, spec_key
 
@@ -30,6 +30,9 @@ def _words_in_order(phrase: str, text: str) -> bool:
             return False
         pos += 1
     return bool(words)
+
+
+LIGHTING_PDF = "GROZ_LIGHTING_GL-10_1.pdf"
 
 
 class ProductBuilder:
@@ -383,6 +386,17 @@ class ProductBuilder:
                     # Same strength (0.7) as the layout rule these replace: family evidence that
                     # counts toward the record's confidence (validator/confidence.py).
                     matched_images = [self.image_extractor.make_ref(pick[0], "product_family", pick[1], 0.7)]
+            # Rules 3.1.0 (decision I, lighting catalogue): a worklight printed front and back takes its
+            # front view, the picture printed with callouts naming its light (image_sections rule 5).
+            # Tripod models keep their tripod picture.
+            if (source_pdf == LIGHTING_PDF and matched_images and matched_images[0].association_type == "product_family"
+                    and "tripod" not in (matched_images[0].evidence or "").lower()):
+                chosen = next((c for c in candidate_images if c["crop_filename"].rsplit(".", 1)[0] == matched_images[0].image_id), None)
+                own = [c for c in (cat_nr, model_code) if c]
+                front = front_view_picture(chosen, printed_title, candidate_images, titles, page_number,
+                                           own, [c for c in page_codes if c not in own])
+                if front:
+                    matched_images = [self.image_extractor.make_ref(front[0], "product_family", front[1], 0.7)]
 
             # Table bounding box
             t_bbox = row.get("table_bbox")

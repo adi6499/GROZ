@@ -16,6 +16,13 @@ picture: it shows the product family of the section, not necessarily this exact 
    variant. When several variants are pictured, the product stays unconfirmed.
 4. Facing page: a right-hand page that prints no title of its own and no picture for the product
    uses the section's picture on the facing page (same single/clearly-largest condition).
+5. Front view (rules 3.1.0, decision I; the lighting catalogue only): a worklight is often printed
+   twice, its front (the lit face, with callouts such as "COB light", "SMD Worklight", "Top torch")
+   and its back (hook, magnets, switch). A callout belongs to the picture its leader line points
+   into (image_extractor "callout_text"). When the picture chosen by the rules above has no callout
+   naming the light and exactly one other large picture in the product's section has one, that
+   picture is the front view and is used instead. Pictures labelled with a code are never replaced;
+   pages without leader lines are left as they are.
 
 A picture is never used when it is labelled for a product outside this table, or when another
 section's title is printed on or against it. Anything ambiguous stays unconfirmed.
@@ -114,6 +121,36 @@ def _groups(tables: Sequence[Box]) -> List[Tuple[Tuple[float, float, float, floa
         else:
             groups.append([t])
     return [((min(t[0] for t in g), min(t[1] for t in g), max(t[2] for t in g), max(t[3] for t in g)), g) for g in groups]
+
+
+LIGHT_CALLOUT = re.compile(r"\b(COB|SMD|torch)\b", re.I)
+
+
+def front_view_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]], cands: Sequence[Cand],
+                       titles: PageTitles, page_number: int, own_codes: Sequence[str],
+                       other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+    """Rule 5: the front view of a worklight when the chosen picture shows another side; else None."""
+    if not title or title["rule"] == "facing" or chosen is None:
+        return None
+    if LIGHT_CALLOUT.search(chosen.get("callout_text") or "") or _labelled(chosen, own_codes):
+        return None
+    info = titles.page(page_number)
+    other_blocks = [b for b in (info[1] if info else []) if b["text"] != title["text"]]
+    fronts = []
+    for c in cands:
+        if c is chosen or c["area"] < MIN_AREA or _touches_other_title(c, other_blocks) or _labelled(c, other_codes):
+            continue
+        if section_of_point(titles, page_number, *_center(c)) != title["block"]:
+            continue
+        words = LIGHT_CALLOUT.findall(c.get("callout_text") or "")
+        if words:
+            fronts.append((c, words))
+    if len(fronts) != 1:
+        return None
+    c, words = fronts[0]
+    named = ", ".join(dict.fromkeys("torch" if w.lower() == "torch" else w.upper() for w in words))
+    return c, (f"the front view, printed with callouts naming its light ({named}) under the title “{title['text']}”; "
+               "preferred to the product's other picture, which has none")
 
 
 def section_picture(table_bbox: Optional[Box], title: Optional[Dict[str, Any]], cands: Sequence[Cand],

@@ -448,6 +448,27 @@ class ImageExtractor:
             c["label_text"] = reading(owned.get(i, []))
             for k in ("_nearby", "_placement", "_smask", "_visible"):
                 c.pop(k, None)
+
+        # Callouts (rules 3.1.0): a feature name printed beside a picture with a thin leader line drawn
+        # from the text into the picture ("COB light", "Top torch") describes that picture, wherever
+        # the text sits; it may be printed closer to the picture next to it.
+        for c in candidates:
+            c["callout_text"] = ""
+        blocks = [pymupdf.Rect(b[:4]) for b in page.get_text("blocks") if b[6] == 0 and b[4].strip()]
+        texts = [b[4].strip() for b in page.get_text("blocks") if b[6] == 0 and b[4].strip()]
+        for d in page.get_drawings():
+            if d.get("color") is None or (d.get("width") or 0) > 1.2:
+                continue  # leader lines are thin stroked lines
+            pts = [p for it in d["items"] if it[0] == "l" for p in (it[1], it[2])]
+            if len(pts) < 2 or abs(pts[0].x - pts[-1].x) + abs(pts[0].y - pts[-1].y) < 15:
+                continue
+            for start, end in ((pts[0], pts[-1]), (pts[-1], pts[0])):
+                k = next((k for k, r in enumerate(blocks) if (r + (-6, -6, 6, 6)).contains(start)), None)
+                into = [c for c in candidates if pymupdf.Rect(c["rect"]).contains(end)]
+                if k is not None and into:
+                    target = min(into, key=lambda c: c["area"])
+                    target["callout_text"] = (target["callout_text"] + " " + " ".join(texts[k].split())).strip()
+                    break
         return candidates
 
     def match_image_to_product(

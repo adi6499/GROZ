@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-14",
+  "updated": "2026-11-24",
   "note": "Editorial decision log. 'status' changes only when the project owner approves; until then the data is not changed. Decision E (apply extraction rules 2.1.0: capacities and beam angles; see NEXT_PHASE_REPORT.md) was approved and applied together with A, B, D and F in rules 2.2.0. Decision G (rules 2.3.0, product pictures) was approved and applied on 15 Oct 2026. Decision H (rules 2.3.1, clean product pictures) was applied on 15 Oct 2026.",
   "decisions": [
     {
@@ -119,6 +119,21 @@
       "limitation": "A picture is shown as the catalogue prints it: low-resolution source photos (e.g. the knurl wheels) stay low resolution, and parts of a photo hidden under another picture in print can become visible.",
       "proposal": "Save each picture alone, trimmed, and stop treating icon-sized close-ups on empty canvases as product pictures.",
       "applied": "Requested by the project owner on 15 Oct 2026 ('yes fix the pictures') and applied in extraction rules 2.3.1 (commit 1dd3e42); output_v2 regenerated. Before/after: review/applied/2026-10-15_rules-2.3.1/."
+    },
+    {
+      "id": "I",
+      "title": "Worklights printed front and back show their front view (extraction rules 3.1.0, 24 Nov 2026)",
+      "status": "approved and applied",
+      "evidence": [
+        "Mitul's groz.tools checklist (24 Nov 2026) reported that LED/360, LED/375 and LED/396 show the back of the light. The lighting catalogue prints several worklights twice: the front (the lit face, with callouts such as \"COB light\", \"SMD Worklight\", \"Top torch\") and the back (hook, magnets, switch). The layout rules picked the back, the larger or better-placed picture.",
+        "A callout belongs to the picture its thin leader line is drawn into, not to the nearest picture: on p16 the LED/360 callouts are printed closer to the back picture, but their leader lines end in the front picture.",
+        "A dry run of batch_1 with the new rule changed 5 of 150 records and nothing else: LED/360 (p16), LED/375 (p17), LED/396 (p19), LED/397 (p21) and LED/140 (p26, which had the FLASHLIGHTS chapter photo). Each was checked by eye on a before/after sheet and on its page.",
+        "Pages without leader lines (e.g. LED/800 on p10) and tripod models keep their pictures; pictures labelled with a product code are never replaced."
+      ],
+      "current": "output_v2 regenerated with rules 3.1.0: 5 picture assignments changed in batch_1; record count unchanged.",
+      "limitation": "Lighting catalogue only. A worklight printed front and back without leader lines keeps the picture the layout rules choose.",
+      "proposal": "When the picture chosen for a worklight has no callout naming its light, and exactly one other large picture in the same printed section has one (joined by a leader line), use that front view.",
+      "applied": "Requested by the project owner on 24 Nov 2026 (task 2 of the groz.tools checklist: \"fix LED/360, LED/375, LED/396 pictures\"; \"yes start task 2\") and applied in extraction rules 3.1.0; output_v2 regenerated. Before/after: review/applied/2026-11-24_rules-3.1.0/."
     }
   ]
 }

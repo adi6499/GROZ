@@ -262,3 +262,15 @@ def test_sibling_picture_only_when_one_variant_is_pictured(page_products):
     assert pic(p7, "SS/A/2-3-4-6/ST") == ("direct_product", 35)
     assert pic(p7, "SS/A/2") == ("product_family", 35)
     assert "picture labelled SS/A/2-3-4-6/ST, a variant printed in the same table" in evidence(p7, "SS/A/2")
+
+
+def test_worklights_printed_front_and_back_take_their_front_view(page_products):
+    """Rules 3.1.0 (decision I, 24 Nov 2026): each of these worklights is printed twice, its front (with
+    callouts naming the light, joined to it by leader lines) and its back. Checked by eye on the pages.
+    On p16 the callouts are printed closer to the back picture: their leader lines decide."""
+    for page, code, front in ((16, "LED/360", 4099), (17, "LED/375", 4155), (19, "LED/396", 4276)):
+        products = page_products(LIGHTING, page)
+        assert pic(products, code) == ("product_family", front), code
+        assert evidence(products, code).startswith("the front view, printed with callouts naming its light"), code
+    # A worklight printed once keeps its picture.
+    assert pic(page_products(LIGHTING, 5), "LED/695") == ("product_family", 3323)
