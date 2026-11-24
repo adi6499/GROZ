@@ -11,6 +11,11 @@ Reads site/data/catalogue.json (built by build_site_data.py) and writes, from it
                             no prices, offers or ratings, because the catalogues print none.
 - site/p/index.html         every product as a plain list, by category (a page search engines can follow).
 - site/sitemap.xml          the catalogue, the list and every product page, for search engines.
+- site/data/parts/          the same catalogue data in parts of PART_SIZE products plus index.json (meta,
+                            categories, catalogues, the part names). The catalogue page loads these right
+                            after its first paint and reads each part in its own short step (a phone reads
+                            one 4 MB file in one long stall). Joined in order they are catalogue.json's
+                            products exactly (site/tests/pages.test.mjs).
 
 Every value comes from the catalogue data; nothing is added. The folder site/p/ belongs to this
 script: pages of products no longer in the data are removed. The addresses written into the pages
@@ -33,6 +38,8 @@ SITE = os.path.join(ROOT, "site")
 DATA = os.path.join(SITE, "data", "catalogue.json")
 PAGES = os.path.join(SITE, "p")
 SITEMAP = os.path.join(SITE, "sitemap.xml")
+PARTS = os.path.join(SITE, "data", "parts")
+PART_SIZE = 250  # products per part: about 0.35 MB, read in about 10 ms on a desktop, 40 ms on a slow phone
 BASE = "https://groz.tools/site/"  # where the site is published (groz.in shows the same files)
 NOTICE = ("This is not the official GROZ website. For GROZ’s own website, visit "
           '<a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a>')
@@ -220,6 +227,25 @@ def sitemap(products: List[Dict[str, Any]], day: str) -> str:
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
 
 
+def write_parts(data: Dict[str, Any]) -> int:
+    """site/data/parts/: index.json (everything but the products, plus the part names) and the parts."""
+    if os.path.isdir(PARTS):
+        shutil.rmtree(PARTS)  # this script's own output only
+    os.makedirs(PARTS)
+    products = data["products"]
+    names = []
+    for i in range(0, len(products), PART_SIZE):
+        name = f"{i // PART_SIZE}.json"
+        with open(os.path.join(PARTS, name), "w", encoding="utf-8", newline="\n") as f:
+            json.dump(products[i:i + PART_SIZE], f, ensure_ascii=False, separators=(",", ":"))
+        names.append(name)
+    index = {k: v for k, v in data.items() if k != "products"}
+    index["parts"] = names
+    with open(os.path.join(PARTS, "index.json"), "w", encoding="utf-8", newline="\n") as f:
+        json.dump(index, f, ensure_ascii=False, separators=(",", ":"))
+    return len(names)
+
+
 def main() -> int:
     with open(DATA, encoding="utf-8") as f:
         data = json.load(f)
@@ -242,6 +268,8 @@ def main() -> int:
         f.write(index_page(products, [c["name"] for c in data["categories"]]))
     with open(SITEMAP, "w", encoding="utf-8", newline="\n") as f:
         f.write(sitemap(products, data["meta"]["generated_at"][:10]))
+    n = write_parts(data)
+    print(f"site/data/parts/: index.json and {n} parts of up to {PART_SIZE} products")
     print(f"{len(products)} product pages in site/p/, the list site/p/index.html, and site/sitemap.xml "
           f"({len(products) + 3} addresses)")
     return 0

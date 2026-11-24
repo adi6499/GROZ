@@ -134,14 +134,6 @@ export function initHeroParallax() {
   const leftSilhouette = hero.querySelector(".hero-silhouette.left");
   const rightSilhouette = hero.querySelector(".hero-silhouette.right");
 
-  // Side silhouettes slide in once the intro (if any) is over; until then they wait out of sight.
-  if (leftSilhouette) gsap.set(leftSilhouette, { x: -70, opacity: 0 });
-  if (rightSilhouette) gsap.set(rightSilhouette, { x: 70, opacity: 0 });
-  introDone.then(() => {
-    if (leftSilhouette) gsap.to(leftSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.2 });
-    if (rightSilhouette) gsap.to(rightSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.3 });
-  });
-
   if (leftSilhouette) {
     gsap.to(leftSilhouette, {
       y: 90,
@@ -173,6 +165,21 @@ export function initHeroParallax() {
       scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.5 },
     });
   }
+}
+
+/** The side silhouettes slide in when the page opens; until then they wait out of sight. */
+export function initHeroSilhouettes() {
+  const gsap = getGsap();
+  if (!animOK() || !gsap) return;
+  const hero = document.querySelector(".hero");
+  const leftSilhouette = hero?.querySelector(".hero-silhouette.left");
+  const rightSilhouette = hero?.querySelector(".hero-silhouette.right");
+  if (leftSilhouette) gsap.set(leftSilhouette, { x: -70, opacity: 0 });
+  if (rightSilhouette) gsap.set(rightSilhouette, { x: 70, opacity: 0 });
+  introDone.then(() => {
+    if (leftSilhouette) gsap.to(leftSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.2 });
+    if (rightSilhouette) gsap.to(rightSilhouette, { x: 0, opacity: 0.38, duration: 0.8, ease: "power2.out", delay: 0.3 });
+  });
 }
 
 /**
@@ -695,13 +702,16 @@ export function animateCategoryOutlines() {
     });
   };
 
-  if (gsap && window.ScrollTrigger) {
-    window.ScrollTrigger.create({
-      trigger: "#categoryGrid",
-      start: "top 86%",
-      once: true,
-      onEnter: runDraw,
-    });
+  // When the grid's top reaches 86% of the window (an IntersectionObserver, which measures nothing on
+  // the page's own time; a ScrollTrigger laid the whole page out when created).
+  const grid = document.querySelector("#categoryGrid");
+  if (grid && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((en) => en.isIntersecting)) return;
+      io.disconnect();
+      runDraw();
+    }, { rootMargin: "0px 0px -14% 0px" });
+    io.observe(grid);
   } else {
     runDraw();
   }
@@ -714,22 +724,25 @@ export function animateCategoryOutlines() {
  */
 export function initUnifiedAnimationSystem() {
   if (!animOK()) return;
-  initScrollProgressBar();
-  initHeroParallax();
-  initScrollCue();
-  initSectionScrollTriggers();
-  initCardSparkListeners();
-
-  // Tool icons draw themselves once the intro (if any) is over, not unseen underneath it.
-  introDone.then(() => {
-    const heroTool = document.querySelector(".hero-tool");
-    if (heroTool) animateSvgDraw(heroTool, { duration: 0.6, delay: 0.2, stagger: 0.06 });
-    document.querySelectorAll(".trust-icon svg").forEach((svg, i) => {
+  // Speed (24 Nov 2026): each part is set up on its own when the browser is idle, so the page never
+  // stalls on all of them at once. The hero's scroll parallax waits for the first scroll.
+  inIdleSteps([
+    initHeroSilhouettes,
+    initScrollCue,
+    () => {
+      // Tool icons draw themselves once the intro (if any) is over, not unseen underneath it.
+      const heroTool = document.querySelector(".hero-tool");
+      if (heroTool) introDone.then(() => animateSvgDraw(heroTool, { duration: 0.6, delay: 0.2, stagger: 0.06 }));
+    },
+    () => introDone.then(() => document.querySelectorAll(".trust-icon svg").forEach((svg, i) => {
       animateSvgDraw(svg, { duration: 0.48, delay: 0.25 + i * 0.08, stagger: 0.04 });
-    });
-  });
-
-  animateCategoryOutlines();
+    })),
+    initCardSparkListeners,
+    animateCategoryOutlines,
+    initScrollProgressBar,
+    initSectionScrollTriggers,
+  ]);
+  addEventListener("scroll", () => initHeroParallax(), { passive: true, once: true });
 
   // Ensure exit overlay is strictly hidden on startup
   const exitOverlay = document.querySelector("#exitOverlay");
@@ -750,6 +763,18 @@ export function initUnifiedAnimationSystem() {
     });
   });
 
+}
+
+/** Runs the steps one at a time, each when the browser is idle (or soon after, at the latest). */
+function inIdleSteps(steps) {
+  const next = () => {
+    const step = steps.shift();
+    if (!step) return;
+    try { step(); } catch (e) { console.error(e); }
+    if (steps.length) later(next);
+  };
+  const later = (fn) => ("requestIdleCallback" in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 60));
+  later(next);
 }
 
 /** The header's sound button: shows the remembered choice and switches it. Works with or without

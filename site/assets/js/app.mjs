@@ -242,21 +242,27 @@ const PREVIEW = new URLSearchParams(location.search).get("data") === "preview";
 async function load() {
   renderLoading();
   try {
-    // The download the page started in its <head> (index.html), else a new one.
+    // The data the page's loader read in parts (index.html), else the whole file in one go.
     const early = window.grozData;
     window.grozData = null;
-    const res = (early && await early) || await fetch(PREVIEW ? "data/catalogue.preview.json" : "data/catalogue.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error(`The data file returned HTTP ${res.status}.`);
-    const data = await res.json();
+    let data = early && await early;
+    if (!data) {
+      const res = await fetch(PREVIEW ? "data/catalogue.preview.json" : "data/catalogue.json", { cache: "no-cache" });
+      if (!res.ok) throw new Error(`The data file returned HTTP ${res.status}.`);
+      data = await res.json();
+    }
     if (!data || !Array.isArray(data.products)) throw new Error("The data file is not in the expected format.");
-    init(data);
+    await init(data);
   } catch (err) {
     console.error(err);
     renderError(err);
   }
 }
 
-function init(data) {
+// Lets the browser paint and answer input between steps of building the page (speed, 24 Nov 2026).
+const nextTask = () => (globalThis.scheduler?.yield ? scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
+
+async function init(data) {
   if (PREVIEW) {
     const bar = document.createElement("div");
     bar.className = "preview-bar";
@@ -277,13 +283,17 @@ function init(data) {
   for (const id of [...state.quote.keys()]) if (!state.byId.has(id)) state.quote.delete(id);
   persist();
   renderHero();
+  await nextTask();
   renderCategories();
+  await nextTask();
   renderGroupMenus();
   renderCatalogues();
   renderDataNote();
+  await nextTask();
   setView(state.view, false);
   renderFilters();
-  renderProducts();
+  await nextTask();
+  renderProducts({ initial: true });
   updateBadges();
   state.fxReady = true;
   anim.initUnifiedAnimationSystem();
@@ -310,7 +320,8 @@ function warmSearchIndex() {
   let i = 0;
   const step = (deadline) => {
     if (state.index || state.products !== products) return; // a search built it already, or new data
-    while (i < products.length && deadline.timeRemaining() > 3) {
+    const until = performance.now() + 6; // short slices: a slow phone runs each about four times longer
+    while (i < products.length && deadline.timeRemaining() > 1 && performance.now() < until) {
       const p = products[i++];
       index.set(p.id, core.indexEntry(p));
     }
@@ -589,7 +600,7 @@ function setCount(text, n = null, total = 0) {
 /** Renders the current results. `append` adds only the next page (Show more) instead of rebuilding.
  *  New cards come in with motion: `typing` makes that a short fade, `quiet` (a rebuild that only
  *  refreshes buttons) shows them at once. */
-function renderProducts({ append = false, typing = false, quiet = false } = {}) {
+function renderProducts({ append = false, typing = false, quiet = false, initial = false } = {}) {
   if (!state.data) return;
   if (!append) state.results = core.sortProducts(core.filterProducts(state.products, state.filters.query.trim() ? searchIndex() : NO_INDEX, state.filters), state.sort);
   const list = state.results;
@@ -628,7 +639,7 @@ function renderProducts({ append = false, typing = false, quiet = false } = {}) 
   // as they scroll into view (motion.mjs); table rows rise in (animations.mjs). Both run on the Web
   // Animations API, which the cards' own CSS hover transitions cannot slow down (GSAP's inline
   // styles were re-timed by them, so the cards lagged).
-  if (state.view === "grid") fx.cascade(quiet ? [] : $$(".product", grid).slice(from), { fresh: !append, quick: typing, from: before });
+  if (state.view === "grid") fx.cascade(quiet ? [] : $$(".product", grid).slice(from), { fresh: !append, quick: typing, from: before, initial });
   else {
     fx.cascade([], { fresh: !append });
     if (!quiet && !typing) anim.animateTableRowsOnLoad($$("#ptableBody tr", grid).slice(from));

@@ -147,9 +147,12 @@ function glide(el, prev, now, i) {
 /** Freshly shown cards come in: those on screen rise one after another; those further down wait,
  *  hidden, and rise as they are scrolled into view. `fresh` (a new result list) forgets cards still
  *  waiting from the previous list. `quick` (results changing while someone types) only fades. */
-export function cascade(cards, { fresh = true, quick = false, from = null } = {}) {
+export function cascade(cards, { fresh = true, quick = false, from = null, initial = false } = {}) {
   if (fresh) revealer?.disconnect();
   if (!cards.length || !motionOK()) return;
+  // The first render of the page (speed, 24 Nov 2026): nothing is measured here, which would make the
+  // browser lay the whole page out at once; it reports which cards are on screen and they rise then.
+  if (initial && "IntersectionObserver" in window) { watch(cards); return; }
   if (quick) {
     for (const c of cards) if (onScreen(c.getBoundingClientRect())) c.animate({ opacity: [0.35, 1] }, { duration: 200, easing: "ease-out" });
     return;
@@ -165,6 +168,11 @@ export function cascade(cards, { fresh = true, quick = false, from = null } = {}
     else if (r.top >= innerHeight) below.push(c);
   }
   if (!below.length || !("IntersectionObserver" in window)) return;
+  watch(below);
+}
+
+/** Cards wait hidden and rise as they come into view (a few at a time, one after another). */
+function watch(cards) {
   revealer ??= new IntersectionObserver((entries) => {
     let n = 0;
     for (const en of entries) {
@@ -173,7 +181,7 @@ export function cascade(cards, { fresh = true, quick = false, from = null } = {}
       reveal(en.target, Math.min(n++, 6) * 60);
     }
   }, { rootMargin: "0px 0px -30px 0px" });
-  for (const c of below) { c.classList.add("fx-wait"); revealer.observe(c); }
+  for (const c of cards) { c.classList.add("fx-wait"); revealer.observe(c); }
 }
 
 /** List rows in a dialog rise in one after another. */

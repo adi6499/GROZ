@@ -57,3 +57,11 @@ test("the sitemap lists the catalogue, the product list and every product page",
   const list = readFileSync(site("p/index.html"), "utf8");
   for (const p of data.products) assert.ok(list.includes(`href="${p.id}.html"`), `${p.id} is not on the list`);
 });
+
+test("the data parts the catalogue page loads are catalogue.json exactly, in order", () => {
+  const index = JSON.parse(readFileSync(site("data/parts/index.json"), "utf8"));
+  const products = index.parts.flatMap((f) => JSON.parse(readFileSync(site(`data/parts/${f}`), "utf8")));
+  const { parts, ...rest } = index;
+  assert.deepEqual({ ...rest, products }, data);
+  for (const f of index.parts) assert.ok(JSON.parse(readFileSync(site(`data/parts/${f}`), "utf8")).length <= 250, f);
+});
