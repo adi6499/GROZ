@@ -299,7 +299,7 @@ export function quoteText(items, byId, contact, when = new Date()) {
   const t = quoteTotals(items);
   const lines = [
     "GROZ QUOTATION REQUEST",
-    "Prepared on this catalogue website. Not sent to anyone.",
+    "Prepared on this catalogue website, which is not the official GROZ website. Not sent to anyone.",
     `Your reference: ${quoteRef(when)}`,
     `Prepared: ${quoteTime(when)}`,
     "",
@@ -374,7 +374,7 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
 <tfoot><tr><td colspan="4" style="padding:10px 8px;text-align:right;font-weight:700">Total units</td><td style="padding:10px 8px;text-align:right;font-weight:800;font-size:14px">${t.units}</td></tr></tfoot>
 </table>
 ${val("notes") ? `<div style="margin-top:16px;padding:10px 12px;border-left:3px solid #f4511e;background:#fff6f2;border-radius:0 8px 8px 0">${label("Notes")}<div style="white-space:pre-wrap">${html(val("notes"))}</div></div>` : ""}
-<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e7e7ea;font-size:10.5px;${muted}"><b style="color:#1d1d1f">Not sent.</b> Prepared on this catalogue website; please send it to your GROZ sales contact yourself.
+<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e7e7ea;font-size:10.5px;${muted}"><b style="color:#1d1d1f">Not sent.</b> Prepared on this catalogue website, which is not the official GROZ website; please send it to your GROZ sales contact yourself.
 Product data was extracted from GROZ catalogues and has not been verified. Please confirm codes, order numbers and specifications with GROZ.</div>
 </div>`;
 }
