@@ -50,7 +50,7 @@ footer a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* hero (visible immediately; a short entrance plays on load, independent of scripts) */
 main{max-width:1280px;margin:auto;padding:24px max(30px,var(--sar)) 76px max(30px,var(--sal))}
-.hero{min-height:440px;display:grid;grid-template-columns:1fr 1fr;border-radius:30px;overflow:hidden;position:relative;color:white;background:#141414;box-shadow:var(--shadow);isolation:isolate;animation:rise .6s var(--ease) both}
+.hero{min-height:440px;display:grid;grid-template-columns:1fr 1fr;border-radius:30px;overflow:hidden;position:relative;color:white;background:#141414;box-shadow:var(--shadow);isolation:isolate;animation:settle .6s var(--ease) both}
 .hero:before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 77% 47%,#f4511e26,transparent 31%),linear-gradient(120deg,#141414 15%,#202020 100%)}
 .hero-copy{padding:52px 0 45px 54px;align-self:center;max-width:590px;min-width:0}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#b7b7bd}.eyebrow.accent{color:var(--orange2)}
@@ -247,6 +247,9 @@ body.has-dock main{padding-bottom:110px}
 /* motion */
 .js .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s var(--ease)}.js .reveal.in{opacity:1;transform:none}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-14deg)}50%{transform:translateY(-12px) rotate(-10deg)}}@keyframes orbit{0%,100%{transform:scale(.96);opacity:.65}50%{transform:scale(1.04);opacity:1}}@keyframes wiggle{0%,80%,100%{transform:rotate(0)}86%{transform:rotate(-9deg)}93%{transform:rotate(7deg)}}@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}@keyframes shimmer{from{background-position:100% 0}to{background-position:0 0}}@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* The hero holds the page's main heading: it is visible from the first frame and only settles into place
+   (a fade-in kept the heading invisible until the scripts let the animation run; 24 Nov 2026). */
+@keyframes settle{from{transform:translateY(14px)}to{transform:none}}
 
 /* Apple-style frosted header only on capable, hover-pointer devices (blur re-renders on every scroll frame) */
 /* No backdrop blur on the header or dialog heads: it re-blurred the page scrolling under them on every

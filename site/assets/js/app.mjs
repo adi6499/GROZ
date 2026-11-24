@@ -232,7 +232,7 @@ function renderError(err) {
 }
 
 // The catalogues the flipbook can show (flipbook.mjs CATALOGUES); others get no flipbook link.
-const FLIPBOOK_PDFS = new Set(["GROZ_LIGHTING_GL-10_1.pdf", "tools_storage.pdf", "Estwing_Hammer_E-03_Interactive_1.pdf",
+const FLIPBOOK_PDFS = new Set(["GROZ_LIGHTING_GL-10_1.pdf", "tools_storage.pdf", "Hand_Tool_Catalogue_low_res_with_cover.pdf",
   "Precision_Catalogue_CA_03.pdf", "groz-lubrication-equipments.pdf", "Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"]);
 
 // ?data=preview: the local preview of newly extracted products that are not approved yet
@@ -242,7 +242,10 @@ const PREVIEW = new URLSearchParams(location.search).get("data") === "preview";
 async function load() {
   renderLoading();
   try {
-    const res = await fetch(PREVIEW ? "data/catalogue.preview.json" : "data/catalogue.json", { cache: "no-cache" });
+    // The download the page started in its <head> (index.html), else a new one.
+    const early = window.grozData;
+    window.grozData = null;
+    const res = (early && await early) || await fetch(PREVIEW ? "data/catalogue.preview.json" : "data/catalogue.json", { cache: "no-cache" });
     if (!res.ok) throw new Error(`The data file returned HTTP ${res.status}.`);
     const data = await res.json();
     if (!data || !Array.isArray(data.products)) throw new Error("The data file is not in the expected format.");
@@ -265,7 +268,7 @@ function init(data) {
   state.data = data;
   state.products = data.products;
   state.byId = new Map(data.products.map((p) => [p.id, p]));
-  state.index = core.buildIndex(data.products);
+  state.index = null; // the search index is built when a search first needs it (searchIndex below)
   state.artByCategory = new Map((data.categories || []).map((c) => [c.name, c.art]));
   state.pdfSize = new Map((data.catalogues || []).map((c) => [c.pdf, c.size_mb]));
   state.groups = core.siteGroups(data.categories || []);
@@ -286,7 +289,35 @@ function init(data) {
   anim.initUnifiedAnimationSystem();
   if ("requestIdleCallback" in window) requestIdleCallback(() => probeFrames(), { timeout: 2000 });
   else setTimeout(() => probeFrames(), 500);
+  warmSearchIndex();
   openFromHash();
+}
+
+// ---------------------------------------------------------------- search index
+// Speed (24 Nov 2026): building the search index for every product was the longest piece of start-up
+// work on a phone, and nothing needs it until someone searches. It is built in small pieces while the
+// browser is idle, or all at once when a search comes first.
+const NO_INDEX = new Map(); // with no search words every product matches (core.matchesQuery)
+
+function searchIndex() {
+  if (!state.index) state.index = core.buildIndex(state.products);
+  return state.index;
+}
+
+function warmSearchIndex() {
+  if (!("requestIdleCallback" in window)) return; // built on the first search
+  const products = state.products, index = new Map();
+  let i = 0;
+  const step = (deadline) => {
+    if (state.index || state.products !== products) return; // a search built it already, or new data
+    while (i < products.length && deadline.timeRemaining() > 3) {
+      const p = products[i++];
+      index.set(p.id, core.indexEntry(p));
+    }
+    if (i < products.length) requestIdleCallback(step);
+    else state.index = index;
+  };
+  requestIdleCallback(step);
 }
 
 // ---------------------------------------------------------------- static sections
@@ -560,7 +591,7 @@ function setCount(text, n = null, total = 0) {
  *  refreshes buttons) shows them at once. */
 function renderProducts({ append = false, typing = false, quiet = false } = {}) {
   if (!state.data) return;
-  if (!append) state.results = core.sortProducts(core.filterProducts(state.products, state.index, state.filters), state.sort);
+  if (!append) state.results = core.sortProducts(core.filterProducts(state.products, state.filters.query.trim() ? searchIndex() : NO_INDEX, state.filters), state.sort);
   const list = state.results;
   grid.setAttribute("aria-busy", "false");
   setCount(`${list.length} of ${state.products.length} products`, list.length, state.products.length);

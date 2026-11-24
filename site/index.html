@@ -7,6 +7,7 @@
 <meta name="color-scheme" content="light dark"/>
 <meta name="robots" content="noindex, nofollow"/>
 <title>GROZ Catalogue — Find your tool.</title>
+<meta name="description" content="Search GROZ tools by name, catalogue number or order number: hammers, worklights, lubrication, fuel and air equipment, tool storage and precision tools, each with its catalogue page. Not the official GROZ website."/>
 <!-- Entrance effects only hide content once scripts run, so the page never stays blank without JS. -->
 <script>document.documentElement.classList.add("js")</script>
 <!-- Theme before first paint: the visitor's choice if any, else the device setting. -->
@@ -18,6 +19,13 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 <link rel="stylesheet" href="assets/site.css"/>
 <script defer src="assets/js/vendor/gsap.min.js"></script>
 <script defer src="assets/js/vendor/ScrollTrigger.min.js"></script>
+<!-- Speed (24 Nov 2026): the catalogue data starts downloading with the page, not after the scripts have
+     run; app.mjs uses this download (or fetches again if it failed). The scripts app.mjs imports are
+     fetched at once too, instead of one after another. -->
+<script>window.grozData=fetch(new URLSearchParams(location.search).get("data")==="preview"?"data/catalogue.preview.json":"data/catalogue.json",{cache:"no-cache",priority:"low"}).catch(function(){return null})</script>
+<link rel="modulepreload" href="assets/js/app.mjs"/>
+<link rel="modulepreload" href="assets/js/art.mjs"/>
+<link rel="modulepreload" href="assets/js/icons.mjs"/>
 <link rel="modulepreload" href="assets/js/core.mjs"/>
 <link rel="modulepreload" href="assets/js/motion.mjs"/>
 <link rel="modulepreload" href="assets/js/animations.mjs"/>
@@ -155,7 +163,7 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
         <a class="btn primary fb-launch-btn" href="flipbook.html">Open 3D Flipbook Viewer 📖</a>
         <a class="btn soft" href="flipbook.html?pdf=GROZ_LIGHTING_GL-10_1.pdf">Lighting GL-10</a>
         <a class="btn soft" href="flipbook.html?pdf=tools_storage.pdf">Tool Storage</a>
-        <a class="btn soft" href="flipbook.html?pdf=Estwing_Hammer_E-03_Interactive_1.pdf">Estwing Hammers</a>
+        <a class="btn soft" href="flipbook.html?pdf=Hand_Tool_Catalogue_low_res_with_cover.pdf">Workshop Tools CB-05</a>
         <a class="btn soft" href="flipbook.html?pdf=Precision_Catalogue_CA_03.pdf">Precision Tools</a>
         <a class="btn soft" href="flipbook.html?pdf=groz-lubrication-equipments.pdf">Lubrication</a>
         <a class="btn soft" href="flipbook.html?pdf=Fluid_Handling_Catalogue_spread.pdf">Fluid Handling CC-07</a>
@@ -169,7 +177,7 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 </main>
 
 <footer>
-  <div><span>Not the official GROZ website · GROZ’s own website: <a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a></span><span id="footerNote">Product data is extracted from GROZ catalogues and has not been verified. Check the source page before ordering.</span></div>
+  <div><span>Not the official GROZ website · GROZ’s own website: <a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a></span><span id="footerNote">Product data is extracted from GROZ catalogues and has not been verified. Check the source page before ordering. <a href="p/">All products as a list</a></span></div>
 </footer>
 
 <div class="sheet-scrim" id="sheetScrim" hidden></div>

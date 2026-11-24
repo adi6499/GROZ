@@ -100,14 +100,17 @@ export function searchText(p) {
   ].filter((x) => x != null && x !== "").join(" ");
 }
 
+/** One product's search entry: its words, and its codes without punctuation. */
+export function indexEntry(p) {
+  return {
+    hay: norm(searchText(p)),
+    codes: [p.cat_nr, p.ord_nr, p.model_code].map(codeKey).filter(Boolean),
+  };
+}
+
 export function buildIndex(products) {
   const index = new Map();
-  for (const p of products) {
-    index.set(p.id, {
-      hay: norm(searchText(p)),
-      codes: [p.cat_nr, p.ord_nr, p.model_code].map(codeKey).filter(Boolean),
-    });
-  }
+  for (const p of products) index.set(p.id, indexEntry(p));
   return index;
 }
 

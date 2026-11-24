@@ -24,11 +24,10 @@ test("flipbook HTML and CSS assets exist and contain 3D flipbook structures", ()
   assert.ok(css.includes("preserve-3d"), "flipbook.css should preserve 3D styling");
 });
 
-test("all 4 catalogues have high-res rendered spreads available", () => {
+test("the catalogues rendered to PNG have their pages (PDF-only catalogues are checked in deploy.test.mjs)", () => {
   const catalogues = [
     { folder: "site/assets/flipbook/lighting", minPages: 40 },
     { folder: "site/assets/flipbook/storage", minPages: 30 },
-    { folder: "site/assets/flipbook/estwing", minPages: 18 },
     { folder: "site/assets/flipbook/precision", minPages: 80 },
   ];
 

@@ -34,16 +34,18 @@ const CATALOGUES = {
     art: "storage",
     companionText: "Mechanic's Storage",
   },
-  "Estwing_Hammer_E-03_Interactive_1.pdf": {
-    id: "estwing",
-    title: "Estwing Hammers E-03",
-    pdf: "Estwing_Hammer_E-03_Interactive_1.pdf",
-    href: "../Estwing_Hammer_E-03_Interactive_1.pdf",
-    folder: "assets/flipbook/estwing",
-    pageCount: 20,
-    size: "5.4 MB",
+  // GROZ Workshop Tools CB-05 (the Hand Tool catalogue) replaced Estwing Hammers E-03 on 24 Nov 2026,
+  // when its hammers replaced the Estwing hammers on the site.
+  "Hand_Tool_Catalogue_low_res_with_cover.pdf": {
+    id: "handtool",
+    title: "GROZ Workshop Tools CB-05",
+    pdf: "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+    href: "../Hand_Tool_Catalogue_low_res_with_cover.pdf",
+    folder: "assets/flipbook/handtool",
+    pageCount: 260,
+    size: "35.3 MB",
     art: "sledge",
-    companionText: "Solid Steel Striking",
+    companionText: "Hammers, Punches & Vices",
   },
   "Precision_Catalogue_CA_03.pdf": {
     id: "precision",
