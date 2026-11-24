@@ -6,7 +6,7 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 
 | Batch | Scope | Records | Code version | Generated (UTC) |
 | --- | --- | --- | --- | --- |
-| batch_1 | Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695) | 150 | 1dd3e42 | 2026-10-15T06:50:03+00:00 |
+| batch_1 | Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695) | 150 | f2171dd | 2026-11-24T10:59:04+00:00 |
 | batch_2 | Estwing hammers + Precision measuring tools, all pages | 791 | 1dd3e42 | 2026-10-15T06:50:58+00:00 |
 | batch_3_fluid | Fluid Handling CC-07 (all 372 pages: lubrication, fuel & DEF, air handling) and FUEL CAT 400 (32 pages), read with the column reader of rules 3.0.x. Approved by the project owner on 21 Oct 2026 ("Extract all, preview"); the preview (output_preview_fluid/) was approved for the website the same day ("approve the preview and make it live"), so the batch is now part of the main dataset. | 2024 | e14eb51 | 2026-10-21T08:52:51+00:00 |
 

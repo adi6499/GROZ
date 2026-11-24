@@ -6230,22 +6230,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p16_xref4129_1035_226",
-        "file_path": "images/groz_lighting_gl_10_1_p16_xref4129_1035_226.png",
+        "image_id": "groz_lighting_gl_10_1_p16_xref4099_882_230",
+        "file_path": "images/groz_lighting_gl_10_1_p16_xref4099_882_230.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 16,
         "bounding_box": {
-          "x0": 1035.05,
-          "y0": 226.24,
-          "x1": 1152.46,
-          "y1": 571.02,
+          "x0": 882.6,
+          "y0": 230.91,
+          "x1": 986.63,
+          "y1": 573.55,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "SMD \nWorklight: \nBeam \nDistance \n45m (150')\nTop\nTorch:\nBeam \nDistance \n0m (650')\nOn / Off\nswitch\nIK0"
+        "evidence": "the front view, printed with callouts naming its light (SMD, torch) under the title “Worklight 360° Swivel”; preferred to the product's other picture, which has none",
+        "confidence": 0.7,
+        "caption_or_label": "SMD \nWorklight: \nBeam \nDistance \n45m (150')\nTop\nTorch:\nBeam \nDistance \n200m (650')\nOn / Off\nswitch"
       }
     ],
     "editorial_notes": [],
@@ -6294,22 +6294,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p17_xref4180_618_144",
-        "file_path": "images/groz_lighting_gl_10_1_p17_xref4180_618_144.png",
+        "image_id": "groz_lighting_gl_10_1_p17_xref4155_355_214",
+        "file_path": "images/groz_lighting_gl_10_1_p17_xref4155_355_214.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 17,
         "bounding_box": {
-          "x0": 618.86,
-          "y0": 144.18,
-          "x1": 795.9,
-          "y1": 655.26,
+          "x0": 355.97,
+          "y0": 214.93,
+          "x1": 537.69,
+          "y1": 660.39,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "180°\nRotation\nOn / Off\nswitch\nWireless \nCharging"
+        "evidence": "the front view, printed with callouts naming its light (torch, COB) under the title “Worklight Wireless Charging”; preferred to the product's other picture, which has none",
+        "confidence": 0.7,
+        "caption_or_label": "Top\ntorch\nCOB \nlight"
       }
     ],
     "editorial_notes": [],
@@ -6418,22 +6418,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p19_xref4286_620_195",
-        "file_path": "images/groz_lighting_gl_10_1_p19_xref4286_620_195.png",
+        "image_id": "groz_lighting_gl_10_1_p19_xref4276_314_184",
+        "file_path": "images/groz_lighting_gl_10_1_p19_xref4276_314_184.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 19,
         "bounding_box": {
-          "x0": 620.38,
-          "y0": 195.93,
-          "x1": 761.94,
-          "y1": 612.7,
+          "x0": 314.61,
+          "y0": 184.3,
+          "x1": 505.43,
+          "y1": 610.73,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 4 pictures printed directly above this product's table, under the title “Worklight Intensity Control & Battery Display”",
+        "evidence": "the front view, printed with callouts naming its light (COB) under the title “Worklight Intensity Control & Battery Display”; preferred to the product's other picture, which has none",
         "confidence": 0.7,
-        "caption_or_label": "LCD disp\nshow b\nperce\nAlum\nfins \nligh\nb"
+        "caption_or_label": "10W COB \nmain light\n3W LED top \ntorch\nSwivel\nMagne\nStand\n180°"
       }
     ],
     "editorial_notes": [],
@@ -6540,22 +6540,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p21_xref4404_631_241",
-        "file_path": "images/groz_lighting_gl_10_1_p21_xref4404_631_241.png",
+        "image_id": "groz_lighting_gl_10_1_p21_xref4376_325_235",
+        "file_path": "images/groz_lighting_gl_10_1_p21_xref4376_325_235.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 21,
         "bounding_box": {
-          "x0": 631.07,
-          "y0": 241.92,
-          "x1": 795.08,
-          "y1": 583.43,
+          "x0": 325.54,
+          "y0": 235.53,
+          "x1": 519.2,
+          "y1": 578.11,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 5 pictures printed directly above this product's table, under the title “Worklight Intensity Control & Bluetooth Speaker”",
+        "evidence": "the front view, printed with callouts naming its light (COB) under the title “Worklight Intensity Control & Bluetooth Speaker”; preferred to the product's other picture, which has none",
         "confidence": 0.7,
-        "caption_or_label": "Real time\nLumens a\nPo\nInten"
+        "caption_or_label": "10W COB\nMain Ligh\n3W LED top torch\nSwivelling \nMagnetic \nStand\n180°"
       }
     ],
     "editorial_notes": [],
@@ -6970,22 +6970,22 @@
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "groz_lighting_gl_10_1_p26_xref4645_-1_93",
-        "file_path": "images/groz_lighting_gl_10_1_p26_xref4645_-1_93.png",
+        "image_id": "groz_lighting_gl_10_1_p26_xref4659_803_196",
+        "file_path": "images/groz_lighting_gl_10_1_p26_xref4659_803_196.png",
         "source_pdf": "GROZ_LIGHTING_GL-10_1.pdf",
         "physical_page_number": 26,
         "bounding_box": {
-          "x0": 0.0,
-          "y0": 93.88,
-          "x1": 597.83,
-          "y1": 841.89,
+          "x0": 803.84,
+          "y0": 196.96,
+          "x1": 924.84,
+          "y1": 453.12,
           "page_width": 1190.55,
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "largest product image in the same page region as the only ordering table there (layout evidence)",
-        "confidence": 0.8,
-        "caption_or_label": "II\nFLASHLIGHTS\nHa\nDu\na.\t\nb.\t\nHa\nMa\naf\nOR\nCa\nea\nHA\nPO"
+        "evidence": "the front view, printed with callouts naming its light (COB) under the title “Flashlight Slim Pocket Size”; preferred to the product's other picture, which has none",
+        "confidence": 0.7,
+        "caption_or_label": "ABS \no \n3W COB \nLED\n180˚"
       }
     ],
     "editorial_notes": [],
