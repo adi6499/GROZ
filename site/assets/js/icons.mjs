@@ -18,6 +18,7 @@ const P = {
   menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
   compare: '<path d="M7 7h13m-3-3 3 3-3 3M17 17H4m3-3-3 3 3 3"/>',
   quote: '<path d="M8 4h8M8 4a2 2 0 0 0-2 2v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a2 2 0 0 0-2-2"/><path d="M9.5 10h5M9.5 14h5"/>',
+  share: '<path d="M12 4v11M7.5 8.5 12 4l4.5 4.5"/><path d="M6 12v6.5A1.5 1.5 0 0 0 7.5 20h9a1.5 1.5 0 0 0 1.5-1.5V12"/>',
   copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   download: '<path d="M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 20h14"/>',
   print: '<path d="M7 9V4h10v5M7 17H5a1 1 0 0 1-1-1v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a1 1 0 0 1-1 1h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/>',

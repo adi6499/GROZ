@@ -219,7 +219,7 @@ body.has-dock main{padding-bottom:110px}
 .pd-facts div{padding:14px 16px}.pd-facts dt,.pd-specs dt{font-size:11px;color:var(--muted);margin:0 0 5px}.pd-facts dd{margin:0;font-size:15.5px;font-weight:700;letter-spacing:-.014em;line-height:1.25;overflow-wrap:anywhere}
 .pd-actions{display:grid;gap:10px;margin-top:24px}
 .pd-primary{width:100%;min-height:50px;font-size:14px}
-.pd-secondary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pd-secondary .btn{min-height:46px;font-size:12.5px}.pd-secondary .btn .i{width:17px;height:17px}
+.pd-secondary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pd-secondary .btn{min-height:46px;font-size:12.5px}.pd-secondary .btn .i{width:17px;height:17px}
 .pd-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;font-size:12.5px;font-weight:650;color:var(--orange2)}.pd-link .i{width:15px;height:15px}
 .pd-callout{margin:28px 0 0;padding:12px 15px;border-radius:14px;background:#fff8ec;border:1px solid #f4dfb5;font-size:11.5px;line-height:1.55;color:#55555b}
 .pd .review-notes{margin-top:16px}

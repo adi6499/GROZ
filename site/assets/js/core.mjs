@@ -250,6 +250,20 @@ export function compareRows(products) {
 
 // ---------------------------------------------------------------- quotation (prepared locally only)
 
+// ---------------------------------------------------------------- product links
+
+/** A product's own link on this site: "#p-<id>" after the page address (ids are letters, digits, dots,
+ *  dashes and underscores, so they stay readable). Relative, so it works on every domain. */
+export function productHash(id) {
+  return `#p-${encodeURIComponent(id)}`;
+}
+
+/** The product id in a "#p-<id>" link, or "" for any other address. */
+export function idFromHash(hash) {
+  if (!String(hash || "").startsWith("#p-")) return "";
+  try { return decodeURIComponent(hash.slice(3)); } catch { return ""; }
+}
+
 export function parseQty(v) {
   const s = String(v ?? "").trim();
   if (!/^\d+$/.test(s)) return null;

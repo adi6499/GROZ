@@ -91,6 +91,69 @@ $("#themeBtn")?.addEventListener("click", toggleTheme);
 $("#themeRow")?.addEventListener("click", toggleTheme);
 darkQuery.addEventListener("change", () => { if (store.get("groz.theme", null) == null) applyTheme(deviceTheme()); });
 
+// ---------------------------------------------------------------- product links (#p-<id>)
+// Every product has its own link: the page address + "#p-<id>". Opening it opens that product's
+// details; the address bar follows the product shown (replaceState: no extra history entries). The
+// root page of groz.tools / groz.in forwards to site/ with the #hash kept.
+
+/** The full address of a product's details, on whichever domain the site is open. */
+function productUrl(id) {
+  return new URL(core.productHash(id), location.href).href;
+}
+
+function setProductHash(id) {
+  const want = id ? core.productHash(id) : "";
+  const now = core.idFromHash(location.hash) ? location.hash : "";
+  if (want === now) return;
+  history.replaceState(history.state, "", want || location.pathname + location.search);
+}
+
+/** Opens the product a "#p-<id>" address names (on load, or when the address changes). */
+function openFromHash() {
+  const id = core.idFromHash(location.hash);
+  if (!id || !state.products.length || state.detailId === id) return;
+  if (!state.byId.has(id)) {
+    notify("That product is not in the catalogue any more.");
+    setProductHash("");
+    return;
+  }
+  showDetails(id);
+}
+
+/** Copies text; false only when the browser allows no copying at all. */
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch { /* older browser or no permission: try the selection below */ }
+  const ta = Object.assign(document.createElement("textarea"), { value: text, readOnly: true });
+  ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+  (backdrop.classList.contains("open") ? modal : document.body).appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch { /* not supported */ }
+  ta.remove();
+  return ok;
+}
+
+/** Share: the phone's share sheet where there is one; otherwise the link is copied. */
+async function shareProduct(id) {
+  const p = state.byId.get(id);
+  if (!p) return;
+  const url = productUrl(id);
+  const title = [p.cat_nr, core.displayTitle(p)].filter(Boolean).join(" — ");
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try {
+      await navigator.share({ title, text: `${title} (GROZ)`, url });
+      return;
+    } catch (e) {
+      if (e?.name === "AbortError") return; // the visitor closed the share sheet
+    }
+  }
+  if (await copyText(url)) notify("Link copied");
+  else window.prompt("Copy this link:", url);
+}
+
 function notify(message) {
   toastEl.innerHTML = `<span>${esc(message)}</span>${fx.motionOK() ? '<i class="toast-bar" aria-hidden="true"></i>' : ""}`;
   toastEl.classList.add("show");
@@ -223,6 +286,7 @@ function init(data) {
   anim.initUnifiedAnimationSystem();
   if ("requestIdleCallback" in window) requestIdleCallback(() => probeFrames(), { timeout: 2000 });
   else setTimeout(() => probeFrames(), 500);
+  openFromHash();
 }
 
 // ---------------------------------------------------------------- static sections
@@ -680,6 +744,7 @@ function openModal(title, html, { wide = false, kind = "", tools = "" } = {}) {
     lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : lastClicked;
   }
   state.detailId = null;
+  if (kind !== "detail") setProductHash("");
   modal.dataset.kind = kind;
   backdrop.dataset.kind = kind;
   $("#modalTitle").textContent = title;
@@ -700,6 +765,7 @@ function closeModal() {
   stopUnbox();
   const boxTo = boxCloseTarget(); // product details whose card is on screen close back into its box
   state.detailId = null;
+  setProductHash("");
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   backdrop.classList.add("closing");
   const hide = () => {
@@ -1065,6 +1131,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
             <div class="pd-secondary">
               <button class="btn soft" type="button" data-modal-save="${esc(p.id)}" aria-pressed="${saved}">${icon("heart", saved ? "filled" : "")}${saved ? "Saved" : "Save"}</button>
               <button class="btn soft" type="button" data-modal-compare="${esc(p.id)}" aria-pressed="${cmp}">${icon(cmp ? "check" : "compare")}${cmp ? "Comparing" : "Compare"}</button>
+              <button class="btn soft" type="button" data-modal-share="${esc(p.id)}" aria-label="Share a link to ${esc(p.cat_nr)}">${icon("share")}Share</button>
             </div>
             ${FLIPBOOK_PDFS.has(p.catalogue?.pdf) ? `<a class="pd-link" href="flipbook.html?pdf=${encodeURIComponent(p.catalogue?.pdf || '')}&page=${p.page || p.catalogue?.page || 1}" target="_blank" rel="noopener">Open in 3D Flipbook (page ${p.page || p.catalogue?.page || 1}) 📖</a>` : ""}
             <a class="pd-link" href="${esc(p.catalogue.href)}" target="_blank" rel="noopener">View the catalogue PDF${state.pdfSize?.get(p.catalogue.pdf) >= 10 ? ` (${Math.round(state.pdfSize.get(p.catalogue.pdf))} MB)` : ""} ${icon("external")}<span class="sr-only">(opens the PDF in a new tab)</span></a>
@@ -1087,6 +1154,7 @@ function showDetails(id, { focusNav = "", dir = 0, still = false } = {}) {
       </section>
     </article>`, { wide: true, kind: "detail", tools });
   state.detailId = p.id;
+  setProductHash(p.id);
   // Shown again in place (Save, Compare, Add to quote) or stepped to: the opening fade does not replay.
   if (dir || still) cancelEntrance();
   if (dir) fx.carousel($(".pd-stage", modal), oldPic, dir, [$(".pd-copy", modal), $(".pd-caption", modal)]);
@@ -1605,6 +1673,7 @@ function wire() {
   fx.glider($("#catMenu"), ".group-link:not(.soon)", { cls: "fx-glide-row" });
   // Moving between this page and the flipbook: a soft cross-fade (site.css, @view-transition), skipped
   // on low-end devices like the other effects.
+  addEventListener("hashchange", openFromHash);
   addEventListener("pageswap", (e) => { if (!fx.motionOK()) e.viewTransition?.skipTransition(); });
   addEventListener("pagereveal", (e) => { if (!fx.motionOK()) e.viewTransition?.skipTransition(); });
   $("#moreWrap").addEventListener("click", (e) => {
@@ -1670,6 +1739,7 @@ function wire() {
       b?.focus();
       fx.burst(b?.querySelector("svg"), state.saved.has(d.modalSave));
     }
+    else if (d.modalShare) shareProduct(d.modalShare);
     else if (d.modalCompare) { if (toggleCompare(d.modalCompare, !state.compare.has(d.modalCompare))) { syncProductButtons(d.modalCompare); showDetails(d.modalCompare, { still: true }); $(`[data-modal-compare]`, modal)?.focus(); } }
     else if (d.uncompare) { state.compare.delete(d.uncompare); updateBadges(); syncProductButtons(d.uncompare); state.compare.size >= 2 ? showCompare() : (closeModal(), notify("Choose at least two products to compare.")); }
     else if ("quoteAll" in d) { addManyToQuote(state.compare); showQuote(); }

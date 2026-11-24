@@ -93,6 +93,19 @@ test("comparison uses the union of fields and handles missing ones", () => {
   assert.deepEqual(row("Printed title").cells.map((c) => c.text), ["Worklight Impact Resistant", "Worklight 270° Swivelling", "PULASKI FIBERGLASS HANDLE"]);
 });
 
+test("every product has its own link, and the link gives the product back", () => {
+  assert.equal(core.productHash("led-p5-LED-695-55117"), "#p-led-p5-LED-695-55117");
+  assert.equal(core.idFromHash("#p-led-p5-LED-695-55117"), "led-p5-LED-695-55117");
+  assert.equal(core.idFromHash("#products"), "");
+  assert.equal(core.idFromHash(""), "");
+  assert.equal(core.idFromHash("#p-%E0%A4"), ""); // a broken link opens nothing
+  const data = JSON.parse(readFileSync(new URL("../data/catalogue.json", import.meta.url), "utf8"));
+  for (const p of data.products) {
+    assert.equal(core.idFromHash(core.productHash(p.id)), p.id);
+    assert.equal(core.productHash(p.id), `#p-${p.id}`, `${p.id} needs no escaping, so its link stays readable`);
+  }
+});
+
 test("quantities, totals and validation", () => {
   assert.equal(core.parseQty("10"), 10);
   for (const bad of ["0", "-1", "1.5", "abc", "", " ", "100000", null]) assert.equal(core.parseQty(bad), null, String(bad));
