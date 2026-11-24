@@ -314,9 +314,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
     - Each copy is removed when its animation ends, or by a timer if the page stops drawing.
     - Nothing waits for an effect. With reduced motion, on low-end devices, or without Web Animations support, every effect is skipped and the page behaves as before.
 - **Intro, sound and GSAP effects** (`site/assets/js/animations.mjs`, with GSAP 3.12.5 and ScrollTrigger vendored in `site/assets/js/vendor/`, GreenSock standard license):
-  - **Intro:** the GROZ logo assembles from tool parts, then the page appears. It plays once per visit, and only when motion is allowed and the device is not low-end. A small script in the page head decides this before the first paint (`html.intro`).
-    - Skip, <kbd>Esc</kbd> and a 6-second timer end it. A CSS failsafe hides the overlay after 7 seconds even if no script runs, so the page is never left black.
-    - The hero count-up, the hammer strike, the heading reveal and the icon drawing wait for it (`introDone`).
+  - **No intro, no GROZ logo** (24 Nov 2026): this catalogue is not GROZ's official website, so it does not show their logo anywhere: the full-screen intro (the logo assembling from tool parts) is gone, the header says "GROZ Catalogue" in plain text, the tab icon is a neutral list icon, the unboxing carton is plain and the quotation request has no letterhead logo. Product pictures still show the products as printed. `introDone` (already resolved) remains for the effects that waited for the intro.
   - **Sound** (synthesized, no audio files): off until the visitor turns it on with the speaker button. The choice is remembered in this browser (`groz.sound`) and shared with the flipbook.
   - **Effects:**
     - Hero silhouettes and parallax on scroll.
@@ -366,7 +364,7 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
 - Files:
   - `site/index.html`, `site/assets/site.css`
   - `site/assets/js/core.mjs`: pure logic, tested by Node.
-  - `site/assets/js/app.mjs`: page behaviour. `site/assets/js/motion.mjs`: decorative motion only. `site/assets/js/animations.mjs`: intro, sound and the GSAP effects.
+  - `site/assets/js/app.mjs`: page behaviour. `site/assets/js/motion.mjs`: decorative motion only. `site/assets/js/animations.mjs`: sound and the GSAP effects.
   - `site/assets/js/art.mjs`: category icons from the reference design. `site/assets/js/icons.mjs`: interface icons (inline SVG).
 - Responsive and touch:
   - Tested at 320, 375, 430, 768, 1024 and 1440 px with no horizontal page scrolling.

@@ -113,81 +113,11 @@ export function playToolDropSound(pitchMult = 1) {
   }
 }
 
-// ---------------------------------------------------------------- 1. Entry Animation (Page Load)
-// The intro overlay is hidden by default (site.css). A small script in the page head adds the class
-// "intro" to <html> only when the intro may play: motion allowed, not a low-end device, and not yet
-// shown in this browser session. Then the overlay covers the page until startIntro() ends it, and a
-// CSS failsafe hides it after a few seconds whatever happens (a script that fails to load, a data
-// error), so no visitor is ever left on a black screen.
-
-let introResolve = null;
-/** Resolves when the intro is finishing (or at once when there is none): start the hero then. */
-export const introDone = new Promise((resolve) => { introResolve = resolve; });
-
-/** Removes the intro overlay and lets the page continue. Safe to call more than once. */
-export function endIntro() {
-  introResolve?.();
-  document.querySelector("#introOverlay")?.remove();
-  root.classList.remove("intro");
-}
-
-/**
- * Full-screen entry sequence where the GROZ logo assembles like precision tools snapping together.
- * Runs from page load (it does not wait for the catalogue data); Skip or Escape ends it at once.
- */
-export function startIntro() {
-  const overlay = document.querySelector("#introOverlay");
-  const gsap = getGsap();
-  if (!overlay || !root.classList.contains("intro") || !animOK() || !gsap) { endIntro(); return; }
-
-  let finished = false;
-  const finish = (fast = false) => {
-    if (finished) return;
-    finished = true;
-    introResolve?.(); // the hero starts while the overlay fades away
-    removeEventListener("keydown", onKey);
-    if (fast) { endIntro(); return; }
-    gsap.to(overlay, { opacity: 0, scale: 1.04, duration: 0.5, ease: "power2.inOut", onComplete: endIntro });
-  };
-  const onKey = (e) => { if (e.key === "Escape") finish(true); };
-  overlay.querySelector("#introSkipBtn")?.addEventListener("click", () => finish(true));
-  addEventListener("keydown", onKey);
-  setTimeout(() => finish(true), 6000); // a stalled timeline never holds the page
-
-  const part = (id) => overlay.querySelector(id);
-  const partWrench = part("#partWrench"), partHammer = part("#partHammer"), partCaliper = part("#partCaliper");
-  const partBracket = part("#partBracket"), partDiamond = part("#partDiamond"), partInnerDiamond = part("#partInnerDiamond");
-  const partLetterG = part("#partLetterG"), partGlowRing = part("#partGlowRing");
-  const brandName = part("#introBrandName"), tagline = part("#introTagline");
-
-  // Tool parts start scattered outside the frame (they are already invisible: site.css).
-  gsap.set(partWrench, { y: -160, x: -80, rotate: -40, opacity: 0, transformOrigin: "center center" });
-  gsap.set(partHammer, { y: -80, x: 180, rotate: 45, opacity: 0, transformOrigin: "center center" });
-  gsap.set(partCaliper, { y: 160, x: 80, rotate: -30, opacity: 0, transformOrigin: "center center" });
-  gsap.set(partBracket, { y: 80, x: -180, rotate: 35, opacity: 0, transformOrigin: "center center" });
-  gsap.set([partDiamond, partInnerDiamond], { scale: 0.2, rotate: 180, opacity: 0, transformOrigin: "center center" });
-  gsap.set(partLetterG, { scale: 0, opacity: 0, transformOrigin: "center center" });
-  gsap.set([brandName, tagline], { opacity: 0, y: 16 });
-
-  gsap.timeline({ defaults: { ease: "power2.out" }, onComplete: () => finish() })
-    // Step 1: Diamond core expands into view
-    .to([partDiamond, partInnerDiamond], { scale: 1, rotate: 0, opacity: 1, duration: 0.55, ease: "back.out(1.6)" }, 0.1)
-    // Step 2: Tool parts fly in and snap together with elastic precision
-    .to(partWrench, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.25)
-    .to(partHammer, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.3)
-    .to(partCaliper, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.35)
-    .to(partBracket, { y: 0, x: 0, rotate: 0, opacity: 1, duration: 0.45, ease: "elastic.out(1, 0.6)" }, 0.4)
-    // Step 3: Mechanical strike sound & core G reveal
-    .call(() => playToolDropSound(1.1), null, 0.45)
-    .to(partLetterG, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(2)" }, 0.45)
-    .to(partGlowRing, { scale: 3.2, opacity: 0.9, duration: 0.3, ease: "power2.out" }, 0.48)
-    .to(partGlowRing, { opacity: 0, duration: 0.2 }, 0.7)
-    // Step 4: Kinetic brand typography reveals
-    .to(brandName, { opacity: 1, y: 0, letterSpacing: "0.22em", duration: 0.4, ease: "power2.out" }, 0.65)
-    .to(tagline, { opacity: 0.85, y: 0, letterSpacing: "0.28em", duration: 0.35, ease: "power2.out" }, 0.75)
-    // Hold momentarily for cinematic impact
-    .to({}, { duration: 0.4 });
-}
+// ---------------------------------------------------------------- 1. Entry
+// The full-screen intro (the GROZ logo assembling from tool parts) was removed on 24 Nov 2026: this
+// site is not GROZ's own website, so it does not show their logo. The effects that waited for the
+// intro (hero count-up, hammer strike, heading reveal, icon drawing) start at once.
+export const introDone = Promise.resolve();
 
 /**
  * Slide in subtle tool silhouettes from the sides and animate hero parallax depth.

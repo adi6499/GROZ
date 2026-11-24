@@ -13,12 +13,9 @@
 <script>(function(){var d=document.documentElement,t=null;try{t=JSON.parse(localStorage.getItem("groz.theme"))}catch(e){}
 if(t!=="light"&&t!=="dark")t=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
 d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==="dark"?"#0d0d0f":"#f5f5f7"})()</script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cpath d=%27M16 1 31 16 16 31 1 16Z%27 fill=%27%23f4511e%27/%3E%3Ctext x=%2716%27 y=%2721%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2714%27 text-anchor=%27middle%27 fill=%27white%27%3EG%3C/text%3E%3C/svg%3E"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%272%27 y=%272%27 width=%2728%27 height=%2728%27 rx=%277%27 fill=%27%23f4511e%27/%3E%3Cpath d=%27M9 11h14M9 16h14M9 21h9%27 stroke=%27white%27 stroke-width=%273%27 stroke-linecap=%27round%27/%3E%3C/svg%3E"/>
 <link rel="preload" href="assets/fonts/ubuntu-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin/>
 <link rel="stylesheet" href="assets/site.css"/>
-<!-- The intro plays only when motion is welcome, the device is not low-end, and not yet this visit;
-     otherwise its overlay stays hidden (site.css), so nobody is ever left on a black screen. -->
-<script>(function(){try{var d=document.documentElement,n=navigator,c=n.connection;if(matchMedia("(prefers-reduced-motion: reduce)").matches||(c&&c.saveData)||(n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2)||sessionStorage.getItem("groz.intro")==="1")return;sessionStorage.setItem("groz.intro","1");d.classList.add("intro")}catch(e){}})()</script>
 <script defer src="assets/js/vendor/gsap.min.js"></script>
 <script defer src="assets/js/vendor/ScrollTrigger.min.js"></script>
 <link rel="modulepreload" href="assets/js/core.mjs"/>
@@ -28,44 +25,9 @@ d.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-co
 <body>
 <div class="scroll-progress-bar" id="scrollProgress" aria-hidden="true"></div>
 
-<!-- 1. Full-Screen Entry Sequence with Animated GROZ Logo Assembly -->
-<div class="intro-overlay" id="introOverlay">
-  <div class="intro-backdrop-grid" aria-hidden="true"></div>
-  <div class="intro-content">
-    <div class="intro-logo-assembly" aria-hidden="true">
-      <svg class="intro-logo-svg" viewBox="0 0 300 300" aria-hidden="true">
-        <defs>
-          <linearGradient id="introOrange" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#ff7b47"/>
-            <stop offset="50%" stop-color="#f4511e"/>
-            <stop offset="100%" stop-color="#bf360c"/>
-          </linearGradient>
-          <linearGradient id="introSteel" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#ffffff"/>
-            <stop offset="40%" stop-color="#c4c9d1"/>
-            <stop offset="100%" stop-color="#69717d"/>
-          </linearGradient>
-        </defs>
-        <!-- Precision tool parts assembling into the mark -->
-        <path id="partWrench" class="intro-part" d="M150 20 L210 80 L185 105 L150 70 L115 105 L90 80 Z" fill="url(#introSteel)" stroke="#515863" stroke-width="3"/>
-        <path id="partHammer" class="intro-part" d="M280 150 L220 210 L195 185 L230 150 L195 115 L220 90 Z" fill="url(#introSteel)" stroke="#515863" stroke-width="3"/>
-        <path id="partCaliper" class="intro-part" d="M150 280 L90 220 L115 195 L150 230 L185 195 L210 220 Z" fill="url(#introSteel)" stroke="#515863" stroke-width="3"/>
-        <path id="partBracket" class="intro-part" d="M20 150 L80 90 L105 115 L70 150 L105 185 L80 210 Z" fill="url(#introSteel)" stroke="#515863" stroke-width="3"/>
-        <polygon id="partDiamond" class="intro-part" points="150,45 255,150 150,255 45,150" fill="url(#introOrange)" stroke="#8e2508" stroke-width="4"/>
-        <polygon id="partInnerDiamond" class="intro-part" points="150,65 235,150 150,235 65,150" fill="#1e2024" stroke="#ff8452" stroke-width="2"/>
-        <text id="partLetterG" class="intro-part" x="150" y="196" font-family="Arial, sans-serif" font-weight="900" font-size="125" text-anchor="middle" fill="#ffffff">G</text>
-        <circle id="partGlowRing" cx="150" cy="150" r="16" fill="none" stroke="#ffad88" stroke-width="4" opacity="0"/>
-      </svg>
-    </div>
-    <div class="intro-brand-name" id="introBrandName" aria-hidden="true">GROZ</div>
-    <div class="intro-tagline" id="introTagline" aria-hidden="true">MADE FOR THE WORK AHEAD</div>
-    <button class="intro-skip-btn" id="introSkipBtn" type="button">Skip Intro ➔</button>
-  </div>
-</div>
-
 <a class="skip" href="#products">Skip to products</a>
 <header class="top"><nav class="nav" aria-label="Main">
-  <a class="brand" href="#top" aria-label="GROZ catalogue home"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-word">GROZ</span></a>
+  <a class="brand" href="#top" aria-label="GROZ catalogue home"><span class="brand-word">GROZ<span class="brand-sub"> Catalogue</span></span></a>
   <div class="links"><a href="#products">Products</a><div class="nav-cats"><button class="nav-link" id="catMenuBtn" type="button" aria-expanded="false" aria-controls="catMenu">Categories<svg class="i chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="cat-menu" id="catMenu" hidden></div></div><a href="#catalogues">Catalogues</a><a href="#about">Quotes</a></div>
   <form class="nav-search" id="navSearchForm" role="search"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/></svg><input id="navSearch" type="search" enterkeyhint="search" aria-label="Search products" placeholder="Search…" autocomplete="off" spellcheck="false"/></form>
   <button class="icon-btn sound-toggle" id="soundToggle" type="button" aria-pressed="false" aria-label="Tool sound effects" title="Tool Sound Effects: Off"><svg class="i sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><svg class="i sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg></button>

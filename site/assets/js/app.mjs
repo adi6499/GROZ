@@ -805,7 +805,7 @@ function buildCarton(r, stage, small = "") {
   layer.setAttribute("aria-hidden", "true");
   layer.innerHTML = `<div class="ub-stage" style="left:${left}px;top:${r.top}px;width:${w}px;height:${h}px;--d:${d}px;--h:${h}px">
       <div class="ub-box"><div class="ub-face ub-back"></div><div class="ub-face ub-left"></div><div class="ub-face ub-right"></div>
-      <div class="ub-glow"></div><div class="ub-face ub-front"><span class="brand-mark">G</span><span>GROZ</span></div>
+      <div class="ub-glow"></div><div class="ub-face ub-front"></div>
       <div class="ub-flap ub-flap-f"></div><div class="ub-flap ub-flap-b"></div></div></div>`;
   const boxStage = layer.firstElementChild, box = boxStage.firstElementChild;
   const copy = (cls) => {
@@ -1399,7 +1399,6 @@ function applyFiltersOpen(open, { restoreFocus = true } = {}) {
 
 function wire() {
   // The intro (when the page head decided one may play) starts at once, not after the data.
-  anim.startIntro();
   anim.initSound();
   let typing;
   const onType = (e) => { clearTimeout(typing); const v = e.target.value; typing = setTimeout(() => setQuery(v, { typing: true }), 120); };

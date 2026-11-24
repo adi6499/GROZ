@@ -66,7 +66,6 @@ Open http://127.0.0.1:8962/site/. Stop the server with Ctrl+C.
     - Search "micrometer", then change the sort: the cards shuffle into their new places.
     - Close any dialog: it fades away instead of vanishing. On a phone, the menu and the filter sheet slide in and out.
     - Save a product: a heart flies to the saved button. Watch the embers rising behind the hero hammer.
-    - Open the site in a new tab: the GROZ logo assembles from tool parts first (once per visit; *Skip* or <kbd>Esc</kbd> ends it).
     - Sounds are off at first. Turn them on with the speaker button in the header; the site remembers the choice.
     - Move the mouse along the header links and down the Categories menu: a highlight glides with it. Click into a search box: a light runs around its edge.
 

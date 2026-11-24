@@ -22,7 +22,7 @@ body.modal-open,body.sheet-open{overflow:hidden}
 .top{position:sticky;top:0;z-index:40;background:#fafafc;border-bottom:1px solid #00000010;padding-top:var(--sat)}
 .nav{height:66px;max-width:1280px;margin:auto;padding:0 max(30px,var(--sar)) 0 max(30px,var(--sal));display:flex;align-items:center;gap:28px}
 .brand{display:flex;align-items:center;gap:9px;font-size:21px;font-weight:850;letter-spacing:-.039em;white-space:nowrap;min-height:44px}
-.brand-mark{height:28px;width:28px;background:var(--orange);color:white;display:grid;place-items:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);font-size:14px;flex:none}
+.brand-sub{font-weight:500;letter-spacing:-.02em;color:var(--muted)}
 .links{display:flex;gap:24px;margin-left:16px;font-size:12px;color:#45454a}.links a{transition:color var(--fast);padding:12px 0}
 .nav-search{margin:0 0 0 auto;width:250px;display:flex;gap:8px;align-items:center;padding:0 13px;height:38px;border-radius:99px;background:#eeeef1;color:#77777d;transition:background-color var(--fast),box-shadow var(--fast)}.nav-search:focus-within{background:#fff;box-shadow:0 0 0 4px #f4511e14}.nav-search input{border:0;background:transparent;outline:0;width:100%;min-width:0;font-size:12px;color:var(--ink);height:100%}
 .nav-search input::-webkit-search-cancel-button{cursor:pointer}
@@ -367,8 +367,8 @@ body.has-dock main{padding-bottom:110px}
   .fb-cat-actions .btn{width:100%;justify-content:center;text-align:center;min-height:42px}
 }
 @media(max-width:440px){
-  .brand-word{display:none}
-  .brand-mark{width:32px;height:32px;font-size:15px}
+  .brand-word{font-size:18px}.brand-sub{display:none}
+
   .quick{gap:6px 8px}
   .quick a{font-size:11.5px;padding:4px 9px}
   .results-top{flex-direction:column;align-items:stretch;gap:8px}
@@ -470,7 +470,6 @@ body.has-dock main{padding-bottom:110px}
 .ub-face,.ub-flap,.ub-glow{position:absolute}
 .ub-front{inset:0;border-radius:10px;overflow:hidden;background:linear-gradient(165deg,#36383d,#1c1d20 72%);box-shadow:inset 0 0 0 1px #ffffff14,inset 0 -24px 36px #0007;display:flex;align-items:center;justify-content:center;gap:9px;color:#fff;font-weight:850;letter-spacing:-.04em;font-size:clamp(15px,calc(var(--h) * .14),28px)}
 .ub-front:before{content:"";position:absolute;left:0;right:0;top:0;height:13%;background:linear-gradient(#ff6a3d,#d14512)}
-.ub-front .brand-mark{width:1.3em;height:1.3em;font-size:.7em}
 .ub-back{inset:0;border-radius:10px;transform:translateZ(calc(var(--d) * -1));background:#111214}
 .ub-left,.ub-right{top:0;width:var(--d);height:100%;transform-origin:left center;transform:rotateY(90deg);background:linear-gradient(90deg,#2a2c30,#18191c)}
 .ub-left{left:0}.ub-right{left:100%}
@@ -803,78 +802,6 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
 /* ==========================================================================
    1. Full-Screen Entry Animation
    ========================================================================== */
-.intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100000;
-  background: #0c0d10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  user-select: none;
-}
-.intro-backdrop-grid {
-  position: absolute;
-  inset: -60px;
-  background-image: 
-    linear-gradient(rgba(244, 81, 30, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(244, 81, 30, 0.05) 1px, transparent 1px);
-  background-size: 44px 44px;
-  pointer-events: none;
-}
-.intro-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 30px;
-}
-.intro-logo-assembly {
-  width: 220px;
-  height: 220px;
-  margin-bottom: 24px;
-  position: relative;
-}
-.intro-logo-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 14px 34px rgba(0, 0, 0, 0.75));
-}
-.intro-brand-name {
-  font-family: inherit;
-  font-size: 34px;
-  font-weight: 900;
-  color: #ffffff;
-  letter-spacing: 0.16em;
-  margin-bottom: 8px;
-}
-.intro-tagline {
-  font-size: 11px;
-  font-weight: 700;
-  color: #f4511e;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-.intro-skip-btn {
-  margin-top: 34px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #c4c8d0;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  padding: 7px 18px;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.intro-skip-btn:hover {
-  background: rgba(244, 81, 30, 0.2);
-  border-color: #f4511e;
-  color: #fff;
-}
 
 /* ==========================================================================
    2. Hero Section Additions: Silhouettes & Scroll Cue
@@ -1109,14 +1036,6 @@ body.has-dock .to-top{bottom:calc(84px + var(--sab))}
   font-weight: 700;
   padding: 10px 20px;
 }
-/* intro overlay: hidden unless the page head chose to play it (html.intro); a failsafe hides it after
-   7 s even if no script runs, so the page can never stay black. Its parts start invisible, so the
-   finished logo never flashes before it assembles. (overflow-x:clip above, not hidden: hidden made
-   <main> a scroll container and the results bar stopped sticking on phones.) */
-.intro-overlay{display:none}
-html.intro .intro-overlay{display:flex;animation:intro-failsafe .4s 7s forwards}
-html.intro .intro-part,html.intro #introBrandName,html.intro #introTagline{opacity:0}
-@keyframes intro-failsafe{to{opacity:0;visibility:hidden}}
 
 /* the Categories menu's entrance is GSAP's (animations.mjs); the CSS pop as well played it twice */
 .cat-menu{animation:none}

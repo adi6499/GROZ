@@ -338,7 +338,6 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
   const muted = "color:#6a6a70";
   const cell = "padding:9px 8px;border-bottom:1px solid #e7e7ea;vertical-align:top";
   const head = "padding:7px 8px;font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#55555b;background:#f5f5f7;border-bottom:2px solid #1d1d1f;text-align:left;white-space:nowrap";
-  const logo = screen ? '<svg width="26" height="26" viewBox="0 0 28 28" aria-hidden="true" style="vertical-align:-6px;margin-right:8px"><path d="M14 0 28 14 14 28 0 14Z" fill="#f4511e"/><text x="14" y="18.6" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Arial,sans-serif">G</text></svg>' : "";
   const rows = items.map((it, n) => {
     const p = byId.get(it.id);
     if (!p) return "";
@@ -361,9 +360,9 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   return `<div class="qd" style="font-family:'Ubuntu Sans',Arial,Helvetica,sans-serif;color:#1d1d1f;font-size:12px;line-height:1.45;letter-spacing:0">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
-<td style="vertical-align:middle;white-space:nowrap;padding-right:12px">${logo}<span style="font-size:22px;font-weight:800;letter-spacing:-.03em">GROZ</span></td>
-<td style="vertical-align:middle;text-align:right"><div style="font-size:18px;font-weight:750;letter-spacing:-.02em">Quotation request</div>
-<div style="font-size:11px;${muted}">Ref. ${quoteRef(when)} · ${quoteTime(when)}</div></td></tr></table>
+<td style="vertical-align:bottom;padding-right:12px"><div style="font-size:20px;font-weight:750;letter-spacing:-.02em">Quotation request</div>
+<div style="font-size:11px;${muted}">for GROZ products</div></td>
+<td style="vertical-align:bottom;text-align:right;font-size:11px;${muted}">Ref. ${quoteRef(when)}<br/>${quoteTime(when)}</td></tr></table>
 <div style="height:3px;background:#f4511e;border-radius:2px;margin:12px 0 18px"></div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
 <td style="vertical-align:top;width:55%;padding:0 16px 16px 0">${label("Requested by")}<div style="font-size:13px;font-weight:700">${html(val("name"))}</div>${who}</td>
