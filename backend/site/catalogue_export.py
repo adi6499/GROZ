@@ -57,6 +57,11 @@ CATALOGUES: Dict[str, Dict[str, str]] = {
     "Estwing_Hammer_E-03_Interactive_1.pdf": {
         "category": "Striking Tools", "brand": "Estwing", "title": "Estwing Hammers E-03",
         "art": "sledge", "blurb": "Sledgehammers, mallets, axes & bars"},
+    # The Hand Tool catalogue; its printed cover reads "Workshop Tools", code CB-05 (batch_3_striking:
+    # its hammer pages, 24 Nov 2026).
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": {
+        "category": "Striking Tools", "brand": "GROZ", "title": "GROZ Workshop Tools CB-05",
+        "art": "sledge", "blurb": "Hammers, axes, mauls & mallets"},
     "GROZ_LIGHTING_GL-10_1.pdf": {
         "category": "LED Worklights", "brand": "GROZ", "title": "GROZ Lighting GL-10",
         "art": "light", "blurb": "Worklights, floodlights & inspection lamps"},
@@ -74,14 +79,20 @@ CATALOGUES: Dict[str, Dict[str, str]] = {
         "category": "Fuel & DEF Handling", "brand": "GROZ", "title": "GROZ Fuel Equipment CAT 400",
         "art": "fuel", "blurb": "Fuel pumps, meters, nozzles & filters"},
 }
-CATALOGUE_ORDER = ("tools_storage.pdf", "GROZ_LIGHTING_GL-10_1.pdf", "Estwing_Hammer_E-03_Interactive_1.pdf",
+CATALOGUE_ORDER = ("tools_storage.pdf", "GROZ_LIGHTING_GL-10_1.pdf", "Hand_Tool_Catalogue_low_res_with_cover.pdf",
                    "Precision_Catalogue_CA_03.pdf", "Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf")
+
+# Catalogues whose records stay in the dataset but are not shown on the website, with the reason.
+LEFT_OUT: Dict[str, str] = {
+    "Estwing_Hammer_E-03_Interactive_1.pdf": "replaced on the website by GROZ's own hammers (Workshop Tools CB-05, batch_3_striking), "
+            "as Mitul's groz.tools checklist asked (24 Nov 2026); the batch_2 records are kept unchanged",
+}
 
 # Every category the site shows, in this order, with its tile picture and description (presentation).
 CATEGORY_INFO: Dict[str, Tuple[str, str]] = {
     "Tool Storage": ("storage", "Cabinets, tool boxes & workbenches"),
     "LED Worklights": ("light", "Worklights, floodlights & inspection lamps"),
-    "Striking Tools": ("sledge", "Sledgehammers, mallets, axes & bars"),
+    "Striking Tools": ("sledge", "Hammers, axes, mauls & mallets"),
     "Precision Tools": ("measure", "Measuring tools & machine accessories"),
     "Greasing Equipment": ("grease", "Grease guns, pumps, couplers, fittings & accessories"),
     "Oiling Equipment": ("grease", "Oil pumps, dispensers, meters, control guns, cans & funnels"),
@@ -319,6 +330,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
     for path, base in extra:
         with open(path, encoding="utf-8") as f:
             sources += [(r, base) for r in json.load(f)]
+    left_out = Counter(r["source_pdf"] for r, _ in sources if r["source_pdf"] in LEFT_OUT)
+    sources = [(r, b) for r, b in sources if r["source_pdf"] not in LEFT_OUT]
     dups = {id(r) for r in fuel_duplicates([r for r, _ in sources])}
     fuel_dups = [r for r, _ in sources if id(r) in dups]
     sources = [(r, b) for r, b in sources if id(r) not in dups]
@@ -365,6 +378,7 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
             "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
             "fuel_duplicates_left_out": len(fuel_dups),
+            "catalogues_left_out": {pdf: {"records": n, "why": LEFT_OUT[pdf]} for pdf, n in sorted(left_out.items())},
             **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra]}} if extra else {}),
         },
         "categories": [{"name": name, "art": art, "blurb": blurb, "records": by_cat[name]}

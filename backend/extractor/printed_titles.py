@@ -33,6 +33,7 @@ TITLE_TYPE: Dict[str, Tuple[str, float]] = {
     "Precision_Catalogue_CA_03.pdf": ("Mont-Heavy", 16.0),
     "tools_storage.pdf": ("Mont-Heavy", 16.0),
     "Fluid_Handling_Catalogue_spread.pdf": ("Mont-Heavy", 16.0),
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": ("Mont-Heavy", 16.0),  # Workshop Tools CB-05 (rules 3.2.0)
 }
 # Lighting titles have a second line printed directly below in a lighter type ("Worklight" /
 # "Impact Resistant"); it is part of the printed title.

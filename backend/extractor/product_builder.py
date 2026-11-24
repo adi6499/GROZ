@@ -13,9 +13,9 @@ from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, Edit
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor, table_cell_rects
-from .image_sections import caption_picture, front_view_picture, section_picture
+from .image_sections import caption_picture, facing_right_picture, front_view_picture, main_section_picture, section_picture
 from .printed_titles import PageTitles, table_caption
-from .grid_tables import GRID_PDFS, grid_picture, printed_page_number, spec_key
+from .grid_tables import GRID_PDFS, GRID_TABLE_PDFS, grid_picture, printed_page_number, spec_key
 
 
 def _words_in_order(phrase: str, text: str) -> bool:
@@ -33,6 +33,7 @@ def _words_in_order(phrase: str, text: str) -> bool:
 
 
 LIGHTING_PDF = "GROZ_LIGHTING_GL-10_1.pdf"
+HAND_TOOL_PDF = "Hand_Tool_Catalogue_low_res_with_cover.pdf"  # Workshop Tools CB-05
 
 
 class ProductBuilder:
@@ -61,7 +62,10 @@ class ProductBuilder:
             if d not in seen_digits:
                 seen_digits.append(d)
         catalog_label = "-".join(seen_digits[:2]) if seen_digits else str(page_number)
-        grid = source_pdf in GRID_PDFS
+        # The column reader's tables, titles and notes (rules 3.0.0; Workshop Tools CB-05 since 3.2.0) ...
+        grid = source_pdf in GRID_TABLE_PDFS
+        # ... and its picture rules (CC-07 and FUEL CAT 400 only).
+        grid_pictures = source_pdf in GRID_PDFS
         if grid:
             # CC-07 / FUEL CAT 400: the page number printed in the bottom margin (pages run past 150, and
             # CC-07 prints it 55 pt above the edge, outside the 45 pt band read above)
@@ -350,7 +354,7 @@ class ProductBuilder:
             if row.get("variant_label"):
                 specs["variant_label"] = row["variant_label"]
 
-            if grid:
+            if grid_pictures:
                 # rules 3.0.0 (grid_tables.grid_picture): own code, then family tag, then the single
                 # unlabelled main picture; a picture labelled for other products is never used
                 prev = page.parent[page_number - 2] if page_number > 1 else None
@@ -373,7 +377,7 @@ class ProductBuilder:
             # clearly largest) picture; the region-wide "largest picture" layout rule comes after.
             weak = (not matched_images or matched_images[0].association_type == "unresolved"
                     or (matched_images[0].evidence or "").startswith("largest product image in the same page region"))
-            if weak and not grid:
+            if weak and not grid_pictures:
                 own = [c for c in (cat_nr, model_code) if c]
                 others = [c for c in page_codes if c not in own]
                 siblings = [c for r2 in ordering_rows if r2 is not row and r2.get("table_bbox") == row.get("table_bbox")
@@ -386,6 +390,27 @@ class ProductBuilder:
                     # Same strength (0.7) as the layout rule these replace: family evidence that
                     # counts toward the record's confidence (validator/confidence.py).
                     matched_images = [self.image_extractor.make_ref(pick[0], "product_family", pick[1], 0.7)]
+            # Rules 3.2.0 (Workshop Tools CB-05): the product family's picture is the clearly largest one under
+            # its title, not a smaller photo of the tool in use printed beside the table (image_sections rule 7).
+            if source_pdf == HAND_TOOL_PDF and matched_images and matched_images[0].association_type == "product_family":
+                chosen = next((c for c in candidate_images if c["crop_filename"].rsplit(".", 1)[0] == matched_images[0].image_id), None)
+                own = [c for c in (cat_nr, model_code) if c]
+                main = main_section_picture(chosen, printed_title, candidate_images, titles, page_number,
+                                            [c for c in page_codes if c not in own])
+                if main:
+                    matched_images = [self.image_extractor.make_ref(main[0], "product_family", main[1], 0.7)]
+            # Rules 3.2.0 (Workshop Tools CB-05): a left-hand page with the title and table but no picture
+            # takes the picture of the facing right-hand page when that page prints no title of its own.
+            if (source_pdf == HAND_TOOL_PDF and not matched_images and catalog_label.isdigit()
+                    and int(catalog_label) % 2 == 0 and page_number < len(page.parent)):
+                if "next" not in facing_cache:
+                    facing_cache["next"] = self.image_extractor.extract_page_product_images(
+                        page.parent[page_number], source_pdf, page_number + 1)
+                own = [c for c in (cat_nr, model_code) if c]
+                nxt = facing_right_picture(printed_title, facing_cache["next"], titles, page_number,
+                                           [c for c in page_codes if c not in own])
+                if nxt:
+                    matched_images = [self.image_extractor.make_ref(nxt[0], "product_family", nxt[1], 0.7)]
             # Rules 3.1.0 (decision I, lighting catalogue): a worklight printed front and back takes its
             # front view, the picture printed with callouts naming its light (image_sections rule 5).
             # Tripod models keep their tripod picture.

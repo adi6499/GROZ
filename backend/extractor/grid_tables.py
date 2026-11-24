@@ -207,6 +207,12 @@ def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
     lines = [_phrases(l) for l in _lines(header_words)]
     if not lines:
         return []
+    for ps in lines:
+        for p in ps:
+            # A unit printed with only its closing bracket is that unit: Workshop Tools CB-05 p12 prints
+            # "INCH)" where its other pages print "(INCH)" (rules 3.2.0). Header phrases only.
+            if re.fullmatch(r"(INCH|MM|LBS|KGS?|GMS|OZ)\)", p["text"]):
+                p["text"] = "(" + p["text"]
     unit = lambda p: bool(re.fullmatch(r"\([^()]{1,10}\)\**|LPM|GPM|CFM|M|FEET|MM|INCH|KGS?|LBS?\.?|OZ\.?|ML|GMS|PSI|BAR",
                                        p["text"]))
     for k in range(len(lines) - 1):
@@ -542,6 +548,11 @@ def extract_tile_rows(page: pymupdf.Page, known_ords: set) -> List[Dict[str, Any
 # The catalogues read with this module (batch_3_fluid). The four catalogues of batches 1 and 2 keep the
 # table reader in table_extractor.py unchanged.
 GRID_PDFS = {"Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"}
+# Catalogues whose ordering tables are read with this column reader (rules 3.2.0). The Workshop Tools
+# CB-05 catalogue (Hand_Tool_Catalogue_low_res_with_cover.pdf, batch_3_striking) prints its tables the same way
+# ("HEAD WEIGHT" over "(LBS)" "(KG)"); its pictures keep the picture rules of batches 1 and 2, which
+# suit its one-product-family-per-page layout (checked on every hammer page, 24 Nov 2026).
+GRID_TABLE_PDFS = GRID_PDFS | {"Hand_Tool_Catalogue_low_res_with_cover.pdf"}
 
 # Contents pages: product family titles with the printed page each starts on.
 CONTENTS_PAGES: Dict[str, Tuple[int, ...]] = {

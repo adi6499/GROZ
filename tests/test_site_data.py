@@ -9,7 +9,7 @@ import re
 import pymupdf
 import pytest
 
-from backend.site.catalogue_export import (CATALOGUES, DATASET, SITE_DATA, TITLE_REVIEW, build, category_for, display_methods,
+from backend.site.catalogue_export import (CATALOGUES, DATASET, LEFT_OUT, SITE_DATA, TITLE_REVIEW, build, category_for, display_methods,
                                            export_record, fuel_duplicates, heading_text, load_pending_corrections,
                                            title_review_rows)
 from backend.site.titles import relation
@@ -24,9 +24,11 @@ def dataset():
 @pytest.fixture(scope="module")
 def source(dataset):
     """The dataset records the site shows: every one, except the Fuel CAT 400 products that CC-07 also
-    prints (same order number), which are shown once, from CC-07."""
-    dups = {id(r) for r in fuel_duplicates(dataset)}
-    return [r for r in dataset if id(r) not in dups]
+    prints (same order number), which are shown once, from CC-07, and the catalogues left out of the site
+    (Estwing, replaced by GROZ's own hammers on 24 Nov 2026)."""
+    shown = [r for r in dataset if r["source_pdf"] not in LEFT_OUT]
+    dups = {id(r) for r in fuel_duplicates(shown)}
+    return [r for r in shown if id(r) not in dups]
 
 
 @pytest.fixture(scope="module")
@@ -39,9 +41,14 @@ def site(source):
     return data
 
 
-def test_only_fuel_cat_400_duplicates_of_cc07_products_are_left_out(dataset, source, site):
+def test_only_estwing_and_fuel_cat_400_duplicates_of_cc07_products_are_left_out(dataset, source, site):
+    estwing = [r for r in dataset if r["source_pdf"] == "Estwing_Hammer_E-03_Interactive_1.pdf"]
+    assert set(LEFT_OUT) == {"Estwing_Hammer_E-03_Interactive_1.pdf"} and len(estwing) == 131  # kept in the dataset, not shown
+    assert site["meta"]["catalogues_left_out"]["Estwing_Hammer_E-03_Interactive_1.pdf"]["records"] == 131
+    assert not any(p["catalogue"]["pdf"] in LEFT_OUT for p in site["products"])
+    assert not any(c["pdf"] in LEFT_OUT for c in site["catalogues"])
     left_out = fuel_duplicates(dataset)
-    assert len(dataset) - len(source) == len(left_out) == site["meta"]["fuel_duplicates_left_out"] == 73
+    assert len(dataset) - len(estwing) - len(source) == len(left_out) == site["meta"]["fuel_duplicates_left_out"] == 73
     cc07 = [r for r in dataset if r["source_pdf"] == "Fluid_Handling_Catalogue_spread.pdf"]
     ords, cats = {r["ord_nr"] for r in cc07 if r["ord_nr"]}, {r["cat_nr"] for r in cc07 if r["cat_nr"]}
     assert all(r["source_pdf"] == "FUEL.pdf" and (r["ord_nr"] in ords if r["ord_nr"] else r["cat_nr"] in cats) for r in left_out)
@@ -116,7 +123,7 @@ def test_values_awaiting_a_pending_correction_are_withheld(source, tmp_path):
     assert "beam_angle" in {s["key"] for s in export_record(other, pending)["specs"]}
 
 
-def test_rules_2_2_applied_nothing_is_withheld(site):
+def test_rules_2_2_applied_nothing_is_withheld(dataset, site):
     """Decisions A-F were approved and applied (rules 2.2.0): no correction is pending, and the
     corrected readings are shown (review/applied/2026-10-14_rules-2.2.0)."""
     assert not load_pending_corrections()
@@ -126,7 +133,7 @@ def test_rules_2_2_applied_nothing_is_withheld(site):
     assert specs("LED/621").get("beam_angle") == "60˚"           # E: from the spec strip, not the "270°" callout
     assert specs("LED/800/EU").get("diameter") == '12-1/64" (305 mm)'  # A
     assert by_cat["LED/800/EU"]["dimensions_mm"] is None
-    assert by_cat["ECH-212X"]["heading"] == "CLUB HAMMERS"       # F
+    assert heading_text(next(r for r in dataset if r["cat_nr"] == "ECH-212X")) == "CLUB HAMMERS"  # F (Estwing: dataset only)
     assert specs("G/10/M1").get("table_caption") == "TAPER SHANK ARBORS - DIN 238"
 
 
@@ -159,13 +166,12 @@ def test_committed_title_review_matches(site):
 
 # Checked against the rendered catalogue pages (see review/editorial_decisions.json, decision F).
 PRINTED_TITLES = [
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ECH-212X", "CLUB HAMMERS", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESH-1030X", "SLEDGE HAMMERS", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESH/SF-1030X", "SLEDGE HAMMERS - SOFT FACE", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ETH-520X", "TIRE BEAD BREAK HAMMERS", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "EMH-0313X", "MACHINIST HAMMERS", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "ESAB-72", "SAN ANGELO BAR", "above"),
-    ("Estwing_Hammer_E-03_Interactive_1.pdf", "EPHD-69", "POST HOLE DIGGING BAR", "above"),
+    # Workshop Tools CB-05 (rules 3.2.0): the title over the table, or on the facing left-hand page.
+    ("Hand_Tool_Catalogue_low_res_with_cover.pdf", "CHID/2.5/12", "Club Hammers Indestructible Handle", "above"),
+    ("Hand_Tool_Catalogue_low_res_with_cover.pdf", "SHID/6/16", "Sledge Hammer Indestructible Handle", "above"),
+    ("Hand_Tool_Catalogue_low_res_with_cover.pdf", "SHID/SF/6/30", "Sledge Hammer Indestructible Handle", "facing"),
+    ("Hand_Tool_Catalogue_low_res_with_cover.pdf", "AXE/HW/1.25/14", "Axes Hickory Wood Handle", "above"),
+    ("Hand_Tool_Catalogue_low_res_with_cover.pdf", "MLTR/16B/FG", "Rubber Mallets", "above"),
     ("Precision_Catalogue_CA_03.pdf", "VB/C/2", "Vee Blocks Cast Iron", "above"),
     ("Precision_Catalogue_CA_03.pdf", "PAB/01/A", "Adjustable Angle Block 0-60°", "above"),
     ("Precision_Catalogue_CA_03.pdf", "SS/A/2", "Engineer’s Precision Squares", "facing"),

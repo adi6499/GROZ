@@ -51,15 +51,25 @@ BATCHES: Dict[str, Batch] = {
         "(\"approve the preview and make it live\"), so the batch is now part of the main dataset.",
         (Source("Fluid_Handling_Catalogue_spread.pdf", tuple(range(1, 373))), Source("FUEL.pdf")),
     ),
+    "batch_3_striking": Batch(
+        "batch_3_striking",
+        "Workshop Tools CB-05 (the Hand Tool catalogue), its striking-tools pages with hammers, axes, mauls and "
+        "mallets: physical pages 8-47 (printed 9-45; the chapter divider and introduction pages print no ordering "
+        "table). Read with the column reader of rules 3.2.0. Approved by the project owner on 24 Nov 2026 to "
+        "replace the Estwing hammers on the website (\"replace the 131 Estwing hammers with GROZ hammers from "
+        "CI 37\"; \"Yes, that's CI 37\"; \"do all things first and then push the codes one go\").",
+        (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", tuple(range(8, 48))),),
+    ),
 }
 
-BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot", "batch_3_fluid")
+BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot", "batch_3_fluid", "batch_3_striking")
 
 # Batch 3 catalogues: only the pages listed here may be processed, so no batch definition (or edit of
-# one) can run more of them by accident. Hand Tool: the five pilot pages (the full catalogue is not
-# approved). Fluid Handling: every page, approved for batch_3_fluid on 21 Oct 2026.
+# one) can run more of them by accident. Hand Tool: the five pilot pages and the striking-tools pages
+# 8-47 approved for batch_3_striking on 24 Nov 2026 (the rest of the catalogue is not approved).
+# Fluid Handling: every page, approved for batch_3_fluid on 21 Oct 2026.
 RESTRICTED_SOURCES: Dict[str, Tuple[int, ...]] = {
-    "Hand_Tool_Catalogue_low_res_with_cover.pdf": (8, 11, 12, 53, 224),
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": tuple(sorted({8, 11, 12, 53, 224} | set(range(8, 48)))),
     "Fluid_Handling_Catalogue_spread.pdf": tuple(range(1, 373)),
 }
 

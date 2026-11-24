@@ -23,6 +23,12 @@ picture: it shows the product family of the section, not necessarily this exact 
    naming the light and exactly one other large picture in the product's section has one, that
    picture is the front view and is used instead. Pictures labelled with a code are never replaced;
    pages without leader lines are left as they are.
+6. Facing right-hand page (rules 3.2.0; the Workshop Tools CB-05 catalogue only): a left-hand page that
+   prints a product's title and table but no picture uses the only (or clearly largest) picture of the
+   facing right-hand page, when that page prints no title of its own.
+7. Main picture (rules 3.2.0; Workshop Tools CB-05 only): that catalogue pictures each product family large
+   under its title; a smaller photo printed beside the table (the tool in use, a detail) never replaces the
+   clearly largest picture of the product's section.
 
 A picture is never used when it is labelled for a product outside this table, or when another
 section's title is printed on or against it. Anything ambiguous stays unconfirmed.
@@ -151,6 +157,46 @@ def front_view_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]], 
     named = ", ".join(dict.fromkeys("torch" if w.lower() == "torch" else w.upper() for w in words))
     return c, (f"the front view, printed with callouts naming its light ({named}) under the title “{title['text']}”; "
                "preferred to the product's other picture, which has none")
+
+
+def main_section_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]], cands: Sequence[Cand],
+                         titles: PageTitles, page_number: int, other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+    """Rule 7 (rules 3.2.0; Workshop Tools CB-05 only): the catalogue pictures each product family large
+    under its title; smaller photos on the page show details or the tool in use. When the picture chosen
+    by the rules above is not the clearly largest picture printed in the product's section (DOMINANT), the
+    clearly largest one is used. Else None (also when no picture is clearly the largest)."""
+    if not title or title["rule"] not in ("above", "page") or chosen is None:
+        return None
+    info = titles.page(page_number)
+    other_blocks = [b for b in (info[1] if info else []) if b["text"] != title["text"]]
+    pics = [c for c in cands if c["area"] >= MIN_AREA and not _touches_other_title(c, other_blocks)
+            and not _labelled(c, other_codes) and section_of_point(titles, page_number, *_center(c)) == title["block"]]
+    best = _choose(pics)
+    if not best or best[0] is chosen:
+        return None
+    c, n = best
+    return c, f"the clearly largest of {n} pictures printed under the title “{title['text']}”"
+
+
+def facing_right_picture(title: Optional[Dict[str, Any]], next_cands: Sequence[Cand], titles: PageTitles,
+                         page_number: int, other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+    """Rule 6 (rules 3.2.0; Workshop Tools CB-05 only): a left-hand page that prints a product's title
+    and ordering table but no picture continues on the facing right-hand page. When that page prints no
+    title of its own, its only (or clearly largest) picture not labelled for another product is the
+    family's picture. Else None."""
+    if not title or title["rule"] not in ("above", "page"):
+        return None
+    info = titles.page(page_number + 1)
+    if not info or info[1]:
+        return None
+    pics = [c for c in next_cands if c["area"] >= MIN_AREA and not _labelled(c, other_codes)]
+    chosen = _choose(pics)
+    if not chosen:
+        return None
+    c, n = chosen
+    which = "the only picture" if n == 1 else f"the largest of {n} pictures"
+    return c, (f"{which} under the title “{title['text']}”, printed on the facing right-hand page "
+               f"(PDF page {page_number + 1}), which prints no title of its own")
 
 
 def section_picture(table_bbox: Optional[Box], title: Optional[Dict[str, Any]], cands: Sequence[Cand],
