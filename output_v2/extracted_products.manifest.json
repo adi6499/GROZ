@@ -2,7 +2,8 @@
   "batches": {
     "batch_1": 150,
     "batch_2": 791,
-    "batch_3_fluid": 2024
+    "batch_3_fluid": 2024,
+    "batch_3_striking": 183
   },
-  "record_count": 2965
+  "record_count": 3148
 }

@@ -38,13 +38,13 @@ HIRES_QUALITY = 66
 FOLDER_PDFS = {
     "lighting": "GROZ_LIGHTING_GL-10_1.pdf",
     "storage": "tools_storage.pdf",
-    "estwing": "Estwing_Hammer_E-03_Interactive_1.pdf",
+    "handtool": "Hand_Tool_Catalogue_low_res_with_cover.pdf",  # replaced "estwing" on 24 Nov 2026
     "precision": "Precision_Catalogue_CA_03.pdf",
     "lubrication": "groz-lubrication-equipments.pdf",
     "fluid": "Fluid_Handling_Catalogue_spread.pdf",
     "fuel": "FUEL.pdf",
 }
-PDF_ONLY = ("fluid", "fuel")  # added 21 Oct 2026, when their products went live
+PDF_ONLY = ("fluid", "fuel", "handtool")  # added 21 Oct 2026 / 24 Nov 2026, when their products went live
 
 
 def stale(src, dst, force):

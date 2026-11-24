@@ -82,7 +82,8 @@ def test_ledger_round_trip_and_append_only_log(tmp_path, records):
 
 
 def test_website_shows_only_current_human_decisions(tmp_path, records):
-    a, b, c = rec(records, "G/10/M1"), rec(records, "LED/621"), rec(records, "ECH-212X")
+    # c: a product the website shows (Estwing's ECH-212X until 24 Nov 2026, when Estwing left the site)
+    a, b, c = rec(records, "G/10/M1"), rec(records, "LED/621"), rec(records, "CHID/2.5/12")
     led = v.empty_ledger()
     v.record_decision(led, cx.record_id(a), a, "verified", "Asha", v.fingerprint(a), now=WHEN)
     v.record_decision(led, cx.record_id(b), b, "flagged", "Asha", v.fingerprint(b), comment="Beam angle reads 60 on p12", fields=["Beam angle"], now=WHEN)
@@ -96,7 +97,7 @@ def test_website_shows_only_current_human_decisions(tmp_path, records):
     assert by_cat["G/10/M1"]["verification"] == {"state": "verified", "reviewer": "Asha", "at": "2026-10-14T09:00:00+00:00"}
     assert by_cat["LED/621"]["status"] == "needs_review"
     assert by_cat["LED/621"]["notes"][-1]["issue"] == "Flagged by Asha on 2026-10-14: Beam angle reads 60 on p12"
-    assert by_cat["ECH-212X"]["status"] == c["verification_status"] and by_cat["ECH-212X"]["verification"] is None
+    assert by_cat["CHID/2.5/12"]["status"] == c["verification_status"] and by_cat["CHID/2.5/12"]["verification"] is None
     assert (data["meta"]["verified"], data["meta"]["flagged_by_reviewer"], data["meta"]["verification_stale"]) == (1, 1, 1)
     assert sum(1 for p in data["products"] if p["status"] == "verified") == 1  # nothing else becomes verified
 
@@ -133,7 +134,8 @@ def test_server_lists_every_product_with_its_fingerprint(server):
     data = json.loads(body)
     with open(cx.DATASET, encoding="utf-8") as f:
         total = len(json.load(f))  # every extracted record, including the Fuel CAT 400 ones also printed in CC-07
-    assert code == 200 and data["total"] == total == 2965 and data["can_publish"] is False
+    # and the Estwing ones the website leaves out (still in the dataset); 3148 since batch_3_striking (24 Nov 2026)
+    assert code == 200 and data["total"] == total == 3148 and data["can_publish"] is False
     assert data["counts"] == {"verified": 0, "flagged": 0, "stale": 0, "to_check": total}
     g = next(r for r in data["records"] if r["cat_nr"] == "G/10/M1")
     assert {x["label"]: x["value"] for x in g["values"]}["Table caption (printed)"] == "TAPER SHANK ARBORS - DIN 238"

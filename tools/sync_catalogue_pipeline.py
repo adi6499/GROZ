@@ -32,10 +32,11 @@ from build_flipbook_webp import build as build_flipbook_webp
 CATALOGUE_JSON = "site/data/catalogue.json"
 CATALOGUE_CSV = "site/data/catalogue.csv"
 
+# Flipbook catalogues rendered to PNG first (Fluid Handling, Fuel and Workshop Tools CB-05 are rendered
+# straight from their PDFs by build_flipbook_webp.py). Estwing left the site on 24 Nov 2026.
 CATALOGUE_FOLDERS = {
     "GROZ_LIGHTING_GL-10_1.pdf": "site/assets/flipbook/lighting",
     "tools_storage.pdf": "site/assets/flipbook/storage",
-    "Estwing_Hammer_E-03_Interactive_1.pdf": "site/assets/flipbook/estwing",
     "Precision_Catalogue_CA_03.pdf": "site/assets/flipbook/precision",
     "groz-lubrication-equipments.pdf": "site/assets/flipbook/lubrication",
 }
