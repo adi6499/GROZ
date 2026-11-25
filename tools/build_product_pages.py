@@ -41,8 +41,7 @@ SITEMAP = os.path.join(SITE, "sitemap.xml")
 PARTS = os.path.join(SITE, "data", "parts")
 PART_SIZE = 250  # products per part: about 0.35 MB, read in about 10 ms on a desktop, 40 ms on a slow phone
 BASE = "https://groz.tools/site/"  # where the site is published (groz.in shows the same files)
-NOTICE = ("This is not the official GROZ website. For GROZ’s own website, visit "
-          '<a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a>')
+NOTICE = "This is not the official GROZ website."  # no link to GROZ's own site (removed 25 Nov 2026)
 # The catalogue's own groups (site/assets/js/core.mjs GROUPS): the category's group name, for the breadcrumb.
 GROUP_OF = {
     "Greasing Equipment": "Lubrication", "Oiling Equipment": "Lubrication", "Hose Reels": "Lubrication",
@@ -186,7 +185,7 @@ def product_page(p: Dict[str, Any]) -> str:
     </div>
   </article>
 </main>
-<footer class="pp-foot">Not the official GROZ website · GROZ’s own website: <a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a></footer>
+<footer class="pp-foot">Not the official GROZ website.</footer>
 </body>
 </html>
 """
@@ -215,7 +214,7 @@ def index_page(products: List[Dict[str, Any]], categories: List[str]) -> str:
   <p class="pp-toc">{toc}</p>
   {chr(10).join(sections)}
 </main>
-<footer class="pp-foot">Not the official GROZ website · GROZ’s own website: <a href="https://www.groz-tools.com/" target="_blank" rel="noopener">groz-tools.com</a></footer>
+<footer class="pp-foot">Not the official GROZ website.</footer>
 </body>
 </html>
 """
