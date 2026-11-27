@@ -188898,26 +188898,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 87,
         "bounding_box": {
-          "x0": 425.8,
+          "x0": 403.61,
           "y0": 73.01,
           "x1": 452.36,
           "y1": 423.83,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Hacksaw Blades”",
         "confidence": 0.7,
-        "caption_or_label": "MS\nHB"
+        "caption_or_label": null
       }
     ],
     "editorial_notes": [],
@@ -188952,26 +188952,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 87,
         "bounding_box": {
-          "x0": 425.8,
+          "x0": 403.61,
           "y0": 73.01,
           "x1": 452.36,
           "y1": 423.83,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Hacksaw Blades”",
         "confidence": 0.7,
-        "caption_or_label": "MS\nHB"
+        "caption_or_label": null
       }
     ],
     "editorial_notes": [],
@@ -189006,26 +189006,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 87,
         "bounding_box": {
-          "x0": 425.8,
+          "x0": 403.61,
           "y0": 73.01,
           "x1": 452.36,
           "y1": 423.83,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Hacksaw Blades”",
         "confidence": 0.7,
-        "caption_or_label": "MS\nHB"
+        "caption_or_label": null
       }
     ],
     "editorial_notes": [],
@@ -189060,26 +189060,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_row3397_403_73.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 87,
         "bounding_box": {
-          "x0": 425.8,
+          "x0": 403.61,
           "y0": 73.01,
           "x1": 452.36,
           "y1": 423.83,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Hacksaw Blades”",
         "confidence": 0.7,
-        "caption_or_label": "MS\nHB"
+        "caption_or_label": null
       }
     ],
     "editorial_notes": [],
@@ -189113,26 +189113,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_xref3397_425_73.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p87_row3393_406_499",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p87_row3393_406_499.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 87,
         "bounding_box": {
-          "x0": 425.8,
-          "y0": 73.01,
-          "x1": 452.36,
-          "y1": 423.83,
+          "x0": 406.62,
+          "y0": 499.88,
+          "x1": 457.68,
+          "y1": 767.31,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Mini Saw Blades”",
         "confidence": 0.7,
-        "caption_or_label": "MS\nHB"
+        "caption_or_label": "X\nY.\n0"
       }
     ],
     "editorial_notes": [],
@@ -189166,9 +189166,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "FSB/3/ST 30357 3 18 100",
@@ -189200,9 +189219,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "ºFSB/4/ST 30358 4 18 100",
@@ -189234,9 +189272,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "FSB/5/ST 30359 5 16 100",
@@ -189268,9 +189325,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "FSB/6/ST 30360 6 16 100",
@@ -189302,9 +189378,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "ºFSB/8/ST 30361 8 14 100",
@@ -189336,9 +189431,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "FSB/10/ST 30362 10 12 100",
@@ -189370,9 +189484,28 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
-    "images": [],
+    "images": [
+      {
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3436_380_453.png",
+        "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
+        "physical_page_number": 88,
+        "bounding_box": {
+          "x0": 380.92,
+          "y0": 453.72,
+          "x1": 483.71,
+          "y1": 791.84,
+          "page_width": 595.28,
+          "page_height": 841.89
+        },
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Fret Saw Blades”",
+        "confidence": 0.7,
+        "caption_or_label": null
+      }
+    ],
     "editorial_notes": [],
     "raw_text_snippet": "www.groz-tools.com 86 Comes as Standard with GROZ Fret Saw Frames CAT NR. ORD NR. BLADE NR. TPI (THREADS PER INCH) BOX QTY. FSB/3/ST 30357 3 18 100 ºFSB/4/ST 30358 4 18 100 FSB/5/ST 30359 5 16 100 F",
     "source_row_text": "FSB/12/ST 30363 12 10 100",
@@ -189405,24 +189538,24 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_xref3444_408_76",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_xref3444_408_76.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p88_row3444_408_76",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p88_row3444_408_76.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 88,
         "bounding_box": {
           "x0": 408.6,
           "y0": 76.64,
-          "x1": 434.27,
+          "x1": 479.17,
           "y1": 429.79,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Coping Saw Blades”",
         "confidence": 0.7,
         "caption_or_label": null
       }
@@ -199358,7 +199491,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed beside or under this set, before the next set of its column",
+        "evidence": "the only picture printed beside or under this set, before the next set of its column",
         "confidence": 0.7,
         "caption_or_label": "HEX\n(MM)\n2.5 \n3.0\n4.0\n5.0\n6.0\n8.0\n10.0\nHEX"
       }
@@ -220324,7 +220457,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 3 pictures printed directly above this product's table, under the title “1\" Impact Wrench D Style”",
+        "evidence": "the largest of 2 pictures printed directly above this product's table, under the title “1\" Impact Wrench D Style”",
         "confidence": 0.7,
         "caption_or_label": "applications \nDesigned for exceptional power, \ndurability & operators convenience\nRobust & durable a"
       }
@@ -228684,7 +228817,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -228737,7 +228870,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -228790,7 +228923,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -228843,7 +228976,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -228896,7 +229029,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -228949,7 +229082,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -229002,7 +229135,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -229055,7 +229188,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -229108,7 +229241,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -229161,7 +229294,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -229214,7 +229347,7 @@
           "page_height": 841.89
         },
         "association_type": "product_family",
-        "evidence": "the largest of 2 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
+        "evidence": "the largest of 1 pictures printed directly above this product's table (views of the same product), under the title “Wheel Wrenches - Double Ended”",
         "confidence": 0.7,
         "caption_or_label": "Double Ended\n158\n158\nHeavy Duty Double Ended Wheel \nWrenches, also referred to as Truck \nWrenches ar"
       }
@@ -236296,26 +236429,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236350,26 +236483,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236404,26 +236537,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236458,26 +236591,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236512,26 +236645,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236566,26 +236699,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236620,26 +236753,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236674,26 +236807,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236728,26 +236861,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236782,26 +236915,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236836,26 +236969,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],
@@ -236890,26 +237023,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_xref7188_434_488.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p231_row7180_417_115.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 231,
         "bounding_box": {
-          "x0": 434.97,
-          "y0": 488.75,
-          "x1": 514.68,
-          "y1": 804.71,
+          "x0": 417.94,
+          "y0": 115.15,
+          "x1": 542.36,
+          "y1": 425.46,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Stainless Steel Rules”",
         "confidence": 0.7,
-        "caption_or_label": "info@groz-tools.com\n229\n229\n229\nSR P"
+        "caption_or_label": "SR"
       }
     ],
     "editorial_notes": [],

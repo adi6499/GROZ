@@ -10,7 +10,7 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 | batch_2 | Estwing hammers + Precision measuring tools, all pages | 791 | 1dd3e42 | 2026-10-15T06:50:58+00:00 |
 | batch_3_fluid | Fluid Handling CC-07 (all 372 pages: lubrication, fuel & DEF, air handling) and FUEL CAT 400 (32 pages), read with the column reader of rules 3.0.x. Approved by the project owner on 21 Oct 2026 ("Extract all, preview"); the preview (output_preview_fluid/) was approved for the website the same day ("approve the preview and make it live"), so the batch is now part of the main dataset. | 2024 | e14eb51 | 2026-10-21T08:52:51+00:00 |
 | batch_3_striking | Workshop Tools CB-05 (the Hand Tool catalogue), its striking-tools pages with hammers, axes, mauls and mallets: physical pages 8-47 (printed 9-45; the chapter divider and introduction pages print no ordering table). Read with the column reader of rules 3.2.0. Approved by the project owner on 24 Nov 2026 to replace the Estwing hammers on the website ("replace the 131 Estwing hammers with GROZ hammers from CI 37"; "Yes, that's CI 37"; "do all things first and then push the codes one go"). | 183 | 36f9d12 | 2026-11-27T09:48:10+00:00 |
-| batch_3_workshop | Workshop Tools CB-05 (the Hand Tool catalogue), the rest of its product pages after the hammers: physical pages 48-253 (printed 46-251): punches, chisels and bars, hacksaws, vices and clamps, woodworking tools, automotive tools, sockets, impact and ratchet wrenches, torque tools, tool storage, spanners and wrenches, pliers and cutters, measuring and marking, taps and dies, specialty hand tools. The numerical index (pages 254-257) is a checklist, not product pages. Read with rules 3.3.0. Approved by the project owner on 27 Nov 2026 to add GROZ's missing hand and mechanic's tools to the website, as Mitul's groz.tools plan asked ("Shall I start on the Workshop Tools CB-05 pages next ... as a preview for your OK?" - "well do one and push it once"). | 1663 | 36f9d12 | 2026-11-27T09:58:53+00:00 |
+| batch_3_workshop | Workshop Tools CB-05 (the Hand Tool catalogue), the rest of its product pages after the hammers: physical pages 48-253 (printed 46-251): punches, chisels and bars, hacksaws, vices and clamps, woodworking tools, automotive tools, sockets, impact and ratchet wrenches, torque tools, tool storage, spanners and wrenches, pliers and cutters, measuring and marking, taps and dies, specialty hand tools. The numerical index (pages 254-257) is a checklist, not product pages. Read with rules 3.3.0. Approved by the project owner on 27 Nov 2026 to add GROZ's missing hand and mechanic's tools to the website, as Mitul's groz.tools plan asked ("Shall I start on the Workshop Tools CB-05 pages next ... as a preview for your OK?" - "well do one and push it once"). | 1663 | 6d6ce0df | 2026-11-27T11:28:49+00:00 |
 
 ## Records
 
@@ -169,10 +169,10 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 | Association | Count |
 | --- | --- |
 | Direct product image | 324 |
-| Product-family image | 3510 |
-| Unresolved candidate | 855 |
-| Records with a direct or family image | 3834 |
-| Records with no image candidate | 122 |
+| Product-family image | 3535 |
+| Unresolved candidate | 837 |
+| Records with a direct or family image | 3859 |
+| Records with no image candidate | 115 |
 
 Unresolved candidates are linked by page position only and must not be shown as the product's image.
 
