@@ -44,3 +44,6 @@
 # batch_3_fluid preview as it was approved on 21 Oct 2026).
 /site/data/catalogue.preview.json
 /output_preview_fluid/
+# The quote sender runs on the groz.tools server only (PHP); the Vercel copy has none, so its quote
+# drawer falls back to "prepared, not sent" (27 Nov 2026).
+/site/quote.php

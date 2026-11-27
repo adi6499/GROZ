@@ -5,6 +5,11 @@
 export const PAGE_SIZE = 36;
 export const MAX_COMPARE = 4;
 export const MAX_QTY = 99999;
+/** Where a quotation request is emailed (site/quote.php, on the groz.tools server). */
+export const QUOTE_TO = "cart@groz.tools";
+/** The currencies a visitor can ask prices in ("" = no preference). site/quote.php has the same list. */
+export const CURRENCIES = [["USD", "US dollars (USD)"], ["EUR", "Euros (EUR)"], ["INR", "Indian rupees (INR)"], ["", "No preference"]];
+const currencyName = (c) => (c ? (CURRENCIES.find(([k]) => k === c) || [])[1] : "") || ""; // "No preference": not shown
 export const FACET_MAX_VALUES = 14;
 
 // Which specifications summarise a product best on its card, per category. A description printed
@@ -312,17 +317,18 @@ export function quoteRef(when) {
   return `QR-${when.getFullYear()}${pad2(when.getMonth() + 1)}${pad2(when.getDate())}-${pad2(when.getHours())}${pad2(when.getMinutes())}`;
 }
 
-export function quoteText(items, byId, contact, when = new Date()) {
+export function quoteText(items, byId, contact, when = new Date(), { sent = false } = {}) {
   const t = quoteTotals(items);
   const lines = [
     "GROZ QUOTATION REQUEST",
-    "Prepared on this catalogue website, which is not the official GROZ website. Not sent to anyone.",
+    sent ? `Sent to ${QUOTE_TO} from this catalogue website, which is not the official GROZ website.`
+      : "Prepared on this catalogue website, which is not the official GROZ website. Not sent to anyone.",
     `Your reference: ${quoteRef(when)}`,
     `Prepared: ${quoteTime(when)}`,
     "",
     "CONTACT",
     ...[["Name", contact.name], ["Company", contact.company], ["Email", contact.email], ["Phone", contact.phone],
-        ["Delivery location", contact.location]]
+        ["Country", contact.country], ["Delivery location", contact.location], ["Prices in", currencyName(contact.currency)]]
       .filter(([, v]) => String(v ?? "").trim()).map(([k, v]) => `${k}: ${String(v).trim()}`),
     "",
     "PRODUCTS",
@@ -348,7 +354,7 @@ const html = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", 
  * and pasted into an email. `screen` adds the product pictures, the logo and the phone layout hooks
  * (site.css .qd); the email copy leaves them out, as an email cannot load pictures from this site.
  */
-export function quoteHtml(items, byId, contact, when = new Date(), { screen = true } = {}) {
+export function quoteHtml(items, byId, contact, when = new Date(), { screen = true, sent = false } = {}) {
   const t = quoteTotals(items);
   const val = (k) => String(contact[k] ?? "").trim();
   const label = (s) => `<div style="font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#c2410c;margin:0 0 5px">${s}</div>`;
@@ -375,6 +381,8 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
   }).join("");
   const who = ["company", "email", "phone"].map((k) => val(k)).filter(Boolean).map((v) => `<div>${html(v)}</div>`).join("");
   const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  const place = [val("location"), val("country")].filter(Boolean).join(", ");
+  const money = currencyName(contact.currency);
   return `<div class="qd" style="font-family:'Ubuntu Sans',Arial,Helvetica,sans-serif;color:#1d1d1f;font-size:12px;line-height:1.45;letter-spacing:0">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
 <td style="vertical-align:bottom;padding-right:12px"><div style="font-size:20px;font-weight:750;letter-spacing:-.02em">Quotation request</div>
@@ -383,7 +391,7 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
 <div style="height:3px;background:#f4511e;border-radius:2px;margin:12px 0 18px"></div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse"><tr>
 <td style="vertical-align:top;width:55%;padding:0 16px 16px 0">${label("Requested by")}<div style="font-size:13px;font-weight:700">${html(val("name"))}</div>${who}</td>
-<td style="vertical-align:top;padding:0 0 16px">${val("location") ? `${label("Delivery location")}<div style="margin-bottom:10px">${html(val("location"))}</div>` : ""}${label("Summary")}<div>${plural(t.lines, "product line")} · ${plural(t.units, "unit")}</div></td>
+<td style="vertical-align:top;padding:0 0 16px">${place ? `${label("Delivery")}<div style="margin-bottom:10px">${html(place)}</div>` : ""}${label("Summary")}<div>${plural(t.lines, "product line")} · ${plural(t.units, "unit")}</div>${money ? `<div>Prices in ${html(money)}</div>` : ""}</td>
 </tr></table>
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
 <thead><tr><th style="${head}">#</th><th style="${head}">Product</th><th style="${head}">ORD NR</th><th class="qd-src" style="${head}">Catalogue</th><th style="${head};text-align:right">Qty</th></tr></thead>
@@ -391,9 +399,26 @@ export function quoteHtml(items, byId, contact, when = new Date(), { screen = tr
 <tfoot><tr><td colspan="4" style="padding:10px 8px;text-align:right;font-weight:700">Total units</td><td style="padding:10px 8px;text-align:right;font-weight:800;font-size:14px">${t.units}</td></tr></tfoot>
 </table>
 ${val("notes") ? `<div style="margin-top:16px;padding:10px 12px;border-left:3px solid #f4511e;background:#fff6f2;border-radius:0 8px 8px 0">${label("Notes")}<div style="white-space:pre-wrap">${html(val("notes"))}</div></div>` : ""}
-<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e7e7ea;font-size:10.5px;${muted}"><b style="color:#1d1d1f">Not sent.</b> Prepared on this catalogue website, which is not the official GROZ website; please send it to your GROZ sales contact yourself.
+<div style="margin-top:20px;padding-top:10px;border-top:1px solid #e7e7ea;font-size:10.5px;${muted}">${sent ? `<b style="color:#1d1d1f">Sent</b> to ${QUOTE_TO} from this catalogue website, which is not the official GROZ website.`
+    : '<b style="color:#1d1d1f">Not sent.</b> Prepared on this catalogue website, which is not the official GROZ website; please send it to your GROZ sales contact yourself.'}
 Product data was extracted from GROZ catalogues and has not been verified. Please confirm codes, order numbers and specifications with GROZ.</div>
 </div>`;
+}
+
+/** The request as site/quote.php reads it: the visitor's details and one line per product (no pictures). */
+export function quotePayload(items, byId, contact, when = new Date()) {
+  const val = (k) => String(contact[k] ?? "").trim();
+  return {
+    ref: quoteRef(when),
+    prepared: quoteTime(when),
+    contact: { name: val("name"), company: val("company"), email: val("email"), phone: val("phone"), country: val("country"),
+      location: val("location"), currency: val("currency"), notes: val("notes") },
+    lines: items.filter((it) => byId.has(it.id)).map((it) => {
+      const p = byId.get(it.id);
+      return { id: p.id, cat_nr: p.cat_nr || "Not specified", ord_nr: p.ord_nr || "", title: displayTitle(p) || "", category: p.category || "",
+        catalogue: p.catalogue?.title || "", printed_page: p.printed_page ?? "", pdf_page: p.page ?? "", qty: parseQty(it.qty) };
+    }),
+  };
 }
 
 function csvCell(v) {

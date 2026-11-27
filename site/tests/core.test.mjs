@@ -243,3 +243,31 @@ test("real catalogue data: every product sits in exactly one shown group", () =>
     assert.equal(groups.filter((g) => g.categories.includes(p.category)).length, 1, `${p.cat_nr} (${p.category})`);
   }
 });
+test("a sent request says where it went, and carries country and currency (27 Nov 2026)", () => {
+  const byId = new Map(ALL.map((p) => [p.id, p]));
+  const contact = { name: "Amina", email: "amina@x.co.ke", country: "Kenya", location: "Mombasa", currency: "USD", notes: "" };
+  const when = new Date("2026-11-27T08:00:00Z");
+  const text = core.quoteText([{ id: "a", qty: 4 }], byId, contact, when, { sent: true });
+  assert.match(text, /Sent to cart@groz\.tools/);
+  assert.doesNotMatch(text, /Not sent/);
+  assert.match(text, /Country: Kenya\nDelivery location: Mombasa\nPrices in: US dollars \(USD\)/);
+  const doc = core.quoteHtml([{ id: "a", qty: 4 }], byId, contact, when, { sent: true });
+  assert.match(doc, /<b[^>]*>Sent<\/b> to cart@groz\.tools/);
+  assert.match(doc, /Mombasa, Kenya/);
+  assert.match(doc, /Prices in US dollars \(USD\)/);
+  // Not sent (the default): unchanged wording; no currency chosen = no "Prices in" line.
+  assert.match(core.quoteText([{ id: "a", qty: 4 }], byId, { ...contact, currency: "" }, when), /Not sent to anyone/);
+  assert.doesNotMatch(core.quoteText([{ id: "a", qty: 4 }], byId, { ...contact, currency: "" }, when), /Prices in/);
+});
+
+test("what the page posts to quote.php: the visitor's details and one line per product, nothing invented", () => {
+  const byId = new Map(ALL.map((p) => [p.id, p]));
+  const when = new Date("2026-11-27T08:00:00Z");
+  const body = core.quotePayload([{ id: "a", qty: "4" }, { id: "c", qty: 2 }, { id: "gone", qty: 1 }], byId,
+    { name: " Amina ", email: "amina@x.co.ke", country: "Kenya", currency: "EUR", website: "x" }, when);
+  assert.equal(body.ref, core.quoteRef(when));
+  assert.deepEqual(body.contact, { name: "Amina", company: "", email: "amina@x.co.ke", phone: "", country: "Kenya", location: "", currency: "EUR", notes: "" });
+  assert.equal(body.lines.length, 2); // a product no longer in the data is left out
+  assert.deepEqual(body.lines.map((l) => [l.cat_nr, l.ord_nr, l.qty]), [["LED/550", "55046", 4], ["EPAX-336F", "", 2]]); // no ORD NR printed: left empty
+  assert.ok(core.CURRENCIES.some(([k]) => k === "EUR") && core.QUOTE_TO === "cart@groz.tools");
+});

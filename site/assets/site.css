@@ -172,7 +172,7 @@ body.has-dock .toast{bottom:calc(88px + var(--sab))}
 .review-notes{border:1px solid #e2dcff;background:#faf8ff;border-radius:14px;padding:12px 15px;margin-top:12px;font-size:11.5px;line-height:1.55;overflow-wrap:anywhere}.review-notes h4{margin:0 0 6px;font-size:12px;color:#4b3aa6}.review-notes p{margin:6px 0}
 .compare-head{display:flex;flex-direction:column;gap:6px}.compare-head .remove{align-self:flex-start;border:0;background:#f0f0f2;border-radius:99px;padding:0 10px;min-height:30px;font-size:10.5px;display:inline-flex;align-items:center;gap:4px}.compare-head .remove .i{width:13px;height:13px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font-size:11.5px;font-weight:700}
-.field input,.field textarea{border:1px solid #dedee2;border-radius:11px;padding:0 12px;min-height:44px;outline:0;font-size:13px;background:#fff;width:100%;transition:border-color var(--fast),box-shadow var(--fast)}.field input:focus,.field textarea:focus{border-color:#f18a6a;box-shadow:0 0 0 4px #f4511e14}.field textarea{min-height:84px;padding:10px 12px;resize:vertical}
+.field input,.field textarea,.field select{border:1px solid #dedee2;border-radius:11px;padding:0 12px;min-height:44px;outline:0;font-size:13px;background:#fff;width:100%;transition:border-color var(--fast),box-shadow var(--fast)}.field input:focus,.field textarea:focus,.field select:focus{border-color:#f18a6a;box-shadow:0 0 0 4px #f4511e14}.field textarea{min-height:84px;padding:10px 12px;resize:vertical}
 .form-foot{flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px}.form-foot small{color:#77777d;font-size:11px}
 .field [aria-invalid="true"],.qty[aria-invalid="true"]{border-color:#d0442a;box-shadow:0 0 0 3px #d0442a1a}.err{color:#b4321a;font-size:11px;font-weight:650;outline:0}.err:empty{display:none}
 .quote-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:8px}.quote-table th{text-align:left;color:var(--muted);font-weight:600;padding:8px;border-bottom:1px solid var(--line)}.quote-table td{padding:8px;border-bottom:1px solid #f0f0f2;vertical-align:middle}.q-label{display:none}
@@ -440,7 +440,7 @@ body.has-dock main{padding-bottom:110px}
 :root[data-theme=dark] .compare-table thead th{background:#242427}:root[data-theme=dark] .compare-table tbody th{background:#1c1c1e}
 :root[data-theme=dark] .source-box{background:#242427;color:#c4c4ca}:root[data-theme=dark] .source-box pre{color:#d6d6db}
 :root[data-theme=dark] .review-notes{background:#1f1b33;border-color:#3a3260}:root[data-theme=dark] .review-notes h4{color:#b9adff}
-:root[data-theme=dark] .field input,:root[data-theme=dark] .field textarea{background:#242427;border-color:#3a3a3e}
+:root[data-theme=dark] .field input,:root[data-theme=dark] .field textarea,:root[data-theme=dark] .field select{background:#242427;border-color:#3a3a3e}
 :root[data-theme=dark] .form-foot small{color:#9d9da4}:root[data-theme=dark] .err{color:#ff8f7a}
 :root[data-theme=dark] .quote-table td{border-bottom-color:#262629}
 :root[data-theme=dark] .stepper{background:#1c1c1e;border-color:#3a3a3e}:root[data-theme=dark] .step{background:#2a2a2d}:root[data-theme=dark] .step:active{background:#36363a}
@@ -1103,3 +1103,9 @@ html:active-view-transition-type(page)::view-transition-new(root){animation:vt-p
 .preview-bar{position:relative;z-index:70;padding:10px max(16px,var(--sar)) 10px max(16px,var(--sal));background:#fff4d6;color:#5c4100;font-size:12.5px;line-height:1.45;border-bottom:1px solid #f0d58a}
 .preview-bar a{text-decoration:underline;text-underline-offset:2px;font-weight:700}
 :root[data-theme=dark] .preview-bar{background:#3a2e0b;color:#f6dc8f;border-color:#5c4a12}
+/* Quote drawer (27 Nov 2026): the currency list looks like the other fields; the robots-only field is never seen. */
+.field select{color:inherit;cursor:pointer}
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.stamp.not-sent{border-color:#c98a1a;background:#fff8ec;color:#8a5a00}
+:root[data-theme=dark] .stamp.not-sent{background:#2e2512;border-color:#c98a1a;color:#f0b44c}
+.notice .i{flex:none;width:15px;height:15px;margin-top:1px}.notice:has(.i){display:flex;gap:8px;align-items:flex-start}

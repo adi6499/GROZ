@@ -178,8 +178,10 @@ def product_page(p: Dict[str, Any]) -> str:
       <table class="pp-specs"><caption>As printed in the catalogue</caption>
 {"".join(f"        <tr><th scope='row'>{esc(label)}</th><td>{esc(value)}</td></tr>{chr(10)}" for label, value in rows)}      </table>
       {review}
-      <p class="pp-actions"><a class="pp-btn" href="../#p-{esc(p['id'])}">Open in the catalogue</a>
+      <p class="pp-actions"><a class="pp-btn" href="../#p-{esc(p['id'])}">Ask for a quote</a>
         <a class="pp-link" href="{esc(pdf_href)}" target="_blank" rel="noopener">The catalogue PDF, page {esc(printed)}</a></p>
+      <p class="pp-small">“Ask for a quote” opens this product in the catalogue: add it to your quote and send it. Buyers from
+        Africa, the Gulf and worldwide are welcome; prices in USD, EUR or INR.</p>
       <p class="pp-small">From the {esc(p['catalogue']['title'])} catalogue. {esc(p.get('status_label') or '')}: these details were
         read from the printed catalogue automatically; check the catalogue page before ordering.</p>
     </div>

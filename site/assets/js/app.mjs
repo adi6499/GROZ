@@ -22,7 +22,7 @@ const state = {
   filters: core.emptyFilters(), sort: "catalogue", view: "grid",
   results: [], shown: core.PAGE_SIZE, rendered: 0, expandedFacets: new Set(), moreFacets: "",
   saved: new Set(store.get("groz.saved", [])), compare: new Set(),
-  quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", location: "", notes: "" },
+  quote: new Map(store.get("groz.quote", [])), contact: { name: "", company: "", email: "", phone: "", country: "", location: "", currency: "USD", notes: "" },
   detailId: null, unbox: null, quoteHold: 0, savedHold: 0, fxReady: false, groups: [],
 };
 
@@ -1294,11 +1294,17 @@ function removeFromQuote(id, card) {
     .finished.then(done, done);
 }
 
-function field(id, label, { type = "text", required = false, full = false, area = false, autocomplete = "", inputmode = "", placeholder = "" } = {}) {
+// Countries offered while typing the country (any other can be typed): the export markets first.
+const COUNTRIES = ["Kenya", "Nigeria", "South Africa", "Tanzania", "Ghana", "Zambia", "Uganda", "Ethiopia", "Rwanda", "Mozambique", "Zimbabwe", "Botswana", "Namibia", "Malawi", "Egypt", "Morocco", "United Arab Emirates", "Saudi Arabia", "Oman", "Qatar", "Kuwait", "Bahrain", "India", "Sri Lanka", "Bangladesh", "Nepal"];
+
+function field(id, label, { type = "text", required = false, full = false, area = false, autocomplete = "", inputmode = "", placeholder = "", options = null, list = null } = {}) {
   const value = esc(state.contact[id] ?? "");
   const input = area
     ? `<textarea id="q-${id}" name="${id}" rows="3" placeholder="Model variants, delivery timing, anything else…">${value}</textarea>`
-    : `<input id="q-${id}" name="${id}" type="${type}" value="${value}" ${placeholder ? `placeholder="${esc(placeholder)}"` : ""} ${required ? 'required aria-required="true"' : ""} ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${inputmode ? `inputmode="${inputmode}"` : ""} aria-describedby="err-${id}"/>`;
+    : options
+    ? `<select id="q-${id}" name="${id}" aria-describedby="err-${id}">${options.map(([v, t]) => `<option value="${esc(v)}"${v === (state.contact[id] ?? "") ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`
+    : `<input id="q-${id}" name="${id}" type="${type}" value="${value}" ${placeholder ? `placeholder="${esc(placeholder)}"` : ""} ${required ? 'required aria-required="true"' : ""} ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${inputmode ? `inputmode="${inputmode}"` : ""} ${list ? `list="q-${id}-list"` : ""} aria-describedby="err-${id}"/>`
+      + (list ? `<datalist id="q-${id}-list">${list.map((v) => `<option value="${esc(v)}"></option>`).join("")}</datalist>` : "");
   return `<div class="field${full ? " full" : ""}"><label for="q-${id}">${label}${required ? ' <span aria-hidden="true">*</span>' : ""}</label>${input}<div class="err" id="err-${id}"></div></div>`;
 }
 
@@ -1308,9 +1314,9 @@ function showQuote() {
     <ol class="q-steps" id="quoteSteps">
       <li><span class="q-step-dot">1</span><span>Products</span></li>
       <li><span class="q-step-dot">2</span><span>Your details</span></li>
-      <li><span class="q-step-dot">3</span><span>Prepare</span></li>
+      <li><span class="q-step-dot">3</span><span>Send</span></li>
     </ol>
-    <p class="q-note">${icon("info")}<span>Nothing is sent from this website: you get a ready request to email, print or save as a PDF for your GROZ sales contact.</span></p>
+    <p class="q-note">${icon("info")}<span>Your request goes by email to <b>${core.QUOTE_TO}</b>. Buyers from Africa, the Gulf and anywhere else are welcome: ask for prices in US dollars, euros or rupees. You keep a copy to print or save.</span></p>
     <section class="q-section" aria-labelledby="qProductsHead">
       <div class="q-section-head"><h3 id="qProductsHead">Products <span class="q-count" id="quoteCount">${state.quote.size}</span></h3></div>
       <div id="quoteItems">${quoteItemsHtml()}</div><div class="err" id="err-items" tabindex="-1"></div>
@@ -1322,12 +1328,15 @@ function showQuote() {
         ${field("company", "Company", { autocomplete: "organization", placeholder: "Company name" })}
         ${field("email", "Work email", { type: "email", required: true, autocomplete: "email", inputmode: "email", placeholder: "name@company.com" })}
         ${field("phone", "Phone", { type: "tel", autocomplete: "tel", inputmode: "tel", placeholder: "Phone number" })}
+        ${field("country", "Country", { autocomplete: "country-name", placeholder: "Country", list: COUNTRIES })}
+        ${field("currency", "Prices in", { options: core.CURRENCIES })}
         ${field("location", "Delivery location", { full: true, autocomplete: "address-level2", placeholder: "City or site" })}
         ${field("notes", "What else should we know?", { full: true, area: true })}
+        <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"/></label></div>
       </form>
     </section>
     <div class="q-footer"><div class="quote-totals" id="quoteTotals" aria-live="polite">${totalsHtml()}</div>
-      <button class="btn primary lg" type="submit" form="quoteForm" id="prepareQuote">Prepare request${icon("right")}</button></div>`, { kind: "quote" });
+      <button class="btn primary lg" type="submit" form="quoteForm" id="prepareQuote">Send request${icon("send")}</button></div>`, { kind: "quote" });
   updateQuoteSteps();
   $("#quoteForm")?.addEventListener("input", () => {
     for (const el of $("#quoteForm").elements) if (el.name) state.contact[el.name] = el.value;
@@ -1344,7 +1353,9 @@ function refreshQuoteItems() {
   updateQuoteSteps();
 }
 
-function submitQuote(form) {
+async function submitQuote(form) {
+  const button = $("#prepareQuote");
+  if (button?.disabled) return; // already sending
   for (const el of form.elements) if (el.name) state.contact[el.name] = el.value;
   const items = typedQuoteItems();
   const errors = core.validateQuote(items, state.contact);
@@ -1370,16 +1381,56 @@ function submitQuote(form) {
     return;
   }
   const when = new Date();
-  const text = core.quoteText(items, state.byId, state.contact, when);
-  const doc = core.quoteHtml(items, state.byId, state.contact, when);
+  const result = await sendQuote(items, when, form.elements.website?.value ?? "", button);
+  showReady(items, when, result);
+}
+
+/**
+ * Posts the request to site/quote.php, which emails it to core.QUOTE_TO. Answers { sent: true } only
+ * when the server says the email was handed over; otherwise { sent: false, why } (never throws), and
+ * the visitor gets the prepared request to send themselves (the Vercel copy and local previews have
+ * no quote.php).
+ */
+async function sendQuote(items, when, website, button) {
+  const label = button?.innerHTML;
+  if (button) { button.disabled = true; button.innerHTML = "Sending…"; }
+  const stop = new AbortController();
+  const timer = setTimeout(() => stop.abort(), 20000);
+  try {
+    const res = await fetch("quote.php", {
+      method: "POST", headers: { "Content-Type": "application/json" }, signal: stop.signal,
+      body: JSON.stringify({ ...core.quotePayload(items, state.byId, state.contact, when), website }),
+    });
+    const out = await res.json().catch(() => null);
+    if (out?.ok && out.mailed === true) return { sent: true };
+    if (out?.error) return { sent: false, why: String(out.error) };
+    return { sent: false, why: "The website could not send it just now." };
+  } catch {
+    return { sent: false, why: navigator.onLine === false ? "You are offline." : "The website could not send it just now." };
+  } finally {
+    clearTimeout(timer);
+    if (button?.isConnected) { button.disabled = false; button.innerHTML = label; }
+  }
+}
+
+/** The request after sending: the copy to keep, or (not sent) the request ready to email yourself. */
+function showReady(items, when, { sent, why = "" }) {
+  const text = core.quoteText(items, state.byId, state.contact, when, { sent });
+  const doc = core.quoteHtml(items, state.byId, state.contact, when, { sent });
   const csv = core.quoteCsv(items, state.byId);
-  const name = `groz-quote-${core.quoteRef(when)}`;
-  openModal("Your request is ready", `
-    <p class="notice ok">${icon("check")}<span>Prepared on this device and <b>not sent</b>. Copy it into an email to your GROZ sales contact, or print it or save it as a PDF.</span></p>
-    <div class="paper"><span class="slot" aria-hidden="true"></span><div class="prepared doc" id="preparedDoc" tabindex="0" role="document" aria-label="Prepared quotation request">${doc}</div><span class="stamp" aria-hidden="true">Ready · not sent</span></div>
+  const ref = core.quoteRef(when);
+  const name = `groz-quote-${ref}`;
+  const email = String(state.contact.email ?? "").trim();
+  openModal(sent ? "Your request is on its way" : "Your request is ready", `
+    ${sent
+      ? `<p class="notice ok">${icon("check")}<span><b>Sent</b> to ${core.QUOTE_TO}. The reply comes to ${esc(email)}. Keep this copy: print it or save it as a PDF.</span></p>`
+      : `<p class="notice">${icon("info")}<span><b>Not sent.</b> ${esc(why)} Your request is ready: email it to <b>${core.QUOTE_TO}</b> yourself, or print it or save it as a PDF.</span></p>`}
+    <div class="paper"><span class="slot" aria-hidden="true"></span><div class="prepared doc" id="preparedDoc" tabindex="0" role="document" aria-label="${sent ? "Sent" : "Prepared"} quotation request">${doc}</div><span class="stamp${sent ? "" : " not-sent"}" aria-hidden="true">${sent ? "Sent" : "Ready · not sent"}</span></div>
     <div class="ready-actions">
-      <button class="btn primary" type="button" id="copyQuote" data-autofocus>${icon("copy")}Copy for email</button>
-      <button class="btn soft" type="button" id="printQuote">${icon("print")}Print or save as PDF</button>
+      ${sent ? "" : `<a class="btn primary" id="mailQuote" href="${esc(mailtoQuote(ref, text))}" data-autofocus>${icon("mail")}Email it</a>`}
+      ${sent ? `<button class="btn primary" type="button" id="printQuote" data-autofocus>${icon("print")}Print or save as PDF</button>` : ""}
+      <button class="btn soft" type="button" id="copyQuote">${icon("copy")}Copy for email</button>
+      ${sent ? "" : `<button class="btn soft" type="button" id="printQuote">${icon("print")}Print or save as PDF</button>`}
       <button class="btn soft" type="button" id="dlCsv">${icon("download")}Excel (.csv)</button>
       <button class="btn soft" type="button" id="dlTxt">${icon("download")}Text (.txt)</button>
     </div>
@@ -1414,6 +1465,16 @@ function submitQuote(form) {
     renderProducts({ quiet: true });
     showQuote();
   };
+}
+
+/** An email to core.QUOTE_TO with the request as its text (shortened if a mail link would be too long). */
+function mailtoQuote(ref, text) {
+  const body = text.split("\n").filter((l) => !/Not sent to anyone/.test(l)).join("\n");
+  const link = (b) => `mailto:${core.QUOTE_TO}?subject=${encodeURIComponent(`GROZ quotation request ${ref}`)}&body=${encodeURIComponent(b)}`;
+  if (link(body).length <= 1900) return link(body);
+  let cut = body;
+  while (cut.length && link(`${cut}\n…`).length > 1700) cut = cut.slice(0, cut.lastIndexOf("\n"));
+  return link(`${cut}\n… (the list continues: on the website, use “Copy for email” and paste the whole request here)`);
 }
 
 function selectText(el) {
