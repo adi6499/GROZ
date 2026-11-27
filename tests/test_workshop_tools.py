@@ -161,8 +161,20 @@ def test_pictures(page_products):
     # p151: each pair of sets takes the photo printed beside it.
     assert xref(one(page_products(151), "KIT/SKT/H/1-2/13/UG")) == 5230
     assert xref(one(page_products(151), "KIT/SKT/BH/1-2/27/UG")) == 5226
-    # p88: the facing page's full-page chapter divider is never a product's photo.
-    assert not one(page_products(88), "FSB/3/ST").images
+    # p88: the facing page's full-page chapter divider is never a product's photo (rules 3.3.0) ...
+    assert "xref3450" not in one(page_products(88), "FSB/3/ST").images[0].image_id
+
+
+def test_rows_of_upright_pictures_are_one_picture(page_products):
+    # Rules 3.3.1: saw blades and rules are pictured upright, side by side (one blade's picture printed
+    # several times in a row); the row is the product family's picture, cut out together.
+    for page, code, row in ((87, "HB/C/01/ST", "row3397"), (88, "FSB/3/ST", "row3436"), (88, "CSB/170/ST", "row3444"),
+                            (231, "SR/12", "row7180")):
+        p = one(page_products(page), code)
+        assert row in p.images[0].image_id and p.images[0].association_type == "product_family", code
+    # the steel rules' row is three rules wide, not one strip
+    bb = one(page_products(231), "SR/12").images[0].bounding_box
+    assert bb.x1 - bb.x0 > 80 and bb.y1 - bb.y0 > 250
 
 
 def test_chapters_are_categories():

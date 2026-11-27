@@ -220,6 +220,36 @@ def render_picture_alone(source: pymupdf.Page, xref: int, rect: pymupdf.Rect, cl
     return pixmap_image(source.get_pixmap(clip=clip, dpi=dpi))
 
 
+def render_pictures_alone(source: pymupdf.Page, xrefs: Sequence[int], clip: pymupdf.Rect, dpi: int) -> Optional[Image.Image]:
+    """Like render_picture_alone for several pictures at once: every placement of the given pictures inside
+    the clip, as printed, and nothing else (rules 3.3.0, rows of upright pictures). None if the PDF cannot
+    be reopened."""
+    path = source.parent.name
+    doc = None
+    try:
+        if path and os.path.isfile(path):
+            doc = pymupdf.open(path)
+            page = doc[source.number]
+            key = (path, source.number)
+            if key not in _CLEANED:
+                if len(_CLEANED) > 8:
+                    _CLEANED.clear()
+                streams = set(page.get_contents()) | {x[0] for x in page.get_xobjects()}
+                _CLEANED[key] = {sx: _picture_only_stream(doc.xref_stream(sx)) for sx in streams}
+            for sx, data in _CLEANED[key].items():
+                doc.update_stream(sx, data)
+            for info in page.get_images(full=True):
+                if info[0] not in xrefs:
+                    page.delete_image(info[0])
+            return pixmap_image(page.get_pixmap(clip=clip, dpi=dpi, annots=False))
+    except Exception:
+        return None
+    finally:
+        if doc is not None:
+            doc.close()
+    return None
+
+
 def save_trimmed(img: Image.Image, box: Optional[tuple], path: str, margin: float = 0.03) -> None:
     """Save a picture without its plain white margins (a cut-out on a large transparent canvas would
     otherwise look tiny), keeping a small border. A picture with no ink is saved as it is."""
@@ -613,6 +643,58 @@ class ImageExtractor:
             return []
         _, _, _, cand, assoc, evidence, score = min(accepted, key=lambda t: (t[0], t[1], t[2]))
         return [self.make_ref(cand, assoc, evidence, score)]
+
+    def group_upright_rows(self, page: pymupdf.Page, cands: List[Dict[str, Any]], dpi: int = 200) -> List[Dict[str, Any]]:
+        """Rules 3.3.0 (Workshop Tools CB-05): long, thin products are pictured upright, side by side: one
+        blade's picture printed two to eight times in a row (hacksaw, coping and fret saw blades), or a few
+        rules next to each other. Each copy alone is just one narrow strip and none is "the" picture, so
+        the rules found none. Upright pictures (at least three times as tall as wide) standing in one row
+        (tops and bottoms within 8 pt, no more than 12 pt apart) are one picture: drawn as printed, without
+        the page's text, and cut out together. Every other picture is kept as it is."""
+        seen, unique = set(), []
+        for c in cands:  # a picture listed twice by the PDF is one picture
+            key = (c["xref"], tuple(round(v) for v in c["rect"]))
+            if key not in seen:
+                seen.add(key)
+                unique.append(c)
+        upright = sorted((c for c in unique if c["height"] >= 3 * c["width"]), key=lambda c: c["rect"][0])
+        rows: List[List[Dict[str, Any]]] = []
+        for c in upright:
+            x0, y0, _, y1 = c["rect"]
+            row = next((r for r in rows if abs(r[-1]["rect"][1] - y0) <= 8 and abs(r[-1]["rect"][3] - y1) <= 8
+                        and x0 - max(m["rect"][2] for m in r) <= 12), None)
+            if row is None:
+                rows.append([c])
+            else:
+                row.append(c)
+        out = [c for c in unique if not any(c in r for r in rows if len(r) > 1)]
+        for r in rows:
+            if len(r) < 2:
+                continue
+            x0, y0 = min(m["rect"][0] for m in r), min(m["rect"][1] for m in r)
+            x1, y1 = max(m["rect"][2] for m in r), max(m["rect"][3] for m in r)
+            pr = page.rect
+            clip = pymupdf.Rect(max(0, x0 - 4), max(0, y0 - 4), min(pr.width, x1 + 4), min(pr.height, y1 + 4))
+            img = render_pictures_alone(page, {m["xref"] for m in r}, clip, dpi)
+            if img is None:
+                out.extend(r)
+                continue
+            first = r[0]
+            name = f"{pdf_slug(first['source_pdf'])}_p{first['physical_page_number']}_row{first['xref']}_{int(x0)}_{int(y0)}.png"
+            path = os.path.join(self.output_dir, name)
+            save_trimmed(img, ink_box(img), path)
+            g = dict(first)
+            g.update({
+                "crop_filename": name, "crop_path": path, "rect": (x0, y0, x1, y1),
+                "bounding_box": BoundingBox(x0=round(max(0.0, x0), 2), y0=round(max(0.0, y0), 2),
+                                            x1=round(min(pr.width, x1), 2), y1=round(min(pr.height, y1), 2),
+                                            page_width=round(pr.width, 2), page_height=round(pr.height, 2)),
+                "label_text": " ".join(dict.fromkeys(t for m in r for t in (m.get("label_text") or "").split())),
+                "area": (x1 - x0) * (y1 - y0), "width": x1 - x0, "height": y1 - y0,
+                "row_of": len(r),
+            })
+            out.append(g)
+        return out
 
     def make_ref(self, cand: Dict[str, Any], assoc: str, evidence: str, score: float) -> ProductImageRef:
         return ProductImageRef(

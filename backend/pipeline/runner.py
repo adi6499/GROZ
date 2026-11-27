@@ -31,7 +31,7 @@ from ..extractor.product_builder import ProductBuilder
 from ..validator.schema import ProductRecord
 from .batches import BATCHES, RESTRICTED_SOURCES, SUPPLEMENTARY_SOURCES, Batch
 
-PIPELINE_VERSION = "3.3.0"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G; 2.3.1 = clean pictures; 3.0.0 = column reader for Fluid Handling CC-07 / FUEL CAT 400, batch_3_fluid; 3.0.1 = its review fixes; 3.1.0 = worklight front view, decision I; 3.2.0 = Workshop Tools CB-05 hammers, batch_3_striking; 3.3.0 = the rest of CB-05, batch_3_workshop: sets and kits as tiles, side-by-side metric/imperial tables, tall rows, set rows, tidy column names, picture rules 7-8)
+PIPELINE_VERSION = "3.3.1"  # bump whenever extraction rules change (2.0.0 = recovery 4cf3417; 2.2.0 = decisions A, B, D, F; 2.3.0 = image evidence, decision G; 2.3.1 = clean pictures; 3.0.0 = column reader for Fluid Handling CC-07 / FUEL CAT 400, batch_3_fluid; 3.0.1 = its review fixes; 3.1.0 = worklight front view, decision I; 3.2.0 = Workshop Tools CB-05 hammers, batch_3_striking; 3.3.0 = the rest of CB-05, batch_3_workshop: sets and kits as tiles, side-by-side metric/imperial tables, tall rows, set rows, tidy column names, picture rules 7-8; 3.3.1 = rows of upright pictures as one picture, saw blades and rules)
 LEGACY_OUTPUT_DIR = "output"
 DEFAULT_OUTPUT_DIR = "output_v2"
 

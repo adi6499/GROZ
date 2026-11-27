@@ -80,6 +80,9 @@ class ProductBuilder:
             # a tile's code is its picture's caption, not a table cell (grid_tables.extract_tile_rows)
             page, source_pdf, page_number, table_cells=table_cell_rects(page, [r for r in ordering_rows if not r.get("tile")])
         )
+        if source_pdf == HAND_TOOL_PDF:
+            # rules 3.3.0: a row of upright pictures (copies of one saw blade, rules side by side) is one picture
+            candidate_images = self.image_extractor.group_upright_rows(page, candidate_images)
         page_tables = sorted({tuple(r["table_bbox"]) for r in ordering_rows if r.get("table_bbox")})
         page_words = page.get_text("words")
         facing_cache: Dict[str, Any] = {}
