@@ -36,6 +36,22 @@ picture: it shows the product family of the section, not necessarily this exact 
    different sides (each socket table prints a side view and an angled view): the largest of those printed
    over the product's own table is used (a hex and a bi-hex socket table printed side by side each keep
    their own photos). This also holds on a page whose title is printed further down (p141).
+10. Last resort (rules 3.3.2; Workshop Tools CB-05 only, for a product no rule above gave a picture; asked
+    for by the owner on 27 Nov 2026). In this order, each recorded with its reason:
+    a. variant code: the picture labelled with the product's code without its variant letter (SP/3C, a
+       corrugated-base plane: the plane labelled SP/3; KIT/HKP/4L/ST: KIT/HKP/4/ST);
+    b. the same set: the picture labelled for a set in the same table described the same way apart from its
+       number of pieces ("5 pc Bell Type Arch Punch Set - Packed in a vinyl pouch": the 7 pc set);
+    c. one table in its section: the largest picture printed anywhere in the product's section, beside its
+       table too, when that table is the only one in the section (the socket merchandiser, p141; two views
+       of the adjustable bevel, p230);
+    d. a family continued: on a page whose title says "(continued)", the clearly largest picture of the
+       family on the page where its title is printed (the hollow punch sets, p62: the hollow punch, p60);
+    e. the same table: the picture labelled for another product of the same table, the one with most of the
+       same printed columns ticked (the larger picture on a tie): a family picture of a related product.
+    Thin tools pictured upright (at least three times as tall as wide, 3000 pt2) count as pictures printed
+    above their table (the flexible extension, p144), and sets printed one under the other share the photo
+    under them (socket sets on rails, p152).
 9. Sets printed as tiles (rules 3.3.0; Workshop Tools CB-05 only): a set or kit printed as a tile ("HEX
    SOCKET SET / KIT/SKT/... / ORD NR. / BOX QTY.") takes the largest picture printed beside or under it,
    before the next tile of its column; a tile alone on its line may have its photo anywhere along it.
@@ -226,7 +242,8 @@ def table_views_picture(table_bbox: Optional[Box], cands: Sequence[Cand], tables
     for c in cands:
         cx, _ = _center(c)
         bottom = c["rect"][3]
-        if c["area"] < MIN_AREA or not tx0 <= cx <= tx1 or not ty0 - 150 <= bottom <= ty0 + 10 or _labelled(c, other_codes):
+        upright = c["height"] >= 3 * c["width"] and c["area"] >= 3000  # (rules 3.3.2: a thin tool pictured upright)
+        if (c["area"] < MIN_AREA and not upright) or not tx0 - 5 <= cx <= tx1 + 5 or not ty0 - 150 <= bottom <= ty0 + 10 or _labelled(c, other_codes):
             continue
         if any(t is not table_bbox and t[0] <= cx <= t[2] and bottom <= t[1] < ty0 - 5 for t in tables):
             continue  # another table is printed between the picture and this one
@@ -258,6 +275,96 @@ def tile_picture(tile_bbox: Box, tiles: Sequence[Box], cands: Sequence[Cand], pa
     c = max(pics, key=lambda c: c["area"])
     which = "the only picture" if len(pics) == 1 else f"the largest of {len(pics)} pictures"
     return c, f"{which} printed beside or under this set, before the next set of its column"
+
+
+def _set_phrase(row: Dict[str, Any]) -> str:
+    """The words a set's row prints before its code and sizes, without its number of pieces."""
+    text, code = row.get("source_row_text") or "", row.get("cat_nr") or ""
+    i = text.find(code) if code else -1
+    head = text[:i] if i > 0 else ""
+    head = re.split(r'\s[\d./-]+(?:"|”)', " " + head)[0]
+    head = re.sub(r"^\W*\d+\s*pcs?\b", "", head.strip(), flags=re.I)
+    return " ".join(re.sub(r"[^a-z]+", " ", head.lower()).split())
+
+
+def _variant_base(code: str) -> Optional[str]:
+    """The code without the variant letter of its last numbered part: SP/3C -> SP/3, KIT/HKP/4L/ST ->
+    KIT/HKP/4/ST, HPL/7A/BEL/ST -> HPL/7/BEL/ST. None when no part carries one."""
+    parts = code.split("/")
+    for k in range(len(parts) - 1, -1, -1):
+        m = re.fullmatch(r"(\d+(?:\.\d+)?)([A-Z]{1,2})", parts[k])
+        if m:
+            return "/".join(parts[:k] + [m.group(1)] + parts[k + 1:])
+    return None
+
+
+def last_resort_picture(row: Dict[str, Any], rows: Sequence[Dict[str, Any]], title: Optional[Dict[str, Any]],
+                        cands: Sequence[Cand], tables: Sequence[Box], titles: PageTitles, page_number: int,
+                        other_codes: Sequence[str], family_cands=None) -> Optional[Tuple[Cand, str]]:
+    """Rule 10 (rules 3.3.2, CB-05): a picture for a product no other rule found one for, with its reason."""
+    code = row.get("cat_nr") or ""
+    siblings = [r for r in rows if r is not row and r.get("table_bbox") == row.get("table_bbox") and r.get("cat_nr")]
+    labelled_for = lambda c_code: [c for c in cands if _labelled(c, [c_code])]
+    # a. variant code
+    base = _variant_base(code)
+    if base and base != code:
+        pics = labelled_for(base)
+        if pics:
+            c = max(pics, key=lambda c: c["area"])
+            return c, (f"picture labelled {base}, the same product without the variant letter of {code}; "
+                       "this variant is not pictured in the catalogue")
+    # b. the same set with another number of pieces
+    phrase = _set_phrase(row)
+    if phrase:
+        for s in siblings:
+            if _set_phrase(s) == phrase and labelled_for(s["cat_nr"]):
+                c = max(labelled_for(s["cat_nr"]), key=lambda c: c["area"])
+                return c, (f"picture labelled {s['cat_nr']}, the set printed in the same table as “{phrase}” with "
+                           "another number of pieces; this set is not pictured in the catalogue")
+    if title:
+        info = titles.page(page_number)
+        other_blocks = [b for b in (info[1] if info else []) if b["text"] != title["text"]]
+        # c. the only table of its section: the section's picture, also beside the table
+        in_section = lambda x, y: section_of_point(titles, page_number, x, y) == title["block"]
+        own_tables = {tuple(t) for t in tables if in_section(t[0] + 10, t[1] + 10)}
+        if title["rule"] in ("above", "page") and len(own_tables) == 1:
+            pics = [c for c in cands if MIN_AREA <= c["area"] < PAGE_SIZED and in_section(*_center(c))
+                    and not _labelled(c, other_codes) and not _touches_other_title(c, other_blocks)]
+            if pics:
+                c = max(pics, key=lambda c: c["area"])
+                which = "the only picture" if len(pics) == 1 else f"the largest of {len(pics)} pictures (views of the same product)"
+                return c, f"{which} printed in its section, under the title “{title['text']}”, whose only table is this product's"
+        # d. a family continued from an earlier page
+        m = re.fullmatch(r"(.+?)\s*\(continued\)", title["text"], re.I)
+        if m and family_cands is not None:
+            for back in range(1, 5):
+                n0 = page_number - back
+                info0 = titles.page(n0)
+                block = next((b for b in (info0[1] if info0 else []) if b["text"] == m.group(1)), None)
+                if not block:
+                    continue
+                key = (n0, round(block["x0"], 1), round(block["y0"], 1))
+                pics = [c for c in family_cands(n0) if MIN_AREA <= c["area"] < PAGE_SIZED
+                        and section_of_point(titles, n0, *_center(c)) == key and not _labelled(c, other_codes)]
+                chosen = _choose(pics)
+                if chosen:
+                    return chosen[0], (f"the picture of the “{m.group(1)}” family on PDF page {n0}, where its title is "
+                                       "printed; this product is not pictured on its own page")
+                break
+    # e. another product of the same table
+    ticks = lambda r: {k for k, v in (r.get("column_specs") or {}).items() if v in ("Yes", "✓")}
+    scored = []
+    for s in siblings:
+        pics = labelled_for(s["cat_nr"])
+        if pics:
+            c = max(pics, key=lambda c: c["area"])
+            scored.append((len(ticks(row) & ticks(s)), c["area"], s["cat_nr"], c))
+    if scored:
+        shared, _, sib, c = max(scored, key=lambda t: (t[0], t[1]))
+        why = f", with {shared} of the same printed columns ticked" if shared else ""
+        return c, (f"picture labelled {sib}, another product of the same table{why} (a related product: this one "
+                   "is not pictured in the catalogue)")
+    return None
 
 
 def section_picture(table_bbox: Optional[Box], title: Optional[Dict[str, Any]], cands: Sequence[Cand],

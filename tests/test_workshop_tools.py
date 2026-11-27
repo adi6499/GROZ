@@ -194,3 +194,22 @@ def test_products_printed_again_are_shown_once():
     left_out = workshop_repeats([precision, again, blade3, blade1, blade2, own])
     assert again in left_out and own not in left_out and precision not in left_out
     assert sum(1 for r in left_out if r["cat_nr"] == "BLD/KNV/5/ST") == 2  # the first printing (p218) is shown
+
+
+def test_last_resort_pictures_name_their_reason(page_products):
+    # Rules 3.3.2 (image_sections rule 10): the 17 products no other rule gave a picture, each with its reason.
+    expect = {
+        (100, "SP/3C"): ("xref3708", "picture labelled SP/3, the same product without the variant letter"),
+        (118, "KIT/HKP/4L/ST"): ("xref4066", "picture labelled KIT/HKP/4/ST, the same product without the variant letter"),
+        (62, "HPL/5/BEL/ST"): ("xref2854", "the set printed in the same table as “bell type arch punch set packed in a vinyl pouch”"),
+        (62, "HPL/16/ST"): ("xref2850", "the set printed in the same table as “punch set packed to a wooden box”"),
+        (62, "HPL/5/ST"): ("xref2818", "family on PDF page 60, where its title is printed"),
+        (141, "SKT/H/1-2/UG/ST50"): ("xref4770", "the only picture printed in its section, under the title “Socket Merchandiser”"),
+        (230, "AB/10"): ("xref7145", "views of the same product"),
+        (144, "FLEX/1-4/UG"): ("xref4942", "printed directly above this product's table"),
+        (152, "KIT/SKT/H/3-8/9LH/UG"): ("xref5311", "beside or under this set"),
+        (118, "HKP/01"): ("xref4066", "another product of the same table"),
+    }
+    for (page, code), (xref_part, why) in expect.items():
+        img = one(page_products(page), code).images[0]
+        assert xref_part in img.image_id and why in img.evidence and img.association_type == "product_family", code

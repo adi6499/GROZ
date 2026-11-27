@@ -13,8 +13,8 @@ from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, Edit
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor, table_cell_rects
-from .image_sections import (caption_picture, facing_right_picture, front_view_picture, main_section_picture,
-                             section_picture, table_views_picture, tile_picture)
+from .image_sections import (caption_picture, facing_right_picture, front_view_picture, last_resort_picture,
+                             main_section_picture, section_picture, table_views_picture, tile_picture)
 from .printed_titles import PageTitles, table_caption
 from .grid_tables import GRID_PDFS, GRID_TABLE_PDFS, grid_picture, printed_page_number, spec_key
 
@@ -394,7 +394,13 @@ class ProductBuilder:
                 if source_pdf == HAND_TOOL_PDF and row.get("tile") and row.get("table_bbox"):
                     # rules 3.3.0, image_sections rule 9: a set printed as a tile takes the photo beside it
                     tiles = [r2["table_bbox"] for r2 in ordering_rows if r2.get("tile") and r2.get("table_bbox")]
-                    pick = tile_picture(row["table_bbox"], tiles, candidate_images, page.rect.width, page.rect.height, others) or pick
+                    # (rules 3.3.2) sets printed one under the other share the photo under them: the codes of the
+                    # sets stacked with this one are not "another product" for it
+                    tx, ty = row["table_bbox"][0], row["table_bbox"][1]
+                    stacked = {r2.get("cat_nr") for r2 in ordering_rows if r2.get("tile") and r2.get("table_bbox")
+                               and abs(r2["table_bbox"][0] - tx) < 10 and abs(r2["table_bbox"][1] - ty) <= 60}
+                    pick = tile_picture(row["table_bbox"], tiles, candidate_images, page.rect.width, page.rect.height,
+                                        [c for c in others if c not in stacked]) or pick
                 elif source_pdf == HAND_TOOL_PDF and not pick:
                     # rules 3.3.0, image_sections rule 8 without a title: the photos printed over the table
                     pick = table_views_picture(row.get("table_bbox"), candidate_images,
@@ -425,6 +431,20 @@ class ProductBuilder:
                                            [c for c in page_codes if c not in own])
                 if nxt:
                     matched_images = [self.image_extractor.make_ref(nxt[0], "product_family", nxt[1], 0.7)]
+            # Rules 3.3.2 (Workshop Tools CB-05): a product still without a picture takes one by the last-resort
+            # rules (image_sections rule 10), each with its reason.
+            if source_pdf == HAND_TOOL_PDF and (not matched_images or matched_images[0].association_type == "unresolved"):
+                def family_cands(n0):
+                    if ("fam", n0) not in facing_cache:
+                        p0 = page.parent[n0 - 1]
+                        facing_cache[("fam", n0)] = self.image_extractor.group_upright_rows(
+                            p0, self.image_extractor.extract_page_product_images(p0, source_pdf, n0))
+                    return facing_cache[("fam", n0)]
+                own = [c for c in (cat_nr, model_code) if c]
+                last = last_resort_picture(row, ordering_rows, printed_title, candidate_images, page_tables, titles,
+                                           page_number, [c for c in page_codes if c not in own], family_cands)
+                if last:
+                    matched_images = [self.image_extractor.make_ref(last[0], "product_family", last[1], 0.7)]
             # Rules 3.1.0 (decision I, lighting catalogue): a worklight printed front and back takes its
             # front view, the picture printed with callouts naming its light (image_sections rule 5).
             # Tripod models keep their tripod picture.
