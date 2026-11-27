@@ -181007,26 +181007,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
-        "physical_page_number": 62,
+        "physical_page_number": 60,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 349.47,
+          "y0": 63.2,
+          "x1": 527.44,
+          "y1": 348.27,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "the picture of the “Hollow & Arch Punches” family on PDF page 60, where its title is printed; this product is not pictured on its own page",
+        "confidence": 0.7,
+        "caption_or_label": "Hollow Punches\nORDERING INFORMATION\nD"
       }
     ],
     "editorial_notes": [],
@@ -181059,26 +181059,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2854_47_126",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2854_47_126.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 62,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 47.69,
+          "y0": 126.02,
+          "x1": 274.97,
+          "y1": 290.62,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "picture labelled HPL/7/BEL/ST, the set printed in the same table as “bell type arch punch set packed in a vinyl pouch” with another number of pieces; this set is not pictured in the catalogue",
+        "confidence": 0.7,
+        "caption_or_label": "HPL/7/BEL/ST\nPunches (continued)"
       }
     ],
     "editorial_notes": [],
@@ -181111,26 +181111,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
-        "physical_page_number": 62,
+        "physical_page_number": 60,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 349.47,
+          "y0": 63.2,
+          "x1": 527.44,
+          "y1": 348.27,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "the picture of the “Hollow & Arch Punches” family on PDF page 60, where its title is printed; this product is not pictured on its own page",
+        "confidence": 0.7,
+        "caption_or_label": "Hollow Punches\nORDERING INFORMATION\nD"
       }
     ],
     "editorial_notes": [],
@@ -181163,26 +181163,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
-        "physical_page_number": 62,
+        "physical_page_number": 60,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 349.47,
+          "y0": 63.2,
+          "x1": 527.44,
+          "y1": 348.27,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "the picture of the “Hollow & Arch Punches” family on PDF page 60, where its title is printed; this product is not pictured on its own page",
+        "confidence": 0.7,
+        "caption_or_label": "Hollow Punches\nORDERING INFORMATION\nD"
       }
     ],
     "editorial_notes": [],
@@ -181265,26 +181265,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.7,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2854_47_126",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2854_47_126.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 62,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 47.69,
+          "y0": 126.02,
+          "x1": 274.97,
+          "y1": 290.62,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "picture labelled HPL/7/BEL/ST, the same product without the variant letter of HPL/7A/BEL/ST; this variant is not pictured in the catalogue",
+        "confidence": 0.7,
+        "caption_or_label": "HPL/7/BEL/ST\nPunches (continued)"
       }
     ],
     "editorial_notes": [],
@@ -181315,26 +181315,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.7,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p62_xref2850_331_83.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p60_xref2818_349_63.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
-        "physical_page_number": 62,
+        "physical_page_number": 60,
         "bounding_box": {
-          "x0": 331.97,
-          "y0": 83.54,
-          "x1": 552.24,
-          "y1": 307.34,
+          "x0": 349.47,
+          "y0": 63.2,
+          "x1": 527.44,
+          "y1": 348.27,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "NTS\nBOX\nHPL/14/ST"
+        "association_type": "product_family",
+        "evidence": "the picture of the “Hollow & Arch Punches” family on PDF page 60, where its title is printed; this product is not pictured on its own page",
+        "confidence": 0.7,
+        "caption_or_label": "Hollow Punches\nORDERING INFORMATION\nD"
       }
     ],
     "editorial_notes": [],
@@ -181415,7 +181415,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.7,
     "verification_status": "unverified",
     "images": [
       {
@@ -181431,9 +181431,9 @@
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
+        "association_type": "product_family",
+        "evidence": "picture labelled HPL/14/ST, the set printed in the same table as “punch set packed to a wooden box” with another number of pieces; this set is not pictured in the catalogue",
+        "confidence": 0.7,
         "caption_or_label": "NTS\nBOX\nHPL/14/ST"
       }
     ],
@@ -193208,26 +193208,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p100_xref3692_302_382",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p100_xref3692_302_382.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p100_xref3708_204_146",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p100_xref3708_204_146.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 100,
         "bounding_box": {
-          "x0": 302.19,
-          "y0": 382.95,
-          "x1": 581.61,
-          "y1": 542.04,
+          "x0": 204.1,
+          "y0": 146.18,
+          "x1": 341.77,
+          "y1": 237.37,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "JP/7"
+        "association_type": "product_family",
+        "evidence": "picture labelled SP/3, the same product without the variant letter of SP/3C; this variant is not pictured in the catalogue",
+        "confidence": 0.7,
+        "caption_or_label": "dards \nnd to \nd upto \nSP/4\nSP/3"
       }
     ],
     "editorial_notes": [],
@@ -193322,26 +193322,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p100_xref3692_302_382",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p100_xref3692_302_382.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p100_xref3704_381_142",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p100_xref3704_381_142.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 100,
         "bounding_box": {
-          "x0": 302.19,
-          "y0": 382.95,
-          "x1": 581.61,
-          "y1": 542.04,
+          "x0": 381.75,
+          "y0": 142.12,
+          "x1": 571.06,
+          "y1": 244.27,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "JP/7"
+        "association_type": "product_family",
+        "evidence": "picture labelled JP/5, the same product without the variant letter of JP/5C; this variant is not pictured in the catalogue",
+        "confidence": 0.7,
+        "caption_or_label": "FP/\nJP/5"
       }
     ],
     "editorial_notes": [],
@@ -197652,7 +197652,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -197668,8 +197668,8 @@
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "picture labelled KIT/HKP/4/ST, another product of the same table, with 4 of the same printed columns ticked (a related product: this one is not pictured in the catalogue)",
         "confidence": 0.7,
         "caption_or_label": "& \ns, \nKIT/HKP/4/ST\n6” (150mm)\n6” (150mm)\n4 piece set in Standard 6” (150 mm)"
       }
@@ -197707,7 +197707,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -197723,8 +197723,8 @@
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "picture labelled KIT/HKP/4/ST, the same product without the variant letter of KIT/HKP/4L/ST; this variant is not pictured in the catalogue",
         "confidence": 0.7,
         "caption_or_label": "& \ns, \nKIT/HKP/4/ST\n6” (150mm)\n6” (150mm)\n4 piece set in Standard 6” (150 mm)"
       }
@@ -197760,7 +197760,7 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
@@ -197776,8 +197776,8 @@
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "picture labelled KIT/HKP/4/ST, another product of the same table, with 1 of the same printed columns ticked (a related product: this one is not pictured in the catalogue)",
         "confidence": 0.7,
         "caption_or_label": "& \ns, \nKIT/HKP/4/ST\n6” (150mm)\n6” (150mm)\n4 piece set in Standard 6” (150 mm)"
       }
@@ -211702,26 +211702,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p141_xref4786_92_189",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p141_xref4786_92_189.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p141_xref4770_324_607",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p141_xref4770_324_607.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 141,
         "bounding_box": {
-          "x0": 92.36,
-          "y0": 189.19,
-          "x1": 180.15,
-          "y1": 293.45,
+          "x0": 324.71,
+          "y0": 607.31,
+          "x1": 545.82,
+          "y1": 794.41,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed in its section, under the title “Socket Merchandiser”, whose only table is this product's",
         "confidence": 0.7,
-        "caption_or_label": "CAT\nORD\nSIZE\nL\nD\nERING INFORMATION\nD\nL"
+        "caption_or_label": "info@groz-tools.com\n139\nBOX QTY.\n5\n1/2\" DRIVE"
       }
     ],
     "editorial_notes": [],
@@ -214388,26 +214388,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p144_xref4946_258_459",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p144_xref4946_258_459.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p144_xref4942_492_135",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p144_xref4942_492_135.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 144,
         "bounding_box": {
-          "x0": 258.79,
-          "y0": 459.7,
-          "x1": 595.28,
-          "y1": 733.26,
+          "x0": 492.98,
+          "y0": 135.52,
+          "x1": 532.96,
+          "y1": 350.24,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "andle\nLENGTH\nTORQUE\nBOX\nQTY.\nNCH)\n(MM)\n(NM)\n(FT-LB)\n-11/16\n500\n2000\n1475\n1\n6\n3/8\n670\n2515\n1855\n1\nm \n"
+        "association_type": "product_family",
+        "evidence": "the only picture printed directly above this product's table",
+        "confidence": 0.7,
+        "caption_or_label": "E\nBOX\nth & \non \nd"
       }
     ],
     "editorial_notes": [],
@@ -215747,26 +215747,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p152_xref5319_497_195",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p152_xref5319_497_195.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p152_xref5315_476_564",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p152_xref5315_476_564.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 152,
         "bounding_box": {
-          "x0": 497.31,
-          "y0": 195.17,
-          "x1": 571.22,
-          "y1": 394.18,
+          "x0": 476.56,
+          "y0": 564.88,
+          "x1": 559.73,
+          "y1": 740.31,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed beside or under this set, before the next set of its column",
         "confidence": 0.7,
-        "caption_or_label": "SET\n2/9L/UG\n0392\nKET SET\n1-2/9L/UG\n0395"
+        "caption_or_label": "PTION\nockets: \n2, 13, 14, 17, 19, 22, 24 mm \nSOCKET SET\nT/BH/1-2/11LH/UG\n. \t\n40396\nY.  \t 5"
       }
     ],
     "editorial_notes": [],
@@ -215909,26 +215909,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.8,
+    "confidence": 0.85,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p152_xref5299_126_202",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p152_xref5299_126_202.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p152_xref5311_307_548",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p152_xref5311_307_548.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 152,
         "bounding_box": {
-          "x0": 126.12,
-          "y0": 202.53,
-          "x1": 207.02,
-          "y1": 396.58,
+          "x0": 307.51,
+          "y0": 548.85,
+          "x1": 382.19,
+          "y1": 745.38,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
+        "association_type": "product_family",
+        "evidence": "the only picture printed beside or under this set, before the next set of its column",
         "confidence": 0.7,
-        "caption_or_label": "ION\nSockets :\nDESC\n8 pc\nH/1-4/9LH/UG\n40192\n 5\nKIT/S\nORD \nBOX Q\nBI-HE\nKIT/S\nORD \nBOX Q\n8\nPIEC"
+        "caption_or_label": "DES\n10 p\n8, 9\n1 pc\nON\nkets: \n3, 14, 17, 19 mm\net Handle\nBOX\nBI-H\nKIT/\nORD\nBOX\n5\nOCKET SET\nBH/3-8/9LH"
       }
     ],
     "editorial_notes": [],
@@ -236322,26 +236322,26 @@
       "page_height": 841.89
     },
     "extraction_method": "native_pdf",
-    "confidence": 0.65,
+    "confidence": 0.7,
     "verification_status": "unverified",
     "images": [
       {
-        "image_id": "hand_tool_catalogue_low_res_with_cover_p230_xref7157_238_480",
-        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p230_xref7157_238_480.png",
+        "image_id": "hand_tool_catalogue_low_res_with_cover_p230_xref7145_290_131",
+        "file_path": "images/hand_tool_catalogue_low_res_with_cover_p230_xref7145_290_131.png",
         "source_pdf": "Hand_Tool_Catalogue_low_res_with_cover.pdf",
         "physical_page_number": 230,
         "bounding_box": {
-          "x0": 238.12,
-          "y0": 480.84,
-          "x1": 595.28,
-          "y1": 694.96,
+          "x0": 290.45,
+          "y0": 131.64,
+          "x1": 460.33,
+          "y1": 433.91,
           "page_width": 595.28,
           "page_height": 841.89
         },
-        "association_type": "unresolved",
-        "evidence": "only page/region proximity links this image to the product",
-        "confidence": 0.8,
-        "caption_or_label": "r \nPosition the vee of the \ncentre square onto \nthe round face of the \nstock and scribe a line \nalon"
+        "association_type": "product_family",
+        "evidence": "the largest of 2 pictures (views of the same product) printed in its section, under the title “Adjustable Bevel”, whose only table is this product's",
+        "confidence": 0.7,
+        "caption_or_label": "BOX \nQTY.\n120\nC"
       }
     ],
     "editorial_notes": [],
