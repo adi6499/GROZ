@@ -9,7 +9,8 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 | batch_1 | Tool storage + lighting, all pages (includes the former pilot pages 6-10 and page 5, LED/695) | 150 | f2171dd | 2026-11-24T10:59:04+00:00 |
 | batch_2 | Estwing hammers + Precision measuring tools, all pages | 791 | 1dd3e42 | 2026-10-15T06:50:58+00:00 |
 | batch_3_fluid | Fluid Handling CC-07 (all 372 pages: lubrication, fuel & DEF, air handling) and FUEL CAT 400 (32 pages), read with the column reader of rules 3.0.x. Approved by the project owner on 21 Oct 2026 ("Extract all, preview"); the preview (output_preview_fluid/) was approved for the website the same day ("approve the preview and make it live"), so the batch is now part of the main dataset. | 2024 | e14eb51 | 2026-10-21T08:52:51+00:00 |
-| batch_3_striking | Workshop Tools CB-05 (the Hand Tool catalogue), its striking-tools pages with hammers, axes, mauls and mallets: physical pages 8-47 (printed 9-45; the chapter divider and introduction pages print no ordering table). Read with the column reader of rules 3.2.0. Approved by the project owner on 24 Nov 2026 to replace the Estwing hammers on the website ("replace the 131 Estwing hammers with GROZ hammers from CI 37"; "Yes, that's CI 37"; "do all things first and then push the codes one go"). | 183 | 74e8bf3 | 2026-11-24T11:10:51+00:00 |
+| batch_3_striking | Workshop Tools CB-05 (the Hand Tool catalogue), its striking-tools pages with hammers, axes, mauls and mallets: physical pages 8-47 (printed 9-45; the chapter divider and introduction pages print no ordering table). Read with the column reader of rules 3.2.0. Approved by the project owner on 24 Nov 2026 to replace the Estwing hammers on the website ("replace the 131 Estwing hammers with GROZ hammers from CI 37"; "Yes, that's CI 37"; "do all things first and then push the codes one go"). | 183 | 36f9d12 | 2026-11-27T09:48:10+00:00 |
+| batch_3_workshop | Workshop Tools CB-05 (the Hand Tool catalogue), the rest of its product pages after the hammers: physical pages 48-253 (printed 46-251): punches, chisels and bars, hacksaws, vices and clamps, woodworking tools, automotive tools, sockets, impact and ratchet wrenches, torque tools, tool storage, spanners and wrenches, pliers and cutters, measuring and marking, taps and dies, specialty hand tools. The numerical index (pages 254-257) is a checklist, not product pages. Read with rules 3.3.0. Approved by the project owner on 27 Nov 2026 to add GROZ's missing hand and mechanic's tools to the website, as Mitul's groz.tools plan asked ("Shall I start on the Workshop Tools CB-05 pages next ... as a preview for your OK?" - "well do one and push it once"). | 1663 | 36f9d12 | 2026-11-27T09:58:53+00:00 |
 
 ## Records
 
@@ -19,16 +20,66 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 | FUEL.pdf | 83 |
 | Fluid_Handling_Catalogue_spread.pdf | 1941 |
 | GROZ_LIGHTING_GL-10_1.pdf | 68 |
-| Hand_Tool_Catalogue_low_res_with_cover.pdf | 183 |
+| Hand_Tool_Catalogue_low_res_with_cover.pdf | 1846 |
 | Precision_Catalogue_CA_03.pdf | 660 |
 | tools_storage.pdf | 82 |
-| **Total** | **3148** |
+| **Total** | **4811** |
 
-- Verification status: 3137 unverified, 11 needs_review, **0 verified** (automatic verification is impossible by design).
-- ORD NR: 3137 records carry one, 3051 unique; 11 records have none; 83 ORD values are printed more than once.
-- Box quantity present on 2417 records; dimensions on 155; printed column-group label (variant_label) on 1092.
+- Verification status: 4800 unverified, 11 needs_review, **0 verified** (automatic verification is impossible by design).
+- ORD NR: 4800 records carry one, 4663 unique; 11 records have none; 134 ORD values are printed more than once.
+- Box quantity present on 4071 records; dimensions on 580; printed column-group label (variant_label) on 1232.
 - Records without ORD NR: LED/616/US (GROZ_LIGHTING_GL-10_1.pd p12); LED/616/EU (GROZ_LIGHTING_GL-10_1.pd p12); EPAX-336F (Estwing_Hammer_E-03_Inte p15); HRE/AW/10M/3-8/B (Fluid_Handling_Catalogue p204); HRE/AW/10M/3-8/N (Fluid_Handling_Catalogue p204); HRE/AW/15M/3-8/B (Fluid_Handling_Catalogue p204); HRE/AW/15M/3-8/N (Fluid_Handling_Catalogue p204); HRE/AW/10M/1-2/B (Fluid_Handling_Catalogue p204); HRE/AW/10M/1-2/N (Fluid_Handling_Catalogue p204); HRE/AW/15M/1-2/B (Fluid_Handling_Catalogue p204); HRE/AW/15M/1-2/N (Fluid_Handling_Catalogue p204)
+- ORD 01000 printed for: SS/A/2 (Precision_Catalogue_CA_0 p7); SS/A/2 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01001 printed for: SS/A/3 (Precision_Catalogue_CA_0 p7); SS/A/3 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01002 printed for: SS/A/4 (Precision_Catalogue_CA_0 p7); SS/A/4 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01003 printed for: SS/A/6 (Precision_Catalogue_CA_0 p7); SS/A/6 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01004 printed for: SS/A/8 (Precision_Catalogue_CA_0 p7); SS/A/8 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01005 printed for: SS/A/9 (Precision_Catalogue_CA_0 p7); SS/A/9 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01006 printed for: SS/A/10 (Precision_Catalogue_CA_0 p7); SS/A/10 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01007 printed for: SS/A/12 (Precision_Catalogue_CA_0 p7); SS/A/12 (Hand_Tool_Catalogue_low_ p226)
+- ORD 01011 printed for: SS/A/2-3-4-6/ST (Precision_Catalogue_CA_0 p7); SS/A/2-3-4-6/ST (Hand_Tool_Catalogue_low_ p226)
+- ORD 01012 printed for: SS/A/2-4-6/ST (Precision_Catalogue_CA_0 p7); SS/A/2-4-6/ST (Hand_Tool_Catalogue_low_ p226)
+- ORD 01400 printed for: ID/3 (Precision_Catalogue_CA_0 p10); ID/3 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01401 printed for: ID/4 (Precision_Catalogue_CA_0 p10); ID/4 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01402 printed for: ID/6 (Precision_Catalogue_CA_0 p10); ID/6 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01403 printed for: ID/8 (Precision_Catalogue_CA_0 p10); ID/8 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01404 printed for: ID/10 (Precision_Catalogue_CA_0 p10); ID/10 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01405 printed for: ID/12 (Precision_Catalogue_CA_0 p10); ID/12 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01410 printed for: OD/3 (Precision_Catalogue_CA_0 p10); OD/3 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01411 printed for: OD/4 (Precision_Catalogue_CA_0 p10); OD/4 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01412 printed for: OD/6 (Precision_Catalogue_CA_0 p10); OD/6 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01413 printed for: OD/8 (Precision_Catalogue_CA_0 p10); OD/8 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01414 printed for: OD/10 (Precision_Catalogue_CA_0 p10); OD/10 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01415 printed for: OD/12 (Precision_Catalogue_CA_0 p10); OD/12 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01420 printed for: DD/3 (Precision_Catalogue_CA_0 p10); DD/3 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01421 printed for: DD/4 (Precision_Catalogue_CA_0 p10); DD/4 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01422 printed for: DD/6 (Precision_Catalogue_CA_0 p10); DD/6 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01423 printed for: DD/8 (Precision_Catalogue_CA_0 p10); DD/8 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01424 printed for: DD/10 (Precision_Catalogue_CA_0 p10); DD/10 (Hand_Tool_Catalogue_low_ p224)
+- ORD 01425 printed for: DD/12 (Precision_Catalogue_CA_0 p10); DD/12 (Hand_Tool_Catalogue_low_ p224)
+- ORD 03521 printed for: CS/1 (Precision_Catalogue_CA_0 p15); CS/1 (Hand_Tool_Catalogue_low_ p230)
+- ORD 03522 printed for: CS/2 (Precision_Catalogue_CA_0 p15); CS/2 (Hand_Tool_Catalogue_low_ p230)
+- ORD 09110 printed for: DS/13-16 (Precision_Catalogue_CA_0 p66); DS/13-16 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09111 printed for: DS/0-1 (Precision_Catalogue_CA_0 p66); DS/0-1 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09112 printed for: DS/1-5-16 (Precision_Catalogue_CA_0 p66); DS/1-5-16 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09113 printed for: DS/1-1-2 (Precision_Catalogue_CA_0 p66); DS/1-1-2 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09114 printed for: DS/0-2 (Precision_Catalogue_CA_0 p66); DS/0-2 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09116 printed for: DS/2-1-2 (Precision_Catalogue_CA_0 p66); DS/2-1-2 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09220 printed for: ARWR/SG/00 (Precision_Catalogue_CA_0 p65); ARWR/SG/00 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09221 printed for: ARWR/SG/0 (Precision_Catalogue_CA_0 p65); ARWR/SG/0 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09222 printed for: ARWR/SG/5 (Precision_Catalogue_CA_0 p65); ARWR/SG/5 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09223 printed for: ARWR/SG/6 (Precision_Catalogue_CA_0 p65); ARWR/SG/6 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09224 printed for: ARWR/SG/7 (Precision_Catalogue_CA_0 p65); ARWR/SG/7 (Hand_Tool_Catalogue_low_ p233)
+- ORD 09225 printed for: ARWR/SG/8 (Precision_Catalogue_CA_0 p65); ARWR/SG/8 (Hand_Tool_Catalogue_low_ p233)
 - ORD 34575 printed for: KIT/HMID/3S/ST (Hand_Tool_Catalogue_low_ p22); KIT/HMR/SF/4ST (Hand_Tool_Catalogue_low_ p47)
+- ORD 35120 printed for: DPV/UG/75 (Precision_Catalogue_CA_0 p79); DPV/UG/75 (Hand_Tool_Catalogue_low_ p94)
+- ORD 35121 printed for: DPV/UG/100 (Precision_Catalogue_CA_0 p79); DPV/UG/100 (Hand_Tool_Catalogue_low_ p94)
+- ORD 35122 printed for: DPV/UG/125 (Precision_Catalogue_CA_0 p79); DPV/UG/125 (Hand_Tool_Catalogue_low_ p94)
+- ORD 35125 printed for: DPV/UG/3/100 (Precision_Catalogue_CA_0 p79); DPV/UG/3/100 (Hand_Tool_Catalogue_low_ p94)
+- ORD 39941 printed for: ISKT/H/1-2/22 (Hand_Tool_Catalogue_low_ p154); ISKT/H/1-2/24 (Hand_Tool_Catalogue_low_ p154)
+- ORD 40002 printed for: MTB/5 (tools_storage.pdf p20); MTB/5 (Hand_Tool_Catalogue_low_ p193)
+- ORD 40003 printed for: MTB/5T (tools_storage.pdf p20); MTB/5T (Hand_Tool_Catalogue_low_ p193)
+- ORD 40390 printed for: SKT/H/1-2/UG/ST50 (Hand_Tool_Catalogue_low_ p141); KIT/SKT/H/1-2/27/UG (Hand_Tool_Catalogue_low_ p151)
 - ORD 43509 printed for: HC/18/3/N (Fluid_Handling_Catalogue p53); HC/18/3/N (Fluid_Handling_Catalogue p59)
 - ORD 44030 printed for: RB/1 (Fluid_Handling_Catalogue p137); RB/1 (FUEL.pdf p13)
 - ORD 44031 printed for: RB/1H (Fluid_Handling_Catalogue p137); RB/1H (FUEL.pdf p13)
@@ -109,6 +160,7 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 - ORD 45911 printed for: FF/FFS/10-WB (Fluid_Handling_Catalogue p296); FF/FFS/10-WB (FUEL.pdf p29)
 - ORD 46990 printed for: BRL/G1-CL (Fluid_Handling_Catalogue p25); BRL/G1-CL (Fluid_Handling_Catalogue p37)
 - ORD 46991 printed for: BRL/G4-CL (Fluid_Handling_Catalogue p25); BRL/G4-CL (Fluid_Handling_Catalogue p37)
+- ORD 61511 printed for: BLD/KNV/5/ST (Hand_Tool_Catalogue_low_ p218); BLD/KNV/5/ST (Hand_Tool_Catalogue_low_ p220)
 - ORD 62263 printed for: ESH-630X/BR (Estwing_Hammer_E-03_Inte p5); SHID/6/30/BR (Hand_Tool_Catalogue_low_ p16)
 - ORD 62900 printed for: EMLTT/CH-25W (Estwing_Hammer_E-03_Inte p11); EMLTT/CH-45W (Estwing_Hammer_E-03_Inte p11)
 
@@ -116,11 +168,11 @@ All numbers in this file are computed from the JSON records and the source PDFs 
 
 | Association | Count |
 | --- | --- |
-| Direct product image | 259 |
-| Product-family image | 1954 |
-| Unresolved candidate | 820 |
-| Records with a direct or family image | 2213 |
-| Records with no image candidate | 115 |
+| Direct product image | 324 |
+| Product-family image | 3510 |
+| Unresolved candidate | 855 |
+| Records with a direct or family image | 3834 |
+| Records with no image candidate | 122 |
 
 Unresolved candidates are linked by page position only and must not be shown as the product's image.
 
@@ -232,9 +284,9 @@ Unresolved candidates are linked by page position only and must not be shown as 
 | Precision_Catalogue_CA_03.pdf | 88 | 660 | 660 | 0 | 0 | 0 | 634 indexed, 3 missing |
 | Fluid_Handling_Catalogue_spread.pdf | 372 | 1962 | 1933 | 29 | 0 | 20 | 1942 indexed, 49 missing |
 | FUEL.pdf | 32 | 93 | 83 | 10 | 0 | 0 | — |
-| Hand_Tool_Catalogue_low_res_with_cover.pdf | 40 | 183 | 183 | 0 | 0 | 0 | 1781 indexed, 12 missing |
+| Hand_Tool_Catalogue_low_res_with_cover.pdf | 246 | 1852 | 1845 | 7 | 0 | 0 | 1781 indexed, 29 missing |
 
-**Gate findings: 99**
+**Gate findings: 119**
 
 - Precision_Catalogue_CA_03.pdf: indexed ORD 01217 (index page ref 12) not in dataset (printed on physical pages none)
 - Precision_Catalogue_CA_03.pdf: indexed ORD 35044 (index page ref 75) not in dataset (printed on physical pages none)
@@ -323,6 +375,26 @@ Unresolved candidates are linked by page position only and must not be shown as 
 - FUEL.pdf p14: printed ORD not extracted: 44092
 - FUEL.pdf p28: printed ORD not extracted: 99999
 - FUEL.pdf p31: printed ORD not extracted: 15192, 15677
+- Hand_Tool_Catalogue_low_res_with_cover.pdf p86: printed ORD not extracted: 30473
+- Hand_Tool_Catalogue_low_res_with_cover.pdf p127: printed ORD not extracted: 10886, 18144, 29030, 45359
+- Hand_Tool_Catalogue_low_res_with_cover.pdf p132: printed ORD not extracted: 10000, 60900
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31754 (index page ref 204) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31755 (index page ref 204) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31818 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31819 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31820 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31821 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31822 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31823 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31824 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31868 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31869 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31870 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31871 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31872 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31873 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31874 (index page ref 200) not in dataset (printed on physical pages none)
+- Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 31950 (index page ref 203) not in dataset (printed on physical pages none)
 - Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 34553 (index page ref 9) not in dataset (printed on physical pages none)
 - Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 34564 (index page ref 11) not in dataset (printed on physical pages none)
 - Hand_Tool_Catalogue_low_res_with_cover.pdf: indexed ORD 34566 (index page ref 11) not in dataset (printed on physical pages none)

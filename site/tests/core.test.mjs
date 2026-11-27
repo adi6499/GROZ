@@ -209,8 +209,9 @@ test("quotation exports use the printed title", () => {
 test("real catalogue data: every product has a printed title with its source page", () => {
   const data = JSON.parse(readFileSync(new URL("../data/catalogue.json", import.meta.url), "utf8"));
   for (const p of data.products) {
-    if (!p.title && p.catalogue.pdf === "Fluid_Handling_Catalogue_spread.pdf") {
-      // CC-07: two product families start on the same page, so no title is chosen rather than a guess
+    if (!p.title && ["Fluid_Handling_Catalogue_spread.pdf", "Hand_Tool_Catalogue_low_res_with_cover.pdf"].includes(p.catalogue.pdf)) {
+      // CC-07: two product families start on the same page; Workshop Tools CB-05: a few sets and sockets
+      // print no title over their table (p130, p131, p141, p229): no title is chosen rather than a guess
       assert.equal(p.title_source, null);
       continue;
     }

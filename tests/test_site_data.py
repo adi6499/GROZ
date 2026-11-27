@@ -141,11 +141,12 @@ def test_rules_2_2_applied_nothing_is_withheld(dataset, site):
 
 
 def test_categories_follow_the_source_catalogue(source, site):
-    """One category per catalogue, except CC-07: the section of its contents a product's printed page is
-    in (and Battery Grease Guns for grease guns whose printed title names a battery)."""
+    """One category per catalogue, except CC-07 and Workshop Tools CB-05: the section (chapter) of its
+    contents a product's printed page is in (and Battery Grease Guns for grease guns whose printed title
+    names a battery)."""
     for r, p in zip(source, site["products"]):
         assert p["category"] == category_for(r, p["title"])
-        if r["source_pdf"] != "Fluid_Handling_Catalogue_spread.pdf":
+        if r["source_pdf"] not in ("Fluid_Handling_Catalogue_spread.pdf", "Hand_Tool_Catalogue_low_res_with_cover.pdf"):
             assert p["category"] == CATALOGUES[r["source_pdf"]]["category"]
     assert sum(c["records"] for c in site["categories"]) == len(source)
 
@@ -197,8 +198,9 @@ def test_every_display_title_is_printed_on_its_cited_page(site):
     words = lambda s: re.findall(r"[0-9a-z]+", s.lower().replace("’", "'"))
     pages = {}
     for p in site["products"]:
-        if not p["title"]:  # CC-07: two product families start on the same page, so no title is chosen
-            assert p["title_source"] is None and p["catalogue"]["pdf"] == "Fluid_Handling_Catalogue_spread.pdf"
+        if not p["title"]:  # CC-07: two families start on the same page; CB-05: no title printed over the table
+            assert p["title_source"] is None and p["catalogue"]["pdf"] in ("Fluid_Handling_Catalogue_spread.pdf",
+                                                                           "Hand_Tool_Catalogue_low_res_with_cover.pdf")
             continue
         assert p["title_source"]["rule"] in {"above", "page", "spread", "facing", "contents"}
         key = (p["catalogue"]["pdf"], p["title_source"]["pdf_page"])

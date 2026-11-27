@@ -91,7 +91,7 @@ Options: `--out DIR` (main dataset folder, default `output_v2`), `--allow-shrink
 
 Safe order: `batch batch_1` and `batch batch_2` (any order, independently) → `compare` → review.
 
-Pipeline version: `2.3.1` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.3.1 (15 Oct 2026): decision G (product pictures, 2.3.0) and decision H (clean pictures, 2.3.1), both approved by the owner. Earlier, 2.2.0 applied decisions A–F. Every changed value is listed in `review/applied/` (one folder per applied rules version).
+Pipeline version: `3.3.0` since 27 Nov 2026 (see the batch notes below for 3.x). Originally `2.3.1` (`backend/pipeline/runner.py`). Bump it whenever an extraction rule changes. The `output_v2` dataset was produced by rules version 2.3.1 (15 Oct 2026): decision G (product pictures, 2.3.0) and decision H (clean pictures, 2.3.1), both approved by the owner. Earlier, 2.2.0 applied decisions A–F. Every changed value is listed in `review/applied/` (one folder per applied rules version).
 
 ## Batches
 
@@ -101,10 +101,24 @@ Pipeline version: `2.3.1` (`backend/pipeline/runner.py`). Bump it whenever an ex
 | `batch_2` | `Estwing_Hammer_E-03_Interactive_1.pdf` + `Precision_Catalogue_CA_03.pdf`, all pages | approved |
 | `batch_3_pilot` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` pages 8, 11, 12, 53, 224 → `output_pilot_handtool/` | approved and run 17 Oct 2026 (73 records); its proposed fixes await approval |
 | `batch_3_fluid` | `Fluid_Handling_Catalogue_spread.pdf` (CC-07, all 372 pages) + `FUEL.pdf` (CAT 400, 32 pages) | approved 21 Oct 2026 ("extract all, preview"); its preview was approved for the website the same day ("approve the preview and make it live"); 2024 records in `output_v2` |
-| `batch_3_striking` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` (printed cover: GROZ Workshop Tools CB-05; the owner calls it CI 37) pages 8–47: hammers, axes, mauls and mallets | approved 24 Nov 2026 to replace the Estwing hammers on the website; 183 records in `output_v2` (rules 3.2.0) |
+| `batch_3_striking` | `Hand_Tool_Catalogue_low_res_with_cover.pdf` (printed cover: GROZ Workshop Tools CB-05; the owner calls it CI 37) pages 8–47: hammers, axes, mauls and mallets | approved 24 Nov 2026 to replace the Estwing hammers on the website; 183 records in `output_v2` (re-read with rules 3.3.0 on 27 Nov 2026: only its two hammer sets changed, for the better) |
+| `batch_3_workshop` | the same catalogue, pages 48–253: punches, chisels and bars, hacksaws, vices and clamps, woodworking tools, automotive tools, sockets, impact and ratchet wrenches, torque tools, tool storage, spanners and wrenches, pliers and cutters, measuring and marking, taps and dies, specialty hand tools | approved 27 Nov 2026 ("well do one and push it once"; Mitul's plan asked for GROZ's missing hand and mechanic's tools); 1663 records in `output_v2` (rules 3.3.0) |
 
 Supplementary sources (no product records by default; used later for images, features and descriptions; genuinely new products or specifications are flagged for review): `Workshop_mini-compress.pdf`, `Fluid_Handling_mini_min_2.pdf`. `groz-lubrication-equipments.pdf` prints no CAT or ORD numbers at all: it is shown in the flipbook only, never a source of product records.
-Not yet scheduled: the rest of the Hand Tool catalogue (punches, chisels and bars from page 48 on, hacksaws, vices, woodworking tools, …).
+Every product page of the Hand Tool catalogue (Workshop Tools CB-05) is now extracted; its index (pages 254–257) and covers stay closed.
+
+### `batch_3_workshop`: the rest of Workshop Tools CB-05 (rules 3.3.0, 27 Nov 2026)
+
+- **Source:** the printed catalogue only (the owner's rule: the printed GROZ catalogues are the source of truth), not groz-tools.com. Physical pages 48–253 (printed 46–251).
+- **Completeness:** every five-digit order number printed on these pages is read, and none is added (`tests/test_workshop_tools.py`), except seven numbers that are not order numbers: the bottle jacks' lifting capacities in kg (p127: 10886, 18144, 29030, 45359), "IEC 60900" and "10000 Volt" (p132), and the label printed on a blade in a photo (p86: 30473; the table lists the blades 30460–30483). The catalogue prints two order numbers twice: 39941 for ISKT/H/1-2/22 and ISKT/H/1-2/24 (p154), and 40390 for SKT/H/1-2/UG/ST50 (p141) and KIT/SKT/H/1-2/27/UG (p151). Both are kept as printed; confirmation from GROZ is needed. The catalogue's back index lists 13 more order numbers for these pages (printed pages 200, 203 and 204: 31754, 31755, 31818–31824, 31868–31874, 31950) that are printed on no page; they are not invented.
+- **New in the reader (rules 3.3.0, this catalogue only; CC-07, CAT 400 and the hammer pages re-read field for field: no difference except the two hammer sets on p28, whose sentence "3 pc set Includes sizes - 24, 32, 48oz." is now their description instead of being cut into head-weight cells):**
+  - sets and kits printed as tiles: code, the set's name, "ORD NR.", "BOX QTY." and the DESCRIPTION box with what the set contains (one item per "N pcs …" entry; boxes printed side by side or in two columns read separately);
+  - metric and imperial tables printed side by side on one header line (p200): each starts where its codes start;
+  - tall rows (tap & die sets, p235): a set's CONSTITUENTS run over many lines with its code and order number centred in the row;
+  - set rows: "5 pc set - packed in a vinyl pouch" with the sizes printed across the value columns (1/4" over (6mm)), or a sentence "3 Pc Set: 12" (300 mm), …" in a length column, are the row's description, never measurements;
+  - words printed on past a text column ("Black powder coated frame with red handle") stay in it; column names are tidied ("( MM)", "(MM" and the printed "(MM)S" read "(MM)"; "(NM)" printed beside "TORQUE RANGE" over "(FT-LB)" "(IN-LB)" is "TORQUE RANGE (NM)"; BOX QTY. heads no column).
+- **Pictures:** the rules of batch_3_striking, plus (image_sections rules 7–9): several photos printed above a product's own table are views of it and the largest is used (each socket table prints two; tables side by side keep their own); a set printed as a tile takes the photo beside or under it; the "clearly largest picture" rule only takes a picture printed above the table (never the "Professional Quality SOCKETS" photo beside one); a page-sized chapter divider is never a product photo. Checked on sheets of every page with a doubtful rule. 42 products keep no picture (thin saw blades and rules, a few sets without a photo of their own) rather than a wrong one.
+- **Website:** the catalogue's chapters are the categories (`HT_SECTIONS` in `catalogue_export.py`), filed under GROZ's own menu (`GROUPS` in `core.mjs`). Products the catalogue prints again are shown once (`workshop_repeats`): 46 precision tools and 2 tool boxes also printed in Precision CA-03 and Tool Storage keep their existing product pages, and a knife's blade refill printed under two knives on p218 (one record) and again on p220 is shown once, from p218.
 
 ### `batch_3_striking`: the GROZ hammers (rules 3.2.0, 24 Nov 2026)
 
@@ -266,8 +280,9 @@ Then open http://127.0.0.1:8962/site/. The server listens on this computer only 
   - The site uses GROZ's own top-level categories, in the order of the main menu on groz-tools.com (India site, checked 17 Oct 2026): Lubrication, Fuel & DEF, Air Tools, Lighting, Hand Tools, Mechanic's Tools, Power Tools, New & Exciting.
   - The catalogue categories sit where GROZ's menu puts them:
     - LED Worklights under Lighting;
-    - Striking Tools (hammers) under Hand Tools;
-    - Tool Storage (rolling tool cabinets, tool boxes) under Mechanic's Tools.
+    - Striking Tools (hammers, punches, chisels, bars) and the other hand tool chapters of Workshop Tools CB-05 (hacksaws, vices & clamps, woodworking tools, spanners & wrenches, pliers & cutters, measuring & marking, taps & dies, specialty hand tools) under Hand Tools;
+    - Tool Storage (rolling tool cabinets, tool boxes, tool kits), Sockets & Accessories, Torque Tools and Automotive Tools & Accessories under Mechanic's Tools;
+    - Impact & Ratchet Wrenches (air tools) under Air Tools.
   - GROZ's menu has no place for precision measuring tools: its site search finds no micrometers, calipers, scribers or verniers. So Precision Tools follows the eight as a category of its own (owner's choice, 17 Oct 2026).
   - They appear as category tiles, in a Categories menu in the header and in the phone menu, and as the Category filter. Chips and the details heading show them too, for example "Mechanic's Tools › Tool Storage". Searching a category name finds its products.
   - Since 21 Oct 2026, Lubrication, Fuel & DEF, Air Tools and Power Tools show the products of the Fluid Handling CC-07 and Fuel CAT 400 catalogues (`batch_3_fluid`). Only New & Exciting says "Coming soon": there is no catalogue for it. Its description lists what GROZ's menu shows under it. No products are made up for it.

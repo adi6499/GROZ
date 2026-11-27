@@ -5457,11 +5457,8 @@
     "description": null,
     "features": [],
     "specifications": {
-      "HEAD_WEIGHT_(GMS)": "5 pc set",
-      "HEAD_WEIGHT_(OZ)": "Includes sizes",
-      "OVERALL_LENGTH_(INCH)": "- 8, 12,16,24, 32",
-      "OVERALL_LENGTH_(MM)": "oz.",
-      "table_section": "SETS"
+      "table_section": "SETS",
+      "table_description": "5 pc set Includes sizes - 8, 12,16,24, 32 oz."
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
@@ -5513,10 +5510,8 @@
     "description": null,
     "features": [],
     "specifications": {
-      "HEAD_WEIGHT_(GMS)": "3 pc set",
-      "HEAD_WEIGHT_(OZ)": "Includes sizes",
-      "OVERALL_LENGTH_(INCH)": "- 24, 32, 48oz.",
-      "table_section": "SETS"
+      "table_section": "SETS",
+      "table_description": "3 pc set Includes sizes - 24, 32, 48oz."
     },
     "dimensions_inch": null,
     "dimensions_mm": null,
