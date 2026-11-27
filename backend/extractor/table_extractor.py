@@ -125,6 +125,16 @@ class TableExtractor:
             rows += extract_tile_rows(page, {r["ord_nr"] for r in rows if r.get("ord_nr")})
             if source_pdf in SET_TILE_PDFS:  # sets and kits printed as tiles (rules 3.3.0)
                 rows += extract_set_tiles(page, {r["ord_nr"] for r in rows if r.get("ord_nr")})
+                # The same product printed twice on one page (a knife's spare blades listed under two knives,
+                # CB-05 p218) is one product: one record, from the printing with more of its cells read.
+                kept: Dict[Any, Dict[str, Any]] = {}
+                filled = lambda r: (sum(1 for k in ("box_qty", "description", "dimensions_inch", "dimensions_mm") if r.get(k))
+                                    + len(r.get("column_specs") or {}))
+                for r in rows:
+                    key = (r.get("cat_nr"), r.get("ord_nr"))
+                    if key not in kept or filled(r) > filled(kept[key]):
+                        kept[key] = r
+                rows = [r for r in rows if kept.get((r.get("cat_nr"), r.get("ord_nr"))) is r]
             for row in rows:
                 row["source_pdf"] = source_pdf
                 row["physical_page_number"] = page_number

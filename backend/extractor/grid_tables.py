@@ -596,7 +596,8 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
             if not text or text in DASHES:
                 continue
             n = _norm_label(col["label"])
-            if n in ("BOXQTY", "QTY", "PACKQTY"):
+            # (rules 3.3.0, CB-05: a few tables print the heading "BOX" with its "QTY." out of line: p87, p218)
+            if n in ("BOXQTY", "QTY", "PACKQTY") or (b.get("phrase_rows") and n == "BOX"):
                 if re.fullmatch(r"\d{1,5}", text):
                     box_qty = int(text)
                 continue
