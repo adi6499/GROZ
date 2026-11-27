@@ -34,10 +34,12 @@ export const GROUPS = [
   // The data categories are the sections of GROZ's Fluid Handling CC-07 and Fuel CAT 400 catalogues.
   { name: "Lubrication", art: "grease", categories: ["Greasing Equipment", "Oiling Equipment", "Hose Reels", "Waste Oil Handling", "Drum Handling"], range: "Grease, oil and waste-oil handling, drum handling & hose reels" },
   { name: "Fuel & DEF", art: "fuel", categories: ["Fuel & DEF Handling"], range: "Fuel and DEF pumps, meters, nozzles & specialty pumps" },
-  { name: "Air Tools", art: "air", categories: ["Air Handling"], range: "Impact wrenches & ratchets, blow guns & air control units" },
+  { name: "Air Tools", art: "air", categories: ["Air Handling", "Impact & Ratchet Wrenches"], range: "Impact wrenches & ratchets, blow guns & air control units" },
   { name: "Lighting", art: "light", categories: ["LED Worklights"] },
-  { name: "Hand Tools", art: "sledge", categories: ["Striking Tools"] },
-  { name: "Mechanic's Tools", art: "storage", categories: ["Tool Storage"] },
+  // Workshop Tools CB-05 chapters (27 Nov 2026), filed where groz-tools.com files them.
+  { name: "Hand Tools", art: "sledge", categories: ["Striking Tools", "Hacksaw Frames & Blades", "Vices & Clamps", "Woodworking Tools",
+    "Spanners & Wrenches", "Pliers & Cutters", "Measuring & Marking", "Taps, Dies & Holders", "Specialty Hand Tools"] },
+  { name: "Mechanic's Tools", art: "storage", categories: ["Tool Storage", "Sockets & Accessories", "Torque Tools", "Automotive Tools & Accessories"] },
   { name: "Power Tools", art: "drill", categories: ["Battery Grease Guns"], range: "Cordless impact wrenches, drill drivers & grease guns" },
   { name: "New & Exciting", art: "spark", categories: [], range: "GROZ's newest products" },
   { name: "Precision Tools", art: "measure", categories: ["Precision Tools"] },

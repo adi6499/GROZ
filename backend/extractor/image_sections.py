@@ -28,7 +28,17 @@ picture: it shows the product family of the section, not necessarily this exact 
    facing right-hand page, when that page prints no title of its own.
 7. Main picture (rules 3.2.0; Workshop Tools CB-05 only): that catalogue pictures each product family large
    under its title; a smaller photo printed beside the table (the tool in use, a detail) never replaces the
-   clearly largest picture of the product's section.
+   clearly largest picture of the product's section. Since rules 3.3.0 that largest picture must be printed
+   above the product's table: a promotional photo printed beside the table ("Professional Quality SOCKETS",
+   p139) or below it (a socket set in use, p140) is never the family's picture.
+8. Views of one product (rules 3.3.0; Workshop Tools CB-05 only): when several pictures are printed
+   directly above a product's table and none is clearly the largest, they show the same product from
+   different sides (each socket table prints a side view and an angled view): the largest of those printed
+   over the product's own table is used (a hex and a bi-hex socket table printed side by side each keep
+   their own photos). This also holds on a page whose title is printed further down (p141).
+9. Sets printed as tiles (rules 3.3.0; Workshop Tools CB-05 only): a set or kit printed as a tile ("HEX
+   SOCKET SET / KIT/SKT/... / ORD NR. / BOX QTY.") takes the largest picture printed beside or under it,
+   before the next tile of its column; a tile alone on its line may have its photo anywhere along it.
 
 A picture is never used when it is labelled for a product outside this table, or when another
 section's title is printed on or against it. Anything ambiguous stays unconfirmed.
@@ -42,6 +52,7 @@ from .printed_titles import PageTitles, section_of_point
 
 DOMINANT = 2.0      # the largest picture must be at least this many times the area of every other
 MIN_AREA = 6000     # pt²: smaller pictures are icons, badges or usage thumbnails
+PAGE_SIZED = 250000  # pt²: about half an A4 page or more: a chapter divider photo (rules 3.3.0)
 
 Cand = Dict[str, Any]
 Box = Sequence[float]
@@ -160,7 +171,8 @@ def front_view_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]], 
 
 
 def main_section_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]], cands: Sequence[Cand],
-                         titles: PageTitles, page_number: int, other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+                         titles: PageTitles, page_number: int, other_codes: Sequence[str],
+                         table_bbox: Optional[Box] = None) -> Optional[Tuple[Cand, str]]:
     """Rule 7 (rules 3.2.0; Workshop Tools CB-05 only): the catalogue pictures each product family large
     under its title; smaller photos on the page show details or the tool in use. When the picture chosen
     by the rules above is not the clearly largest picture printed in the product's section (DOMINANT), the
@@ -172,6 +184,8 @@ def main_section_picture(chosen: Optional[Cand], title: Optional[Dict[str, Any]]
     pics = [c for c in cands if c["area"] >= MIN_AREA and not _touches_other_title(c, other_blocks)
             and not _labelled(c, other_codes) and section_of_point(titles, page_number, *_center(c)) == title["block"]]
     best = _choose(pics)
+    if best and table_bbox is not None and best[0]["rect"][3] > table_bbox[1] + 10:
+        return None  # rules 3.3.0: only a picture printed above the product's table, not beside or below it
     if not best or best[0] is chosen:
         return None
     c, n = best
@@ -189,7 +203,8 @@ def facing_right_picture(title: Optional[Dict[str, Any]], next_cands: Sequence[C
     info = titles.page(page_number + 1)
     if not info or info[1]:
         return None
-    pics = [c for c in next_cands if c["area"] >= MIN_AREA and not _labelled(c, other_codes)]
+    # (rules 3.3.0: a picture covering most of the page is a chapter divider, never a product's photo)
+    pics = [c for c in next_cands if c["area"] >= MIN_AREA and not _labelled(c, other_codes) and c["area"] < PAGE_SIZED]
     chosen = _choose(pics)
     if not chosen:
         return None
@@ -199,10 +214,56 @@ def facing_right_picture(title: Optional[Dict[str, Any]], next_cands: Sequence[C
                f"(PDF page {page_number + 1}), which prints no title of its own")
 
 
+def table_views_picture(table_bbox: Optional[Box], cands: Sequence[Cand], tables: Sequence[Box],
+                        other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+    """Rule 8 without a title (rules 3.3.0, CB-05): the largest picture printed directly above the product's
+    own table (its centre over the table, its bottom within 150 pt above the table's top, no other table in
+    between), not labelled for another product. Else None."""
+    if not table_bbox:
+        return None
+    tx0, ty0, tx1, _ = table_bbox
+    pics = []
+    for c in cands:
+        cx, _ = _center(c)
+        bottom = c["rect"][3]
+        if c["area"] < MIN_AREA or not tx0 <= cx <= tx1 or not ty0 - 150 <= bottom <= ty0 + 10 or _labelled(c, other_codes):
+            continue
+        if any(t is not table_bbox and t[0] <= cx <= t[2] and bottom <= t[1] < ty0 - 5 for t in tables):
+            continue  # another table is printed between the picture and this one
+        pics.append(c)
+    if not pics:
+        return None
+    c = max(pics, key=lambda c: c["area"])
+    which = "the only picture" if len(pics) == 1 else f"the largest of {len(pics)} pictures"
+    return c, f"{which} printed directly above this product's table"
+
+
+def tile_picture(tile_bbox: Box, tiles: Sequence[Box], cands: Sequence[Cand], page_width: float, page_height: float,
+                 other_codes: Sequence[str]) -> Optional[Tuple[Cand, str]]:
+    """Rule 9 (rules 3.3.0, CB-05): the largest picture printed beside or under a set printed as a tile, before
+    the next tile of its column (a tile alone on its line: anywhere along its band). Else None."""
+    x0, y0, x1, _ = tile_bbox
+    same_line = [t for t in tiles if t is not tile_bbox and abs(t[1] - y0) < 6]
+    below = [t[1] for t in tiles if t is not tile_bbox and t[1] > y0 + 60 and (abs(t[0] - x0) < 10 or not same_line)]
+    y_end = min(below) if below else page_height - 40
+    in_band = lambda c, lo, hi: (c["area"] >= 2500 and lo <= _center(c)[0] <= hi and y0 - 30 <= _center(c)[1] < y_end
+                                 and not _labelled(c, other_codes))
+    pics = [c for c in cands if in_band(c, x0 - 10, x1 + 10)] if same_line else [c for c in cands if in_band(c, 0, page_width)]
+    if not pics and same_line:
+        # tiles printed side by side with one photo to their right (a hex and a bi-hex set, p149, p151)
+        right_end = max(t[2] for t in same_line + [tile_bbox])
+        pics = [c for c in cands if in_band(c, right_end - 10, page_width)]
+    if not pics:
+        return None
+    c = max(pics, key=lambda c: c["area"])
+    which = "the only picture" if len(pics) == 1 else f"the largest of {len(pics)} pictures"
+    return c, f"{which} printed beside or under this set, before the next set of its column"
+
+
 def section_picture(table_bbox: Optional[Box], title: Optional[Dict[str, Any]], cands: Sequence[Cand],
                     tables: Sequence[Box], titles: PageTitles, page_number: int,
                     own_codes: Sequence[str], sibling_codes: Sequence[str], other_codes: Sequence[str],
-                    facing_cands: Optional[Sequence[Cand]] = None) -> Optional[Tuple[Cand, str]]:
+                    facing_cands: Optional[Sequence[Cand]] = None, views: bool = False) -> Optional[Tuple[Cand, str]]:
     """The section picture for a product's table, with the evidence sentence; None if ambiguous."""
     if not title or not table_bbox:
         return None
@@ -246,6 +307,12 @@ def section_picture(table_bbox: Optional[Box], title: Optional[Dict[str, Any]], 
             which = "the only picture" if n == 1 else f"the largest of {n} pictures"
             unlabelled = " not labelled for another product" if excluded else ""
             return c, f"{which}{unlabelled} {where}, under the title “{name}”"
+        if pool and views and pool is direct:
+            # rule 8 (rules 3.3.0, CB-05): several views of the product printed right above its table
+            own = [c for c in pool if table_bbox[0] <= _center(c)[0] <= table_bbox[2]] or pool
+            c = max(own, key=lambda c: c["area"])
+            return c, (f"the largest of {len(own)} pictures printed directly above this product's table "
+                       f"(views of the same product), under the title “{name}”")
         if pool:
             return None  # pictures exist but none is clearly the one: stay unconfirmed
     if sibling:

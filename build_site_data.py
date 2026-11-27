@@ -33,7 +33,8 @@ def main() -> int:
     m = data["meta"]
     print(f"{SITE_DATA}: {m['records']} products ({m['with_confirmed_image']} with a confirmed image, "
           f"{m['verified']} verified, {m['fields_under_review']} fields withheld as under review; "
-          f"{m['fuel_duplicates_left_out']} FUEL CAT 400 products also in CC-07 left out)")
+          f"{m['fuel_duplicates_left_out']} FUEL CAT 400 products also in CC-07 left out, "
+          f"{m['workshop_repeats_left_out']} Workshop Tools CB-05 products shown once)")
     print(f"Display titles by rule: {m['titles_by_rule']}")
     print(f"{TITLE_REVIEW}: {n} products whose display title differs from the extracted heading "
           f"({m['heading_relations']})")

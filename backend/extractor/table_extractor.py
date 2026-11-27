@@ -22,7 +22,7 @@ from typing import List, Dict, Any, Optional, Sequence
 import pymupdf
 import re
 
-from .grid_tables import GRID_TABLE_PDFS, extract_grid_rows, extract_tile_rows
+from .grid_tables import GRID_TABLE_PDFS, SET_TILE_PDFS, extract_grid_rows, extract_set_tiles, extract_tile_rows
 
 _LEAD_GLYPHS = re.compile(r'^[^A-Za-z0-9]+')
 _ORD_WORD = re.compile(r'^\d{5}$')
@@ -121,8 +121,10 @@ class TableExtractor:
         # Fluid Handling CC-07 and FUEL CAT 400 (rules 3.0.0) and Workshop Tools CB-05 (rules 3.2.0): their
         # tables are read column by column (grid_tables.py), then products printed as tiles outside any table.
         if source_pdf in GRID_TABLE_PDFS:
-            rows = extract_grid_rows(page)
+            rows = extract_grid_rows(page, phrase_rows=source_pdf in SET_TILE_PDFS)
             rows += extract_tile_rows(page, {r["ord_nr"] for r in rows if r.get("ord_nr")})
+            if source_pdf in SET_TILE_PDFS:  # sets and kits printed as tiles (rules 3.3.0)
+                rows += extract_set_tiles(page, {r["ord_nr"] for r in rows if r.get("ord_nr")})
             for row in rows:
                 row["source_pdf"] = source_pdf
                 row["physical_page_number"] = page_number

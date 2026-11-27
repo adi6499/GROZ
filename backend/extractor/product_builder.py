@@ -13,7 +13,8 @@ from ..validator.schema import ProductRecord, BoundingBox, ProductImageRef, Edit
 from ..validator.confidence import calculate_product_confidence, determine_initial_status
 from .table_extractor import TableExtractor
 from .image_extractor import ImageExtractor, table_cell_rects
-from .image_sections import caption_picture, facing_right_picture, front_view_picture, main_section_picture, section_picture
+from .image_sections import (caption_picture, facing_right_picture, front_view_picture, main_section_picture,
+                             section_picture, table_views_picture, tile_picture)
 from .printed_titles import PageTitles, table_caption
 from .grid_tables import GRID_PDFS, GRID_TABLE_PDFS, grid_picture, printed_page_number, spec_key
 
@@ -385,7 +386,17 @@ class ProductBuilder:
                 pick = caption_picture(candidate_images, caption, page_words, row.get("table_bbox")) or section_picture(
                     row.get("table_bbox"), printed_title, candidate_images, page_tables, titles, page_number,
                     own, siblings, others,
-                    facing_cands=facing_candidates() if printed_title and printed_title["rule"] == "facing" else None)
+                    facing_cands=facing_candidates() if printed_title and printed_title["rule"] == "facing" else None,
+                    views=source_pdf == HAND_TOOL_PDF)
+                if source_pdf == HAND_TOOL_PDF and row.get("tile") and row.get("table_bbox"):
+                    # rules 3.3.0, image_sections rule 9: a set printed as a tile takes the photo beside it
+                    tiles = [r2["table_bbox"] for r2 in ordering_rows if r2.get("tile") and r2.get("table_bbox")]
+                    pick = tile_picture(row["table_bbox"], tiles, candidate_images, page.rect.width, page.rect.height, others) or pick
+                elif source_pdf == HAND_TOOL_PDF and not pick:
+                    # rules 3.3.0, image_sections rule 8 without a title: the photos printed over the table
+                    pick = table_views_picture(row.get("table_bbox"), candidate_images,
+                                               [r2["table_bbox"] for r2 in ordering_rows if r2.get("table_bbox") and not r2.get("tile")],
+                                               others)
                 if pick:
                     # Same strength (0.7) as the layout rule these replace: family evidence that
                     # counts toward the record's confidence (validator/confidence.py).
@@ -396,7 +407,7 @@ class ProductBuilder:
                 chosen = next((c for c in candidate_images if c["crop_filename"].rsplit(".", 1)[0] == matched_images[0].image_id), None)
                 own = [c for c in (cat_nr, model_code) if c]
                 main = main_section_picture(chosen, printed_title, candidate_images, titles, page_number,
-                                            [c for c in page_codes if c not in own])
+                                            [c for c in page_codes if c not in own], table_bbox=row.get("table_bbox"))
                 if main:
                     matched_images = [self.image_extractor.make_ref(main[0], "product_family", main[1], 0.7)]
             # Rules 3.2.0 (Workshop Tools CB-05): a left-hand page with the title and table but no picture

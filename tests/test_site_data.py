@@ -10,7 +10,7 @@ import pymupdf
 import pytest
 
 from backend.site.catalogue_export import (CATALOGUES, DATASET, LEFT_OUT, SITE_DATA, TITLE_REVIEW, build, category_for, display_methods,
-                                           export_record, fuel_duplicates, heading_text, load_pending_corrections,
+                                           export_record, fuel_duplicates, workshop_repeats, heading_text, load_pending_corrections,
                                            title_review_rows)
 from backend.site.titles import relation
 
@@ -28,7 +28,9 @@ def source(dataset):
     (Estwing, replaced by GROZ's own hammers on 24 Nov 2026)."""
     shown = [r for r in dataset if r["source_pdf"] not in LEFT_OUT]
     dups = {id(r) for r in fuel_duplicates(shown)}
-    return [r for r in shown if id(r) not in dups]
+    shown = [r for r in shown if id(r) not in dups]
+    repeats = {id(r) for r in workshop_repeats(shown)}  # Workshop Tools CB-05 products shown once
+    return [r for r in shown if id(r) not in repeats]
 
 
 @pytest.fixture(scope="module")
@@ -48,7 +50,8 @@ def test_only_estwing_and_fuel_cat_400_duplicates_of_cc07_products_are_left_out(
     assert not any(p["catalogue"]["pdf"] in LEFT_OUT for p in site["products"])
     assert not any(c["pdf"] in LEFT_OUT for c in site["catalogues"])
     left_out = fuel_duplicates(dataset)
-    assert len(dataset) - len(estwing) - len(source) == len(left_out) == site["meta"]["fuel_duplicates_left_out"] == 73
+    repeats = site["meta"]["workshop_repeats_left_out"]
+    assert len(dataset) - len(estwing) - len(source) - repeats == len(left_out) == site["meta"]["fuel_duplicates_left_out"] == 73
     cc07 = [r for r in dataset if r["source_pdf"] == "Fluid_Handling_Catalogue_spread.pdf"]
     ords, cats = {r["ord_nr"] for r in cc07 if r["ord_nr"]}, {r["cat_nr"] for r in cc07 if r["cat_nr"]}
     assert all(r["source_pdf"] == "FUEL.pdf" and (r["ord_nr"] in ords if r["ord_nr"] else r["cat_nr"] in cats) for r in left_out)

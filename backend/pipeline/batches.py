@@ -60,16 +60,29 @@ BATCHES: Dict[str, Batch] = {
         "CI 37\"; \"Yes, that's CI 37\"; \"do all things first and then push the codes one go\").",
         (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", tuple(range(8, 48))),),
     ),
+    "batch_3_workshop": Batch(
+        "batch_3_workshop",
+        "Workshop Tools CB-05 (the Hand Tool catalogue), the rest of its product pages after the hammers: "
+        "physical pages 48-253 (printed 46-251): punches, chisels and bars, hacksaws, vices and clamps, "
+        "woodworking tools, automotive tools, sockets, impact and ratchet wrenches, torque tools, tool storage, "
+        "spanners and wrenches, pliers and cutters, measuring and marking, taps and dies, specialty hand tools. "
+        "The numerical index (pages 254-257) is a checklist, not product pages. Read with rules 3.3.0. "
+        "Approved by the project owner on 27 Nov 2026 to add GROZ's missing hand and mechanic's tools to the "
+        "website, as Mitul's groz.tools plan asked (\"Shall I start on the Workshop Tools CB-05 pages next ... as "
+        "a preview for your OK?\" - \"well do one and push it once\").",
+        (Source("Hand_Tool_Catalogue_low_res_with_cover.pdf", tuple(range(48, 254))),),
+    ),
 }
 
-BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot", "batch_3_fluid", "batch_3_striking")
+BATCH_ORDER = ("batch_1", "batch_2", "batch_3_pilot", "batch_3_fluid", "batch_3_striking", "batch_3_workshop")
 
 # Batch 3 catalogues: only the pages listed here may be processed, so no batch definition (or edit of
-# one) can run more of them by accident. Hand Tool: the five pilot pages and the striking-tools pages
-# 8-47 approved for batch_3_striking on 24 Nov 2026 (the rest of the catalogue is not approved).
+# one) can run more of them by accident. Hand Tool: the striking-tools pages 8-47 approved for
+# batch_3_striking on 24 Nov 2026 and the product pages 48-253 approved for batch_3_workshop on 27 Nov
+# 2026 (the pilot pages 53 and 224 are among them); the index pages 254-257 and the covers stay closed.
 # Fluid Handling: every page, approved for batch_3_fluid on 21 Oct 2026.
 RESTRICTED_SOURCES: Dict[str, Tuple[int, ...]] = {
-    "Hand_Tool_Catalogue_low_res_with_cover.pdf": tuple(sorted({8, 11, 12, 53, 224} | set(range(8, 48)))),
+    "Hand_Tool_Catalogue_low_res_with_cover.pdf": tuple(range(8, 254)),
     "Fluid_Handling_Catalogue_spread.pdf": tuple(range(1, 373)),
 }
 

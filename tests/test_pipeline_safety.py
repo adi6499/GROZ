@@ -193,8 +193,9 @@ def test_command_line_has_no_approval_bypass(no_extraction, capsys, monkeypatch)
 
 
 @pytest.mark.parametrize("pdf,pages", [
-    (HAND_TOOL, (48,)),                                 # a Hand Tool page outside the approved ones (punches)
-    (HAND_TOOL, (47, 48)),                              # the last hammer page with one page too many
+    (HAND_TOOL, (254,)),                                # a Hand Tool page outside the approved ones (its index)
+    (HAND_TOOL, (253, 254)),                            # the last product page with one page too many
+    (HAND_TOOL, (7,)),                                  # the contents pages before the hammers
     (HAND_TOOL, None),                                  # the whole Hand Tool catalogue = Batch 3
     ("Fluid_Handling_Catalogue_spread.pdf", None),      # Fluid Handling: pages must be listed
     ("Fluid_Handling_Catalogue_spread.pdf", (373,)),    # Fluid Handling: no such page
@@ -209,6 +210,7 @@ def test_batch_3_and_brochures_cannot_run(pdf, pages):
 def test_pilot_pages_pass_the_source_check():
     check_sources(BATCHES["batch_3_pilot"])  # allowed pages only; approval is a separate gate
     check_sources(BATCHES["batch_3_striking"])  # the hammer pages 8-47, approved 24 Nov 2026
+    check_sources(BATCHES["batch_3_workshop"])  # the product pages 48-253, approved 27 Nov 2026
 
 
 def test_cumulative_never_merges_the_pilot(tmp_path):

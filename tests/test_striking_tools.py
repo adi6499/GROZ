@@ -47,7 +47,7 @@ def test_the_batch_covers_the_striking_tools_pages_and_nothing_else():
     batch = BATCHES["batch_3_striking"]
     assert batch.approved and batch.output_dir is None  # part of the main dataset (output_v2)
     assert [(s.pdf, s.pages) for s in batch.sources] == [(HT, tuple(range(8, 48)))]
-    assert set(range(8, 48)) | {53, 224} == set(RESTRICTED_SOURCES[HT])  # the rest of the catalogue stays closed
+    assert set(range(8, 254)) == set(RESTRICTED_SOURCES[HT])  # with batch_3_workshop's pages 48-253; index and covers closed
 
 
 def test_every_printed_column_is_read_with_its_printed_heading(page_products):

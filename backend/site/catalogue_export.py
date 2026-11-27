@@ -58,10 +58,11 @@ CATALOGUES: Dict[str, Dict[str, str]] = {
         "category": "Striking Tools", "brand": "Estwing", "title": "Estwing Hammers E-03",
         "art": "sledge", "blurb": "Sledgehammers, mallets, axes & bars"},
     # The Hand Tool catalogue; its printed cover reads "Workshop Tools", code CB-05 (batch_3_striking:
-    # its hammer pages, 24 Nov 2026).
+    # its hammer pages, 24 Nov 2026; batch_3_workshop: the rest, 27 Nov 2026). Several categories: each
+    # product's comes from the catalogue's chapters (HT_SECTIONS below).
     "Hand_Tool_Catalogue_low_res_with_cover.pdf": {
         "category": "Striking Tools", "brand": "GROZ", "title": "GROZ Workshop Tools CB-05",
-        "art": "sledge", "blurb": "Hammers, axes, mauls & mallets"},
+        "art": "sledge", "blurb": "Hand tools, sockets, wrenches, torque tools, vices & more"},
     "GROZ_LIGHTING_GL-10_1.pdf": {
         "category": "LED Worklights", "brand": "GROZ", "title": "GROZ Lighting GL-10",
         "art": "light", "blurb": "Worklights, floodlights & inspection lamps"},
@@ -92,7 +93,20 @@ LEFT_OUT: Dict[str, str] = {
 CATEGORY_INFO: Dict[str, Tuple[str, str]] = {
     "Tool Storage": ("storage", "Cabinets, tool boxes & workbenches"),
     "LED Worklights": ("light", "Worklights, floodlights & inspection lamps"),
-    "Striking Tools": ("sledge", "Hammers, axes, mauls & mallets"),
+    "Striking Tools": ("sledge", "Hammers, mallets, axes, punches, chisels & bars"),
+    # Workshop Tools CB-05 chapters (27 Nov 2026)
+    "Hacksaw Frames & Blades": ("sledge", "Hacksaw, junior, fret & coping saw frames and blades"),
+    "Vices & Clamps": ("sledge", "Bench, mechanic's, drill press & hand vices, G clamps"),
+    "Woodworking Tools": ("sledge", "Bench planes, woodworking vices & clamps"),
+    "Spanners & Wrenches": ("sledge", "Ratcheting, open end, slogging, box, wheel & adjustable wrenches"),
+    "Pliers & Cutters": ("sledge", "Pliers, pipe & tubing cutters, knives"),
+    "Measuring & Marking": ("measure", "Measuring wheel, calipers, dividers, squares, compasses & rules"),
+    "Taps, Dies & Holders": ("sledge", "Tap & die sets, hand taps, dies, wrenches & stock holders"),
+    "Specialty Hand Tools": ("sledge", "Riveters, grommet kits, paint mixers & scratch awls"),
+    "Automotive Tools & Accessories": ("storage", "Pry bars, pullers, jacks, hex keys, screwdrivers & more"),
+    "Sockets & Accessories": ("storage", "Hand & impact sockets, ratchet handles, socket sets"),
+    "Torque Tools": ("storage", "Torque wrenches, adaptors & multipliers"),
+    "Impact & Ratchet Wrenches": ("air", "3/8\", 1/2\", 3/4\" & 1\" impact wrenches and ratchet wrenches"),
     "Precision Tools": ("measure", "Measuring tools & machine accessories"),
     "Greasing Equipment": ("grease", "Grease guns, pumps, couplers, fittings & accessories"),
     "Oiling Equipment": ("grease", "Oil pumps, dispensers, meters, control guns, cans & funnels"),
@@ -117,8 +131,30 @@ FH_SECTIONS: Tuple[Tuple[int, int, str], ...] = (
 )
 
 
+# Workshop Tools CB-05: the chapters of its contents pages (pages 4-6), by printed page (physical page =
+# printed page + 2). The tool storage chapter shares the Tool Storage category of the tool storage catalogue.
+HT_PDF = "Hand_Tool_Catalogue_low_res_with_cover.pdf"
+HT_SECTIONS: Tuple[Tuple[int, int, str], ...] = (
+    (1, 74, "Striking Tools"),                    # I    STRIKING TOOLS (hammers ... punches, chisels, bars)
+    (75, 86, "Hacksaw Frames & Blades"),          # II   HACKSAW FRAMES & BLADES
+    (87, 96, "Vices & Clamps"),                   # III  VICES & CLAMPS
+    (97, 109, "Woodworking Tools"),               # IV   WOODWORKING TOOLS
+    (110, 132, "Automotive Tools & Accessories"), # V    AUTOMOTIVE TOOLS & ACCESSORIES
+    (133, 154, "Sockets & Accessories"),          # VI   SOCKETS & ACCESSORIES
+    (155, 169, "Impact & Ratchet Wrenches"),      # VII  IMPACT & RATCHET WRENCHES
+    (170, 178, "Torque Tools"),                   # VIII TORQUE TOOLS
+    (179, 195, "Tool Storage"),                   # IX   TOOL STORAGE
+    (196, 204, "Spanners & Wrenches"),            # X    SPANNERS & WRENCHES
+    (205, 219, "Pliers & Cutters"),               # XI   PLIERS & CUTTERS
+    (220, 229, "Measuring & Marking"),            # XII  MEASURING & MARKING
+    (230, 239, "Taps, Dies & Holders"),           # XIII TAPS, DIES & HOLDERS
+    (240, 999, "Specialty Hand Tools"),           # XIV  SPECIALTY HAND TOOLS
+)
+
+
 def category_for(r: Dict[str, Any], title: Optional[str]) -> str:
-    """A product's category: its catalogue's, or for CC-07 the contents section its printed page is in.
+    """A product's category: its catalogue's, or for CC-07 and CB-05 the contents section (chapter) its
+    printed page is in.
     Grease guns whose printed title names a battery are Battery Grease Guns (GROZ lists them under
     Power Tools; owner's choice, 21 Oct 2026)."""
     cat = CATALOGUES.get(r["source_pdf"], {"category": "Other"})["category"]
@@ -128,6 +164,10 @@ def category_for(r: Dict[str, Any], title: Optional[str]) -> str:
         cat = next((name for lo, hi, name in FH_SECTIONS if lo <= printed <= hi), cat)
         if title and re.search(r"battery", title, re.I) and re.search(r"grease gun", title, re.I):
             cat = "Battery Grease Guns"
+    elif r["source_pdf"] == HT_PDF:
+        m = re.match(r"\d+", str(r.get("catalog_page_label") or ""))
+        printed = int(m.group()) if m else int(r.get("physical_page_number") or 0) - 2
+        cat = next((name for lo, hi, name in HT_SECTIONS if lo <= printed <= hi), cat)
     return cat
 
 SPEC_LABELS: Dict[str, str] = {
@@ -320,6 +360,28 @@ def fuel_duplicates(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             and ((r.get("ord_nr") and r["ord_nr"] in ords) or (not r.get("ord_nr") and r.get("cat_nr") in cats))]
 
 
+# Catalogues whose products the Workshop Tools CB-05 catalogue prints again (precision squares, dies stock,
+# drill press vices; tool boxes): the site keeps the dedicated catalogue's product, already shown before.
+WORKSHOP_REPRINTS_OF = ("Precision_Catalogue_CA_03.pdf", "tools_storage.pdf")
+
+
+def workshop_repeats(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Workshop Tools CB-05 products the site shows once (27 Nov 2026): those also printed in the Precision
+    CA-03 or Tool Storage catalogue (same ORD NR., or the same CAT NR. when no order number is printed), and
+    those CB-05 prints more than once (same CAT NR. and ORD NR.: a knife's spare blades in two tables of
+    p218 and again on p220), of which the first printing is shown."""
+    ords = {r["ord_nr"] for r in records if r["source_pdf"] in WORKSHOP_REPRINTS_OF and r.get("ord_nr")}
+    cats = {r["cat_nr"] for r in records if r["source_pdf"] in WORKSHOP_REPRINTS_OF and r.get("cat_nr")}
+    out, seen = [], set()
+    ht = sorted((r for r in records if r["source_pdf"] == HT_PDF), key=lambda r: r["physical_page_number"])
+    for r in ht:
+        key = (r.get("cat_nr"), r.get("ord_nr"))
+        if (r.get("ord_nr") and r["ord_nr"] in ords) or (not r.get("ord_nr") and r.get("cat_nr") in cats) or key in seen:
+            out.append(r)
+        seen.add(key)
+    return out
+
+
 def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_root: str = ".",
           ledger_path: str = verification.LEDGER, extra: Tuple[Tuple[str, str], ...] = ()) -> Dict[str, Any]:
     """The site data. `extra`: further datasets (path, image folder) shown with output_v2 (the local
@@ -335,6 +397,8 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
     dups = {id(r) for r in fuel_duplicates([r for r, _ in sources])}
     fuel_dups = [r for r, _ in sources if id(r) in dups]
     sources = [(r, b) for r, b in sources if id(r) not in dups]
+    repeats = {id(r) for r in workshop_repeats([r for r, _ in sources])}
+    sources = [(r, b) for r, b in sources if id(r) not in repeats]
     records = [r for r, _ in sources]
     pending = load_pending_corrections(preview_glob)
     ledger = verification.load_ledger(ledger_path)
@@ -378,6 +442,7 @@ def build(dataset_path: str = DATASET, preview_glob: str = PREVIEW_GLOB, pdf_roo
             "titles_by_rule": dict(sorted(Counter((i["title_source"] or {}).get("rule", "none") for i in items).items())),
             "heading_relations": dict(sorted(Counter(i["heading_relation"] for i in items).items())),
             "fuel_duplicates_left_out": len(fuel_dups),
+            "workshop_repeats_left_out": len(repeats),
             "catalogues_left_out": {pdf: {"records": n, "why": LEFT_OUT[pdf]} for pdf, n in sorted(left_out.items())},
             **({"preview": {"datasets": [p.replace("\\", "/") for p, _ in extra]}} if extra else {}),
         },

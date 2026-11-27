@@ -161,7 +161,7 @@ def _blocks(words: List[Any], cats: List[Any], page_width: float, all_cats: List
     return out
 
 
-def _bound(blocks: List[Dict[str, Any]], page_width: float) -> None:
+def _bound(blocks: List[Dict[str, Any]], page_width: float, words: Optional[List[Any]] = None) -> None:
     """Each table's horizontal extent and column ranges. Tables printed side by side (on the same header
     line or a little lower) never reach into each other: a table starts where the one to its left ends."""
     side = lambda a, b: abs(a["hy"] - b["hy"]) < 60  # header lines at about the same height
@@ -172,6 +172,22 @@ def _bound(blocks: List[Dict[str, Any]], page_width: float) -> None:
         # Codes are printed left-aligned under a centred CAT header: the first pair's code column starts
         # at the table's left edge (up to 60 pt left of its header, never inside the table to its left).
         b["x_start"] = max([b["cat0"] - 60] + left)
+    if words is not None:
+        # Rules 3.3.0: a table printed right beside another on the same header line (Workshop Tools CB-05
+        # p200: METRIC CAT/ORD/SIZE (MM), then IMPERIAL CAT/ORD/SIZE (INCH) ...) starts where its codes
+        # start, when they are printed left of where the table to its left was taken to end.
+        for b in blocks:
+            for a in blocks:
+                if a is b or abs(a["hy"] - b["hy"]) > 3 or a["cat0"] >= b["cat0"]:
+                    continue
+                head_end = max([w[2] for g in a["groups"] for w in g["own"]]
+                               + [g["ord"][2] for g in a["groups"] if g["ord"]] + [a["cat0"]])
+                codes = [w[0] for w in words if code_of(w[4]) and b["hy"] + 5 < w[1] < b["hy"] + 400
+                         and head_end + 2 < w[0] < b["x_start"] and w[0] >= b["cat0"] - 60]
+                if codes:
+                    b["x_start"] = min(codes) - 2
+                    a["own_end"] = min(a["own_end"], b["x_start"])
+                    a["x_end"] = min(a["x_end"], b["x_start"])
     for b in blocks:
         nxt = [o["x_start"] for o in blocks if o is not b and side(o, b) and o["cat0"] >= b["own_end"] - 30]
         b["x_end"] = min([b["x_end"]] + [max(x, b["cat0"] + 40) for x in nxt])
@@ -193,7 +209,7 @@ def _bound(blocks: List[Dict[str, Any]], page_width: float) -> None:
             g["ord_hi"] = nxt_cat
 
 
-def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
+def _leaf_columns(header_words: List[Any], tidy: bool = False) -> List[Dict[str, Any]]:
     """The printed columns of the shared part of a table, each labelled with its header words from top
     to bottom ("MAX." / "PRESSURE" / "(PSI)" -> "MAX. PRESSURE (PSI)").
 
@@ -236,8 +252,10 @@ def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
                               "last_cx": p["cx"], "parent": None, "kids": 0})
     for c in cells:
         c["cx"] = (c["x0"] + c["x1"]) / 2
+    box_cell = lambda o: tidy and _norm_label(" ".join(o["parts"])) in ("BOXQTY", "BOX", "QTY")
     for c in cells:
-        above = [o for o in cells if o is not c and o["top"] < c["top"] and o["last_li"] < c["top"]]
+        # (rules 3.3.0: BOX QTY. is always a column of its own, never the heading of another)
+        above = [o for o in cells if o is not c and o["top"] < c["top"] and o["last_li"] < c["top"] and not box_cell(o)]
         cover = [o for o in above if o["x0"] - 18 <= c["cx"] <= o["x1"] + 18]
         near = [o for o in above if abs(o["cx"] - c["cx"]) <= 45]
         # the most specific (lowest) cell that covers it, then the nearest by centre
@@ -259,6 +277,8 @@ def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
         leaves.append({"label": re.sub(r"\s+", " ", " ".join(reversed(chain))).strip(),
                        "x0": c["x0"], "x1": c["x1"], "cx": c["cx"]})
     leaves.sort(key=lambda c: c["cx"])
+    if tidy:
+        _tidy_labels(leaves)
     for i, c in enumerate(leaves):
         left = leaves[i - 1] if i else None
         right = leaves[i + 1] if i + 1 < len(leaves) else None
@@ -273,11 +293,48 @@ def _leaf_columns(header_words: List[Any]) -> List[Dict[str, Any]]:
     return leaves
 
 
+_UNIT_ONLY = re.compile(r"\([^()]{1,12}\)")
+
+
+def _tidy_labels(leaves: List[Dict[str, Any]]) -> None:
+    """Rules 3.3.0 (Workshop Tools CB-05): printed column names as GROZ means them.
+
+    - spaces inside brackets and a missing closing bracket: "(INCH )", "( MM)", "(MM" -> "(INCH)", "(MM)";
+      a stray letter printed after a unit ("(MM)S", p93) is dropped;
+    - a unit bracket added to "INCH)" where the name already opened one: "TPI (THREAD PER (INCH)" ->
+      "TPI (THREAD PER INCH)";
+    - a unit printed off to the side of its heading ("(NM)" beside "TORQUE RANGE" over "(FT-LB)" and
+      "(IN-LB)", p175; "(OZ)" beside "HEAD WT." over "(LB)", p125) takes the heading of the unit next
+      to it.
+    """
+    for c in leaves:
+        t = re.sub(r"\(\s+", "(", c["label"])
+        t = re.sub(r"\s+\)", ")", t)
+        t = re.sub(r"\((INCH|MM|KGS?|LBS?)\)[A-Z]$", r"(\1)", t)
+        t = re.sub(r"\((INCH|MM|KGS?|LBS?)$", r"(\1)", t)
+        if t.count("(") > t.count(")"):
+            t = re.sub(r"\((INCH|MM)\)$", r"\1)", t)
+        # the pick sets' CONSTITUENTS heading spans the item columns under it (p118, p120)
+        t = re.sub(r"^CONSTITUENTS\s+(?=\S)", "", t)
+        c["label"] = t
+    heading = lambda label: (re.fullmatch(r"(.+?)\s+\([^()]{1,12}\)", label) or [None, None])[1]
+    units_of = lambda h: sum(1 for o in leaves if heading(o["label"]) == h)
+    for i, c in enumerate(leaves):
+        if not _UNIT_ONLY.fullmatch(c["label"]):
+            continue
+        cands = [j for j in (i - 1, i + 1) if 0 <= j < len(leaves) and heading(leaves[j]["label"])]
+        if cands:
+            # a heading printed over several units (TORQUE RANGE over (FT-LB) (IN-LB)) is the one a unit
+            # printed beside them belongs to, before a heading with a single unit under it
+            j = max(cands, key=lambda j: (units_of(heading(leaves[j]["label"])), -abs(leaves[j]["cx"] - c["cx"])))
+            c["label"] = f"{heading(leaves[j]['label'])} {c['label']}"
+
+
 def _norm_label(label: str) -> str:
     return re.sub(r"[^A-Z]", "", label.upper())
 
 
-def extract_grid_rows(page: pymupdf.Page) -> List[Dict[str, Any]]:
+def extract_grid_rows(page: pymupdf.Page, phrase_rows: bool = False) -> List[Dict[str, Any]]:
     """Every product row of every ordering table on the page (see the module notes)."""
     width, height = page.rect.width, page.rect.height
     words = [w for w in page.get_text("words") if w[4].strip()]
@@ -292,9 +349,10 @@ def extract_grid_rows(page: pymupdf.Page) -> List[Dict[str, Any]]:
             header_lines.append([c])
     blocks = [b for line in header_lines for b in _blocks(words, line, width, cats)]
     blocks.sort(key=lambda b: b["cat0"])
-    _bound(blocks, width)
+    _bound(blocks, width, words)
     rows_out: List[Dict[str, Any]] = []
     for b in blocks:
+        b["phrase_rows"] = phrase_rows  # rules 3.3.0, Workshop Tools CB-05 only
         rows_out.extend(_read_block(page, words, b, blocks, width, height))
     return rows_out
 
@@ -322,10 +380,18 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
 
     has_ord = any(g["ord"] for g in groups)
     code_lines = [(i, code_hits(l)) for i, l in enumerate(lines) if lines[i][0][1] > hy + 5]
+    # Rules 3.3.0 (Workshop Tools CB-05): a table with a CONSTITUENTS / CONTENTS column whose first code is
+    # printed well below its header has tall rows: each set's contents run over many lines and its code
+    # and order number are centred in the row, not always on the same line (CB-05 p235, tap & die sets).
+    tall = False
+    if b.get("phrase_rows"):
+        head_tokens = {_hdr(w[4]) for w in zone if hy - 9 <= w[1] <= hy + 32}
+        firsts = [lines[i][0][1] for i, h in code_lines if any(c for c, _ in h.values())]
+        tall = bool(head_tokens & {"CONSTITUENTS", "CONTENTS"}) and bool(firsts) and firsts[0] > hy + 40
     # A product row prints a code and, in a table with ORD columns, an order number (a thread label
     # such as "M10 × 1" printed under a CAT column in the header is not a product).
     code_lines = [(i, h) for i, h in code_lines
-                  if any(c for c, _ in h.values()) and (not has_ord or any(o for _, o in h.values()))]
+                  if any(c for c, _ in h.values()) and (tall or not has_ord or any(o for _, o in h.values()))]
     if not code_lines:
         return []
     first_i = code_lines[0][0]
@@ -338,7 +404,7 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
     # the CAT/ORD pairs are group labels (one per pair) or a section label (one phrase across).
     # Lines just above the first product row belong to it (a cell printed over two lines, centred on
     # the row), not to the header.
-    head_lines = [l for l in lines[:first_i] if l[0][1] < first_y - pitch * 0.72]
+    head_lines = [l for l in lines[:first_i] if l[0][1] < first_y - pitch * 0.72 and (not tall or l[0][1] <= hy + 32)]
     labels = ["" for _ in groups]
 
     def section_line(line_words) -> Optional[str]:
@@ -373,7 +439,7 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
 
     shared_head = [w for l in head_lines if not (l[0][1] > hy + 9 and section_line(l)) for w in l if w[0] >= shared_x0]
     try:
-        columns = _leaf_columns(shared_head)
+        columns = _leaf_columns(shared_head, tidy=bool(b.get("phrase_rows")))
         columns_note = None
     except ValueError as e:
         # Only the box quantity is read (BOX QTY. is always the last column, under its own header).
@@ -401,7 +467,39 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
     current = section
     last_code_y = ys[-1]
     body_start = next((i for i in range(len(lines)) if lines[i][0][1] >= first_y - pitch * 0.72 and lines[i][0][1] > hy + 9), first_i)
-    for i in range(body_start, len(lines)):
+    if tall:
+        # Each row runs from halfway after the previous code to halfway before the next one; the last
+        # ends at the first clear gap below its code.
+        label_only = lambda l: not any(w[0] >= shared_x0 for w in l) and not any(code_of(w[4]) for w in l)
+        top = next((l[0][1] for l in lines if l[0][1] > hy + 32 and not label_only(l)), ys[0])  # the first row's top
+        bounds = []
+        for k in range(len(ys) - 1):
+            bd = 2 * ys[k] - top  # the code is printed halfway down its row
+            if not ys[k] < bd < ys[k + 1]:
+                bd = (ys[k] + ys[k + 1]) / 2
+            bounds.append(bd)
+            top = bd
+        prev_y = None
+        for i in range(len(lines)):
+            l = lines[i]
+            y = l[0][1]
+            if y <= hy + 32:
+                continue
+            if i in row_index:
+                sections_at[row_index[i]] = current
+                prev_y = y
+                continue
+            if prev_y is not None and y > last_code_y and y - prev_y > 30:
+                break
+            if not any(w[0] >= shared_x0 for w in l) and not any(ORD_WORD.match(_clean(w[4])) for w in l):
+                kind = classify(l)
+                if kind and kind[0] == "section" and not any(code_of(w[4]) for w in l):
+                    current = kind[1]
+                    prev_y = y
+                    continue
+            owners[sum(1 for bd in bounds if y > bd)].append(i)
+            prev_y = y
+    for i in range(body_start if not tall else len(lines), len(lines)):
         l = lines[i]
         y = l[0][1]
         if i in row_index:
@@ -424,14 +522,75 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
         band = list(lines[i]) + [w for j in owners[k] for w in lines[j]]
         shared = [w for w in band if w[0] >= shared_x0]
         cells: Dict[int, List[Any]] = {}
+        where: Dict[int, int] = {}
         for w in shared:
             c = next((ci for ci, col in enumerate(columns) if col["lo"] <= _cx(w) < col["hi"]), None)
             if c is not None:
                 cells.setdefault(c, []).append(w)
+                where[id(w)] = c
+        if b.get("phrase_rows"):
+            # Rules 3.3.0: words printed on right after a text cell, without a column gap ("Black powder
+            # coated frame with red handle"), belong to that cell, not to the empty column they reach into.
+            for ln in _lines(shared):
+                for a, w in zip(ln, ln[1:]):
+                    ca, cw = where.get(id(a)), where.get(id(w))
+                    if ca is None or cw is None or ca == cw or w[0] - a[2] > 4.5:
+                        continue
+                    if not re.search(r"[A-Za-z]{3,}", _cell_text(cells[ca])):
+                        continue
+                    cells[cw].remove(w)
+                    cells[ca].append(w)
+                    where[id(w)] = ca
         values: Dict[str, str] = {}
         box_qty = None
         dims_inch = dims_mm = None
         description = None
+        set_items = None
+        if b.get("phrase_rows"):
+            # Rules 3.3.0 (Workshop Tools CB-05): a set's row prints "5 pc set - packed in a vinyl pouch" and
+            # then its sizes across the value columns, each inch size over its metric size ('1/4"' over
+            # "(6mm)"). The row is read as one description: the phrase, then the sizes in printed order.
+            # The set's phrase above its code and its last sizes below may lie further from the code line
+            # than a wrapped cell: the lines up to the neighbouring rows count, the code line's included.
+            lo = ys[k - 1] + pitch * 0.75 if k else ys[k] - 2.2 * pitch
+            hi = ys[k + 1] - pitch * 0.75 if k + 1 < len(ys) else ys[k] + 2.6 * pitch
+            # a line no row has taken goes to the row whose code line is nearer (two sets printed one
+            # under the other each keep their own sizes)
+            taken = {j for kk, js in owners.items() if kk != k for j in js}
+            nearer = lambda y: all(abs(y - ys[k]) <= abs(y - yy) for kk, yy in enumerate(ys) if kk != k)
+            # the phrase naming a set ("5 pc set - packed in a vinyl pouch") is printed just above its sizes:
+            # it belongs to the row below it even when the row above is nearer
+            prose = lambda l: any(re.fullmatch(r"(pcs?|set)", x[4], re.I) for x in l)
+            near = [l for j, l in enumerate(lines) if lo < l[0][1] < hi and j not in taken and (l is lines[i] or (
+                (nearer(l[0][1]) or (prose(l) and l[0][1] < ys[k]))
+                and not any(code_of(x[4]) or ORD_WORD.match(_clean(x[4])) for x in l)))]
+            wide = []
+            for l in near:  # a metric size printed as two words, "(2.5" "mm)", is one size
+                ws_ = [w for w in l if w[0] >= shared_x0]
+                for w in ws_:
+                    if wide and re.fullmatch(r"mm\)", w[4], re.I) and re.fullmatch(r"\([\d.]+", wide[-1][4]) and w[0] - wide[-1][2] < 4:
+                        wide[-1] = (wide[-1][0], wide[-1][1], w[2], w[3], f"{wide[-1][4]} {w[4]}") + tuple(w[5:])
+                    else:
+                        wide.append(w)
+            inch = [w for w in wide if re.fullmatch(r"[\d./-]+(\"|”|'')", w[4])]
+            pairs = []
+            for w in inch:
+                mm = [o for o in wide if re.fullmatch(r"\([\d.]+\s*mm\)", o[4], re.I) and abs(_cx(o) - _cx(w)) < 12 and 0 < o[1] - w[1] < 14]
+                if mm:
+                    pairs.append((w, mm[0]))
+            # a sentence printing each size inline ('12" (300 mm),') is read as a sentence, not as sizes
+            inline = any(abs(o[1] - w[1]) < 3 and 0 <= o[0] - w[2] < 6 and re.fullmatch(r"\([\d.\s]+(mm\))?.*", o[4], re.I)
+                         for w in inch for o in wide)
+            if len(pairs) >= 2 and not inline:
+                used = {id(x) for p in pairs for x in p}
+                box_col = next((ci for ci, col in enumerate(columns) if _norm_label(col["label"]) in ("BOXQTY", "QTY")), None)
+                # the phrase: words printed above the sizes or on the code line (not notes printed below)
+                top_item = min(p[0][1] for p in pairs)
+                phrase = [w for w in wide if id(w) not in used and w[1] <= max(top_item, lines[i][0][1]) + 2
+                          and (box_col is None or w not in cells.get(box_col, []))]
+                items = ", ".join(f"{a[4]} {m[4]}" for a, m in sorted(pairs, key=lambda p: (round(p[0][1]), p[0][0])))
+                set_items = (_cell_text(phrase) + ": " if phrase else "") + items
+                cells = {ci: ws for ci, ws in cells.items() if ci == box_col}
         for ci, col in enumerate(columns):
             text = _cell_text(cells.get(ci, []))
             if not text or text in DASHES:
@@ -440,6 +599,20 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
             if n in ("BOXQTY", "QTY", "PACKQTY"):
                 if re.fullmatch(r"\d{1,5}", text):
                     box_qty = int(text)
+                continue
+            if (b.get("phrase_rows") and (n.startswith("SIZE") or n.startswith("DIMENSION"))
+                    and len(re.findall(r"[A-Za-z]{3,}", text)) >= 2 and not re.match(r"\d", text)):
+                # Rules 3.3.0 (Workshop Tools CB-05): a sentence printed across the row ("Set of 7 extra long
+                # Ratcheting Spanners in metric sizes, 8- 19 mm") is the row's description, read in full
+                # along its line, not a value of the column it starts in.
+                start = min(cells[ci], key=lambda w: w[0])
+                line_words = sorted((w for w in words if abs(w[1] - start[1]) < 3 and w[0] >= start[0]), key=lambda w: w[0])
+                phrase = [line_words[0]]
+                for w in line_words[1:]:
+                    if w[0] - phrase[-1][2] > 9:
+                        break
+                    phrase.append(w)
+                description = _cell_text(phrase)
                 continue
             if (n.startswith("SIZE") or n.startswith("DIMENSION")) and ("INCH" in n or n.endswith("MM")):
                 if "INCH" in n:
@@ -450,7 +623,16 @@ def _read_block(page, words, b, blocks, width, height) -> List[Dict[str, Any]]:
             if n == "DESCRIPTION":
                 description = text
                 continue
+            if (b.get("phrase_rows") and re.search(r"\((INCH|MM|KGS?|LBS?|GMS|OZ)\)", col["label"])
+                    and re.search(r"\b(set|contains|pcs?|pieces?|each)\b", text, re.I)
+                    and len(re.findall(r"[A-Za-z]{2,}", text)) >= 3):
+                # Rules 3.3.0: a sentence describing a set, printed in a measurement column ("3 Pc Set:
+                # 12" (300 mm), 16" (400 mm) & 20" (500 mm)") is the row's description, not a measurement.
+                description = f"{description} {text}" if description else text
+                continue
             values[col["label"]] = text
+        if set_items:
+            description = set_items
         for gi, (cw, ow) in hits.items():
             if cw is None:
                 continue  # "-" in the CAT column: no product in this variant
@@ -544,6 +726,118 @@ def extract_tile_rows(page: pymupdf.Page, known_ords: set) -> List[Dict[str, Any
     return rows
 
 
+_ORD_LABEL = re.compile(r"ORD\.?", re.I)
+_NR_LABEL = re.compile(r"NR\.?", re.I)
+
+
+def _labelled_number(words: List[Any], label: Any, second: re.Pattern, number: re.Pattern) -> Optional[Any]:
+    """The number printed after a two-word label on its line ("ORD NR. 40193", "BOX QTY. 10")."""
+    nxt = [w for w in words if abs(w[1] - label[1]) < 3 and 0 < w[0] - label[2] < 12 and second.fullmatch(w[4])]
+    if not nxt:
+        return None
+    end = nxt[0][2]
+    nums = sorted((w for w in words if abs(w[1] - label[1]) < 3 and 0 < w[0] - end < 45 and number.fullmatch(_clean(w[4]))),
+                  key=lambda w: w[0])
+    return nums[0] if nums else None
+
+
+def extract_set_tiles(page: pymupdf.Page, known_ords: set) -> List[Dict[str, Any]]:
+    """Sets and kits of the Workshop Tools CB-05 catalogue (rules 3.3.0), printed as a tile, not in a table:
+
+        HEX SOCKET SET            <- the set's printed name (optional, above the code)
+        KIT/SKT/H/1-4/19/UG       <- the code
+        19 pc punch & chisel set  <- a name printed under the code (optional, up to three lines)
+        ORD NR.   40193           <- the order number after its label
+        BOX QTY.  10              <- the box quantity after its label
+
+    The DESCRIPTION box printed below the tile (or below a group of tiles printed one under the other,
+    such as a hex and a bi-hex set of the same size) lists what the set contains; it is kept verbatim
+    as the DESCRIPTION specification. Order numbers already read from a table are skipped."""
+    words = [w for w in page.get_text("words") if w[4].strip()]
+    width = page.rect.width
+    labels = [w for w in words if _ORD_LABEL.fullmatch(w[4]) and _labelled_number(words, w, _NR_LABEL, ORD_WORD)]
+    tiles = []
+    for lab in labels:
+        num = _labelled_number(words, lab, _NR_LABEL, ORD_WORD)
+        ord_nr = _clean(num[4])
+        if ord_nr in known_ords:
+            continue
+        codes = [w for w in words if code_of(w[4]) and abs(w[0] - lab[0]) < 6 and 0 < lab[1] - w[1] <= 46]
+        if not codes:
+            continue
+        code = max(codes, key=lambda w: w[1])
+        # the tile's column: up to the next tile printed on the same line (else 170 pt wide)
+        later = [w[0] for w in labels if abs(w[1] - lab[1]) < 3 and w[0] > lab[0] + 10]
+        right = min([lab[0] + 170, width - 20] + [x - 6 for x in later])
+        name_lines = _lines([w for w in words if lab[0] - 4 <= w[0] < right and code[1] + 4 < w[1] < lab[1] - 3])
+        above = _lines([w for w in words if lab[0] - 4 <= w[0] < right and code[1] - 14 < w[1] < code[1] - 3])
+        set_name = " ".join(w[4] for w in above[-1]) if above and re.fullmatch(r"[A-Z0-9\-/&\" ]+", " ".join(w[4] for w in above[-1])) else None
+        box = [w for w in words if re.fullmatch(r"BOX", w[4], re.I) and abs(w[0] - lab[0]) < 6 and 0 < w[1] - lab[1] < 20]
+        box_num = _labelled_number(words, box[0], re.compile(r"QTY\.?", re.I), re.compile(r"\d{1,5}")) if box else None
+        tiles.append({"label": lab, "code": code, "ord": num, "ord_nr": ord_nr, "right": right, "set_name": set_name,
+                      "name": _cell_text([w for l in name_lines for w in l]) or None,
+                      "box": box_num, "bottom": (box_num or num)[3]})
+    rows = []
+    for t in tiles:
+        x0, y = t["label"][0], t["code"][1]
+        # The DESCRIPTION box below the tile, unless another tile of this column starts first more than
+        # 60 pt lower (tiles closer together are one group sharing the box).
+        nxt = [o["code"][1] for o in tiles if o is not t and abs(o["label"][0] - x0) < 6 and o["code"][1] > y + 60]
+        limit = min(nxt) if nxt else page.rect.height
+        # in the tile's column; a tile alone on its line may have its box anywhere in its half of the page
+        alone = not any(o is not t and abs(o["label"][1] - t["label"][1]) < 3 for o in tiles)
+        same_half = lambda x: (x >= width / 2) == (x0 >= width / 2)
+        all_heads = [w for w in words if w[4].upper() == "DESCRIPTION" and y < w[1] < limit]
+        heads = [w for w in all_heads if x0 - 10 <= w[0] < t["right"] or (alone and same_half(w[0]))]
+        if not heads and not alone:
+            # tiles printed side by side over one box share it (a hex and a bi-hex set of the same sizes)
+            row_tiles = [o for o in tiles if abs(o["label"][1] - t["label"][1]) < 3]
+            lo, hi = min(o["label"][0] for o in row_tiles) - 10, max(o["right"] for o in row_tiles)
+            span = [w for w in all_heads if lo <= w[0] < hi]
+            heads = span if len(span) == 1 else []
+        contents = None
+        if heads:
+            h = min(heads, key=lambda w: w[1])
+            # the box is as wide as the space up to the next box on its line
+            others = [w[0] for w in words if w[4].upper() == "DESCRIPTION" and abs(w[1] - h[1]) < 3 and w[0] > h[0] + 20]
+            box_right = min([h[0] + 200] + [x - 4 for x in others])
+            body, last = [], h[3]
+            for line in _lines([w for w in words if h[0] - 4 <= w[0] < box_right and h[3] < w[1] < h[3] + 160]):
+                if line[0][1] - last > 13 or any(_ORD_LABEL.fullmatch(w[4]) for w in line):
+                    break
+                body.extend(line)
+                last = max(w[3] for w in line)
+            # A box printed in two columns of text is read column by column (its words' horizontal extents
+            # leave a clear gap between the columns on every line).
+            spans: List[List[float]] = []
+            for w in sorted(body, key=lambda w: w[0]):
+                if spans and w[0] <= spans[-1][1] + 10:
+                    spans[-1][1] = max(spans[-1][1], w[2])
+                else:
+                    spans.append([w[0], w[2]])
+            text = " ".join(_cell_text([w for w in body if a <= w[0] <= b]) for a, b in spans)
+            text = re.sub(r"\s+", " ", text).strip()
+            # each item of the list starts with its count ("1 pc Ratchet Handle"): one item per entry
+            contents = re.sub(r"(?<=[^\s;:])\s+(?=\d+\s*pcs?\b)", "; ", text, flags=re.I) or None
+        name = " · ".join(x for x in (t["set_name"], t["name"]) if x) or None
+        cat_nr = code_of(t["code"][4])
+        parts = [t["code"], t["label"], t["ord"]] + ([t["box"]] if t["box"] else [])
+        rows.append({
+            "cat_nr": cat_nr, "ord_nr": t["ord_nr"], "model_code": cat_nr.replace("/", "-"),
+            "description": name, "dimensions_inch": None, "dimensions_mm": None,
+            "box_qty": int(t["box"][4]) if t["box"] else None, "measured": {},
+            "column_specs": {"DESCRIPTION": contents} if contents else {}, "variant_label": None, "table_section": None,
+            "source_row_text": " ".join(x for x in (t["set_name"], t["code"][4], t["name"], "ORD NR.", t["ord_nr"],
+                                                     f"BOX QTY. {t['box'][4]}" if t["box"] else None) if x),
+            "table_bbox": (x0 - 4, y - 16 if t["set_name"] else y - 4, t["right"], t["bottom"] + 4),
+            "region_half": "left" if t["right"] <= width / 2 + 30 else ("right" if x0 >= width / 2 - 30 else "full_page"),
+            "raw_text": _cell_text(parts),
+            "tile": True,
+        })
+        known_ords.add(t["ord_nr"])
+    return rows
+
+
 # ---------------------------------------------------------------------------------------------------------
 # The catalogues read with this module (batch_3_fluid). The four catalogues of batches 1 and 2 keep the
 # table reader in table_extractor.py unchanged.
@@ -553,6 +847,8 @@ GRID_PDFS = {"Fluid_Handling_Catalogue_spread.pdf", "FUEL.pdf"}
 # ("HEAD WEIGHT" over "(LBS)" "(KG)"); its pictures keep the picture rules of batches 1 and 2, which
 # suit its one-product-family-per-page layout (checked on every hammer page, 24 Nov 2026).
 GRID_TABLE_PDFS = GRID_PDFS | {"Hand_Tool_Catalogue_low_res_with_cover.pdf"}
+# Catalogues that also print sets and kits as tiles with "ORD NR." and "BOX QTY." labels (rules 3.3.0).
+SET_TILE_PDFS = {"Hand_Tool_Catalogue_low_res_with_cover.pdf"}
 
 # Contents pages: product family titles with the printed page each starts on.
 CONTENTS_PAGES: Dict[str, Tuple[int, ...]] = {
